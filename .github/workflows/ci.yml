@@ -41,9 +41,9 @@ jobs:
         uses: dorny/test-reporter@v1
         if: success() || failure()
         with:
-          name: JEST Tests
+          name: Vitest Tests
           path: junit.xml
-          reporter: jest-junit
+          reporter: java-junit
 
       - name: Coveralls
         uses: coverallsapp/github-action@1.1.3
