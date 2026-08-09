@@ -4,7 +4,7 @@ import {
   DEFAULT_FIXED_STEP,
   DEFAULT_MAX_FRAME_TIME,
   GameLoop,
-} from './GameLoop';
+} from './game-loop';
 
 describe('GameLoop', () => {
   it('runs the expected number of fixed steps for a whole-number frame', () => {

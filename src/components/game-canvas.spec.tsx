@@ -31,7 +31,9 @@ vi.mock('pixi.js', () => {
 
   class Graphics {
     position = { set: vi.fn() };
+    rotation = 0;
     rect = vi.fn().mockReturnThis();
+    circle = vi.fn().mockReturnThis();
     fill = vi.fn().mockReturnThis();
   }
 

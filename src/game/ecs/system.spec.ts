@@ -1,7 +1,7 @@
 import { World } from 'miniplex';
 import { describe, expect, it, vi } from 'vitest';
 
-import { SystemRunner, type System } from './System';
+import { SystemRunner, type System } from './system';
 import type { Entity } from './types';
 
 describe('SystemRunner', () => {

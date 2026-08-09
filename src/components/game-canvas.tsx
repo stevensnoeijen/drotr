@@ -1,10 +1,23 @@
 import { useEffect, useRef } from 'react';
 import { Application, Graphics } from 'pixi.js';
 
-import { GameLoop } from '~/game/GameLoop';
-import { SystemRunner } from '~/game/ecs/System';
-import { world } from '~/game/ecs/world';
+import { GameLoop } from '~/game/game-loop';
+import { SystemRunner } from '~/game/ecs/system';
+import { queries, world } from '~/game/ecs/world';
+import type { Renderable } from '~/game/ecs/types';
+import { spawnInitialUnits } from '~/game/data/spawn';
 import type { GameStats } from './debug-overlay';
+
+/** Draws a {@link Renderable}'s primitive shape into a fresh Graphics. */
+function drawRenderable({ shape, color, size }: Renderable): Graphics {
+  const graphics = new Graphics();
+  if (shape === 'circle') {
+    graphics.circle(0, 0, size);
+  } else {
+    graphics.rect(-size, -size, size * 2, size * 2);
+  }
+  return graphics.fill(color);
+}
 
 export interface GameCanvasProps {
   className?: string;
@@ -57,14 +70,29 @@ export default function GameCanvas({ className, onStats }: GameCanvasProps) {
       app = instance;
       container.appendChild(app.canvas);
 
-      const sprite = new Graphics()
-        .rect(0, 0, 64, 64)
-        .fill(0x66ccff);
-      sprite.position.set(32, 32);
-      app.stage.addChild(sprite);
+      // Seed the world with some units, then draw one Graphics view per
+      // renderable entity. Positions live in the ECS transform; the view is
+      // read-only and synced from it each frame.
+      spawnInitialUnits(world);
+
+      const views = new Map<(typeof queries.renderable.entities)[number], Graphics>();
+      for (const entity of queries.renderable) {
+        const view = drawRenderable(entity.renderable);
+        views.set(entity, view);
+        app.stage.addChild(view);
+      }
 
       app.ticker.add((ticker) => {
         loop.advance(ticker.deltaMS / 1000);
+
+        for (const [entity, view] of views) {
+          view.position.set(
+            entity.transform.position.x,
+            entity.transform.position.y
+          );
+          view.rotation = entity.transform.rotation;
+        }
+
         onStatsRef.current?.({
           fps: ticker.FPS,
           tick: loop.tick,
@@ -86,6 +114,10 @@ export default function GameCanvas({ className, onStats }: GameCanvasProps) {
       if (app) {
         app.canvas.remove();
         app.destroy(true, { children: true, texture: true });
+        // Only the surviving mount reaches here with a live `app`; clear the
+        // units it seeded so a remount starts from an empty world instead of
+        // stacking duplicate entities.
+        world.clear();
       }
     };
   }, []);
