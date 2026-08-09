@@ -5,7 +5,7 @@ import Game from '~/views/game';
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={import.meta.env.BASE_URL}>
       <Routes>
         <Route index element={<Home />} />
         <Route path="/game" element={<Game />} />

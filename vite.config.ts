@@ -6,6 +6,9 @@ import tailwindcss from '@tailwindcss/vite';
 import checker from 'vite-plugin-checker';
 
 export default defineConfig({
+  // Deploy targets (e.g. GitHub Pages) set BASE_URL to the subpath the app
+  // is served from; local dev/build defaults to the site root.
+  base: process.env.BASE_URL ?? '/',
   resolve: {
     alias: {
       '~': path.resolve(__dirname, './src'),
@@ -30,7 +33,7 @@ export default defineConfig({
     },
     coverage: {
       provider: 'v8',
-      reporter: ['text', 'lcov'],
+      reporter: ['text', 'lcov', 'html'],
     },
   },
 });
