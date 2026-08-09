@@ -1,9 +1,15 @@
+import { BrowserRouter, Route, Routes } from 'react-router';
+
+import Home from '~/views/Home';
+import Game from '~/views/Game';
+
 export default function App() {
   return (
-    <div className="flex h-screen items-center justify-center bg-neutral-900">
-      <h1 className="text-4xl font-bold text-white">
-        Dracula: Reign of Terror
-      </h1>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route index element={<Home />} />
+        <Route path="/game" element={<Game />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
