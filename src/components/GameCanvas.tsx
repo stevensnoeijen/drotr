@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { Application } from 'pixi.js';
+import { Application, Graphics } from 'pixi.js';
 
 export interface GameCanvasProps {
   className?: string;
@@ -34,6 +34,12 @@ export default function GameCanvas({ className }: GameCanvasProps) {
 
       app = instance;
       container.appendChild(app.canvas);
+
+      const sprite = new Graphics()
+        .rect(0, 0, 64, 64)
+        .fill(0x66ccff);
+      sprite.position.set(32, 32);
+      app.stage.addChild(sprite);
 
       resizeObserver = new ResizeObserver(([entry]) => {
         const { inlineSize: width, blockSize: height } =

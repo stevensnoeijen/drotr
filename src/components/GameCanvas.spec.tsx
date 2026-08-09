@@ -7,6 +7,7 @@ import GameCanvas from './GameCanvas';
 interface MockApplication {
   canvas: HTMLCanvasElement;
   renderer: { resize: ReturnType<typeof vi.fn> };
+  stage: { addChild: ReturnType<typeof vi.fn> };
   init: ReturnType<typeof vi.fn>;
   destroy: ReturnType<typeof vi.fn>;
 }
@@ -17,6 +18,7 @@ vi.mock('pixi.js', () => {
   class Application implements MockApplication {
     canvas = document.createElement('canvas');
     renderer = { resize: vi.fn() };
+    stage = { addChild: vi.fn() };
     init = vi.fn().mockResolvedValue(undefined);
     destroy = vi.fn();
 
@@ -25,7 +27,13 @@ vi.mock('pixi.js', () => {
     }
   }
 
-  return { Application };
+  class Graphics {
+    position = { set: vi.fn() };
+    rect = vi.fn().mockReturnThis();
+    fill = vi.fn().mockReturnThis();
+  }
+
+  return { Application, Graphics };
 });
 
 describe('GameCanvas', () => {
