@@ -5,7 +5,8 @@ import { GameLoop } from '~/game/game-loop';
 import { SystemRunner } from '~/game/ecs/system';
 import { queries, world } from '~/game/ecs/world';
 import type { Renderable } from '~/game/ecs/types';
-import { spawnInitialUnits } from '~/game/data/spawn';
+import { CELL_SIZE } from '~/lib/grid';
+import type { DebugFlag, TestCase } from '~/game/testcases';
 import type { GameStats } from './debug-overlay';
 
 /** Draws a {@link Renderable}'s primitive shape into a fresh Graphics. */
@@ -19,8 +20,24 @@ function drawRenderable({ shape, color, size }: Renderable): Graphics {
   return graphics.fill(color);
 }
 
+/** Draws a light grid overlay over the given canvas size, for `?debug=grid`. */
+function drawGrid(width: number, height: number): Graphics {
+  const graphics = new Graphics();
+  for (let x = 0; x <= width; x += CELL_SIZE) {
+    graphics.moveTo(x, 0).lineTo(x, height);
+  }
+  for (let y = 0; y <= height; y += CELL_SIZE) {
+    graphics.moveTo(0, y).lineTo(width, y);
+  }
+  return graphics.stroke({ width: 1, color: 0xffffff, alpha: 0.15 });
+}
+
 export interface GameCanvasProps {
   className?: string;
+  /** The test case to seed the world with. */
+  testCase: TestCase;
+  /** Debug overlays to render, parsed from `?debug=`. */
+  debugFlags?: ReadonlySet<DebugFlag>;
   /**
    * Called every rendered frame with the latest simulation stats. Kept as a ref
    * read on the caller's side so it can throttle its own re-renders.
@@ -28,14 +45,23 @@ export interface GameCanvasProps {
   onStats?: (stats: GameStats) => void;
 }
 
-export default function GameCanvas({ className, onStats }: GameCanvasProps) {
+export default function GameCanvas({
+  className,
+  testCase,
+  debugFlags,
+  onStats,
+}: GameCanvasProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const onStatsRef = useRef(onStats);
+  const testCaseRef = useRef(testCase);
+  const debugFlagsRef = useRef(debugFlags);
 
-  // Keep the ref pointing at the latest callback without re-running the
+  // Keep the refs pointing at the latest props without re-running the
   // Pixi-setup effect below (which must run exactly once).
   useEffect(() => {
     onStatsRef.current = onStats;
+    testCaseRef.current = testCase;
+    debugFlagsRef.current = debugFlags;
   });
 
   useEffect(() => {
@@ -70,10 +96,10 @@ export default function GameCanvas({ className, onStats }: GameCanvasProps) {
       app = instance;
       container.appendChild(app.canvas);
 
-      // Seed the world with some units, then draw one Graphics view per
-      // renderable entity. Positions live in the ECS transform; the view is
-      // read-only and synced from it each frame.
-      spawnInitialUnits(world);
+      // Seed the world from the resolved test case, then draw one Graphics
+      // view per renderable entity. Positions live in the ECS transform; the
+      // view is read-only and synced from it each frame.
+      testCaseRef.current.setup(world);
 
       const views = new Map<(typeof queries.renderable.entities)[number], Graphics>();
       for (const entity of queries.renderable) {
@@ -81,6 +107,20 @@ export default function GameCanvas({ className, onStats }: GameCanvasProps) {
         views.set(entity, view);
         app.stage.addChild(view);
       }
+
+      let grid: Graphics | undefined;
+      const syncGrid = () => {
+        if (!app) {
+          return;
+        }
+        grid?.destroy();
+        grid = undefined;
+        if (debugFlagsRef.current?.has('grid')) {
+          grid = drawGrid(app.screen.width, app.screen.height);
+          app.stage.addChildAt(grid, 0);
+        }
+      };
+      syncGrid();
 
       app.ticker.add((ticker) => {
         loop.advance(ticker.deltaMS / 1000);
@@ -104,6 +144,7 @@ export default function GameCanvas({ className, onStats }: GameCanvasProps) {
         const { inlineSize: width, blockSize: height } =
           entry.contentBoxSize[0];
         app?.renderer.resize(width, height);
+        syncGrid();
       });
       resizeObserver.observe(container);
     })();

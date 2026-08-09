@@ -1,11 +1,17 @@
 import { useEffect, useRef, useState } from 'react';
+import { Link, useSearchParams } from 'react-router';
 
 import GameCanvas from '~/components/game-canvas';
 import DebugOverlay, { type GameStats } from '~/components/debug-overlay';
+import { parseDebugFlags, resolveTestCase } from '~/game/testcases';
 
 const EMPTY_STATS: GameStats = { fps: 0, tick: 0, entities: 0 };
 
 export default function Game() {
+  const [searchParams] = useSearchParams();
+  const resolved = resolveTestCase(searchParams);
+  const debugFlags = parseDebugFlags(searchParams.get('debug'));
+
   // The canvas pushes fresh stats every frame into a ref; a slow interval
   // copies them into state so the overlay re-renders a few times a second
   // instead of on every frame.
@@ -17,10 +23,43 @@ export default function Game() {
     return () => clearInterval(id);
   }, []);
 
+  if (resolved.error) {
+    return (
+      <div className="flex h-screen flex-col items-center justify-center gap-4 bg-neutral-900 px-6 text-center">
+        <h1 className="text-2xl font-bold text-white">
+          {resolved.requestedId
+            ? `Unknown test case "${resolved.requestedId}"`
+            : 'No test case selected'}
+        </h1>
+        <p className="text-neutral-300">
+          Valid ids:{' '}
+          {resolved.validIds.map((id, i) => (
+            <span key={id} className="font-mono text-neutral-100">
+              {id}
+              {i < resolved.validIds.length - 1 ? ', ' : ''}
+            </span>
+          ))}
+        </p>
+        <Link
+          to="/"
+          className="rounded bg-neutral-700 px-4 py-2 text-white hover:bg-neutral-600"
+        >
+          Back to test cases
+        </Link>
+      </div>
+    );
+  }
+
   return (
     <div className="relative h-screen w-screen">
       <GameCanvas
+        // Remounts the canvas (and re-seeds the world) whenever the case or
+        // debug flags change, rather than trying to diff and re-sync a live
+        // Pixi scene against a new test case.
+        key={`${resolved.testCase.id}:${resolved.map}:${[...debugFlags].sort().join(',')}`}
         className="absolute inset-0"
+        testCase={resolved.testCase}
+        debugFlags={debugFlags}
         onStats={(next) => {
           statsRef.current = next;
         }}
