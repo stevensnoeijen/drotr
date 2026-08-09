@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build --base=https://stevensnoeijen.github.io/drotr/",
+    "build": "vite build",
     "deploy": "gh-pages -d dist",
     "preview": "vite preview",
     "lint": "eslint src",
