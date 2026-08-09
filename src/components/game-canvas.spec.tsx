@@ -2,7 +2,7 @@ import { StrictMode, act } from 'react';
 import { createRoot } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import GameCanvas from './GameCanvas';
+import GameCanvas from './game-canvas';
 
 interface MockApplication {
   canvas: HTMLCanvasElement;
