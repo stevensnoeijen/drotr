@@ -8,6 +8,7 @@ interface MockApplication {
   canvas: HTMLCanvasElement;
   renderer: { resize: ReturnType<typeof vi.fn> };
   stage: { addChild: ReturnType<typeof vi.fn> };
+  ticker: { add: ReturnType<typeof vi.fn>; FPS: number };
   init: ReturnType<typeof vi.fn>;
   destroy: ReturnType<typeof vi.fn>;
 }
@@ -19,6 +20,7 @@ vi.mock('pixi.js', () => {
     canvas = document.createElement('canvas');
     renderer = { resize: vi.fn() };
     stage = { addChild: vi.fn() };
+    ticker = { add: vi.fn(), FPS: 0 };
     init = vi.fn().mockResolvedValue(undefined);
     destroy = vi.fn();
 
@@ -29,7 +31,9 @@ vi.mock('pixi.js', () => {
 
   class Graphics {
     position = { set: vi.fn() };
+    rotation = 0;
     rect = vi.fn().mockReturnThis();
+    circle = vi.fn().mockReturnThis();
     fill = vi.fn().mockReturnThis();
   }
 

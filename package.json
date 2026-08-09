@@ -17,6 +17,7 @@
   "dependencies": {
     "@pixi/sound": "^4.3.0",
     "lodash": "^4.17.21",
+    "miniplex": "^2.0.0",
     "nanoid": "3.x.x",
     "pixi-viewport": "^4.35.0",
     "pixi.js": "^8.19.0",
