@@ -1,14 +1,1 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-/*
-Fix naive-ui overrides by tailwind.
-Because tailwind is loaded after naive-ui tailwind override default values.
-*/
-.n-button {
-  font-weight: var(--n-font-weight);
-  border-radius: var(--n-border-radius);
-  background-color: var(--n-color);
-  user-select: none;
-}
+@import "tailwindcss";

@@ -1,21 +1,21 @@
 {
   "compilerOptions": {
     "target": "esnext",
-    "experimentalDecorators": true,
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "strict": true,
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "sourceMap": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
+    "verbatimModuleSyntax": true,
     "esModuleInterop": true,
     "lib": ["esnext", "dom"],
     "skipLibCheck": true,
-    "types": ["unplugin-icons/types/vue"],
+    "types": ["vite/client"],
     "paths": {
       "~/*": ["./src/*"]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.vue", "components.d.ts"]
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.d.ts", "vite.config.ts"]
 }
