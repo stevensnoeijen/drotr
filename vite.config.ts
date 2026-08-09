@@ -1,12 +1,9 @@
 import path from 'path';
 
-import { defineConfig } from 'vite';
-import Vue from '@vitejs/plugin-vue';
-import Components from 'unplugin-vue-components/vite';
-import Checker from 'vite-plugin-checker';
-import { NaiveUiResolver } from 'unplugin-vue-components/resolvers';
-import Icons from 'unplugin-icons/vite';
-import IconsResolver from 'unplugin-icons/resolver';
+import { defineConfig } from 'vitest/config';
+import react from '@vitejs/plugin-react-swc';
+import tailwindcss from '@tailwindcss/vite';
+import checker from 'vite-plugin-checker';
 
 export default defineConfig({
   resolve: {
@@ -15,22 +12,22 @@ export default defineConfig({
     },
   },
   plugins: [
-    Checker({
-      typescript: {
-        tsconfigPath: './tsconfig.build.json',
-      },
-      vueTsc: true,
-    }),
-    Vue({
-      reactivityTransform: true,
-    }),
-    Components({
-      dts: true,
-      resolvers: [NaiveUiResolver(), IconsResolver()],
-    }),
-    Icons({
-      autoInstall: true,
-      compiler: 'vue3',
+    react(),
+    tailwindcss(),
+    checker({
+      typescript: true,
     }),
   ],
+  test: {
+    environment: 'jsdom',
+    setupFiles: ['./src/test/setup.ts'],
+    reporters: ['default', 'junit'],
+    outputFile: {
+      junit: './junit.xml',
+    },
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'lcov'],
+    },
+  },
 });
