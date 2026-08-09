@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { parseDebugFlags } from './debug-flags';
+import { parseDebugFlags, serializeDebugFlags } from './debug-flags';
 
 describe('parseDebugFlags', () => {
   it('parses a single flag', () => {
@@ -27,5 +27,26 @@ describe('parseDebugFlags', () => {
 
   it('returns an empty set for an empty string', () => {
     expect(parseDebugFlags('')).toEqual(new Set());
+  });
+});
+
+describe('serializeDebugFlags', () => {
+  it('serializes a single flag', () => {
+    expect(serializeDebugFlags(new Set(['grid']))).toBe('grid');
+  });
+
+  it('serializes multiple flags in a stable, canonical order', () => {
+    expect(serializeDebugFlags(new Set(['health', 'grid']))).toBe(
+      'grid,health'
+    );
+  });
+
+  it('serializes an empty set to an empty string', () => {
+    expect(serializeDebugFlags(new Set())).toBe('');
+  });
+
+  it('round-trips through parseDebugFlags', () => {
+    const flags = parseDebugFlags('paths,grid');
+    expect(parseDebugFlags(serializeDebugFlags(flags))).toEqual(flags);
   });
 });

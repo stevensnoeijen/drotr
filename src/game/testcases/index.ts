@@ -3,7 +3,7 @@ import { skirmishCase } from './cases/skirmish';
 import type { TestCase } from './types';
 
 export type { TestCase, SystemName } from './types';
-export { parseDebugFlags } from './debug-flags';
+export { ALL_DEBUG_FLAGS, parseDebugFlags, serializeDebugFlags } from './debug-flags';
 export type { DebugFlag } from './debug-flags';
 
 /** Every registered test case, in the order they're listed on `/`. */

@@ -1,12 +1,15 @@
 /** Debug overlays a test case can be loaded with, via `?debug=grid,paths`. */
 export type DebugFlag = 'grid' | 'paths' | 'targets' | 'health';
 
-const VALID_DEBUG_FLAGS: ReadonlySet<string> = new Set([
+/** Every known debug flag, in the order they're offered in the UI. */
+export const ALL_DEBUG_FLAGS: readonly DebugFlag[] = [
   'grid',
   'paths',
   'targets',
   'health',
-]);
+];
+
+const VALID_DEBUG_FLAGS: ReadonlySet<string> = new Set(ALL_DEBUG_FLAGS);
 
 function isDebugFlag(value: string): value is DebugFlag {
   return VALID_DEBUG_FLAGS.has(value);
@@ -28,4 +31,14 @@ export function parseDebugFlags(raw: string | null): ReadonlySet<DebugFlag> {
       .map((flag) => flag.trim())
       .filter(isDebugFlag)
   );
+}
+
+/**
+ * Serializes a set of flags back into the `?debug=` query value, in
+ * {@link ALL_DEBUG_FLAGS} order so the URL is stable regardless of the order
+ * flags were toggled in. Empty input serializes to `''` — callers should
+ * drop the `debug` param entirely in that case rather than keep `debug=`.
+ */
+export function serializeDebugFlags(flags: ReadonlySet<DebugFlag>): string {
+  return ALL_DEBUG_FLAGS.filter((flag) => flags.has(flag)).join(',');
 }

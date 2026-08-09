@@ -3,14 +3,44 @@ import { Link, useSearchParams } from 'react-router';
 
 import GameCanvas from '~/components/game-canvas';
 import DebugOverlay, { type GameStats } from '~/components/debug-overlay';
-import { parseDebugFlags, resolveTestCase } from '~/game/testcases';
+import {
+  type DebugFlag,
+  parseDebugFlags,
+  resolveTestCase,
+  serializeDebugFlags,
+} from '~/game/testcases';
 
 const EMPTY_STATS: GameStats = { fps: 0, tick: 0, entities: 0 };
 
 export default function Game() {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const resolved = resolveTestCase(searchParams);
   const debugFlags = parseDebugFlags(searchParams.get('debug'));
+
+  // Flips one flag and writes the result back into `?debug=`, so a refresh
+  // (or a shared link) restores exactly the overlays that were on.
+  function handleToggleDebugFlag(flag: DebugFlag) {
+    const next = new Set(debugFlags);
+    if (next.has(flag)) {
+      next.delete(flag);
+    } else {
+      next.add(flag);
+    }
+
+    setSearchParams(
+      (prev) => {
+        const params = new URLSearchParams(prev);
+        const serialized = serializeDebugFlags(next);
+        if (serialized) {
+          params.set('debug', serialized);
+        } else {
+          params.delete('debug');
+        }
+        return params;
+      },
+      { replace: true }
+    );
+  }
 
   // The canvas pushes fresh stats every frame into a ref; a slow interval
   // copies them into state so the overlay re-renders a few times a second
@@ -56,7 +86,7 @@ export default function Game() {
         // Remounts the canvas (and re-seeds the world) whenever the case or
         // debug flags change, rather than trying to diff and re-sync a live
         // Pixi scene against a new test case.
-        key={`${resolved.testCase.id}:${resolved.map}:${[...debugFlags].sort().join(',')}`}
+        key={`${resolved.testCase.id}:${resolved.map}:${serializeDebugFlags(debugFlags)}`}
         className="absolute inset-0"
         testCase={resolved.testCase}
         debugFlags={debugFlags}
@@ -64,7 +94,11 @@ export default function Game() {
           statsRef.current = next;
         }}
       />
-      <DebugOverlay stats={stats} />
+      <DebugOverlay
+        stats={stats}
+        debugFlags={debugFlags}
+        onToggleDebugFlag={handleToggleDebugFlag}
+      />
     </div>
   );
 }
