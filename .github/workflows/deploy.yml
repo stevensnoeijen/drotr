@@ -13,6 +13,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+
       - name: Install & Build
         run: |
           npm ci
@@ -34,6 +38,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+
       - name: Install
         run: npm ci
 
@@ -41,7 +49,7 @@ jobs:
         run: npm run test-coverage
 
       - name: Coveralls
-        uses: coverallsapp/github-action@1.1.3
+        uses: coverallsapp/github-action@v2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
