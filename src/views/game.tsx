@@ -17,6 +17,21 @@ export default function Game() {
   const resolved = resolveScenario(searchParams);
   const debugFlags = parseDebugFlags(searchParams.get('debug'));
 
+  // URLSearchParams.toString() percent-encodes every comma (%2C), even
+  // though a literal comma is legal, unescaped, in a query string. Purely
+  // cosmetic: react-router already parsed the intended values before this
+  // runs, so rewriting the visible URL doesn't change what searchParams
+  // resolves to on the next render or on reload.
+  useEffect(() => {
+    if (window.location.href.includes('%2C')) {
+      window.history.replaceState(
+        window.history.state,
+        '',
+        window.location.href.replaceAll('%2C', ',')
+      );
+    }
+  }, [searchParams]);
+
   // Flips one flag and writes the result back into `?debug=`, so a refresh
   // (or a shared link) restores exactly the overlays that were on.
   function handleToggleDebugFlag(flag: DebugFlag) {
@@ -84,9 +99,10 @@ export default function Game() {
     <div className="relative h-screen w-screen">
       <GameCanvas
         // Remounts the canvas (and re-seeds the world) whenever the scenario
-        // or debug flags change, rather than trying to diff and re-sync a
-        // live Pixi scene against a new scenario.
-        key={`${resolved.scenario.id}:${resolved.map}:${serializeDebugFlags(debugFlags)}`}
+        // changes, rather than trying to diff and re-sync a live Pixi scene
+        // against a new one. Debug flags are handled reactively inside
+        // GameCanvas instead, so toggling one doesn't reset the simulation.
+        key={`${resolved.scenario.id}:${resolved.map}`}
         className="absolute inset-0"
         scenario={resolved.scenario}
         debugFlags={debugFlags}

@@ -6,7 +6,11 @@ import { SystemRunner } from '~/game/ecs/system';
 import { queries, world } from '~/game/ecs/world';
 import type { Renderable } from '~/game/ecs/types';
 import { CELL_SIZE } from '~/lib/grid';
-import type { DebugFlag, Scenario } from '~/game/scenarios';
+import {
+  serializeDebugFlags,
+  type DebugFlag,
+  type Scenario,
+} from '~/game/scenarios';
 import type { GameStats } from './debug-overlay';
 
 /** Draws a {@link Renderable}'s primitive shape into a fresh Graphics. */
@@ -55,6 +59,10 @@ export default function GameCanvas({
   const onStatsRef = useRef(onStats);
   const scenarioRef = useRef(scenario);
   const debugFlagsRef = useRef(debugFlags);
+  // Set once the Pixi app is ready; re-invoked below whenever debugFlags
+  // changes, so toggling a flag redraws the overlay in place instead of
+  // tearing down and remounting the whole canvas.
+  const syncGridRef = useRef<() => void>(() => {});
 
   // Keep the refs pointing at the latest props without re-running the
   // Pixi-setup effect below (which must run exactly once).
@@ -63,6 +71,13 @@ export default function GameCanvas({
     scenarioRef.current = scenario;
     debugFlagsRef.current = debugFlags;
   });
+
+  // Debounced to the flag set's *content*, not its object identity — the
+  // caller may hand us a freshly constructed Set on every render.
+  const debugFlagsKey = debugFlags ? serializeDebugFlags(debugFlags) : '';
+  useEffect(() => {
+    syncGridRef.current();
+  }, [debugFlagsKey]);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -120,6 +135,7 @@ export default function GameCanvas({
           app.stage.addChildAt(grid, 0);
         }
       };
+      syncGridRef.current = syncGrid;
       syncGrid();
 
       app.ticker.add((ticker) => {
@@ -152,6 +168,7 @@ export default function GameCanvas({
     return () => {
       cancelled = true;
       resizeObserver?.disconnect();
+      syncGridRef.current = () => {};
       if (app) {
         app.canvas.remove();
         app.destroy(true, { children: true, texture: true });
