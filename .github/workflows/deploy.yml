@@ -13,6 +13,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+
       - name: Install & Build
         run: |
           npm ci
@@ -33,6 +37,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
 
       - name: Install
         run: npm ci
