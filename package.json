@@ -43,5 +43,8 @@
     "vite": "^8.2.1",
     "vite-plugin-checker": "^0.14.5",
     "vitest": "^4.1.10"
+  },
+  "allowScripts": {
+    "@swc/core@1.15.47": true
   }
 }
