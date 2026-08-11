@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link, useSearchParams } from 'react-router';
+import { Link, useNavigate, useSearchParams } from 'react-router';
 
 import GameCanvas from '~/components/game-canvas';
 import DebugOverlay, { type GameStats } from '~/components/debug-overlay';
@@ -13,27 +13,17 @@ import {
 const EMPTY_STATS: GameStats = { fps: 0, tick: 0, entities: 0 };
 
 export default function Game() {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const resolved = resolveScenario(searchParams);
   const debugFlags = parseDebugFlags(searchParams.get('debug'));
 
-  // URLSearchParams.toString() percent-encodes every comma (%2C), even
-  // though a literal comma is legal, unescaped, in a query string. Purely
-  // cosmetic: react-router already parsed the intended values before this
-  // runs, so rewriting the visible URL doesn't change what searchParams
-  // resolves to on the next render or on reload.
-  useEffect(() => {
-    if (window.location.href.includes('%2C')) {
-      window.history.replaceState(
-        window.history.state,
-        '',
-        window.location.href.replaceAll('%2C', ',')
-      );
-    }
-  }, [searchParams]);
-
   // Flips one flag and writes the result back into `?debug=`, so a refresh
-  // (or a shared link) restores exactly the overlays that were on.
+  // (or a shared link) restores exactly the overlays that were on. Goes
+  // through navigate() with a hand-built query string rather than
+  // setSearchParams: the latter always serializes via URLSearchParams,
+  // which percent-encodes commas (%2C) even though they're legal unescaped
+  // in a query string.
   function handleToggleDebugFlag(flag: DebugFlag) {
     const next = new Set(debugFlags);
     if (next.has(flag)) {
@@ -42,19 +32,17 @@ export default function Game() {
       next.add(flag);
     }
 
-    setSearchParams(
-      (prev) => {
-        const params = new URLSearchParams(prev);
-        const serialized = serializeDebugFlags(next);
-        if (serialized) {
-          params.set('debug', serialized);
-        } else {
-          params.delete('debug');
-        }
-        return params;
-      },
-      { replace: true }
-    );
+    const params = new URLSearchParams(searchParams);
+    const serialized = serializeDebugFlags(next);
+    if (serialized) {
+      params.set('debug', serialized);
+    } else {
+      params.delete('debug');
+    }
+
+    navigate(`?${params.toString().replaceAll('%2C', ',')}`, {
+      replace: true,
+    });
   }
 
   // The canvas pushes fresh stats every frame into a ref; a slow interval
