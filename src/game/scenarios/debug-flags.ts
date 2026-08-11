@@ -1,4 +1,4 @@
-/** Debug overlays a test case can be loaded with, via `?debug=grid,paths`. */
+/** Debug overlays a scenario can be loaded with, via `?debug=grid,paths`. */
 export type DebugFlag = 'grid' | 'paths' | 'targets' | 'health';
 
 /** Every known debug flag, in the order they're offered in the UI. */

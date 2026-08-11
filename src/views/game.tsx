@@ -6,15 +6,15 @@ import DebugOverlay, { type GameStats } from '~/components/debug-overlay';
 import {
   type DebugFlag,
   parseDebugFlags,
-  resolveTestCase,
+  resolveScenario,
   serializeDebugFlags,
-} from '~/game/testcases';
+} from '~/game/scenarios';
 
 const EMPTY_STATS: GameStats = { fps: 0, tick: 0, entities: 0 };
 
 export default function Game() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const resolved = resolveTestCase(searchParams);
+  const resolved = resolveScenario(searchParams);
   const debugFlags = parseDebugFlags(searchParams.get('debug'));
 
   // Flips one flag and writes the result back into `?debug=`, so a refresh
@@ -58,8 +58,8 @@ export default function Game() {
       <div className="flex h-screen flex-col items-center justify-center gap-4 bg-neutral-900 px-6 text-center">
         <h1 className="text-2xl font-bold text-white">
           {resolved.requestedId
-            ? `Unknown test case "${resolved.requestedId}"`
-            : 'No test case selected'}
+            ? `Unknown scenario "${resolved.requestedId}"`
+            : 'No scenario selected'}
         </h1>
         <p className="text-neutral-300">
           Valid ids:{' '}
@@ -74,7 +74,7 @@ export default function Game() {
           to="/"
           className="rounded bg-neutral-700 px-4 py-2 text-white hover:bg-neutral-600"
         >
-          Back to test cases
+          Back to scenarios
         </Link>
       </div>
     );
@@ -83,12 +83,12 @@ export default function Game() {
   return (
     <div className="relative h-screen w-screen">
       <GameCanvas
-        // Remounts the canvas (and re-seeds the world) whenever the case or
-        // debug flags change, rather than trying to diff and re-sync a live
-        // Pixi scene against a new test case.
-        key={`${resolved.testCase.id}:${resolved.map}:${serializeDebugFlags(debugFlags)}`}
+        // Remounts the canvas (and re-seeds the world) whenever the scenario
+        // or debug flags change, rather than trying to diff and re-sync a
+        // live Pixi scene against a new scenario.
+        key={`${resolved.scenario.id}:${resolved.map}:${serializeDebugFlags(debugFlags)}`}
         className="absolute inset-0"
-        testCase={resolved.testCase}
+        scenario={resolved.scenario}
         debugFlags={debugFlags}
         onStats={(next) => {
           statsRef.current = next;

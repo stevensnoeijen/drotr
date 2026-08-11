@@ -3,12 +3,12 @@ import { createRoot } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import GameCanvas from './game-canvas';
-import type { TestCase } from '~/game/testcases';
+import type { Scenario } from '~/game/scenarios';
 
-const testCase: TestCase = {
+const scenario: Scenario = {
   id: 'test',
   title: 'Test',
-  description: 'Test case for GameCanvas specs.',
+  description: 'Test scenario for GameCanvas specs.',
   map: 'empty',
   setup: () => {},
 };
@@ -69,7 +69,7 @@ describe('GameCanvas', () => {
     const root = createRoot(container);
 
     await act(async () => {
-      root.render(<GameCanvas testCase={testCase} />);
+      root.render(<GameCanvas scenario={scenario} />);
     });
 
     expect(instances).toHaveLength(1);
@@ -93,7 +93,7 @@ describe('GameCanvas', () => {
     await act(async () => {
       root.render(
         <StrictMode>
-          <GameCanvas testCase={testCase} />
+          <GameCanvas scenario={scenario} />
         </StrictMode>
       );
     });

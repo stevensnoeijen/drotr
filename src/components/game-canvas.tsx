@@ -6,7 +6,7 @@ import { SystemRunner } from '~/game/ecs/system';
 import { queries, world } from '~/game/ecs/world';
 import type { Renderable } from '~/game/ecs/types';
 import { CELL_SIZE } from '~/lib/grid';
-import type { DebugFlag, TestCase } from '~/game/testcases';
+import type { DebugFlag, Scenario } from '~/game/scenarios';
 import type { GameStats } from './debug-overlay';
 
 /** Draws a {@link Renderable}'s primitive shape into a fresh Graphics. */
@@ -34,8 +34,8 @@ function drawGrid(width: number, height: number): Graphics {
 
 export interface GameCanvasProps {
   className?: string;
-  /** The test case to seed the world with. */
-  testCase: TestCase;
+  /** The scenario to seed the world with. */
+  scenario: Scenario;
   /** Debug overlays to render, parsed from `?debug=`. */
   debugFlags?: ReadonlySet<DebugFlag>;
   /**
@@ -47,20 +47,20 @@ export interface GameCanvasProps {
 
 export default function GameCanvas({
   className,
-  testCase,
+  scenario,
   debugFlags,
   onStats,
 }: GameCanvasProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const onStatsRef = useRef(onStats);
-  const testCaseRef = useRef(testCase);
+  const scenarioRef = useRef(scenario);
   const debugFlagsRef = useRef(debugFlags);
 
   // Keep the refs pointing at the latest props without re-running the
   // Pixi-setup effect below (which must run exactly once).
   useEffect(() => {
     onStatsRef.current = onStats;
-    testCaseRef.current = testCase;
+    scenarioRef.current = scenario;
     debugFlagsRef.current = debugFlags;
   });
 
@@ -96,10 +96,10 @@ export default function GameCanvas({
       app = instance;
       container.appendChild(app.canvas);
 
-      // Seed the world from the resolved test case, then draw one Graphics
+      // Seed the world from the resolved scenario, then draw one Graphics
       // view per renderable entity. Positions live in the ECS transform; the
       // view is read-only and synced from it each frame.
-      testCaseRef.current.setup(world);
+      scenarioRef.current.setup(world);
 
       const views = new Map<(typeof queries.renderable.entities)[number], Graphics>();
       for (const entity of queries.renderable) {

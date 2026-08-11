@@ -1,6 +1,6 @@
 import { Link } from 'react-router';
 
-import { testCases } from '~/game/testcases';
+import { scenarios } from '~/game/scenarios';
 
 export default function Home() {
   return (
@@ -10,20 +10,20 @@ export default function Home() {
       </h1>
 
       <div className="grid w-full max-w-3xl grid-cols-1 gap-4 sm:grid-cols-2">
-        {testCases.map((testCase) => (
+        {scenarios.map((scenario) => (
           <Link
-            key={testCase.id}
-            to={`/game?case=${testCase.id}`}
+            key={scenario.id}
+            to={`/game?scenario=${scenario.id}`}
             className="flex flex-col gap-1 rounded border border-neutral-700 bg-neutral-800 p-4 text-left hover:border-neutral-500 hover:bg-neutral-700"
           >
             <span className="font-mono text-xs text-neutral-400">
-              {testCase.id}
+              {scenario.id}
             </span>
             <span className="text-lg font-semibold text-white">
-              {testCase.title}
+              {scenario.title}
             </span>
             <span className="text-sm text-neutral-300">
-              {testCase.description}
+              {scenario.description}
             </span>
           </Link>
         ))}

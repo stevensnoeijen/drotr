@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { ALL_DEBUG_FLAGS, type DebugFlag } from '~/game/testcases';
+import { ALL_DEBUG_FLAGS, type DebugFlag } from '~/game/scenarios';
 
 export interface GameStats {
   /** Rendered frames per second, as reported by the Pixi ticker. */

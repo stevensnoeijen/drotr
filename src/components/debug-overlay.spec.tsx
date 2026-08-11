@@ -3,7 +3,7 @@ import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import DebugOverlay, { type GameStats } from './debug-overlay';
-import type { DebugFlag } from '~/game/testcases';
+import type { DebugFlag } from '~/game/scenarios';
 
 const STATS: GameStats = { fps: 60, tick: 120, entities: 4 };
 
