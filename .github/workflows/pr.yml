@@ -14,7 +14,7 @@ permissions:
   checks: write
 
 jobs:
-  test:
+  quality-gate:
     runs-on: ubuntu-latest
 
     steps:
@@ -42,7 +42,7 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Test
+      - name: Unit-Tests
         run: npm run test-coverage
 
       - name: Test Report
