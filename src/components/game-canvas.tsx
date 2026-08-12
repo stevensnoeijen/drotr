@@ -1,12 +1,22 @@
 import { useEffect, useRef } from 'react';
-import { Application, Assets, Graphics, Rectangle, Sprite, Texture } from 'pixi.js';
+import {
+  Application,
+  Assets,
+  type Container,
+  Graphics,
+  Rectangle,
+  Sprite,
+  Texture,
+} from 'pixi.js';
+import type { Viewport } from 'pixi-viewport';
 
 import { spawnUnit } from '~/game/data/spawn';
 import { GameLoop } from '~/game/game-loop';
 import { SystemRunner } from '~/game/ecs/system';
 import { queries, world } from '~/game/ecs/world';
 import type { Renderable } from '~/game/ecs/types';
-import { loadTiledMap, type TerrainType } from '~/game/map/loadTiledMap';
+import { loadTiledMap, type ParsedMap, type TerrainType } from '~/game/map/loadTiledMap';
+import { applyViewportBounds, createGameViewport } from '~/game/render/create-game-viewport';
 import { CELL_SIZE } from '~/lib/grid';
 import {
   serializeDebugFlags,
@@ -35,15 +45,20 @@ const TERRAIN_ATLAS_COLUMN: Record<TerrainType, number> = {
 
 /**
  * Loads a scenario's Tiled map and draws one sprite per tile plus one unit
- * per spawn point, added to `stage` below any existing children.
+ * per spawn point, added to `worldContainer` below any existing children.
+ * Returns the parsed map so the caller can size the camera to its bounds.
  */
 async function drawTiledMap(
   mapSource: string,
-  stage: Application['stage']
-): Promise<void> {
+  worldContainer: Container
+): Promise<ParsedMap> {
   const map = await loadTiledMap(mapSource);
   const atlasUrl = `${import.meta.env.BASE_URL}maps/terrain-atlas.png`;
   const atlas = await Assets.load(atlasUrl);
+  // Nearest-neighbor sampling: the atlas is flat-color placeholder art
+  // packed edge-to-edge, so linear filtering bleeds neighboring tiles'
+  // colors in at non-integer zoom scales, producing visible seams.
+  atlas.source.scaleMode = 'nearest';
 
   const terrainTextures: Record<TerrainType, Texture> = {
     grass: new Texture({
@@ -79,7 +94,7 @@ async function drawTiledMap(
     for (let x = 0; x < map.width; x++) {
       const sprite = new Sprite(terrainTextures[map.terrain[y][x]]);
       sprite.position.set(x * map.tileSize, y * map.tileSize);
-      stage.addChild(sprite);
+      worldContainer.addChild(sprite);
     }
   }
 
@@ -90,6 +105,8 @@ async function drawTiledMap(
       position: spawn.position,
     });
   }
+
+  return map;
 }
 
 /** Draws a light grid overlay over the given canvas size, for `?debug=grid`. */
@@ -104,6 +121,13 @@ function drawGrid(width: number, height: number): Graphics {
   return graphics.stroke({ width: 1, color: 0xffffff, alpha: 0.15 });
 }
 
+/** The camera's current pan/zoom, for consumers doing screen<->grid math. */
+export interface ViewportTransform {
+  x: number;
+  y: number;
+  scale: number;
+}
+
 export interface GameCanvasProps {
   className?: string;
   /** The scenario to seed the world with. */
@@ -115,6 +139,8 @@ export interface GameCanvasProps {
    * read on the caller's side so it can throttle its own re-renders.
    */
   onStats?: (stats: GameStats) => void;
+  /** Called whenever the camera pans or zooms, with its latest transform. */
+  onViewportChange?: (transform: ViewportTransform) => void;
 }
 
 export default function GameCanvas({
@@ -122,9 +148,11 @@ export default function GameCanvas({
   scenario,
   debugFlags,
   onStats,
+  onViewportChange,
 }: GameCanvasProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const onStatsRef = useRef(onStats);
+  const onViewportChangeRef = useRef(onViewportChange);
   const scenarioRef = useRef(scenario);
   const debugFlagsRef = useRef(debugFlags);
   // Set once the Pixi app is ready; re-invoked below whenever debugFlags
@@ -136,6 +164,7 @@ export default function GameCanvas({
   // Pixi-setup effect below (which must run exactly once).
   useEffect(() => {
     onStatsRef.current = onStats;
+    onViewportChangeRef.current = onViewportChange;
     scenarioRef.current = scenario;
     debugFlagsRef.current = debugFlags;
   });
@@ -155,6 +184,7 @@ export default function GameCanvas({
 
     let cancelled = false;
     let app: Application | undefined;
+    let viewport: Viewport | undefined;
     let resizeObserver: ResizeObserver | undefined;
 
     // No systems yet (#78 is the contract only); the runner is empty but the
@@ -169,6 +199,10 @@ export default function GameCanvas({
         background: '#000000',
         antialias: true,
         preference: 'webgl',
+        // Adjacent tile sprites sit edge-to-edge; at the camera's fractional
+        // zoom scales, unrounded sub-pixel positions leave hairline gaps
+        // between them that show the background through as seams.
+        roundPixels: true,
       });
 
       if (cancelled) {
@@ -179,6 +213,28 @@ export default function GameCanvas({
       app = instance;
       container.appendChild(app.canvas);
 
+      const gameViewport = createGameViewport({
+        events: app.renderer.events,
+        screenWidth: app.screen.width,
+        screenHeight: app.screen.height,
+      });
+      viewport = gameViewport;
+      app.stage.addChild(gameViewport);
+      gameViewport.on('moved', () =>
+        onViewportChangeRef.current?.({
+          x: gameViewport.x,
+          y: gameViewport.y,
+          scale: gameViewport.scale.x,
+        })
+      );
+      gameViewport.on('zoomed', () =>
+        onViewportChangeRef.current?.({
+          x: gameViewport.x,
+          y: gameViewport.y,
+          scale: gameViewport.scale.x,
+        })
+      );
+
       // Draw the scenario's map (terrain tiles + map-driven spawns), if it
       // has one, then seed the world from the scenario itself. Positions
       // live in the ECS transform; the unit views below are read-only and
@@ -186,7 +242,12 @@ export default function GameCanvas({
       const { mapSource } = scenarioRef.current;
       if (mapSource) {
         try {
-          await drawTiledMap(mapSource, app.stage);
+          const map = await drawTiledMap(mapSource, gameViewport);
+          applyViewportBounds(
+            gameViewport,
+            map.width * map.tileSize,
+            map.height * map.tileSize
+          );
         } catch (error) {
           console.error(`Failed to load map "${mapSource}":`, error);
         }
@@ -200,19 +261,16 @@ export default function GameCanvas({
       for (const entity of queries.renderable) {
         const view = drawRenderable(entity.renderable);
         views.set(entity, view);
-        app.stage.addChild(view);
+        gameViewport.addChild(view);
       }
 
       let grid: Graphics | undefined;
       const syncGrid = () => {
-        if (!app) {
-          return;
-        }
         grid?.destroy();
         grid = undefined;
         if (debugFlagsRef.current?.has('grid')) {
-          grid = drawGrid(app.screen.width, app.screen.height);
-          app.stage.addChildAt(grid, 0);
+          grid = drawGrid(gameViewport.worldWidth, gameViewport.worldHeight);
+          gameViewport.addChildAt(grid, 0);
         }
       };
       syncGridRef.current = syncGrid;
@@ -240,7 +298,12 @@ export default function GameCanvas({
         const { inlineSize: width, blockSize: height } =
           entry.contentBoxSize[0];
         app?.renderer.resize(width, height);
-        syncGrid();
+        gameViewport.resize(width, height, gameViewport.worldWidth, gameViewport.worldHeight);
+        applyViewportBounds(
+          gameViewport,
+          gameViewport.worldWidth,
+          gameViewport.worldHeight
+        );
       });
       resizeObserver.observe(container);
     })();
@@ -249,6 +312,7 @@ export default function GameCanvas({
       cancelled = true;
       resizeObserver?.disconnect();
       syncGridRef.current = () => {};
+      viewport?.destroy({ children: true });
       if (app) {
         app.canvas.remove();
         app.destroy(true, { children: true, texture: true });
