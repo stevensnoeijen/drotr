@@ -22,6 +22,12 @@ export interface Scenario {
   description: string;
   /** Default map name, overridable via `?map=<name>`. */
   map: string;
+  /**
+   * Path to a `.tmj` Tiled map to load and render via
+   * `~/game/map/loadTiledMap`. When set, `GameCanvas` draws the parsed
+   * terrain and spawns units from it in addition to running `setup`.
+   */
+  mapSource?: string;
   /** Seeds the world with whatever this scenario needs to demonstrate. */
   setup(world: World<Entity>): void;
   /** Subset of systems to run this tick. Defaults to all systems. */

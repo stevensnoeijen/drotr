@@ -1,10 +1,12 @@
 import { useEffect, useRef } from 'react';
-import { Application, Graphics } from 'pixi.js';
+import { Application, Assets, Graphics, Rectangle, Sprite, Texture } from 'pixi.js';
 
+import { spawnUnit } from '~/game/data/spawn';
 import { GameLoop } from '~/game/game-loop';
 import { SystemRunner } from '~/game/ecs/system';
 import { queries, world } from '~/game/ecs/world';
 import type { Renderable } from '~/game/ecs/types';
+import { loadTiledMap, type TerrainType } from '~/game/map/loadTiledMap';
 import { CELL_SIZE } from '~/lib/grid';
 import {
   serializeDebugFlags,
@@ -22,6 +24,72 @@ function drawRenderable({ shape, color, size }: Renderable): Graphics {
     graphics.rect(-size, -size, size * 2, size * 2);
   }
   return graphics.fill(color);
+}
+
+/** Column each terrain type occupies in `maps/terrain-atlas.png`. */
+const TERRAIN_ATLAS_COLUMN: Record<TerrainType, number> = {
+  grass: 0,
+  wall: 1,
+  water: 2,
+};
+
+/**
+ * Loads a scenario's Tiled map and draws one sprite per tile plus one unit
+ * per spawn point, added to `stage` below any existing children.
+ */
+async function drawTiledMap(
+  mapSource: string,
+  stage: Application['stage']
+): Promise<void> {
+  const map = await loadTiledMap(mapSource);
+  const atlasUrl = `${import.meta.env.BASE_URL}maps/terrain-atlas.png`;
+  const atlas = await Assets.load(atlasUrl);
+
+  const terrainTextures: Record<TerrainType, Texture> = {
+    grass: new Texture({
+      source: atlas.source,
+      frame: new Rectangle(
+        TERRAIN_ATLAS_COLUMN.grass * map.tileSize,
+        0,
+        map.tileSize,
+        map.tileSize
+      ),
+    }),
+    wall: new Texture({
+      source: atlas.source,
+      frame: new Rectangle(
+        TERRAIN_ATLAS_COLUMN.wall * map.tileSize,
+        0,
+        map.tileSize,
+        map.tileSize
+      ),
+    }),
+    water: new Texture({
+      source: atlas.source,
+      frame: new Rectangle(
+        TERRAIN_ATLAS_COLUMN.water * map.tileSize,
+        0,
+        map.tileSize,
+        map.tileSize
+      ),
+    }),
+  };
+
+  for (let y = 0; y < map.height; y++) {
+    for (let x = 0; x < map.width; x++) {
+      const sprite = new Sprite(terrainTextures[map.terrain[y][x]]);
+      sprite.position.set(x * map.tileSize, y * map.tileSize);
+      stage.addChild(sprite);
+    }
+  }
+
+  for (const spawn of map.spawns) {
+    spawnUnit(world, {
+      type: spawn.unitType,
+      team: spawn.team,
+      position: spawn.position,
+    });
+  }
 }
 
 /** Draws a light grid overlay over the given canvas size, for `?debug=grid`. */
@@ -111,9 +179,21 @@ export default function GameCanvas({
       app = instance;
       container.appendChild(app.canvas);
 
-      // Seed the world from the resolved scenario, then draw one Graphics
-      // view per renderable entity. Positions live in the ECS transform; the
-      // view is read-only and synced from it each frame.
+      // Draw the scenario's map (terrain tiles + map-driven spawns), if it
+      // has one, then seed the world from the scenario itself. Positions
+      // live in the ECS transform; the unit views below are read-only and
+      // synced from it each frame.
+      const { mapSource } = scenarioRef.current;
+      if (mapSource) {
+        try {
+          await drawTiledMap(mapSource, app.stage);
+        } catch (error) {
+          console.error(`Failed to load map "${mapSource}":`, error);
+        }
+      }
+      if (cancelled) {
+        return;
+      }
       scenarioRef.current.setup(world);
 
       const views = new Map<(typeof queries.renderable.entities)[number], Graphics>();
