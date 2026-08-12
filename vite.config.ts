@@ -11,7 +11,7 @@ export default defineConfig({
   base: process.env.BASE_URL ?? '/',
   resolve: {
     alias: {
-      '~': path.resolve(__dirname, './src'),
+      '~': path.resolve(import.meta.dirname, './src'),
     },
   },
   plugins: [
