@@ -3,6 +3,7 @@ import { Link, useNavigate, useSearchParams } from 'react-router';
 
 import GameCanvas from '~/components/game-canvas';
 import DebugOverlay, { type GameStats } from '~/components/debug-overlay';
+import { resolveMap } from '~/game/maps';
 import {
   type DebugFlag,
   parseDebugFlags,
@@ -15,7 +16,8 @@ const EMPTY_STATS: GameStats = { fps: 0, tick: 0, entities: 0 };
 export default function Game() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const resolved = resolveScenario(searchParams);
+  const resolvedScenario = resolveScenario(searchParams);
+  const resolvedMap = resolveMap(searchParams);
   const debugFlags = parseDebugFlags(searchParams.get('debug'));
 
   // Flips one flag and writes the result back into `?debug=`, so a refresh
@@ -56,23 +58,38 @@ export default function Game() {
     return () => clearInterval(id);
   }, []);
 
-  if (resolved.error) {
+  if (resolvedScenario.error || resolvedMap.error) {
     return (
       <div className="flex h-screen flex-col items-center justify-center gap-4 bg-neutral-900 px-6 text-center">
-        <h1 className="text-2xl font-bold text-white">
-          {resolved.requestedId
-            ? `Unknown scenario "${resolved.requestedId}"`
-            : 'No scenario selected'}
-        </h1>
-        <p className="text-neutral-300">
-          Valid ids:{' '}
-          {resolved.validIds.map((id, i) => (
-            <span key={id} className="font-mono text-neutral-100">
-              {id}
-              {i < resolved.validIds.length - 1 ? ', ' : ''}
-            </span>
-          ))}
-        </p>
+        <h1 className="text-2xl font-bold text-white">Can't load this game</h1>
+        {resolvedScenario.error && (
+          <p className="text-neutral-300">
+            {resolvedScenario.requestedId
+              ? `Unknown scenario "${resolvedScenario.requestedId}"`
+              : 'No scenario selected'}
+            . Valid ids:{' '}
+            {resolvedScenario.validIds.map((id, i) => (
+              <span key={id} className="font-mono text-neutral-100">
+                {id}
+                {i < resolvedScenario.validIds.length - 1 ? ', ' : ''}
+              </span>
+            ))}
+          </p>
+        )}
+        {resolvedMap.error && (
+          <p className="text-neutral-300">
+            {resolvedMap.requestedId
+              ? `Unknown map "${resolvedMap.requestedId}"`
+              : 'No map selected'}
+            . Valid ids:{' '}
+            {resolvedMap.validIds.map((id, i) => (
+              <span key={id} className="font-mono text-neutral-100">
+                {id}
+                {i < resolvedMap.validIds.length - 1 ? ', ' : ''}
+              </span>
+            ))}
+          </p>
+        )}
         <Link
           to="/"
           className="rounded bg-neutral-700 px-4 py-2 text-white hover:bg-neutral-600"
@@ -87,12 +104,13 @@ export default function Game() {
     <div className="relative h-screen w-screen">
       <GameCanvas
         // Remounts the canvas (and re-seeds the world) whenever the scenario
-        // changes, rather than trying to diff and re-sync a live Pixi scene
-        // against a new one. Debug flags are handled reactively inside
+        // or map changes, rather than trying to diff and re-sync a live Pixi
+        // scene against a new one. Debug flags are handled reactively inside
         // GameCanvas instead, so toggling one doesn't reset the simulation.
-        key={`${resolved.scenario.id}:${resolved.map}`}
+        key={`${resolvedScenario.scenario.id}:${resolvedMap.map.id}`}
         className="absolute inset-0"
-        scenario={resolved.scenario}
+        scenario={resolvedScenario.scenario}
+        map={resolvedMap.map}
         debugFlags={debugFlags}
         onStats={(next) => {
           statsRef.current = next;

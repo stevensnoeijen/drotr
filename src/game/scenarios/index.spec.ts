@@ -4,12 +4,11 @@ import { resolveScenario, scenarios } from './index';
 
 describe('resolveScenario', () => {
   it('resolves a known id', () => {
-    const result = resolveScenario(new URLSearchParams('scenario=empty'));
+    const result = resolveScenario(new URLSearchParams('scenario=test-empty'));
 
     expect(result.error).toBeUndefined();
     if (!result.error) {
-      expect(result.scenario.id).toBe('empty');
-      expect(result.map).toBe(result.scenario.map);
+      expect(result.scenario.id).toBe('test-empty');
     }
   });
 
@@ -32,18 +31,9 @@ describe('resolveScenario', () => {
     }
   });
 
-  it('overrides the map via ?map=', () => {
-    const result = resolveScenario(
-      new URLSearchParams('scenario=empty&map=custom')
-    );
-
-    expect(result.error).toBeUndefined();
-    if (!result.error) {
-      expect(result.map).toBe('custom');
-    }
-  });
-
-  it('registers a first empty scenario', () => {
-    expect(scenarios.some((s) => s.id === 'empty')).toBe(true);
+  it('registers the test-empty, test-skirmish and test-claim-spawns scenarios', () => {
+    expect(scenarios.some((s) => s.id === 'test-empty')).toBe(true);
+    expect(scenarios.some((s) => s.id === 'test-skirmish')).toBe(true);
+    expect(scenarios.some((s) => s.id === 'test-claim-spawns')).toBe(true);
   });
 });

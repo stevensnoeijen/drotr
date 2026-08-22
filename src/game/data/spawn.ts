@@ -11,7 +11,7 @@ const TEAM_COLOR: Record<Team, number> = {
 };
 
 /** Rendered radius/half-extent of a unit shape, in world units. */
-const UNIT_SIZE = 12;
+export const UNIT_SIZE = 12;
 
 export interface SpawnUnitOptions {
   type: UnitType;
@@ -39,6 +39,8 @@ export function spawnUnit(
     },
     selectable: true,
     team,
+    unitType: type,
+    health: { current: definition.health, max: definition.health },
   });
 }
 
@@ -53,7 +55,7 @@ export function spawnInitialUnits(world: World<Entity>): void {
 
   for (let i = 0; i < count; i++) {
     const y = 120 + i * spacing;
-    spawnUnit(world, { type: 'soldier', team: 'blue', position: { x: 120, y } });
-    spawnUnit(world, { type: 'soldier', team: 'red', position: { x: 360, y } });
+    spawnUnit(world, { type: 'swordsmen', team: 'blue', position: { x: 120, y } });
+    spawnUnit(world, { type: 'swordsmen', team: 'red', position: { x: 360, y } });
   }
 }

@@ -3,14 +3,20 @@ import { createRoot } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import GameCanvas from './game-canvas';
+import type { MapDefinition } from '~/game/maps';
 import type { Scenario } from '~/game/scenarios';
 
 const scenario: Scenario = {
   id: 'test',
   title: 'Test',
   description: 'Test scenario for GameCanvas specs.',
-  map: 'empty',
   setup: () => {},
+};
+
+const map: MapDefinition = {
+  id: 'empty',
+  title: 'Empty',
+  description: 'Test map for GameCanvas specs.',
 };
 
 interface MockApplication {
@@ -121,7 +127,7 @@ describe('GameCanvas', () => {
     const root = createRoot(container);
 
     await act(async () => {
-      root.render(<GameCanvas scenario={scenario} />);
+      root.render(<GameCanvas scenario={scenario} map={map} />);
     });
 
     expect(instances).toHaveLength(1);
@@ -150,7 +156,7 @@ describe('GameCanvas', () => {
     await act(async () => {
       root.render(
         <StrictMode>
-          <GameCanvas scenario={scenario} />
+          <GameCanvas scenario={scenario} map={map} />
         </StrictMode>
       );
     });
