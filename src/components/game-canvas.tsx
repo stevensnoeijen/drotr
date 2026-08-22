@@ -90,6 +90,22 @@ async function drawTiledMap(
   return map;
 }
 
+/** HP knocked off every living unit per press of the debug damage key. */
+const DEBUG_DAMAGE_AMOUNT = 3;
+
+/**
+ * Temporary debug scaffolding (ticket #85): pressing `H` damages every unit
+ * with a `health` component by {@link DEBUG_DAMAGE_AMOUNT}, clamped at 0, so
+ * the overhead health bars can be exercised in the browser (colour thresholds,
+ * width, redraw-on-change) before real combat exists. T3.3 (real-time combat)
+ * replaces this with actual damage sources and this function goes away.
+ */
+function damageAllUnits(): void {
+  for (const entity of queries.living) {
+    entity.health.current = Math.max(0, entity.health.current - DEBUG_DAMAGE_AMOUNT);
+  }
+}
+
 /** Draws a light grid overlay over the given canvas size, for `?debug=grid`. */
 function drawGrid(width: number, height: number): Graphics {
   const graphics = new Graphics();
@@ -173,6 +189,7 @@ export default function GameCanvas({
     let viewport: Viewport | undefined;
     let resizeObserver: ResizeObserver | undefined;
     let renderSystem: RenderSystem | undefined;
+    let removeKeyDownListener: (() => void) | undefined;
 
     // No systems yet (#78 is the contract only); the runner is empty but the
     // loop still advances the tick count so the debug overlay can show it.
@@ -276,6 +293,14 @@ export default function GameCanvas({
         });
       });
 
+      const handleKeyDown = (event: KeyboardEvent) => {
+        if (event.key.toLowerCase() === 'h') {
+          damageAllUnits();
+        }
+      };
+      window.addEventListener('keydown', handleKeyDown);
+      removeKeyDownListener = () => window.removeEventListener('keydown', handleKeyDown);
+
       resizeObserver = new ResizeObserver(([entry]) => {
         const { inlineSize: width, blockSize: height } =
           entry.contentBoxSize[0];
@@ -292,6 +317,7 @@ export default function GameCanvas({
 
     return () => {
       cancelled = true;
+      removeKeyDownListener?.();
       resizeObserver?.disconnect();
       syncGridRef.current = () => {};
       // Unsubscribe and destroy views before the viewport/app teardown below
