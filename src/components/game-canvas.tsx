@@ -10,13 +10,13 @@ import {
 } from 'pixi.js';
 import type { Viewport } from 'pixi-viewport';
 
-import { spawnUnit } from '~/game/data/spawn';
 import { GameLoop } from '~/game/game-loop';
 import { SystemRunner } from '~/game/ecs/system';
 import { queries, world } from '~/game/ecs/world';
-import type { Renderable } from '~/game/ecs/types';
+import type { MapDefinition } from '~/game/maps';
 import { loadTiledMap, type ParsedMap, type TerrainType } from '~/game/map/loadTiledMap';
 import { applyViewportBounds, createGameViewport } from '~/game/render/create-game-viewport';
+import { RenderSystem } from '~/game/render/render-system';
 import { CELL_SIZE } from '~/lib/grid';
 import {
   serializeDebugFlags,
@@ -24,17 +24,6 @@ import {
   type Scenario,
 } from '~/game/scenarios';
 import type { GameStats } from './debug-overlay';
-
-/** Draws a {@link Renderable}'s primitive shape into a fresh Graphics. */
-function drawRenderable({ shape, color, size }: Renderable): Graphics {
-  const graphics = new Graphics();
-  if (shape === 'circle') {
-    graphics.circle(0, 0, size);
-  } else {
-    graphics.rect(-size, -size, size * 2, size * 2);
-  }
-  return graphics.fill(color);
-}
 
 /** Column each terrain type occupies in `maps/terrain-atlas.png`. */
 const TERRAIN_ATLAS_COLUMN: Record<TerrainType, number> = {
@@ -44,9 +33,9 @@ const TERRAIN_ATLAS_COLUMN: Record<TerrainType, number> = {
 };
 
 /**
- * Loads a scenario's Tiled map and draws one sprite per tile plus one unit
- * per spawn point, added to `worldContainer` below any existing children.
- * Returns the parsed map so the caller can size the camera to its bounds.
+ * Loads a scenario's Tiled map and draws one sprite per tile, added to
+ * `worldContainer` below any existing children. Returns the parsed map so
+ * the caller can spawn its units and size the camera to its bounds.
  */
 async function drawTiledMap(
   mapSource: string,
@@ -98,14 +87,6 @@ async function drawTiledMap(
     }
   }
 
-  for (const spawn of map.spawns) {
-    spawnUnit(world, {
-      type: spawn.unitType,
-      team: spawn.team,
-      position: spawn.position,
-    });
-  }
-
   return map;
 }
 
@@ -132,6 +113,8 @@ export interface GameCanvasProps {
   className?: string;
   /** The scenario to seed the world with. */
   scenario: Scenario;
+  /** The map to draw and pass to the scenario's `setup`. */
+  map: MapDefinition;
   /** Debug overlays to render, parsed from `?debug=`. */
   debugFlags?: ReadonlySet<DebugFlag>;
   /**
@@ -146,6 +129,7 @@ export interface GameCanvasProps {
 export default function GameCanvas({
   className,
   scenario,
+  map: mapProp,
   debugFlags,
   onStats,
   onViewportChange,
@@ -154,6 +138,7 @@ export default function GameCanvas({
   const onStatsRef = useRef(onStats);
   const onViewportChangeRef = useRef(onViewportChange);
   const scenarioRef = useRef(scenario);
+  const mapRef = useRef(mapProp);
   const debugFlagsRef = useRef(debugFlags);
   // Set once the Pixi app is ready; re-invoked below whenever debugFlags
   // changes, so toggling a flag redraws the overlay in place instead of
@@ -166,6 +151,7 @@ export default function GameCanvas({
     onStatsRef.current = onStats;
     onViewportChangeRef.current = onViewportChange;
     scenarioRef.current = scenario;
+    mapRef.current = mapProp;
     debugFlagsRef.current = debugFlags;
   });
 
@@ -186,6 +172,7 @@ export default function GameCanvas({
     let app: Application | undefined;
     let viewport: Viewport | undefined;
     let resizeObserver: ResizeObserver | undefined;
+    let renderSystem: RenderSystem | undefined;
 
     // No systems yet (#78 is the contract only); the runner is empty but the
     // loop still advances the tick count so the debug overlay can show it.
@@ -235,14 +222,22 @@ export default function GameCanvas({
         })
       );
 
-      // Draw the scenario's map (terrain tiles + map-driven spawns), if it
-      // has one, then seed the world from the scenario itself. Positions
-      // live in the ECS transform; the unit views below are read-only and
-      // synced from it each frame.
-      const { mapSource } = scenarioRef.current;
+      // Reactively mirrors `queries.renderable` into Pixi views: it must be
+      // live before any spawning happens below so every unit — whether
+      // added by the map's spawns or by the scenario's own setup — gets a
+      // view, and every removal cleans its view up.
+      renderSystem = new RenderSystem(queries.renderable, gameViewport);
+
+      // Draw the selected map (terrain tiles), then hand it to the
+      // scenario's own setup to decide what to spawn at which of the map's
+      // spawn points, and for which team. Positions live in the ECS
+      // transform; the unit views are read-only and synced from it each
+      // frame via `renderSystem.sync()`.
+      const { mapSource } = mapRef.current;
+      let map: ParsedMap | undefined;
       if (mapSource) {
         try {
-          const map = await drawTiledMap(mapSource, gameViewport);
+          map = await drawTiledMap(mapSource, gameViewport);
           applyViewportBounds(
             gameViewport,
             map.width * map.tileSize,
@@ -255,14 +250,7 @@ export default function GameCanvas({
       if (cancelled) {
         return;
       }
-      scenarioRef.current.setup(world);
-
-      const views = new Map<(typeof queries.renderable.entities)[number], Graphics>();
-      for (const entity of queries.renderable) {
-        const view = drawRenderable(entity.renderable);
-        views.set(entity, view);
-        gameViewport.addChild(view);
-      }
+      scenarioRef.current.setup(world, map);
 
       let grid: Graphics | undefined;
       const syncGrid = () => {
@@ -279,13 +267,7 @@ export default function GameCanvas({
       app.ticker.add((ticker) => {
         loop.advance(ticker.deltaMS / 1000);
 
-        for (const [entity, view] of views) {
-          view.position.set(
-            entity.transform.position.x,
-            entity.transform.position.y
-          );
-          view.rotation = entity.transform.rotation;
-        }
+        renderSystem?.sync();
 
         onStatsRef.current?.({
           fps: ticker.FPS,
@@ -312,6 +294,9 @@ export default function GameCanvas({
       cancelled = true;
       resizeObserver?.disconnect();
       syncGridRef.current = () => {};
+      // Unsubscribe and destroy views before the viewport/app teardown below
+      // destroys the same Pixi objects out from under it.
+      renderSystem?.dispose();
       viewport?.destroy({ children: true });
       if (app) {
         app.canvas.remove();

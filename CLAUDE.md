@@ -28,6 +28,19 @@ Guidance for Claude Code (and contributors) working in this repository.
   already touching them, but renaming purely for style is not itself worth a
   PR — don't go out of your way to do it.
 
+## Maps and scenarios
+
+- Maps (`src/game/maps`) and scenarios (`src/game/scenarios`) are chosen
+  independently, via `?map=<id>` and `?scenario=<id>` on `/game`. A map
+  supplies terrain and named, team-agnostic spawn points (a spawn is just a
+  location — it has no team or unit type of its own). A scenario decides
+  what to spawn at which of the map's spawn points, and for which team
+  (`claimSpawn` in `~/game/systems/spawn-system`), plus any other world
+  setup.
+- Scenario ids that exist to exercise the engine or harness itself — not to
+  demonstrate a real gameplay setup — are prefixed `test-`, e.g.
+  `test-empty`, `test-skirmish`, `test-claim-spawns`.
+
 ## Stack
 
 - React 19 + PixiJS (imperative canvas mount) + `miniplex` ECS, built with

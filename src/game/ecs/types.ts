@@ -1,4 +1,5 @@
 import type { Point } from '~/lib/math/types';
+import type { UnitType } from '~/game/data/units';
 
 /**
  * The two — and only two — teams in the game.
@@ -11,7 +12,7 @@ import type { Point } from '~/lib/math/types';
 export type Team = 'blue' | 'red';
 
 /** How an entity is drawn by the (view-only) renderer. */
-export type Shape = 'circle' | 'square';
+export type Shape = 'circle' | 'square' | 'triangle';
 
 /**
  * World-space placement of an entity. Positions live here, in the ECS — never
@@ -73,4 +74,5 @@ export interface Entity {
   selectable?: Selectable;
   selected?: Selected;
   team?: Team;
+  unitType?: UnitType;
 }

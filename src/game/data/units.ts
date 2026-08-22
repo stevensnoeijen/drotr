@@ -1,25 +1,39 @@
 import type { Shape } from '~/game/ecs/types';
 
 /**
- * The kinds of unit in the game. A single-member union for now; it grows as
- * more units are introduced.
+ * The kinds of unit in the game. Names and starting HP match
+ * `public/assets/entity-definitions.json` (the original game's unit roster),
+ * so `unitType` stays stable once real sprites replace these primitives in
+ * the asset-integration phase.
  */
-export type UnitType = 'soldier';
+export type UnitType = 'swordsmen' | 'knight' | 'crossbowsoldier';
 
 /**
- * Static, per-type unit data. Deliberately minimal to start — just the type and
- * its rendered shape — and grows alongside the roadmap: combat/health stats in
- * T2.3, movement/speed in T3.1.
+ * Static, per-type unit data. Deliberately minimal to start — type, shape and
+ * starting health — and grows alongside the roadmap: combat stats in T2.3,
+ * movement/speed in T3.1.
  */
 export interface UnitDefinition {
   type: UnitType;
   shape: Shape;
+  health: number;
 }
 
 /** All unit definitions, keyed by {@link UnitType}. */
 export const units: Record<UnitType, UnitDefinition> = {
-  soldier: {
-    type: 'soldier',
+  swordsmen: {
+    type: 'swordsmen',
+    shape: 'square',
+    health: 15,
+  },
+  knight: {
+    type: 'knight',
     shape: 'circle',
+    health: 12,
+  },
+  crossbowsoldier: {
+    type: 'crossbowsoldier',
+    shape: 'triangle',
+    health: 10,
   },
 };

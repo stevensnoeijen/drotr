@@ -4143,7 +4143,7 @@
       "objects": [
         {
           "id": 1,
-          "name": "blue-1",
+          "name": "spawn-1",
           "type": "",
           "x": 176,
           "y": 176,
@@ -4152,22 +4152,11 @@
           "rotation": 0,
           "visible": true,
           "point": true,
-          "properties": [
-            {
-              "name": "team",
-              "type": "string",
-              "value": "blue"
-            },
-            {
-              "name": "unitType",
-              "type": "string",
-              "value": "soldier"
-            }
-          ]
+          "properties": []
         },
         {
           "id": 2,
-          "name": "red-1",
+          "name": "spawn-2",
           "type": "",
           "x": 1872,
           "y": 1872,
@@ -4176,18 +4165,7 @@
           "rotation": 0,
           "visible": true,
           "point": true,
-          "properties": [
-            {
-              "name": "team",
-              "type": "string",
-              "value": "red"
-            },
-            {
-              "name": "unitType",
-              "type": "string",
-              "value": "soldier"
-            }
-          ]
+          "properties": []
         }
       ]
     }

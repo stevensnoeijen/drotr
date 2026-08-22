@@ -1,6 +1,6 @@
-import { emptyScenario } from './empty';
-import { grassScenario } from './grass';
-import { skirmishScenario } from './skirmish';
+import { testClaimSpawnsScenario } from './test-claim-spawns';
+import { testEmptyScenario } from './test-empty';
+import { testSkirmishScenario } from './test-skirmish';
 import type { Scenario } from './types';
 
 export type { Scenario, SystemName } from './types';
@@ -9,9 +9,9 @@ export type { DebugFlag } from './debug-flags';
 
 /** Every registered scenario, in the order they're listed on `/`. */
 export const scenarios: readonly Scenario[] = [
-  emptyScenario,
-  skirmishScenario,
-  grassScenario,
+  testEmptyScenario,
+  testSkirmishScenario,
+  testClaimSpawnsScenario,
 ];
 
 const scenariosById = new Map(scenarios.map((scenario) => [scenario.id, scenario]));
@@ -19,22 +19,18 @@ const scenariosById = new Map(scenarios.map((scenario) => [scenario.id, scenario
 export interface ResolvedScenario {
   readonly error?: never;
   readonly scenario: Scenario;
-  /** The map to load: `?map=` if given, else the scenario's own default. */
-  readonly map: string;
 }
 
 export interface UnresolvedScenario {
   readonly error: true;
-  /** The `?scenario=` value that failed to resolve; empty string if absent. */
   readonly requestedId: string;
   readonly validIds: readonly string[];
 }
 
 /**
- * Resolves `?scenario=` (and `?map=`) against the registry. Never throws: an
- * absent or unknown id comes back as a typed {@link UnresolvedScenario} so
- * callers can render a visible error listing the valid ids instead of a
- * blank canvas.
+ * Resolves `?scenario=` against the registry. Never throws: an absent or
+ * unknown id comes back as a typed {@link UnresolvedScenario} so callers can
+ * render a visible error listing the valid ids instead of a blank canvas.
  */
 export function resolveScenario(
   searchParams: URLSearchParams
@@ -50,8 +46,5 @@ export function resolveScenario(
     };
   }
 
-  return {
-    scenario,
-    map: searchParams.get('map') ?? scenario.map,
-  };
+  return { scenario };
 }

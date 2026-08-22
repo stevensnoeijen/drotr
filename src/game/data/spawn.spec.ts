@@ -10,7 +10,7 @@ describe('spawnUnit', () => {
     const world = new World<Entity>();
 
     const unit = spawnUnit(world, {
-      type: 'soldier',
+      type: 'knight',
       team: 'red',
       position: { x: 10, y: 20 },
     });
@@ -19,13 +19,15 @@ describe('spawnUnit', () => {
     expect(unit.renderable?.shape).toBe('circle');
     expect(unit.selectable).toBe(true);
     expect(unit.team).toBe('red');
+    expect(unit.unitType).toBe('knight');
+    expect(unit.health).toEqual({ current: 12, max: 12 });
   });
 
   it('copies the position so callers cannot mutate it through the entity', () => {
     const world = new World<Entity>();
     const position = { x: 1, y: 2 };
 
-    const unit = spawnUnit(world, { type: 'soldier', team: 'blue', position });
+    const unit = spawnUnit(world, { type: 'knight', team: 'blue', position });
     position.x = 999;
 
     expect(unit.transform?.position.x).toBe(1);

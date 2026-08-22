@@ -50,8 +50,8 @@ describe('parseTiledMap', () => {
     );
 
     expect(result.spawns).toEqual([
-      { position: { x: 176, y: 176 }, team: 'blue', unitType: 'soldier' },
-      { position: { x: 1872, y: 1872 }, team: 'red', unitType: 'soldier' },
+      { id: 'spawn-1', position: { x: 176, y: 176 } },
+      { id: 'spawn-2', position: { x: 1872, y: 1872 } },
     ]);
   });
 

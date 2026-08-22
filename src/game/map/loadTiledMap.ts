@@ -3,11 +3,8 @@ import type {
   TiledLayerObjectgroup,
   TiledLayerTilelayer,
   TiledMap,
-  TiledObject,
 } from 'tiled-types';
 
-import type { Team } from '~/game/ecs/types';
-import { units, type UnitType } from '~/game/data/units';
 import type { Point } from '~/lib/math/types';
 
 /** The only terrain kinds a `terrain` layer's tiles may resolve to. */
@@ -26,24 +23,15 @@ function isTerrainType(value: string): value is TerrainType {
   return TERRAIN_TYPES.has(value);
 }
 
-const TEAMS: ReadonlySet<string> = new Set<Team>(['blue', 'red']);
-
-function isTeam(value: unknown): value is Team {
-  return typeof value === 'string' && TEAMS.has(value);
-}
-
-const UNIT_TYPES: ReadonlySet<string> = new Set<UnitType>(
-  Object.keys(units) as UnitType[]
-);
-
-function isUnitType(value: unknown): value is UnitType {
-  return typeof value === 'string' && UNIT_TYPES.has(value);
-}
-
+/**
+ * A named location a scenario can spawn a unit at. Spawns carry no team or
+ * unit-type of their own — a map just marks where things *can* appear;
+ * deciding what appears where, and for which team, is a scenario's job (see
+ * `claimSpawn` in `~/game/systems/spawn-system`).
+ */
 export interface SpawnPoint {
+  id: string;
   position: Point;
-  team: Team;
-  unitType: UnitType;
 }
 
 export interface ParsedMap {
@@ -74,34 +62,17 @@ function findLayer<T extends TiledLayer['type']>(
   );
 }
 
-function readObjectProperty(
-  object: TiledObject,
-  name: string
-): string | undefined {
-  const property = object.properties.find((prop) => prop.name === name);
-  return typeof property?.value === 'string' ? property.value : undefined;
-}
-
 function parseSpawns(layer: TiledLayerObjectgroup): SpawnPoint[] {
   return layer.objects.map((object) => {
-    const rawTeam = readObjectProperty(object, 'team');
-    const rawUnitType = readObjectProperty(object, 'unitType');
-
-    if (!isTeam(rawTeam)) {
+    if (!object.name) {
       throw new TiledMapError(
-        `Spawn object "${object.name || object.id}" has an invalid or missing "team" property: ${JSON.stringify(rawTeam)}`
-      );
-    }
-    if (!isUnitType(rawUnitType)) {
-      throw new TiledMapError(
-        `Spawn object "${object.name || object.id}" has an invalid or missing "unitType" property: ${JSON.stringify(rawUnitType)}`
+        `Spawn object ${object.id} is missing a name to use as its spawn id`
       );
     }
 
     return {
+      id: object.name,
       position: { x: object.x, y: object.y },
-      team: rawTeam,
-      unitType: rawUnitType,
     };
   });
 }
