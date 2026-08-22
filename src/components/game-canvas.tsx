@@ -132,7 +132,7 @@ export interface GameCanvasProps {
   /** The map to draw and pass to the scenario's `setup`. */
   map: MapDefinition;
   /**
-   * Camera pan/zoom to restore on mount, e.g. parsed from `?x=&y=&z=`. Applied
+   * Camera pan/zoom to restore on mount, e.g. parsed from `?camera=x,y,z`. Applied
    * once, after the map's bounds are known; ignored on subsequent prop
    * updates since the camera is thereafter driven by user input.
    */

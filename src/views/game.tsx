@@ -13,18 +13,28 @@ import {
 
 const EMPTY_STATS: GameStats = { fps: 0, tick: 0, entities: 0 };
 
-/** Delay after the last pan/zoom before `?x=&y=&z=` is written to the URL. */
+/** Delay after the last pan/zoom before `?camera=` is written to the URL. */
 const VIEWPORT_SAVE_DEBOUNCE_MS = 250;
 
-/** Parses `?x=&y=&z=` into a camera transform, or undefined if incomplete/invalid. */
+/** `?camera=` holds `x,y,z` as one comma-joined value, e.g. `camera=12.5,-4,1.5`. */
+const CAMERA_PARAM = 'camera';
+
+/** Parses `?camera=x,y,z` into a camera transform, or undefined if missing/invalid. */
 function parseViewport(searchParams: URLSearchParams): ViewportTransform | undefined {
-  const x = Number(searchParams.get('x'));
-  const y = Number(searchParams.get('y'));
-  const scale = Number(searchParams.get('z'));
+  const raw = searchParams.get(CAMERA_PARAM);
+  if (!raw) {
+    return undefined;
+  }
+  const [x, y, scale] = raw.split(',').map(Number);
   if (![x, y, scale].every(Number.isFinite) || scale <= 0) {
     return undefined;
   }
   return { x, y, scale };
+}
+
+/** Serializes a camera transform back into `?camera=`'s comma-joined form. */
+function serializeViewport({ x, y, scale }: ViewportTransform): string {
+  return `${x.toFixed(1)},${y.toFixed(1)},${scale.toFixed(3)}`;
 }
 
 export default function Game() {
@@ -33,19 +43,30 @@ export default function Game() {
   const resolvedScenario = resolveScenario(searchParams);
   const resolvedMap = resolveMap(searchParams);
   const debugFlags = parseDebugFlags(searchParams.get('debug'));
-  // Lazy initializer: read once on mount. The camera is thereafter saved
-  // out-of-band (see handleViewportChange below), not through react-router's
-  // searchParams state, so re-reading this on every render would just
-  // reapply the same initial value — or fight the live camera once panning
-  // starts.
+  // Lazy initializer: read once on mount. The camera is thereafter saved via
+  // handleViewportChange below, which re-navigates on every save, so
+  // re-reading this on every render would just reapply the same initial
+  // value — or fight the live camera once panning starts.
   const [initialViewport] = useState(() => parseViewport(searchParams));
+
+  // `searchParams` as of the most recent render, read inside the debounced
+  // handleViewportChange callback below (which can fire well after the
+  // render that scheduled it) so a save never clobbers a `?debug=` toggle —
+  // or vice versa — that happened in between.
+  const searchParamsRef = useRef(searchParams);
+  useEffect(() => {
+    searchParamsRef.current = searchParams;
+  });
 
   // Flips one flag and writes the result back into `?debug=`, so a refresh
   // (or a shared link) restores exactly the overlays that were on. Goes
   // through navigate() with a hand-built query string rather than
   // setSearchParams: the latter always serializes via URLSearchParams,
   // which percent-encodes commas (%2C) even though they're legal unescaped
-  // in a query string.
+  // in a query string. navigate() (not history.replaceState) because this
+  // app is a HashRouter — `map`/`scenario`/`debug`/`camera` all live inside
+  // `location.hash`, and only react-router's own navigation knows how to
+  // update that rather than the page's real (and here, unused) search string.
   function handleToggleDebugFlag(flag: DebugFlag) {
     const next = new Set(debugFlags);
     if (next.has(flag)) {
@@ -54,12 +75,7 @@ export default function Game() {
       next.add(flag);
     }
 
-    // Built from the *live* URL, not react-router's `searchParams` state:
-    // the camera writes `x`/`y`/`z` straight to the browser's URL bar (see
-    // handleViewportChange) without going through react-router, so
-    // `searchParams` can be stale by the time a debug flag is toggled mid-pan
-    // — rebuilding from it here would silently drop the saved camera.
-    const params = new URLSearchParams(window.location.search);
+    const params = new URLSearchParams(searchParams);
     const serialized = serializeDebugFlags(next);
     if (serialized) {
       params.set('debug', serialized);
@@ -73,22 +89,18 @@ export default function Game() {
   }
 
   // Debounced so a drag or wheel gesture — which can fire many 'moved'
-  // events per second — doesn't spam the URL; only the camera's resting
+  // events per second — doesn't spam navigate(); only the camera's resting
   // position ends up saved.
   const viewportSaveTimeoutRef = useRef<number | undefined>(undefined);
 
   function handleViewportChange(transform: ViewportTransform) {
     window.clearTimeout(viewportSaveTimeoutRef.current);
     viewportSaveTimeoutRef.current = window.setTimeout(() => {
-      const params = new URLSearchParams(window.location.search);
-      params.set('x', transform.x.toFixed(1));
-      params.set('y', transform.y.toFixed(1));
-      params.set('z', transform.scale.toFixed(3));
-      // history.replaceState, not navigate(): saving the camera must not
-      // trigger a react-router navigation (which would re-render this page
-      // and could remount the canvas) or reload the page — just keep the
-      // URL bar (and refresh/share links) in sync with where the camera is.
-      window.history.replaceState(null, '', `?${params.toString().replaceAll('%2C', ',')}`);
+      const params = new URLSearchParams(searchParamsRef.current);
+      params.set(CAMERA_PARAM, serializeViewport(transform));
+      navigate(`?${params.toString().replaceAll('%2C', ',')}`, {
+        replace: true,
+      });
     }, VIEWPORT_SAVE_DEBOUNCE_MS);
   }
 
