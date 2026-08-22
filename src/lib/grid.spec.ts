@@ -14,8 +14,8 @@ describe('toWorldPositionCellCenter', () => {
   it('should center to grid position', () => {
     const position = toWorldPositionCellCenter(new Vector2(101, 60));
 
-    expect(position.x).toEqual(104);
-    expect(position.y).toEqual(56);
+    expect(position.x).toEqual(96);
+    expect(position.y).toEqual(32);
   });
 });
 
@@ -23,8 +23,8 @@ describe('toWorldPosition', () => {
   it('should center to grid position', () => {
     const position = toWorldPosition(new Vector2(10, 2));
 
-    expect(position.x).toEqual(168);
-    expect(position.y).toEqual(40);
+    expect(position.x).toEqual(672);
+    expect(position.y).toEqual(160);
   });
 });
 
@@ -37,7 +37,7 @@ describe('toGridPosition', () => {
   });
 
   it('should round down', () => {
-    expect(toGridPosition(new Vector2(47, 47))).toMatchObject({
+    expect(toGridPosition(new Vector2(130, 130))).toMatchObject({
       x: 2,
       y: 2,
     });

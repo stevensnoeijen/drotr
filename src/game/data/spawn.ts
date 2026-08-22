@@ -10,8 +10,12 @@ const TEAM_COLOR: Record<Team, number> = {
   red: 0xff6b6b,
 };
 
-/** Rendered radius/half-extent of a unit shape, in world units. */
-export const UNIT_SIZE = 12;
+/**
+ * Rendered radius/half-extent of a unit shape, in world units — half of the
+ * 40x40px footprint units are drawn at, centered within a
+ * {@link file://../../lib/grid.ts#CELL_SIZE} (64px) grid cell.
+ */
+export const UNIT_SIZE = 20;
 
 export interface SpawnUnitOptions {
   type: UnitType;

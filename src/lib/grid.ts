@@ -2,7 +2,7 @@ import { Vector2 } from './math/Vector2';
 import * as PathFinding from './navigation/astar';
 import type { Point } from './math/types';
 
-export const CELL_SIZE = 16;
+export const CELL_SIZE = 64;
 
 export const toWorldPositionCellCenter = (vector: Vector2): Vector2 => {
   return new Vector2(
