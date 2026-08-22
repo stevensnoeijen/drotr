@@ -1,12 +1,17 @@
 import type { World } from 'miniplex';
 
-import { spawnUnit, UNIT_SIZE } from '~/game/data/spawn';
+import { spawnUnit } from '~/game/data/spawn';
 import type { UnitType } from '~/game/data/units';
 import type { Entity, Team } from '~/game/ecs/types';
+import { CELL_SIZE } from '~/lib/grid';
 import type { SpawnPoint } from '~/game/map/loadTiledMap';
 
-/** Gap, in world units, between adjacent units claiming the same spawn point. */
-const SPACING = UNIT_SIZE * 4;
+/**
+ * Gap, in world units, between adjacent units claiming the same spawn point —
+ * one grid cell, so each unit's placement snaps to a distinct cell instead
+ * of landing in (or straddling) the same one as its neighbour.
+ */
+const SPACING = CELL_SIZE;
 
 export interface ClaimSpawnOptions {
   team: Team;

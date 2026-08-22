@@ -6,16 +6,17 @@ import type { Entity } from '~/game/ecs/types';
 import { spawnInitialUnits, spawnUnit } from './spawn';
 
 describe('spawnUnit', () => {
-  it('adds a renderable, selectable, positioned unit to the world', () => {
+  it('adds a renderable, selectable unit to the world, centered in its grid cell', () => {
     const world = new World<Entity>();
 
     const unit = spawnUnit(world, {
       type: 'knight',
       team: 'red',
+      // Falls inside the [0, 64) cell on both axes, which centers on (32, 32).
       position: { x: 10, y: 20 },
     });
 
-    expect(unit.transform?.position).toEqual({ x: 10, y: 20 });
+    expect(unit.transform?.position).toEqual({ x: 32, y: 32 });
     expect(unit.renderable?.shape).toBe('circle');
     expect(unit.selectable).toBe(true);
     expect(unit.team).toBe('red');
@@ -23,14 +24,14 @@ describe('spawnUnit', () => {
     expect(unit.health).toEqual({ current: 12, max: 12 });
   });
 
-  it('copies the position so callers cannot mutate it through the entity', () => {
+  it('is unaffected by later mutation of the caller-supplied position', () => {
     const world = new World<Entity>();
     const position = { x: 1, y: 2 };
 
     const unit = spawnUnit(world, { type: 'knight', team: 'blue', position });
     position.x = 999;
 
-    expect(unit.transform?.position.x).toBe(1);
+    expect(unit.transform?.position.x).toBe(32);
   });
 });
 

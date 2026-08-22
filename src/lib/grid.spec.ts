@@ -17,6 +17,16 @@ describe('toWorldPositionCellCenter', () => {
     expect(position.x).toEqual(96);
     expect(position.y).toEqual(32);
   });
+
+  it('centers a negative position in its (negative) cell, not the origin cell', () => {
+    // A truncating `%` puts -54 in the same cell as 10 (both "remainder
+    // -54"/"remainder 10" round to the [0, 64) cell); floor division must
+    // place it in the [-64, 0) cell instead, centered on -32.
+    const position = toWorldPositionCellCenter(new Vector2(-54, -1));
+
+    expect(position.x).toEqual(-32);
+    expect(position.y).toEqual(-32);
+  });
 });
 
 describe('toWorldPosition', () => {
