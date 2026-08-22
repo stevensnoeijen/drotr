@@ -8,7 +8,7 @@ describe('parseDebugFlags', () => {
   });
 
   it('parses a comma-separated list', () => {
-    expect(parseDebugFlags('grid,paths')).toEqual(new Set(['grid', 'paths']));
+    expect(parseDebugFlags('grid,health')).toEqual(new Set(['grid', 'health']));
   });
 
   it('ignores unknown flags', () => {
@@ -16,8 +16,8 @@ describe('parseDebugFlags', () => {
   });
 
   it('trims whitespace around flags', () => {
-    expect(parseDebugFlags(' grid , paths ')).toEqual(
-      new Set(['grid', 'paths'])
+    expect(parseDebugFlags(' grid , health ')).toEqual(
+      new Set(['grid', 'health'])
     );
   });
 
@@ -46,7 +46,7 @@ describe('serializeDebugFlags', () => {
   });
 
   it('round-trips through parseDebugFlags', () => {
-    const flags = parseDebugFlags('paths,grid');
+    const flags = parseDebugFlags('health,grid');
     expect(parseDebugFlags(serializeDebugFlags(flags))).toEqual(flags);
   });
 });
