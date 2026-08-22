@@ -1,5 +1,5 @@
-import { testClaimSpawnsScenario } from './test-claim-spawns';
 import { testEmptyScenario } from './test-empty';
+import { testHealthScenario } from './test-health';
 import { testSkirmishScenario } from './test-skirmish';
 import type { Scenario } from './types';
 
@@ -11,7 +11,7 @@ export type { DebugFlag } from './debug-flags';
 export const scenarios: readonly Scenario[] = [
   testEmptyScenario,
   testSkirmishScenario,
-  testClaimSpawnsScenario,
+  testHealthScenario,
 ];
 
 const scenariosById = new Map(scenarios.map((scenario) => [scenario.id, scenario]));

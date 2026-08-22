@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router';
 
-import GameCanvas from '~/components/game-canvas';
+import GameCanvas, { type ViewportTransform } from '~/components/game-canvas';
 import DebugOverlay, { type GameStats } from '~/components/debug-overlay';
 import { resolveMap } from '~/game/maps';
 import {
@@ -13,19 +13,60 @@ import {
 
 const EMPTY_STATS: GameStats = { fps: 0, tick: 0, entities: 0 };
 
+/** Delay after the last pan/zoom before `?camera=` is written to the URL. */
+const VIEWPORT_SAVE_DEBOUNCE_MS = 250;
+
+/** `?camera=` holds `x,y,z` as one comma-joined value, e.g. `camera=12.5,-4,1.5`. */
+const CAMERA_PARAM = 'camera';
+
+/** Parses `?camera=x,y,z` into a camera transform, or undefined if missing/invalid. */
+function parseViewport(searchParams: URLSearchParams): ViewportTransform | undefined {
+  const raw = searchParams.get(CAMERA_PARAM);
+  if (!raw) {
+    return undefined;
+  }
+  const [x, y, scale] = raw.split(',').map(Number);
+  if (![x, y, scale].every(Number.isFinite) || scale <= 0) {
+    return undefined;
+  }
+  return { x, y, scale };
+}
+
+/** Serializes a camera transform back into `?camera=`'s comma-joined form. */
+function serializeViewport({ x, y, scale }: ViewportTransform): string {
+  return `${x.toFixed(1)},${y.toFixed(1)},${scale.toFixed(3)}`;
+}
+
 export default function Game() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const resolvedScenario = resolveScenario(searchParams);
   const resolvedMap = resolveMap(searchParams);
   const debugFlags = parseDebugFlags(searchParams.get('debug'));
+  // Lazy initializer: read once on mount. The camera is thereafter saved via
+  // handleViewportChange below, which re-navigates on every save, so
+  // re-reading this on every render would just reapply the same initial
+  // value — or fight the live camera once panning starts.
+  const [initialViewport] = useState(() => parseViewport(searchParams));
+
+  // `searchParams` as of the most recent render, read inside the debounced
+  // handleViewportChange callback below (which can fire well after the
+  // render that scheduled it) so a save never clobbers a `?debug=` toggle —
+  // or vice versa — that happened in between.
+  const searchParamsRef = useRef(searchParams);
+  useEffect(() => {
+    searchParamsRef.current = searchParams;
+  });
 
   // Flips one flag and writes the result back into `?debug=`, so a refresh
   // (or a shared link) restores exactly the overlays that were on. Goes
   // through navigate() with a hand-built query string rather than
   // setSearchParams: the latter always serializes via URLSearchParams,
   // which percent-encodes commas (%2C) even though they're legal unescaped
-  // in a query string.
+  // in a query string. navigate() (not history.replaceState) because this
+  // app is a HashRouter — `map`/`scenario`/`debug`/`camera` all live inside
+  // `location.hash`, and only react-router's own navigation knows how to
+  // update that rather than the page's real (and here, unused) search string.
   function handleToggleDebugFlag(flag: DebugFlag) {
     const next = new Set(debugFlags);
     if (next.has(flag)) {
@@ -46,6 +87,26 @@ export default function Game() {
       replace: true,
     });
   }
+
+  // Debounced so a drag or wheel gesture — which can fire many 'moved'
+  // events per second — doesn't spam navigate(); only the camera's resting
+  // position ends up saved.
+  const viewportSaveTimeoutRef = useRef<number | undefined>(undefined);
+
+  function handleViewportChange(transform: ViewportTransform) {
+    window.clearTimeout(viewportSaveTimeoutRef.current);
+    viewportSaveTimeoutRef.current = window.setTimeout(() => {
+      const params = new URLSearchParams(searchParamsRef.current);
+      params.set(CAMERA_PARAM, serializeViewport(transform));
+      navigate(`?${params.toString().replaceAll('%2C', ',')}`, {
+        replace: true,
+      });
+    }, VIEWPORT_SAVE_DEBOUNCE_MS);
+  }
+
+  useEffect(() => {
+    return () => window.clearTimeout(viewportSaveTimeoutRef.current);
+  }, []);
 
   // The canvas pushes fresh stats every frame into a ref; a slow interval
   // copies them into state so the overlay re-renders a few times a second
@@ -111,10 +172,12 @@ export default function Game() {
         className="absolute inset-0"
         scenario={resolvedScenario.scenario}
         map={resolvedMap.map}
+        initialViewport={initialViewport}
         debugFlags={debugFlags}
         onStats={(next) => {
           statsRef.current = next;
         }}
+        onViewportChange={handleViewportChange}
       />
       <DebugOverlay
         stats={stats}

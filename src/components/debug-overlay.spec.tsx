@@ -61,16 +61,16 @@ describe('DebugOverlay', () => {
       container.querySelectorAll<HTMLInputElement>('input[type="checkbox"]')
     );
     expect(checkboxes.map((c) => c.parentElement?.textContent?.trim())).toEqual(
-      ['grid', 'paths', 'targets', 'health']
+      ['grid', 'health']
     );
     const gridCheckbox = checkboxes.find(
       (c) => c.parentElement?.textContent?.trim() === 'grid'
     );
     expect(gridCheckbox?.checked).toBe(true);
-    const pathsCheckbox = checkboxes.find(
-      (c) => c.parentElement?.textContent?.trim() === 'paths'
+    const healthCheckbox = checkboxes.find(
+      (c) => c.parentElement?.textContent?.trim() === 'health'
     );
-    expect(pathsCheckbox?.checked).toBe(false);
+    expect(healthCheckbox?.checked).toBe(false);
   });
 
   it('calls onToggleDebugFlag with the clicked flag', () => {

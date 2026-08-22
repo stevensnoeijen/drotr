@@ -1,5 +1,5 @@
 import { World } from 'miniplex';
-import { Container } from 'pixi.js';
+import { Container, Graphics } from 'pixi.js';
 import { describe, expect, it } from 'vitest';
 
 import { createQueries } from '~/game/ecs/world';
@@ -76,6 +76,112 @@ describe('RenderSystem', () => {
     const [view] = parent.children;
     expect(view.position.x).toBe(42);
     expect(view.rotation).toBe(1.5);
+  });
+
+  it('gives an entity with health a health bar child, redrawn only when HP changes', () => {
+    const world = new World<Entity>();
+    const { renderable } = createQueries(world);
+    const parent = new Container();
+    const system = new RenderSystem(renderable, parent);
+
+    const entity = world.add({
+      transform: { position: { x: 0, y: 0 }, rotation: 0 },
+      renderable: { shape: 'circle', color: 0xffffff, size: 4 },
+      health: { current: 10, max: 10 },
+    });
+
+    const [view] = parent.children;
+    // shape graphic + health bar container + death-mark graphic.
+    expect(view.children.length).toBe(3);
+
+    // Unchanged HP: sync must not mark the entity dirty.
+    system.sync();
+    expect(entity.renderable!.dirty).toBeFalsy();
+
+    entity.health!.current = 5;
+    system.sync();
+    // sync() both marks and clears dirty (having redrawn) within the same call.
+    expect(entity.renderable!.dirty).toBe(false);
+  });
+
+  it('hides health bars by default and shows them once made visible', () => {
+    const world = new World<Entity>();
+    const { renderable } = createQueries(world);
+    const parent = new Container();
+    const system = new RenderSystem(renderable, parent);
+
+    world.add({
+      transform: { position: { x: 0, y: 0 }, rotation: 0 },
+      renderable: { shape: 'circle', color: 0xffffff, size: 4 },
+      health: { current: 10, max: 10 },
+    });
+
+    const [view] = parent.children;
+    const [, healthBarContainer] = view.children;
+    expect(healthBarContainer.visible).toBe(false);
+
+    system.setHealthBarsVisible(true);
+    expect(healthBarContainer.visible).toBe(true);
+  });
+
+  it('makes health bars visible from construction when requested', () => {
+    const world = new World<Entity>();
+    const { renderable } = createQueries(world);
+    const parent = new Container();
+    new RenderSystem(renderable, parent, true);
+
+    world.add({
+      transform: { position: { x: 0, y: 0 }, rotation: 0 },
+      renderable: { shape: 'circle', color: 0xffffff, size: 4 },
+      health: { current: 10, max: 10 },
+    });
+
+    const [view] = parent.children;
+    const [, healthBarContainer] = view.children;
+    expect(healthBarContainer.visible).toBe(true);
+  });
+
+  it('marks a unit dead once its health bar is redrawn at 0 HP', () => {
+    const world = new World<Entity>();
+    const { renderable } = createQueries(world);
+    const parent = new Container();
+    const system = new RenderSystem(renderable, parent);
+
+    const entity = world.add({
+      transform: { position: { x: 0, y: 0 }, rotation: 0 },
+      renderable: { shape: 'circle', color: 0xffffff, size: 4 },
+      health: { current: 10, max: 10 },
+    });
+
+    const [view] = parent.children;
+    const [, , deathMark] = view.children;
+    expect((deathMark as Graphics).context.instructions.length).toBe(0);
+
+    entity.health!.current = 0;
+    system.sync();
+
+    expect((deathMark as Graphics).context.instructions.length).toBeGreaterThan(0);
+  });
+
+  it('destroys the health bar along with its parent container', () => {
+    const world = new World<Entity>();
+    const { renderable } = createQueries(world);
+    const parent = new Container();
+    new RenderSystem(renderable, parent);
+
+    const entity = world.add({
+      transform: { position: { x: 0, y: 0 }, rotation: 0 },
+      renderable: { shape: 'circle', color: 0xffffff, size: 4 },
+      health: { current: 10, max: 10 },
+    });
+
+    const [view] = parent.children;
+    const [, healthBarContainer] = view.children;
+
+    world.remove(entity);
+
+    expect(view.destroyed).toBe(true);
+    expect(healthBarContainer.destroyed).toBe(true);
   });
 
   it('dispose unsubscribes and destroys any still-tracked views', () => {

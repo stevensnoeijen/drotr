@@ -90,6 +90,22 @@ async function drawTiledMap(
   return map;
 }
 
+/** HP knocked off every living unit per press of the debug damage key. */
+const DEBUG_DAMAGE_AMOUNT = 3;
+
+/**
+ * Temporary debug scaffolding (ticket #85): pressing `H` damages every unit
+ * with a `health` component by {@link DEBUG_DAMAGE_AMOUNT}, clamped at 0, so
+ * the overhead health bars can be exercised in the browser (colour thresholds,
+ * width, redraw-on-change) before real combat exists. T3.3 (real-time combat)
+ * replaces this with actual damage sources and this function goes away.
+ */
+function damageAllUnits(): void {
+  for (const entity of queries.living) {
+    entity.health.current = Math.max(0, entity.health.current - DEBUG_DAMAGE_AMOUNT);
+  }
+}
+
 /** Draws a light grid overlay over the given canvas size, for `?debug=grid`. */
 function drawGrid(width: number, height: number): Graphics {
   const graphics = new Graphics();
@@ -115,6 +131,12 @@ export interface GameCanvasProps {
   scenario: Scenario;
   /** The map to draw and pass to the scenario's `setup`. */
   map: MapDefinition;
+  /**
+   * Camera pan/zoom to restore on mount, e.g. parsed from `?camera=x,y,z`. Applied
+   * once, after the map's bounds are known; ignored on subsequent prop
+   * updates since the camera is thereafter driven by user input.
+   */
+  initialViewport?: ViewportTransform;
   /** Debug overlays to render, parsed from `?debug=`. */
   debugFlags?: ReadonlySet<DebugFlag>;
   /**
@@ -130,6 +152,7 @@ export default function GameCanvas({
   className,
   scenario,
   map: mapProp,
+  initialViewport,
   debugFlags,
   onStats,
   onViewportChange,
@@ -139,11 +162,15 @@ export default function GameCanvas({
   const onViewportChangeRef = useRef(onViewportChange);
   const scenarioRef = useRef(scenario);
   const mapRef = useRef(mapProp);
+  // Read once, at mount, by the setup effect below — never re-applied on a
+  // later prop change, since by then the camera is under user control.
+  const initialViewportRef = useRef(initialViewport);
   const debugFlagsRef = useRef(debugFlags);
   // Set once the Pixi app is ready; re-invoked below whenever debugFlags
   // changes, so toggling a flag redraws the overlay in place instead of
   // tearing down and remounting the whole canvas.
   const syncGridRef = useRef<() => void>(() => {});
+  const syncHealthBarsRef = useRef<() => void>(() => {});
 
   // Keep the refs pointing at the latest props without re-running the
   // Pixi-setup effect below (which must run exactly once).
@@ -160,6 +187,7 @@ export default function GameCanvas({
   const debugFlagsKey = debugFlags ? serializeDebugFlags(debugFlags) : '';
   useEffect(() => {
     syncGridRef.current();
+    syncHealthBarsRef.current();
   }, [debugFlagsKey]);
 
   useEffect(() => {
@@ -173,6 +201,7 @@ export default function GameCanvas({
     let viewport: Viewport | undefined;
     let resizeObserver: ResizeObserver | undefined;
     let renderSystem: RenderSystem | undefined;
+    let removeKeyDownListener: (() => void) | undefined;
 
     // No systems yet (#78 is the contract only); the runner is empty but the
     // loop still advances the tick count so the debug overlay can show it.
@@ -226,7 +255,14 @@ export default function GameCanvas({
       // live before any spawning happens below so every unit — whether
       // added by the map's spawns or by the scenario's own setup — gets a
       // view, and every removal cleans its view up.
-      renderSystem = new RenderSystem(queries.renderable, gameViewport);
+      renderSystem = new RenderSystem(
+        queries.renderable,
+        gameViewport,
+        debugFlagsRef.current?.has('health') ?? false
+      );
+      syncHealthBarsRef.current = () => {
+        renderSystem?.setHealthBarsVisible(debugFlagsRef.current?.has('health') ?? false);
+      };
 
       // Draw the selected map (terrain tiles), then hand it to the
       // scenario's own setup to decide what to spawn at which of the map's
@@ -252,13 +288,28 @@ export default function GameCanvas({
       }
       scenarioRef.current.setup(world, map);
 
+      // Restore a saved camera position/zoom now that the map's (clamped)
+      // bounds are known. Assigned directly rather than via a pan/zoom
+      // gesture, so this doesn't itself fire 'moved'/'zoomed' and re-save.
+      if (initialViewportRef.current) {
+        const { x, y, scale } = initialViewportRef.current;
+        gameViewport.scale.x = scale;
+        gameViewport.scale.y = scale;
+        gameViewport.x = x;
+        gameViewport.y = y;
+      }
+
       let grid: Graphics | undefined;
       const syncGrid = () => {
         grid?.destroy();
         grid = undefined;
         if (debugFlagsRef.current?.has('grid')) {
+          // On top of everything (terrain tiles, units) rather than
+          // `addChildAt(grid, 0)`: a map with tile sprites already occupies
+          // index 0+, which buried the grid underneath them and made the
+          // overlay invisible on any map with terrain (e.g. "grass").
           grid = drawGrid(gameViewport.worldWidth, gameViewport.worldHeight);
-          gameViewport.addChildAt(grid, 0);
+          gameViewport.addChild(grid);
         }
       };
       syncGridRef.current = syncGrid;
@@ -276,6 +327,14 @@ export default function GameCanvas({
         });
       });
 
+      const handleKeyDown = (event: KeyboardEvent) => {
+        if (event.key.toLowerCase() === 'h') {
+          damageAllUnits();
+        }
+      };
+      window.addEventListener('keydown', handleKeyDown);
+      removeKeyDownListener = () => window.removeEventListener('keydown', handleKeyDown);
+
       resizeObserver = new ResizeObserver(([entry]) => {
         const { inlineSize: width, blockSize: height } =
           entry.contentBoxSize[0];
@@ -292,8 +351,10 @@ export default function GameCanvas({
 
     return () => {
       cancelled = true;
+      removeKeyDownListener?.();
       resizeObserver?.disconnect();
       syncGridRef.current = () => {};
+      syncHealthBarsRef.current = () => {};
       // Unsubscribe and destroy views before the viewport/app teardown below
       // destroys the same Pixi objects out from under it.
       renderSystem?.dispose();

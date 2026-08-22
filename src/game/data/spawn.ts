@@ -1,6 +1,8 @@
 import type { World } from 'miniplex';
 
 import type { Entity, Team } from '~/game/ecs/types';
+import { CELL_SIZE, toWorldPositionCellCenter } from '~/lib/grid';
+import { Vector2 } from '~/lib/math/Vector2';
 import type { Point } from '~/lib/math/types';
 import { units, type UnitType } from './units';
 
@@ -10,8 +12,12 @@ const TEAM_COLOR: Record<Team, number> = {
   red: 0xff6b6b,
 };
 
-/** Rendered radius/half-extent of a unit shape, in world units. */
-export const UNIT_SIZE = 12;
+/**
+ * Rendered radius/half-extent of a unit shape, in world units — half of the
+ * 40x40px footprint units are drawn at, centered within a
+ * {@link file://../../lib/grid.ts#CELL_SIZE} (64px) grid cell.
+ */
+export const UNIT_SIZE = 20;
 
 export interface SpawnUnitOptions {
   type: UnitType;
@@ -23,15 +29,21 @@ export interface SpawnUnitOptions {
  * Adds a single unit entity to the world and returns it. Combines the static
  * per-type data ({@link units}) with the caller's placement into the ECS
  * component contract the renderer and future systems read.
+ *
+ * `position` is snapped to the center of whichever grid cell it falls in
+ * (see {@link toWorldPositionCellCenter}), so every unit — however its
+ * caller computed its placement — renders centered in a cell rather than
+ * wherever it happened to land.
  */
 export function spawnUnit(
   world: World<Entity>,
   { type, team, position }: SpawnUnitOptions
 ): Entity {
   const definition = units[type];
+  const cellCenter = toWorldPositionCellCenter(new Vector2(position.x, position.y));
 
   return world.add({
-    transform: { position: { ...position }, rotation: 0 },
+    transform: { position: { x: cellCenter.x, y: cellCenter.y }, rotation: 0 },
     renderable: {
       shape: definition.shape,
       color: TEAM_COLOR[team],
@@ -50,7 +62,7 @@ export function spawnUnit(
  * primitive-foundations phase, to be replaced once maps and spawn points land.
  */
 export function spawnInitialUnits(world: World<Entity>): void {
-  const spacing = 48;
+  const spacing = CELL_SIZE;
   const count = 4;
 
   for (let i = 0; i < count; i++) {
