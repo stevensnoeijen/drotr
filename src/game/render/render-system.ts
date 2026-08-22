@@ -2,7 +2,13 @@ import { Container, Graphics } from 'pixi.js';
 import type { Query, With } from 'miniplex';
 
 import type { Entity, Renderable } from '~/game/ecs/types';
-import { createHealthBar, drawHealthBarFill, markDirtyOnHealthChange, type HealthBarView } from './health-bar';
+import {
+  createHealthBar,
+  drawDeathMark,
+  drawHealthBarFill,
+  markDirtyOnHealthChange,
+  type HealthBarView,
+} from './health-bar';
 
 /** The subset of {@link Entity} a {@link RenderSystem} can draw. */
 export type RenderableEntity = With<Entity, 'transform' | 'renderable'>;
@@ -14,6 +20,8 @@ type LivingRenderableEntity = With<Entity, 'transform' | 'renderable' | 'health'
 interface EntityView {
   container: Container;
   healthBar?: HealthBarView;
+  /** Cross drawn over the shape once the entity's HP reaches 0. */
+  deathMark?: Graphics;
 }
 
 /** Draws a {@link Renderable}'s primitive shape into a fresh Graphics. */
@@ -50,9 +58,16 @@ export class RenderSystem {
     const view: EntityView = { container };
     if (entity.health) {
       const healthBar = createHealthBar(entity.renderable.size);
+      healthBar.container.visible = this.healthBarsVisible;
       container.addChild(healthBar.container);
       drawHealthBarFill(healthBar.fill, entity.health);
       view.healthBar = healthBar;
+
+      const deathMark = new Graphics();
+      drawDeathMark(deathMark, entity.renderable.size, entity.health.current <= 0);
+      container.addChild(deathMark);
+      view.deathMark = deathMark;
+
       this.lastHealth.set(entity as LivingRenderableEntity, entity.health.current);
     }
 
@@ -76,13 +91,28 @@ export class RenderSystem {
   /** Last HP drawn per living entity, so {@link sync} can spot a change. */
   private readonly lastHealth = new Map<LivingRenderableEntity, number>();
 
+  /** Whether health bars are currently shown, toggled via `?debug=health`. */
+  private healthBarsVisible: boolean;
+
   constructor(
     query: Query<RenderableEntity>,
-    private readonly parent: Container
+    private readonly parent: Container,
+    healthBarsVisible = false
   ) {
     this.query = query;
+    this.healthBarsVisible = healthBarsVisible;
     this.query.onEntityAdded.subscribe(this.handleAdded);
     this.query.onEntityRemoved.subscribe(this.handleRemoved);
+  }
+
+  /** Shows or hides every tracked (and future) entity's health bar. */
+  public setHealthBarsVisible(visible: boolean): void {
+    this.healthBarsVisible = visible;
+    for (const view of this.views.values()) {
+      if (view.healthBar) {
+        view.healthBar.container.visible = visible;
+      }
+    }
   }
 
   /** Number of views currently tracked — exposed for leak tests. */
@@ -109,6 +139,9 @@ export class RenderSystem {
 
       if (entity.renderable.dirty && view.healthBar && entity.health) {
         drawHealthBarFill(view.healthBar.fill, entity.health);
+        if (view.deathMark) {
+          drawDeathMark(view.deathMark, entity.renderable.size, entity.health.current <= 0);
+        }
         entity.renderable.dirty = false;
       }
     }

@@ -160,6 +160,7 @@ export default function GameCanvas({
   // changes, so toggling a flag redraws the overlay in place instead of
   // tearing down and remounting the whole canvas.
   const syncGridRef = useRef<() => void>(() => {});
+  const syncHealthBarsRef = useRef<() => void>(() => {});
 
   // Keep the refs pointing at the latest props without re-running the
   // Pixi-setup effect below (which must run exactly once).
@@ -176,6 +177,7 @@ export default function GameCanvas({
   const debugFlagsKey = debugFlags ? serializeDebugFlags(debugFlags) : '';
   useEffect(() => {
     syncGridRef.current();
+    syncHealthBarsRef.current();
   }, [debugFlagsKey]);
 
   useEffect(() => {
@@ -243,7 +245,14 @@ export default function GameCanvas({
       // live before any spawning happens below so every unit — whether
       // added by the map's spawns or by the scenario's own setup — gets a
       // view, and every removal cleans its view up.
-      renderSystem = new RenderSystem(queries.renderable, gameViewport);
+      renderSystem = new RenderSystem(
+        queries.renderable,
+        gameViewport,
+        debugFlagsRef.current?.has('health') ?? false
+      );
+      syncHealthBarsRef.current = () => {
+        renderSystem?.setHealthBarsVisible(debugFlagsRef.current?.has('health') ?? false);
+      };
 
       // Draw the selected map (terrain tiles), then hand it to the
       // scenario's own setup to decide what to spawn at which of the map's
@@ -320,6 +329,7 @@ export default function GameCanvas({
       removeKeyDownListener?.();
       resizeObserver?.disconnect();
       syncGridRef.current = () => {};
+      syncHealthBarsRef.current = () => {};
       // Unsubscribe and destroy views before the viewport/app teardown below
       // destroys the same Pixi objects out from under it.
       renderSystem?.dispose();

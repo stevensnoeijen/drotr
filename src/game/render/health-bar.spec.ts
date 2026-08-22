@@ -1,8 +1,10 @@
+import { Graphics } from 'pixi.js';
 import { describe, expect, it } from 'vitest';
 
 import type { Health, Renderable } from '~/game/ecs/types';
 import {
   HEALTH_BAR_WIDTH,
+  drawDeathMark,
   healthBarColor,
   healthBarFillWidth,
   markDirtyOnHealthChange,
@@ -78,5 +80,26 @@ describe('healthBarColor', () => {
   it('is red at and below the yellow threshold', () => {
     expect(healthBarColor(0.3)).toBe(0xf44336);
     expect(healthBarColor(0)).toBe(0xf44336);
+  });
+});
+
+describe('drawDeathMark', () => {
+  it('draws nothing for a living unit', () => {
+    const mark = new Graphics();
+    drawDeathMark(mark, 10, false);
+    expect(mark.context.instructions.length).toBe(0);
+  });
+
+  it('draws a cross for a dead unit', () => {
+    const mark = new Graphics();
+    drawDeathMark(mark, 10, true);
+    expect(mark.context.instructions.length).toBeGreaterThan(0);
+  });
+
+  it('clears a previously drawn cross once no longer dead', () => {
+    const mark = new Graphics();
+    drawDeathMark(mark, 10, true);
+    drawDeathMark(mark, 10, false);
+    expect(mark.context.instructions.length).toBe(0);
   });
 });

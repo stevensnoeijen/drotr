@@ -6,11 +6,14 @@ import type { Health, Renderable } from '~/game/ecs/types';
 export const HEALTH_BAR_WIDTH = 24;
 /** Overall height of a unit's health bar, in world units. */
 export const HEALTH_BAR_HEIGHT = 4;
-/** Vertical gap between the top of a unit's shape and its health bar. */
+/** Vertical gap between the bottom of a unit's shape and its health bar. */
 export const HEALTH_BAR_GAP = 6;
 
 /** Background fill colour, behind the (narrower) health fill. */
-const BACKGROUND_COLOR = 0x000000;
+const BACKGROUND_COLOR = 0x333333;
+/** Colour and width of the 1px border drawn around the health bar. */
+const BORDER_COLOR = 0x000000;
+const BORDER_WIDTH = 1;
 
 /** HP-fraction thresholds the fill colour switches at — see {@link healthBarColor}. */
 const GREEN_THRESHOLD = 0.6;
@@ -19,6 +22,10 @@ const YELLOW_THRESHOLD = 0.3;
 const GREEN = 0x4caf50;
 const YELLOW = 0xffca28;
 const RED = 0xf44336;
+
+/** Colour and stroke width of the cross drawn over a dead unit. */
+const DEATH_MARK_COLOR = 0x000000;
+const DEATH_MARK_LINE_WIDTH = 2;
 
 /**
  * Colour for a health bar's fill, driven purely by the HP fraction: green
@@ -61,19 +68,20 @@ export interface HealthBarView {
 }
 
 /**
- * Builds a health bar as a child `Container` positioned above a unit's shape
- * (`-size - HEALTH_BAR_GAP` on the y axis), with a black background `Graphics`
- * and a colour-coded fill `Graphics` on top. Destroying the returned
- * container (e.g. via the parent entity view's `destroy({ children: true })`)
- * destroys both graphics with it.
+ * Builds a health bar as a child `Container` positioned below a unit's shape
+ * (`size + HEALTH_BAR_GAP` on the y axis), with a background `Graphics`
+ * bordered by a 1px black outline and a colour-coded fill `Graphics` on top.
+ * Destroying the returned container (e.g. via the parent entity view's
+ * `destroy({ children: true })`) destroys both graphics with it.
  */
 export function createHealthBar(unitSize: number): HealthBarView {
   const container = new Container();
-  container.position.set(-HEALTH_BAR_WIDTH / 2, -unitSize - HEALTH_BAR_GAP);
+  container.position.set(-HEALTH_BAR_WIDTH / 2, unitSize + HEALTH_BAR_GAP);
 
   const background = new Graphics()
     .rect(0, 0, HEALTH_BAR_WIDTH, HEALTH_BAR_HEIGHT)
-    .fill(BACKGROUND_COLOR);
+    .fill(BACKGROUND_COLOR)
+    .stroke({ width: BORDER_WIDTH, color: BORDER_COLOR });
   container.addChild(background);
 
   const fill = new Graphics();
@@ -113,4 +121,23 @@ export function drawHealthBarFill(fill: Graphics, health: Health): void {
   }
   const fraction = health.max > 0 ? health.current / health.max : 0;
   fill.rect(0, 0, width, HEALTH_BAR_HEIGHT).fill(healthBarColor(fraction));
+}
+
+/**
+ * Redraws the cross marking a dead unit, centered on its shape. Draws nothing
+ * (clearing any previous mark) when `isDead` is false, so callers can call
+ * this unconditionally whenever HP changes rather than tracking alive/dead
+ * transitions themselves.
+ */
+export function drawDeathMark(mark: Graphics, unitSize: number, isDead: boolean): void {
+  mark.clear();
+  if (!isDead) {
+    return;
+  }
+  mark
+    .moveTo(-unitSize, -unitSize)
+    .lineTo(unitSize, unitSize)
+    .moveTo(unitSize, -unitSize)
+    .lineTo(-unitSize, unitSize)
+    .stroke({ width: DEATH_MARK_LINE_WIDTH, color: DEATH_MARK_COLOR });
 }

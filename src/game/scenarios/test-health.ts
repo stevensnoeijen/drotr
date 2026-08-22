@@ -4,9 +4,11 @@ import type { Scenario } from './types';
 /**
  * A blue line facing a red line (reusing {@link spawnInitialUnits}, as
  * `test-skirmish` does), purely to have units on screen with health bars to
- * verify against. Load with `?scenario=test-health&map=empty` and press `H`
- * (see `damageAllUnits` in `~/components/game-canvas`) to watch the bars
- * shrink and shift green -> yellow -> red.
+ * verify against. Load with `?scenario=test-health&map=empty&debug=health`
+ * (health bars are hidden unless the `health` debug flag is set) and press
+ * `H` (see `damageAllUnits` in `~/components/game-canvas`) to watch the bars
+ * shrink and shift green -> yellow -> red, and a cross appear once a unit
+ * dies.
  *
  * Prefixed `test-`: it exists to test the engine's health-bar rendering, not
  * to demonstrate a real gameplay setup.
