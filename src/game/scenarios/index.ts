@@ -1,4 +1,3 @@
-import { testClaimSpawnsScenario } from './test-claim-spawns';
 import { testEmptyScenario } from './test-empty';
 import { testHealthScenario } from './test-health';
 import { testSkirmishScenario } from './test-skirmish';
@@ -12,7 +11,6 @@ export type { DebugFlag } from './debug-flags';
 export const scenarios: readonly Scenario[] = [
   testEmptyScenario,
   testSkirmishScenario,
-  testClaimSpawnsScenario,
   testHealthScenario,
 ];
 

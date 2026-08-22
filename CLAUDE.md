@@ -39,7 +39,7 @@ Guidance for Claude Code (and contributors) working in this repository.
   setup.
 - Scenario ids that exist to exercise the engine or harness itself — not to
   demonstrate a real gameplay setup — are prefixed `test-`, e.g.
-  `test-empty`, `test-skirmish`, `test-claim-spawns`.
+  `test-empty`, `test-skirmish`, `test-health`.
 
 ## Stack
 

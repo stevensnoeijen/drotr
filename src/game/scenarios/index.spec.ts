@@ -31,9 +31,9 @@ describe('resolveScenario', () => {
     }
   });
 
-  it('registers the test-empty, test-skirmish and test-claim-spawns scenarios', () => {
+  it('registers the test-empty, test-skirmish and test-health scenarios', () => {
     expect(scenarios.some((s) => s.id === 'test-empty')).toBe(true);
     expect(scenarios.some((s) => s.id === 'test-skirmish')).toBe(true);
-    expect(scenarios.some((s) => s.id === 'test-claim-spawns')).toBe(true);
+    expect(scenarios.some((s) => s.id === 'test-health')).toBe(true);
   });
 });
