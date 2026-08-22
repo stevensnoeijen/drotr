@@ -283,8 +283,12 @@ export default function GameCanvas({
         grid?.destroy();
         grid = undefined;
         if (debugFlagsRef.current?.has('grid')) {
+          // On top of everything (terrain tiles, units) rather than
+          // `addChildAt(grid, 0)`: a map with tile sprites already occupies
+          // index 0+, which buried the grid underneath them and made the
+          // overlay invisible on any map with terrain (e.g. "grass").
           grid = drawGrid(gameViewport.worldWidth, gameViewport.worldHeight);
-          gameViewport.addChildAt(grid, 0);
+          gameViewport.addChild(grid);
         }
       };
       syncGridRef.current = syncGrid;

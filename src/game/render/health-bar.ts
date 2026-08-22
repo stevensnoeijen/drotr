@@ -71,7 +71,11 @@ export interface HealthBarView {
  * Builds a health bar as a child `Container` positioned below a unit's shape
  * (`size + HEALTH_BAR_GAP` on the y axis), with a background `Graphics`
  * bordered by a 1px black outline and a colour-coded fill `Graphics` on top.
- * Destroying the returned container (e.g. via the parent entity view's
+ * The border is drawn with `pixelLine: true` and `alignment: 0` (fully
+ * outside the rect) so it stays a crisp, constant 1 screen-pixel line at
+ * every camera zoom level instead of scaling — and shrinking to invisible,
+ * or ballooning — with the world-space rect it outlines. Destroying the
+ * returned container (e.g. via the parent entity view's
  * `destroy({ children: true })`) destroys both graphics with it.
  */
 export function createHealthBar(unitSize: number): HealthBarView {
@@ -81,7 +85,7 @@ export function createHealthBar(unitSize: number): HealthBarView {
   const background = new Graphics()
     .rect(0, 0, HEALTH_BAR_WIDTH, HEALTH_BAR_HEIGHT)
     .fill(BACKGROUND_COLOR)
-    .stroke({ width: BORDER_WIDTH, color: BORDER_COLOR });
+    .stroke({ width: BORDER_WIDTH, color: BORDER_COLOR, pixelLine: true, alignment: 0 });
   container.addChild(background);
 
   const fill = new Graphics();
