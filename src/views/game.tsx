@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router';
 
-import GameCanvas from '~/components/game-canvas';
+import GameCanvas, { type ViewportTransform } from '~/components/game-canvas';
 import DebugOverlay, { type GameStats } from '~/components/debug-overlay';
 import { resolveMap } from '~/game/maps';
 import {
@@ -13,12 +13,32 @@ import {
 
 const EMPTY_STATS: GameStats = { fps: 0, tick: 0, entities: 0 };
 
+/** Delay after the last pan/zoom before `?x=&y=&z=` is written to the URL. */
+const VIEWPORT_SAVE_DEBOUNCE_MS = 250;
+
+/** Parses `?x=&y=&z=` into a camera transform, or undefined if incomplete/invalid. */
+function parseViewport(searchParams: URLSearchParams): ViewportTransform | undefined {
+  const x = Number(searchParams.get('x'));
+  const y = Number(searchParams.get('y'));
+  const scale = Number(searchParams.get('z'));
+  if (![x, y, scale].every(Number.isFinite) || scale <= 0) {
+    return undefined;
+  }
+  return { x, y, scale };
+}
+
 export default function Game() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const resolvedScenario = resolveScenario(searchParams);
   const resolvedMap = resolveMap(searchParams);
   const debugFlags = parseDebugFlags(searchParams.get('debug'));
+  // Lazy initializer: read once on mount. The camera is thereafter saved
+  // out-of-band (see handleViewportChange below), not through react-router's
+  // searchParams state, so re-reading this on every render would just
+  // reapply the same initial value — or fight the live camera once panning
+  // starts.
+  const [initialViewport] = useState(() => parseViewport(searchParams));
 
   // Flips one flag and writes the result back into `?debug=`, so a refresh
   // (or a shared link) restores exactly the overlays that were on. Goes
@@ -34,7 +54,12 @@ export default function Game() {
       next.add(flag);
     }
 
-    const params = new URLSearchParams(searchParams);
+    // Built from the *live* URL, not react-router's `searchParams` state:
+    // the camera writes `x`/`y`/`z` straight to the browser's URL bar (see
+    // handleViewportChange) without going through react-router, so
+    // `searchParams` can be stale by the time a debug flag is toggled mid-pan
+    // — rebuilding from it here would silently drop the saved camera.
+    const params = new URLSearchParams(window.location.search);
     const serialized = serializeDebugFlags(next);
     if (serialized) {
       params.set('debug', serialized);
@@ -46,6 +71,30 @@ export default function Game() {
       replace: true,
     });
   }
+
+  // Debounced so a drag or wheel gesture — which can fire many 'moved'
+  // events per second — doesn't spam the URL; only the camera's resting
+  // position ends up saved.
+  const viewportSaveTimeoutRef = useRef<number | undefined>(undefined);
+
+  function handleViewportChange(transform: ViewportTransform) {
+    window.clearTimeout(viewportSaveTimeoutRef.current);
+    viewportSaveTimeoutRef.current = window.setTimeout(() => {
+      const params = new URLSearchParams(window.location.search);
+      params.set('x', transform.x.toFixed(1));
+      params.set('y', transform.y.toFixed(1));
+      params.set('z', transform.scale.toFixed(3));
+      // history.replaceState, not navigate(): saving the camera must not
+      // trigger a react-router navigation (which would re-render this page
+      // and could remount the canvas) or reload the page — just keep the
+      // URL bar (and refresh/share links) in sync with where the camera is.
+      window.history.replaceState(null, '', `?${params.toString().replaceAll('%2C', ',')}`);
+    }, VIEWPORT_SAVE_DEBOUNCE_MS);
+  }
+
+  useEffect(() => {
+    return () => window.clearTimeout(viewportSaveTimeoutRef.current);
+  }, []);
 
   // The canvas pushes fresh stats every frame into a ref; a slow interval
   // copies them into state so the overlay re-renders a few times a second
@@ -111,10 +160,12 @@ export default function Game() {
         className="absolute inset-0"
         scenario={resolvedScenario.scenario}
         map={resolvedMap.map}
+        initialViewport={initialViewport}
         debugFlags={debugFlags}
         onStats={(next) => {
           statsRef.current = next;
         }}
+        onViewportChange={handleViewportChange}
       />
       <DebugOverlay
         stats={stats}

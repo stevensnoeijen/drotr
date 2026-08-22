@@ -131,6 +131,12 @@ export interface GameCanvasProps {
   scenario: Scenario;
   /** The map to draw and pass to the scenario's `setup`. */
   map: MapDefinition;
+  /**
+   * Camera pan/zoom to restore on mount, e.g. parsed from `?x=&y=&z=`. Applied
+   * once, after the map's bounds are known; ignored on subsequent prop
+   * updates since the camera is thereafter driven by user input.
+   */
+  initialViewport?: ViewportTransform;
   /** Debug overlays to render, parsed from `?debug=`. */
   debugFlags?: ReadonlySet<DebugFlag>;
   /**
@@ -146,6 +152,7 @@ export default function GameCanvas({
   className,
   scenario,
   map: mapProp,
+  initialViewport,
   debugFlags,
   onStats,
   onViewportChange,
@@ -155,6 +162,9 @@ export default function GameCanvas({
   const onViewportChangeRef = useRef(onViewportChange);
   const scenarioRef = useRef(scenario);
   const mapRef = useRef(mapProp);
+  // Read once, at mount, by the setup effect below — never re-applied on a
+  // later prop change, since by then the camera is under user control.
+  const initialViewportRef = useRef(initialViewport);
   const debugFlagsRef = useRef(debugFlags);
   // Set once the Pixi app is ready; re-invoked below whenever debugFlags
   // changes, so toggling a flag redraws the overlay in place instead of
@@ -277,6 +287,17 @@ export default function GameCanvas({
         return;
       }
       scenarioRef.current.setup(world, map);
+
+      // Restore a saved camera position/zoom now that the map's (clamped)
+      // bounds are known. Assigned directly rather than via a pan/zoom
+      // gesture, so this doesn't itself fire 'moved'/'zoomed' and re-save.
+      if (initialViewportRef.current) {
+        const { x, y, scale } = initialViewportRef.current;
+        gameViewport.scale.x = scale;
+        gameViewport.scale.y = scale;
+        gameViewport.x = x;
+        gameViewport.y = y;
+      }
 
       let grid: Graphics | undefined;
       const syncGrid = () => {
