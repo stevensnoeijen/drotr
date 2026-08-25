@@ -79,20 +79,26 @@ export class InputSystem {
 }
 
 /**
- * Selects the nearest `selectable` unit whose position + radius contains
- * `worldPosition`, clearing any previous selection first. Clicking empty
- * ground (no unit hit) still clears the previous selection, leaving nothing
- * selected — this is the single place selection state changes.
+ * Selects the nearest `selectable` unit whose square bounding box (position
+ * +/- `renderable.size` on each axis) contains `worldPosition`, clearing any
+ * previous selection first. Clicking empty ground (no unit hit) still clears
+ * the previous selection, leaving nothing selected — this is the single
+ * place selection state changes.
  */
 export function selectAt(world: World<Entity>, queries: Queries, worldPosition: Vector2): void {
   let nearest: Entity | undefined;
   let nearestDistance = Infinity;
 
   for (const entity of queries.selectable) {
-    const radius = entity.renderable?.size ?? 0;
+    const size = entity.renderable?.size ?? 0;
     const position = new Vector2(entity.transform.position.x, entity.transform.position.y);
+    const dx = Math.abs(worldPosition.x - position.x);
+    const dy = Math.abs(worldPosition.y - position.y);
+    if (dx > size || dy > size) {
+      continue;
+    }
     const distance = Vector2.distance(position, worldPosition);
-    if (distance <= radius && distance < nearestDistance) {
+    if (distance < nearestDistance) {
       nearest = entity;
       nearestDistance = distance;
     }

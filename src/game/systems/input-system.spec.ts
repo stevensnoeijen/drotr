@@ -55,6 +55,29 @@ describe('selectAt', () => {
     expect([...queries.selected]).toHaveLength(0);
   });
 
+  it('selects on a click in the bounding box corner, outside the circular radius', () => {
+    const world = new World<Entity>();
+    const queries = createQueries(world);
+    // (114, 114) is 14px away on each axis (inside the 20x20 box) but
+    // ~19.8px from center — just inside the box, just outside a 20-radius
+    // circle, so this only selects with rect-shaped hit-testing.
+    const unit = addUnit(world, 100, 100, 20);
+
+    selectAt(world, queries, new Vector2(114, 114));
+
+    expect(unit.selected).toBe(true);
+  });
+
+  it('does not select a click outside the bounding box', () => {
+    const world = new World<Entity>();
+    const queries = createQueries(world);
+    const unit = addUnit(world, 100, 100, 20);
+
+    selectAt(world, queries, new Vector2(121, 100));
+
+    expect(unit.selected).toBeUndefined();
+  });
+
   it('replaces the selection with the newly clicked unit', () => {
     const world = new World<Entity>();
     const queries = createQueries(world);

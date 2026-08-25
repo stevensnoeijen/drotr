@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 import type { Health, Renderable } from '~/game/ecs/types';
 import {
   HEALTH_BAR_WIDTH,
+  createHealthBar,
   drawDeathMark,
   healthBarColor,
   healthBarFillWidth,
@@ -16,6 +17,15 @@ function makeEntity(current: number, max: number): { renderable: Renderable; hea
     health: { current, max },
   };
 }
+
+describe('createHealthBar', () => {
+  it('builds a bar as wide as the unit (unitSize * 2), centered under it', () => {
+    const bar = createHealthBar(30);
+
+    expect(bar.width).toBe(60);
+    expect(bar.container.position.x).toBe(-30);
+  });
+});
 
 describe('markDirtyOnHealthChange', () => {
   it('sets renderable.dirty when health.current has changed since the last check', () => {
