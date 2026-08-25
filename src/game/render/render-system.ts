@@ -22,6 +22,18 @@ interface EntityView {
   healthBar?: HealthBarView;
   /** Cross drawn over the shape once the entity's HP reaches 0. */
   deathMark?: Graphics;
+  /** White ring shown while the entity has a `selected` component. */
+  selectionRing?: Graphics;
+}
+
+/** Gap, in world units, between a unit's shape and its selection ring. */
+const SELECTION_RING_GAP = 4;
+
+/** Draws the white selection ring for a unit of the given rendered size. */
+function drawSelectionRing(size: number): Graphics {
+  return new Graphics()
+    .circle(0, 0, size + SELECTION_RING_GAP)
+    .stroke({ width: 2, color: 0xffffff });
 }
 
 /** Draws a {@link Renderable}'s primitive shape into a fresh Graphics. */
@@ -56,6 +68,12 @@ export class RenderSystem {
     container.addChild(drawRenderable(entity.renderable));
 
     const view: EntityView = { container };
+    if (entity.selectable) {
+      const selectionRing = drawSelectionRing(entity.renderable.size);
+      selectionRing.visible = Boolean(entity.selected);
+      container.addChild(selectionRing);
+      view.selectionRing = selectionRing;
+    }
     if (entity.health) {
       const healthBar = createHealthBar(entity.renderable.size);
       healthBar.container.visible = this.healthBarsVisible;
@@ -132,6 +150,10 @@ export class RenderSystem {
     for (const [entity, view] of this.views) {
       view.container.position.set(entity.transform.position.x, entity.transform.position.y);
       view.container.rotation = entity.transform.rotation;
+
+      if (view.selectionRing) {
+        view.selectionRing.visible = Boolean(entity.selected);
+      }
 
       if (entity.health) {
         markDirtyOnHealthChange(entity as LivingRenderableEntity, this.lastHealth);

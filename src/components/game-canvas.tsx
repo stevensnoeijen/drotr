@@ -17,7 +17,8 @@ import type { MapDefinition } from '~/game/maps';
 import { loadTiledMap, type ParsedMap, type TerrainType } from '~/game/map/loadTiledMap';
 import { applyViewportBounds, createGameViewport } from '~/game/render/create-game-viewport';
 import { RenderSystem } from '~/game/render/render-system';
-import { CELL_SIZE } from '~/lib/grid';
+import { createInputSystem, InputSystem } from '~/game/systems/input-system';
+import { CELL_SIZE, screenToGrid } from '~/lib/grid';
 import {
   serializeDebugFlags,
   type DebugFlag,
@@ -201,7 +202,9 @@ export default function GameCanvas({
     let viewport: Viewport | undefined;
     let resizeObserver: ResizeObserver | undefined;
     let renderSystem: RenderSystem | undefined;
+    let inputSystem: InputSystem | undefined;
     let removeKeyDownListener: (() => void) | undefined;
+    let removePointerMoveListener: (() => void) | undefined;
 
     // No systems yet (#78 is the contract only); the runner is empty but the
     // loop still advances the tick count so the debug overlay can show it.
@@ -299,6 +302,29 @@ export default function GameCanvas({
         gameViewport.y = y;
       }
 
+      const getViewportTransform = () => ({
+        x: gameViewport.x,
+        y: gameViewport.y,
+        scale: gameViewport.scale.x,
+      });
+      const mapBounds = map ? { width: map.width, height: map.height } : undefined;
+
+      const canvas = app.canvas;
+      inputSystem = new InputSystem(canvas);
+      runner.add(createInputSystem(inputSystem, queries, getViewportTransform));
+
+      let hoveredCell: { x: number; y: number } | undefined;
+      const handlePointerMove = (event: PointerEvent) => {
+        const rect = canvas.getBoundingClientRect();
+        hoveredCell = screenToGrid(
+          { x: event.clientX - rect.left, y: event.clientY - rect.top },
+          getViewportTransform(),
+          mapBounds
+        );
+      };
+      canvas.addEventListener('pointermove', handlePointerMove);
+      removePointerMoveListener = () => canvas.removeEventListener('pointermove', handlePointerMove);
+
       let grid: Graphics | undefined;
       const syncGrid = () => {
         grid?.destroy();
@@ -324,6 +350,7 @@ export default function GameCanvas({
           fps: ticker.FPS,
           tick: loop.tick,
           entities: world.size,
+          hoveredCell,
         });
       });
 
@@ -352,11 +379,13 @@ export default function GameCanvas({
     return () => {
       cancelled = true;
       removeKeyDownListener?.();
+      removePointerMoveListener?.();
       resizeObserver?.disconnect();
       syncGridRef.current = () => {};
       syncHealthBarsRef.current = () => {};
       // Unsubscribe and destroy views before the viewport/app teardown below
       // destroys the same Pixi objects out from under it.
+      inputSystem?.dispose();
       renderSystem?.dispose();
       viewport?.destroy({ children: true });
       if (app) {

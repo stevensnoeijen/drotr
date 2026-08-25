@@ -9,6 +9,11 @@ export interface GameStats {
   tick: number;
   /** Number of entities currently in the world. */
   entities: number;
+  /**
+   * Grid cell under the pointer, or `undefined` when the pointer is off the
+   * map (outside the canvas, or over the canvas but past the map's bounds).
+   */
+  hoveredCell?: { x: number; y: number };
 }
 
 export interface DebugOverlayProps {
@@ -45,6 +50,10 @@ export default function DebugOverlay({
         <dd className="text-right tabular-nums">{stats.tick}</dd>
         <dt>Entities</dt>
         <dd className="text-right tabular-nums">{stats.entities}</dd>
+        <dt>Cell</dt>
+        <dd className="text-right tabular-nums">
+          {stats.hoveredCell ? `${stats.hoveredCell.x}, ${stats.hoveredCell.y}` : '-'}
+        </dd>
       </dl>
 
       <div className="relative">
