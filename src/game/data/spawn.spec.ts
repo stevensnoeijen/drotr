@@ -6,7 +6,7 @@ import type { Entity } from '~/game/ecs/types';
 import { spawnInitialUnits, spawnUnit } from './spawn';
 
 describe('spawnUnit', () => {
-  it('adds a renderable, selectable unit to the world, centered in its grid cell', () => {
+  it('adds a renderable unit to the world, centered in its grid cell', () => {
     const world = new World<Entity>();
 
     const unit = spawnUnit(world, {
@@ -18,10 +18,21 @@ describe('spawnUnit', () => {
 
     expect(unit.transform?.position).toEqual({ x: 32, y: 32 });
     expect(unit.renderable?.shape).toBe('circle');
-    expect(unit.selectable).toBe(true);
     expect(unit.team).toBe('red');
     expect(unit.unitType).toBe('knight');
     expect(unit.health).toEqual({ current: 12, max: 12 });
+  });
+
+  it('makes a blue unit selectable but not a red one', () => {
+    const world = new World<Entity>();
+    const queries = createQueries(world);
+
+    const blue = spawnUnit(world, { type: 'knight', team: 'blue', position: { x: 0, y: 0 } });
+    const red = spawnUnit(world, { type: 'knight', team: 'red', position: { x: 64, y: 0 } });
+
+    expect(blue.selectable).toBe(true);
+    expect(red.selectable).toBeUndefined();
+    expect([...queries.selectable]).toEqual([blue]);
   });
 
   it('is unaffected by later mutation of the caller-supplied position', () => {

@@ -65,25 +65,30 @@ export interface HealthBarView {
   container: Container;
   background: Graphics;
   fill: Graphics;
+  /** Overall width this bar was built at, in world units — see {@link createHealthBar}. */
+  width: number;
 }
 
 /**
  * Builds a health bar as a child `Container` positioned below a unit's shape
  * (`size + HEALTH_BAR_GAP` on the y axis), with a background `Graphics`
  * bordered by a 1px black outline and a colour-coded fill `Graphics` on top.
- * The border is drawn with `pixelLine: true` and `alignment: 0` (fully
- * outside the rect) so it stays a crisp, constant 1 screen-pixel line at
- * every camera zoom level instead of scaling — and shrinking to invisible,
- * or ballooning — with the world-space rect it outlines. Destroying the
- * returned container (e.g. via the parent entity view's
- * `destroy({ children: true })`) destroys both graphics with it.
+ * The bar is drawn as wide as the unit itself (`unitSize * 2`, matching the
+ * shape's full width) rather than a fixed size, so bigger units get a
+ * proportionally wider bar. The border is drawn with `pixelLine: true` and
+ * `alignment: 0` (fully outside the rect) so it stays a crisp, constant 1
+ * screen-pixel line at every camera zoom level instead of scaling — and
+ * shrinking to invisible, or ballooning — with the world-space rect it
+ * outlines. Destroying the returned container (e.g. via the parent entity
+ * view's `destroy({ children: true })`) destroys both graphics with it.
  */
 export function createHealthBar(unitSize: number): HealthBarView {
+  const width = unitSize * 2;
   const container = new Container();
-  container.position.set(-HEALTH_BAR_WIDTH / 2, unitSize + HEALTH_BAR_GAP);
+  container.position.set(-width / 2, unitSize + HEALTH_BAR_GAP);
 
   const background = new Graphics()
-    .rect(0, 0, HEALTH_BAR_WIDTH, HEALTH_BAR_HEIGHT)
+    .rect(0, 0, width, HEALTH_BAR_HEIGHT)
     .fill(BACKGROUND_COLOR)
     .stroke({ width: BORDER_WIDTH, color: BORDER_COLOR, pixelLine: true, alignment: 0 });
   container.addChild(background);
@@ -91,7 +96,7 @@ export function createHealthBar(unitSize: number): HealthBarView {
   const fill = new Graphics();
   container.addChild(fill);
 
-  return { container, background, fill };
+  return { container, background, fill, width };
 }
 
 /**
@@ -117,9 +122,9 @@ export function markDirtyOnHealthChange<T extends { renderable: Renderable; heal
 }
 
 /** Redraws a health bar's fill to match the given HP. Call only when dirty. */
-export function drawHealthBarFill(fill: Graphics, health: Health): void {
+export function drawHealthBarFill(fill: Graphics, health: Health, barWidth = HEALTH_BAR_WIDTH): void {
   fill.clear();
-  const width = healthBarFillWidth(health.current, health.max);
+  const width = healthBarFillWidth(health.current, health.max, barWidth);
   if (width <= 0) {
     return;
   }

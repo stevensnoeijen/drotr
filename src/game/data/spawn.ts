@@ -42,18 +42,28 @@ export function spawnUnit(
   const definition = units[type];
   const cellCenter = toWorldPositionCellCenter(new Vector2(position.x, position.y));
 
-  return world.add({
+  const entity: Entity = {
     transform: { position: { x: cellCenter.x, y: cellCenter.y }, rotation: 0 },
     renderable: {
       shape: definition.shape,
       color: TEAM_COLOR[team],
       size: UNIT_SIZE,
     },
-    selectable: true,
     team,
     unitType: type,
     health: { current: definition.health, max: definition.health },
-  });
+  };
+  // Only the player's own (blue) units can be click-selected; red is the
+  // opposing side and has no `selectable` component at all — a query for
+  // it (as the click hit-test and RenderSystem's selection marks use) must
+  // never match a red unit, which a `selectable: false` value would not
+  // achieve, since miniplex's `world.with('selectable')` matches on the
+  // component's presence, not its value.
+  if (team === 'blue') {
+    entity.selectable = true;
+  }
+
+  return world.add(entity);
 }
 
 /**

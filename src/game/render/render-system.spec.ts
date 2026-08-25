@@ -141,6 +141,57 @@ describe('RenderSystem', () => {
     expect(healthBarContainer.visible).toBe(true);
   });
 
+  it('shows selection marks only while selected, health bars hidden by default', () => {
+    const world = new World<Entity>();
+    const { renderable } = createQueries(world);
+    const parent = new Container();
+    const system = new RenderSystem(renderable, parent);
+
+    const entity = world.add({
+      transform: { position: { x: 0, y: 0 }, rotation: 0 },
+      renderable: { shape: 'circle', color: 0xffffff, size: 4 },
+      selectable: true,
+    });
+
+    const [view] = parent.children;
+    const [, selectionMarks] = view.children;
+    expect(selectionMarks.visible).toBe(false);
+
+    world.addComponent(entity, 'selected', true);
+    system.sync();
+    expect(selectionMarks.visible).toBe(true);
+
+    world.removeComponent(entity, 'selected');
+    system.sync();
+    expect(selectionMarks.visible).toBe(false);
+  });
+
+  it('shows the health bar of a selected unit even with health bars globally hidden', () => {
+    const world = new World<Entity>();
+    const { renderable } = createQueries(world);
+    const parent = new Container();
+    const system = new RenderSystem(renderable, parent);
+
+    const entity = world.add({
+      transform: { position: { x: 0, y: 0 }, rotation: 0 },
+      renderable: { shape: 'circle', color: 0xffffff, size: 4 },
+      health: { current: 10, max: 10 },
+      selectable: true,
+    });
+
+    const [view] = parent.children;
+    const [, , healthBarContainer] = view.children;
+    expect(healthBarContainer.visible).toBe(false);
+
+    world.addComponent(entity, 'selected', true);
+    system.sync();
+    expect(healthBarContainer.visible).toBe(true);
+
+    world.removeComponent(entity, 'selected');
+    system.sync();
+    expect(healthBarContainer.visible).toBe(false);
+  });
+
   it('marks a unit dead once its health bar is redrawn at 0 HP', () => {
     const world = new World<Entity>();
     const { renderable } = createQueries(world);

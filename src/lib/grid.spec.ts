@@ -8,6 +8,11 @@ import {
   toWorldPosition,
   toGridPosition,
   convertPathfindingPathToPositions,
+  screenToWorld,
+  worldToGrid,
+  screenToGrid,
+  CELL_SIZE,
+  type ViewportTransform,
 } from './grid';
 
 describe('toWorldPositionCellCenter', () => {
@@ -51,6 +56,63 @@ describe('toGridPosition', () => {
       x: 2,
       y: 2,
     });
+  });
+});
+
+describe('screenToWorld -> worldToGrid round trip', () => {
+  const identity: ViewportTransform = { x: 0, y: 0, scale: 1 };
+  const zoomedIn: ViewportTransform = { x: 0, y: 0, scale: 2 };
+  const zoomedOut: ViewportTransform = { x: 0, y: 0, scale: 0.5 };
+  const panned: ViewportTransform = { x: -128, y: 64, scale: 1 };
+  const pannedAndZoomed: ViewportTransform = { x: -200, y: 50, scale: 1.5 };
+
+  it.each([
+    ['zoom 1', identity],
+    ['zoomed in', zoomedIn],
+    ['zoomed out', zoomedOut],
+    ['panned', panned],
+    ['panned and zoomed', pannedAndZoomed],
+  ])('recovers the correct cell under %s', (_label, viewport) => {
+    // Pick a screen point that maps to a known world position/cell under
+    // this transform: world = viewport.x + cell*CELL_SIZE*scale (offset to
+    // land inside the cell rather than exactly on its edge).
+    const cellX = 3;
+    const cellY = 5;
+    const worldX = cellX * CELL_SIZE + 10;
+    const worldY = cellY * CELL_SIZE + 10;
+    const screen = {
+      x: worldX * viewport.scale + viewport.x,
+      y: worldY * viewport.scale + viewport.y,
+    };
+
+    const world = screenToWorld(screen, viewport);
+    expect(world.x).toBeCloseTo(worldX);
+    expect(world.y).toBeCloseTo(worldY);
+
+    const cell = worldToGrid(world);
+    expect(cell).toMatchObject({ x: cellX, y: cellY });
+
+    expect(screenToGrid(screen, viewport)).toMatchObject({ x: cellX, y: cellY });
+  });
+});
+
+describe('worldToGrid out-of-bounds handling', () => {
+  it('returns undefined for a negative cell rather than a negative index', () => {
+    const cell = worldToGrid(new Vector2(-10, -10));
+    expect(cell).toBeUndefined();
+  });
+
+  it('returns undefined when the cell falls outside the given bounds', () => {
+    const bounds = { width: 4, height: 4 };
+    expect(worldToGrid(new Vector2(4 * CELL_SIZE, 0), bounds)).toBeUndefined();
+    expect(worldToGrid(new Vector2(0, 4 * CELL_SIZE), bounds)).toBeUndefined();
+    expect(worldToGrid(new Vector2(3 * CELL_SIZE, 0), bounds)).toMatchObject({ x: 3, y: 0 });
+    expect(worldToGrid(new Vector2(0, 0), bounds)).toMatchObject({ x: 0, y: 0 });
+  });
+
+  it('screenToGrid returns undefined for a screen position outside the canvas/map', () => {
+    const viewport: ViewportTransform = { x: 0, y: 0, scale: 1 };
+    expect(screenToGrid({ x: -50, y: -50 }, viewport)).toBeUndefined();
   });
 });
 

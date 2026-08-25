@@ -22,6 +22,34 @@ interface EntityView {
   healthBar?: HealthBarView;
   /** Cross drawn over the shape once the entity's HP reaches 0. */
   deathMark?: Graphics;
+  /** Black corner marks shown while the entity has a `selected` component. */
+  selectionMarks?: Graphics;
+}
+
+/** Gap, in world units, between a unit's shape and its selection marks. */
+const SELECTION_MARK_GAP = 4;
+
+/** Length, in world units, of each corner mark's two arms. */
+const SELECTION_MARK_ARM_LENGTH = 6;
+
+/**
+ * Draws small black "⌐"-shaped marks at the top-left and top-right corners
+ * of a unit's bounding box, offset outward by {@link SELECTION_MARK_GAP}.
+ */
+function drawSelectionMarks(size: number): Graphics {
+  const left = -size - SELECTION_MARK_GAP;
+  const right = size + SELECTION_MARK_GAP;
+  const top = -size - SELECTION_MARK_GAP;
+  const arm = SELECTION_MARK_ARM_LENGTH;
+
+  return new Graphics()
+    .moveTo(left, top + arm)
+    .lineTo(left, top)
+    .lineTo(left + arm, top)
+    .moveTo(right - arm, top)
+    .lineTo(right, top)
+    .lineTo(right, top + arm)
+    .stroke({ width: 2, color: 0x000000 });
 }
 
 /** Draws a {@link Renderable}'s primitive shape into a fresh Graphics. */
@@ -56,11 +84,17 @@ export class RenderSystem {
     container.addChild(drawRenderable(entity.renderable));
 
     const view: EntityView = { container };
+    if (entity.selectable) {
+      const selectionMarks = drawSelectionMarks(entity.renderable.size);
+      selectionMarks.visible = Boolean(entity.selected);
+      container.addChild(selectionMarks);
+      view.selectionMarks = selectionMarks;
+    }
     if (entity.health) {
       const healthBar = createHealthBar(entity.renderable.size);
-      healthBar.container.visible = this.healthBarsVisible;
+      healthBar.container.visible = this.healthBarsVisible || Boolean(entity.selected);
       container.addChild(healthBar.container);
-      drawHealthBarFill(healthBar.fill, entity.health);
+      drawHealthBarFill(healthBar.fill, entity.health, healthBar.width);
       view.healthBar = healthBar;
 
       const deathMark = new Graphics();
@@ -108,9 +142,9 @@ export class RenderSystem {
   /** Shows or hides every tracked (and future) entity's health bar. */
   public setHealthBarsVisible(visible: boolean): void {
     this.healthBarsVisible = visible;
-    for (const view of this.views.values()) {
+    for (const [entity, view] of this.views) {
       if (view.healthBar) {
-        view.healthBar.container.visible = visible;
+        view.healthBar.container.visible = visible || Boolean(entity.selected);
       }
     }
   }
@@ -133,12 +167,19 @@ export class RenderSystem {
       view.container.position.set(entity.transform.position.x, entity.transform.position.y);
       view.container.rotation = entity.transform.rotation;
 
+      if (view.selectionMarks) {
+        view.selectionMarks.visible = Boolean(entity.selected);
+      }
+
       if (entity.health) {
         markDirtyOnHealthChange(entity as LivingRenderableEntity, this.lastHealth);
+        if (view.healthBar) {
+          view.healthBar.container.visible = this.healthBarsVisible || Boolean(entity.selected);
+        }
       }
 
       if (entity.renderable.dirty && view.healthBar && entity.health) {
-        drawHealthBarFill(view.healthBar.fill, entity.health);
+        drawHealthBarFill(view.healthBar.fill, entity.health, view.healthBar.width);
         if (view.deathMark) {
           drawDeathMark(view.deathMark, entity.renderable.size, entity.health.current <= 0);
         }
