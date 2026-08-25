@@ -11,6 +11,8 @@ import type { Point } from '~/lib/math/types';
 export interface QueuedClick {
   x: number;
   y: number;
+  /** Whether shift was held on pointerup — toggles into the selection instead of replacing it. */
+  shiftKey: boolean;
 }
 
 /**
@@ -51,7 +53,11 @@ export class InputSystem {
     }
 
     const rect = this.canvas.getBoundingClientRect();
-    this.queue.push({ x: event.clientX - rect.left, y: event.clientY - rect.top });
+    this.queue.push({
+      x: event.clientX - rect.left,
+      y: event.clientY - rect.top,
+      shiftKey: event.shiftKey,
+    });
   };
 
   constructor(private readonly canvas: HTMLCanvasElement) {
@@ -80,12 +86,21 @@ export class InputSystem {
 
 /**
  * Selects the nearest `selectable` unit whose square bounding box (position
- * +/- `renderable.size` on each axis) contains `worldPosition`, clearing any
- * previous selection first. Clicking empty ground (no unit hit) still clears
- * the previous selection, leaving nothing selected — this is the single
- * place selection state changes.
+ * +/- `renderable.size` on each axis) contains `worldPosition`.
+ *
+ * Plain click: replaces the selection with just the hit unit, or clears it
+ * entirely on a miss (clicking empty ground).
+ *
+ * Shift-click: adds the hit unit to the existing selection instead of
+ * replacing it, or toggles it off if it was already selected. A shift-click
+ * miss leaves the existing selection untouched.
  */
-export function selectAt(world: World<Entity>, queries: Queries, worldPosition: Vector2): void {
+export function selectAt(
+  world: World<Entity>,
+  queries: Queries,
+  worldPosition: Vector2,
+  shiftKey = false
+): void {
   let nearest: Entity | undefined;
   let nearestDistance = Infinity;
 
@@ -104,10 +119,23 @@ export function selectAt(world: World<Entity>, queries: Queries, worldPosition: 
     }
   }
 
-  for (const entity of [...queries.selected]) {
-    world.removeComponent(entity, 'selected');
+  if (shiftKey) {
+    if (nearest) {
+      if (nearest.selected) {
+        world.removeComponent(nearest, 'selected');
+      } else {
+        world.addComponent(nearest, 'selected', true);
+      }
+    }
+    return;
   }
-  if (nearest) {
+
+  for (const entity of [...queries.selected]) {
+    if (entity !== nearest) {
+      world.removeComponent(entity, 'selected');
+    }
+  }
+  if (nearest && !nearest.selected) {
     world.addComponent(nearest, 'selected', true);
   }
 }
@@ -130,7 +158,7 @@ export function createInputSystem(
 
     const viewport = getViewport();
     for (const click of clicks) {
-      selectAt(world, queries, screenToWorld(click, viewport));
+      selectAt(world, queries, screenToWorld(click, viewport), click.shiftKey);
     }
   };
 }

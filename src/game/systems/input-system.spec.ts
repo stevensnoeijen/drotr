@@ -78,6 +78,47 @@ describe('selectAt', () => {
     expect(unit.selected).toBeUndefined();
   });
 
+  it('adds to the selection on a shift-click instead of replacing it', () => {
+    const world = new World<Entity>();
+    const queries = createQueries(world);
+    const a = addUnit(world, 0, 0);
+    const b = addUnit(world, 200, 200);
+
+    selectAt(world, queries, new Vector2(0, 0));
+    selectAt(world, queries, new Vector2(200, 200), true);
+
+    expect(a.selected).toBe(true);
+    expect(b.selected).toBe(true);
+    expect(new Set(queries.selected)).toEqual(new Set([a, b]));
+  });
+
+  it('toggles an already-selected unit off on a shift-click', () => {
+    const world = new World<Entity>();
+    const queries = createQueries(world);
+    const a = addUnit(world, 0, 0);
+    const b = addUnit(world, 200, 200);
+
+    selectAt(world, queries, new Vector2(0, 0));
+    selectAt(world, queries, new Vector2(200, 200), true);
+    selectAt(world, queries, new Vector2(200, 200), true);
+
+    expect(a.selected).toBe(true);
+    expect(b.selected).toBeUndefined();
+    expect([...queries.selected]).toEqual([a]);
+  });
+
+  it('leaves the existing selection untouched on a shift-click that misses', () => {
+    const world = new World<Entity>();
+    const queries = createQueries(world);
+    const a = addUnit(world, 0, 0);
+
+    selectAt(world, queries, new Vector2(0, 0));
+    selectAt(world, queries, new Vector2(5000, 5000), true);
+
+    expect(a.selected).toBe(true);
+    expect([...queries.selected]).toEqual([a]);
+  });
+
   it('replaces the selection with the newly clicked unit', () => {
     const world = new World<Entity>();
     const queries = createQueries(world);
