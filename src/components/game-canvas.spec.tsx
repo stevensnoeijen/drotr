@@ -73,9 +73,16 @@ vi.mock('pixi.js', () => {
     rect = vi.fn().mockReturnThis();
     circle = vi.fn().mockReturnThis();
     fill = vi.fn().mockReturnThis();
+    stroke = vi.fn().mockReturnThis();
+    clear = vi.fn().mockReturnThis();
+    destroy = vi.fn();
   }
 
-  return { Application, Graphics };
+  class Container {
+    addChild = vi.fn();
+  }
+
+  return { Application, Graphics, Container };
 });
 
 vi.mock('pixi-viewport', () => {

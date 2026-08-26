@@ -12,9 +12,16 @@ export interface CreateGameViewportOptions {
 
 /**
  * Builds the camera that the world (tiles, units, debug overlays) is added
- * to: drag/pinch/wheel to pan and zoom, clamped once real map bounds are
- * known via {@link applyViewportBounds}. World size starts equal to screen
- * size (an effective no-op clamp) until then.
+ * to: pinch/wheel to zoom, clamped once real map bounds are known via
+ * {@link applyViewportBounds}. World size starts equal to screen size (an
+ * effective no-op clamp) until then.
+ *
+ * Deliberately no `.drag()`: a pointer-drag that starts on empty ground is
+ * drag-to-select (see `SelectionBoxDrag`), not drag-to-pan, and the two
+ * can't coexist on the same gesture (#87). Panning instead goes through
+ * `CameraPanSystem` (keyboard and edge-of-screen), which drives this same
+ * `viewport.x`/`viewport.y`/clamp-plugin API rather than a second camera
+ * mechanism.
  */
 export function createGameViewport({
   events,
@@ -29,7 +36,7 @@ export function createGameViewport({
     events,
   });
 
-  viewport.drag().pinch().wheel();
+  viewport.pinch().wheel();
   applyViewportBounds(viewport, screenWidth, screenHeight);
 
   return viewport;
