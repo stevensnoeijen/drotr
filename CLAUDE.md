@@ -38,8 +38,8 @@ Guidance for Claude Code (and contributors) working in this repository.
   (`claimSpawn` in `~/game/systems/spawn-system`), plus any other world
   setup.
 - Scenario ids that exist to exercise the engine or harness itself — not to
-  demonstrate a real gameplay setup — are prefixed `test-`, e.g.
-  `test-empty`, `test-skirmish`, `test-health`.
+  demonstrate a real gameplay setup — are prefixed `test-` (or, for the
+  single general-purpose engine scenario, exactly `test`).
 
 ## Stack
 

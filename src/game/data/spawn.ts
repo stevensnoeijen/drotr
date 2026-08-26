@@ -76,18 +76,7 @@ export function spawnUnit(
   return world.add(entity);
 }
 
-/**
- * Seeds the world with a small starting group of units so there is something to
- * see on screen: a blue line facing a red line. Temporary content for the
- * primitive-foundations phase, to be replaced once maps and spawn points land.
- */
-export function spawnInitialUnits(world: World<Entity>): void {
-  const spacing = CELL_SIZE;
-  const count = 4;
-
-  for (let i = 0; i < count; i++) {
-    const y = 120 + i * spacing;
-    spawnUnit(world, { type: 'swordsmen', team: 'blue', position: { x: 120, y } });
-    spawnUnit(world, { type: 'swordsmen', team: 'red', position: { x: 360, y } });
-  }
+/** World-space position of the center of grid cell (`col`, `row`). */
+export function cellPosition(col: number, row: number): Point {
+  return { x: col * CELL_SIZE, y: row * CELL_SIZE };
 }

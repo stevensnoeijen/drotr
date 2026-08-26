@@ -80,9 +80,23 @@ The subagent starts with no context, so the prompt must be self-contained:
   merged is out of scope for it — per CLAUDE.md that happens on merge, not
   on PR open, so leave status at "doing" and mention this in its final
   report rather than flipping it itself.
+- Tell it explicitly to stop after committing locally and getting the check
+  suite green, and NOT to `git push` or `gh pr create` on its own — pushing
+  a branch and opening a PR are visible, hard-to-reverse actions and need
+  the user's explicit go-ahead first, even though the rest of the ticket is
+  delegated. It should report back with the finished, locally-committed
+  work and wait.
 
 ## 6. Report back
 
 Summarize for the user: issue number/title, branch name, model/effort
 chosen and why, and that the subagent is running (agent id/name so it can be
 resumed via `SendMessage` if the user wants to check progress later).
+
+## 7. Push and open the PR only after approval
+
+When the subagent reports back with the implementation done and checks
+green, do not push or open the PR yourself either. Show the user a summary
+of what it did and explicitly ask for approval to push the branch and open
+the PR. Only run `git push`/`gh pr create` (or resume the subagent to do so)
+after they confirm.

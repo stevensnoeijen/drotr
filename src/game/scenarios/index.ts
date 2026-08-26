@@ -1,6 +1,4 @@
-import { testEmptyScenario } from './test-empty';
-import { testHealthScenario } from './test-health';
-import { testSkirmishScenario } from './test-skirmish';
+import { testScenario } from './test';
 import type { Scenario } from './types';
 
 export type { Scenario, SystemName } from './types';
@@ -8,11 +6,7 @@ export { ALL_DEBUG_FLAGS, parseDebugFlags, serializeDebugFlags } from './debug-f
 export type { DebugFlag } from './debug-flags';
 
 /** Every registered scenario, in the order they're listed on `/`. */
-export const scenarios: readonly Scenario[] = [
-  testEmptyScenario,
-  testSkirmishScenario,
-  testHealthScenario,
-];
+export const scenarios: readonly Scenario[] = [testScenario];
 
 const scenariosById = new Map(scenarios.map((scenario) => [scenario.id, scenario]));
 

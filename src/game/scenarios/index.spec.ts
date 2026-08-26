@@ -4,11 +4,11 @@ import { resolveScenario, scenarios } from './index';
 
 describe('resolveScenario', () => {
   it('resolves a known id', () => {
-    const result = resolveScenario(new URLSearchParams('scenario=test-empty'));
+    const result = resolveScenario(new URLSearchParams('scenario=test'));
 
     expect(result.error).toBeUndefined();
     if (!result.error) {
-      expect(result.scenario.id).toBe('test-empty');
+      expect(result.scenario.id).toBe('test');
     }
   });
 
@@ -31,9 +31,7 @@ describe('resolveScenario', () => {
     }
   });
 
-  it('registers the test-empty, test-skirmish and test-health scenarios', () => {
-    expect(scenarios.some((s) => s.id === 'test-empty')).toBe(true);
-    expect(scenarios.some((s) => s.id === 'test-skirmish')).toBe(true);
-    expect(scenarios.some((s) => s.id === 'test-health')).toBe(true);
+  it('registers the test scenario', () => {
+    expect(scenarios.some((s) => s.id === 'test')).toBe(true);
   });
 });
