@@ -17,7 +17,7 @@
     "lodash": "^4.17.21",
     "miniplex": "^2.0.0",
     "pixi-viewport": "^6.0.3",
-    "pixi.js": "^8.19.0",
+    "pixi.js": "^8.20.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "react-router": "^8.3.0",
