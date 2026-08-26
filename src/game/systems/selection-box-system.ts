@@ -16,17 +16,17 @@ export interface QueuedBox {
   shiftKey: boolean;
 }
 
-const FILL_COLOR = 0xffffff;
-const FILL_ALPHA = 0.15;
 const STROKE_COLOR = 0xffffff;
+const STROKE_WIDTH = 1;
 const SHADOW_COLOR = 0x000000;
-const SHADOW_ALPHA = 0.35;
-const SHADOW_OFFSET = 2;
+const SHADOW_ALPHA = 0.6;
+const SHADOW_OFFSET = 1;
 
 /**
  * Attaches pointer listeners to the Pixi canvas, draws a screen-space
- * drag-select rectangle (a white fill with a drop shadow, so it reads over
- * any terrain) into `overlay` while the drag is in progress, and buffers the
+ * drag-select rectangle (an unfilled white outline with a drop shadow behind
+ * the line, so it reads over any terrain) into `overlay` while the drag is
+ * in progress, and buffers the
  * finished box — once it clears {@link CLICK_MOVE_THRESHOLD} — into a queue.
  * Mirrors {@link InputSystem}: this class only owns DOM listeners and
  * drawing, {@link createSelectionBoxSystem} does the ECS hit-testing once per
@@ -110,10 +110,9 @@ export class SelectionBoxDrag {
 
     this.graphics
       .rect(x + SHADOW_OFFSET, y + SHADOW_OFFSET, width, height)
-      .fill({ color: SHADOW_COLOR, alpha: SHADOW_ALPHA })
+      .stroke({ width: STROKE_WIDTH, color: SHADOW_COLOR, alpha: SHADOW_ALPHA })
       .rect(x, y, width, height)
-      .fill({ color: FILL_COLOR, alpha: FILL_ALPHA })
-      .stroke({ width: 1, color: STROKE_COLOR, alpha: 0.9 });
+      .stroke({ width: STROKE_WIDTH, color: STROKE_COLOR, alpha: 0.9 });
   }
 
   /** Removes every queued box and returns them, oldest first. */
