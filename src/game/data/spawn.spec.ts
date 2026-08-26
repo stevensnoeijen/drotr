@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 
 import { createQueries } from '~/game/ecs/world';
 import type { Entity } from '~/game/ecs/types';
-import { spawnInitialUnits, spawnUnit } from './spawn';
+import { spawnUnit } from './spawn';
 
 describe('spawnUnit', () => {
   it('adds a renderable unit to the world, centered in its grid cell', () => {
@@ -43,19 +43,5 @@ describe('spawnUnit', () => {
     position.x = 999;
 
     expect(unit.transform?.position.x).toBe(32);
-  });
-});
-
-describe('spawnInitialUnits', () => {
-  it('seeds both teams and every unit is renderable', () => {
-    const world = new World<Entity>();
-    const queries = createQueries(world);
-
-    spawnInitialUnits(world);
-
-    expect(world.size).toBeGreaterThan(0);
-    expect(queries.renderable.size).toBe(world.size);
-    expect([...world].some((e) => e.team === 'blue')).toBe(true);
-    expect([...world].some((e) => e.team === 'red')).toBe(true);
   });
 });

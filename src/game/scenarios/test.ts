@@ -1,4 +1,4 @@
-import { spawnInitialUnits } from '~/game/data/spawn';
+import { cellPosition, spawnUnit } from '~/game/data/spawn';
 import type { Scenario } from './types';
 
 /**
@@ -14,5 +14,32 @@ export const testScenario: Scenario = {
   title: 'Test',
   description:
     'Two swordsmen pairs: one within attack range fighting, one four tiles apart not fighting.',
-  setup: (world) => spawnInitialUnits(world),
+  setup: (world) => {
+    const adjacentRow = 2;
+    const separatedRow = 9;
+
+    // Within attack range: one cell apart.
+    spawnUnit(world, {
+      type: 'swordsmen',
+      team: 'blue',
+      position: cellPosition(2, adjacentRow),
+    });
+    spawnUnit(world, {
+      type: 'swordsmen',
+      team: 'red',
+      position: cellPosition(3, adjacentRow),
+    });
+
+    // Out of attack range: four cells apart.
+    spawnUnit(world, {
+      type: 'swordsmen',
+      team: 'blue',
+      position: cellPosition(2, separatedRow),
+    });
+    spawnUnit(world, {
+      type: 'swordsmen',
+      team: 'red',
+      position: cellPosition(6, separatedRow),
+    });
+  },
 };
