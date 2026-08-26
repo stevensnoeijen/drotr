@@ -21,6 +21,8 @@ export function createQueries(world: World<Entity>) {
     renderable: world.with('transform', 'renderable'),
     /** Anything the player may click to select. */
     selectable: world.with('transform', 'selectable'),
+    /** Anything that can be hovered/inspected (debug tooltips). */
+    hoverable: world.with('transform', 'hoverable'),
     /** Anything currently selected. */
     selected: world.with('selected'),
     /** Anything that can take damage or die. */

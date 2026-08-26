@@ -1,0 +1,12 @@
+{
+  "type": "swordsmen",
+  "shape": "square",
+  "health": 15,
+  "attackDamage": 3,
+  "accuracy": 0,
+  "defence": 4,
+  "stamina": 9,
+  "speed": 2,
+  "range": 1,
+  "assets": null
+}
