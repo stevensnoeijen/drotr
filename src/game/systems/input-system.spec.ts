@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import type { Entity } from '~/game/ecs/types';
 import { createQueries } from '~/game/ecs/world';
 import { Vector2 } from '~/lib/math/Vector2';
-import { selectAt } from './input-system';
+import { selectAt, findHoverableUnitAt } from './input-system';
 
 function addUnit(world: World<Entity>, x: number, y: number, size = 20) {
   return world.add({
@@ -132,5 +132,71 @@ describe('selectAt', () => {
 
     expect(a.selected).toBeUndefined();
     expect(b.selected).toBe(true);
+  });
+});
+
+describe('findHoverableUnitAt', () => {
+  it('finds a hoverable unit at the given position', () => {
+    const world = new World<Entity>();
+    const queries = createQueries(world);
+    const unit = world.add({
+      transform: { position: { x: 100, y: 100 }, rotation: 0 },
+      renderable: { shape: 'circle', color: 0x66ccff, size: 20 },
+      hoverable: true,
+    });
+
+    const found = findHoverableUnitAt(queries, new Vector2(105, 100));
+
+    expect(found).toBe(unit);
+  });
+
+  it('finds non-selectable (red) units that are hoverable', () => {
+    const world = new World<Entity>();
+    const queries = createQueries(world);
+    const redUnit = world.add({
+      transform: { position: { x: 100, y: 100 }, rotation: 0 },
+      renderable: { shape: 'circle', color: 0xff6b6b, size: 20 },
+      hoverable: true,
+      team: 'red',
+      // Note: no 'selectable' component (red units are not selectable by player)
+    });
+
+    const found = findHoverableUnitAt(queries, new Vector2(105, 100));
+
+    expect(found).toBe(redUnit);
+  });
+
+  it('finds the nearest hoverable unit when multiple overlap', () => {
+    const world = new World<Entity>();
+    const queries = createQueries(world);
+    world.add({
+      transform: { position: { x: 95, y: 100 }, rotation: 0 },
+      renderable: { shape: 'circle', color: 0x66ccff, size: 20 },
+      hoverable: true,
+    });
+    const near = world.add({
+      transform: { position: { x: 105, y: 100 }, rotation: 0 },
+      renderable: { shape: 'circle', color: 0xff6b6b, size: 20 },
+      hoverable: true,
+      team: 'red',
+    });
+
+    const found = findHoverableUnitAt(queries, new Vector2(110, 100));
+
+    expect(found).toBe(near);
+  });
+
+  it('returns undefined when no hoverable unit is at the position', () => {
+    const world = new World<Entity>();
+    const queries = createQueries(world);
+    world.add({
+      transform: { position: { x: 100, y: 100 }, rotation: 0 },
+      renderable: { shape: 'circle', color: 0x66ccff, size: 20 },
+      hoverable: true,
+    });
+
+    const found = findHoverableUnitAt(queries, new Vector2(5000, 5000));
+
+    expect(found).toBeUndefined();
   });
 });

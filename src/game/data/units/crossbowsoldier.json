@@ -1,0 +1,12 @@
+{
+  "type": "crossbowsoldier",
+  "shape": "triangle",
+  "health": 10,
+  "attackDamage": 2,
+  "accuracy": 6,
+  "defence": 3,
+  "stamina": 6,
+  "speed": 2,
+  "range": 5,
+  "assets": null
+}

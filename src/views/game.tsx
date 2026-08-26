@@ -3,6 +3,7 @@ import { Link, useNavigate, useSearchParams } from 'react-router';
 
 import GameCanvas, { type ViewportTransform } from '~/components/game-canvas';
 import DebugOverlay, { type GameStats } from '~/components/debug-overlay';
+import UnitInfoTooltip from '~/components/unit-info-tooltip';
 import { resolveMap } from '~/game/maps';
 import {
   type DebugFlag,
@@ -184,6 +185,12 @@ export default function Game() {
         debugFlags={debugFlags}
         onToggleDebugFlag={handleToggleDebugFlag}
       />
+      {debugFlags.has('unit-info') && (
+        <UnitInfoTooltip
+          stats={stats.hoveredUnitStats}
+          pointerPosition={stats.pointerPosition}
+        />
+      )}
     </div>
   );
 }

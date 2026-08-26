@@ -13,20 +13,22 @@ import type { Viewport } from 'pixi-viewport';
 import { GameLoop } from '~/game/game-loop';
 import { SystemRunner } from '~/game/ecs/system';
 import { queries, world } from '~/game/ecs/world';
+import type { Entity } from '~/game/ecs/types';
 import type { MapDefinition } from '~/game/maps';
 import { loadTiledMap, type ParsedMap, type TerrainType } from '~/game/map/loadTiledMap';
 import { applyViewportBounds, createGameViewport } from '~/game/render/create-game-viewport';
 import { RenderSystem } from '~/game/render/render-system';
 import { CameraPanSystem } from '~/game/systems/camera-pan-system';
-import { createInputSystem, InputSystem } from '~/game/systems/input-system';
+import { createInputSystem, InputSystem, findHoverableUnitAt } from '~/game/systems/input-system';
 import { createSelectionBoxSystem, SelectionBoxDrag } from '~/game/systems/selection-box-system';
-import { CELL_SIZE, screenToGrid } from '~/lib/grid';
+import { CELL_SIZE, screenToGrid, screenToWorld } from '~/lib/grid';
 import {
   serializeDebugFlags,
   type DebugFlag,
   type Scenario,
 } from '~/game/scenarios';
 import type { GameStats } from './debug-overlay';
+import { units } from '~/game/data/units';
 
 /** Column each terrain type occupies in `maps/terrain-atlas.png`. */
 const TERRAIN_ATLAS_COLUMN: Record<TerrainType, number> = {
@@ -328,13 +330,21 @@ export default function GameCanvas({
       cameraPanSystem = new CameraPanSystem(canvas);
 
       let hoveredCell: { x: number; y: number } | undefined;
+      let hoveredUnit: Entity | undefined;
+      let pointerPosition: { x: number; y: number } | undefined;
       const handlePointerMove = (event: PointerEvent) => {
         const rect = canvas.getBoundingClientRect();
-        hoveredCell = screenToGrid(
-          { x: event.clientX - rect.left, y: event.clientY - rect.top },
-          getViewportTransform(),
-          mapBounds
-        );
+        const screenPos = { x: event.clientX - rect.left, y: event.clientY - rect.top };
+        pointerPosition = { x: event.clientX, y: event.clientY };
+        hoveredCell = screenToGrid(screenPos, getViewportTransform(), mapBounds);
+
+        // Track hovered unit for unit-info debug flag (checks all hoverable units, including red team)
+        if (debugFlagsRef.current?.has('unit-info')) {
+          const worldPos = screenToWorld(screenPos, getViewportTransform());
+          hoveredUnit = findHoverableUnitAt(queries, worldPos);
+        } else {
+          hoveredUnit = undefined;
+        }
       };
       canvas.addEventListener('pointermove', handlePointerMove);
       removePointerMoveListener = () => canvas.removeEventListener('pointermove', handlePointerMove);
@@ -361,11 +371,48 @@ export default function GameCanvas({
 
         renderSystem?.sync();
 
+        // Extract combat stats from the currently selected unit
+        const selectedUnit = queries.selected.entities[0];
+        const selectedUnitStats = selectedUnit?.unitType
+          ? {
+              id: selectedUnit.id,
+              type: selectedUnit.unitType,
+              team: selectedUnit.team,
+              color: selectedUnit.renderable?.color,
+              damage: units[selectedUnit.unitType]?.attackDamage,
+              accuracy: units[selectedUnit.unitType]?.accuracy,
+              defence: units[selectedUnit.unitType]?.defence,
+              stamina: units[selectedUnit.unitType]?.stamina,
+              speed: units[selectedUnit.unitType]?.speed,
+              range: units[selectedUnit.unitType]?.range,
+            }
+          : undefined;
+
+        // Extract combat stats from the hovered unit (unit-info debug flag only)
+        const hoveredUnitStats =
+          debugFlagsRef.current?.has('unit-info') && hoveredUnit?.unitType
+            ? {
+                id: hoveredUnit.id,
+                type: hoveredUnit.unitType,
+                team: hoveredUnit.team,
+                color: hoveredUnit.renderable?.color,
+                damage: units[hoveredUnit.unitType]?.attackDamage,
+                accuracy: units[hoveredUnit.unitType]?.accuracy,
+                defence: units[hoveredUnit.unitType]?.defence,
+                stamina: units[hoveredUnit.unitType]?.stamina,
+                speed: units[hoveredUnit.unitType]?.speed,
+                range: units[hoveredUnit.unitType]?.range,
+              }
+            : undefined;
+
         onStatsRef.current?.({
           fps: ticker.FPS,
           tick: loop.tick,
           entities: world.size,
           hoveredCell,
+          selectedUnitStats,
+          hoveredUnitStats,
+          pointerPosition,
         });
       });
 

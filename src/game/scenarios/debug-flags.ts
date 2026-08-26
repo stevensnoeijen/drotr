@@ -1,10 +1,11 @@
-/** Debug overlays a scenario can be loaded with, via `?debug=grid,health`. */
-export type DebugFlag = 'grid' | 'health';
+/** Debug overlays a scenario can be loaded with, via `?debug=grid,health,unit-info`. */
+export type DebugFlag = 'grid' | 'health' | 'unit-info';
 
 /** Every known debug flag, in the order they're offered in the UI. */
 export const ALL_DEBUG_FLAGS: readonly DebugFlag[] = [
   'grid',
   'health',
+  'unit-info',
 ];
 
 const VALID_DEBUG_FLAGS: ReadonlySet<string> = new Set(ALL_DEBUG_FLAGS);

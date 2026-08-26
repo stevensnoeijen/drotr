@@ -2,6 +2,19 @@ import { useState } from 'react';
 
 import { ALL_DEBUG_FLAGS, type DebugFlag } from '~/game/scenarios';
 
+export interface SelectedUnitStats {
+  id?: number;
+  type?: string;
+  team?: string;
+  color?: number;
+  damage?: number;
+  accuracy?: number;
+  defence?: number;
+  stamina?: number;
+  speed?: number;
+  range?: number;
+}
+
 export interface GameStats {
   /** Rendered frames per second, as reported by the Pixi ticker. */
   fps: number;
@@ -14,6 +27,12 @@ export interface GameStats {
    * map (outside the canvas, or over the canvas but past the map's bounds).
    */
   hoveredCell?: { x: number; y: number };
+  /** Combat stats of the currently selected unit, if any. */
+  selectedUnitStats?: SelectedUnitStats;
+  /** Combat stats of the unit under the pointer, if any and unit-info debug flag is on. */
+  hoveredUnitStats?: SelectedUnitStats;
+  /** Current pointer position in screen coordinates, for tooltip positioning. */
+  pointerPosition?: { x: number; y: number };
 }
 
 export interface DebugOverlayProps {
@@ -54,6 +73,22 @@ export default function DebugOverlay({
         <dd className="text-right tabular-nums">
           {stats.hoveredCell ? `${stats.hoveredCell.x}, ${stats.hoveredCell.y}` : '-'}
         </dd>
+        {stats.selectedUnitStats && (
+          <>
+            <dt>Damage</dt>
+            <dd className="text-right tabular-nums">{stats.selectedUnitStats.damage ?? '-'}</dd>
+            <dt>Accuracy</dt>
+            <dd className="text-right tabular-nums">{stats.selectedUnitStats.accuracy ?? '-'}</dd>
+            <dt>Defence</dt>
+            <dd className="text-right tabular-nums">{stats.selectedUnitStats.defence ?? '-'}</dd>
+            <dt>Stamina</dt>
+            <dd className="text-right tabular-nums">{stats.selectedUnitStats.stamina ?? '-'}</dd>
+            <dt>Speed</dt>
+            <dd className="text-right tabular-nums">{stats.selectedUnitStats.speed ?? '-'}</dd>
+            <dt>Range</dt>
+            <dd className="text-right tabular-nums">{stats.selectedUnitStats.range ?? '-'}</dd>
+          </>
+        )}
       </dl>
 
       <div className="relative">

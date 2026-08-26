@@ -85,22 +85,14 @@ export class InputSystem {
 }
 
 /**
- * Selects the nearest `selectable` unit whose square bounding box (position
- * +/- `renderable.size` on each axis) contains `worldPosition`.
- *
- * Plain click: replaces the selection with just the hit unit, or clears it
- * entirely on a miss (clicking empty ground).
- *
- * Shift-click: adds the hit unit to the existing selection instead of
- * replacing it, or toggles it off if it was already selected. A shift-click
- * miss leaves the existing selection untouched.
+ * Finds the nearest `selectable` unit whose square bounding box (position
+ * +/- `renderable.size` on each axis) contains `worldPosition`, or undefined
+ * if no unit is hit.
  */
-export function selectAt(
-  world: World<Entity>,
+export function findUnitAt(
   queries: Queries,
-  worldPosition: Vector2,
-  shiftKey = false
-): void {
+  worldPosition: Vector2
+): Entity | undefined {
   let nearest: Entity | undefined;
   let nearestDistance = Infinity;
 
@@ -118,6 +110,59 @@ export function selectAt(
       nearestDistance = distance;
     }
   }
+
+  return nearest;
+}
+
+/**
+ * Finds the nearest `hoverable` unit whose square bounding box (position
+ * +/- `renderable.size` on each axis) contains `worldPosition`, or undefined
+ * if no unit is hit. Similar to {@link findUnitAt} but includes all hoverable
+ * units regardless of team (for debug tooltips).
+ */
+export function findHoverableUnitAt(
+  queries: Queries,
+  worldPosition: Vector2
+): Entity | undefined {
+  let nearest: Entity | undefined;
+  let nearestDistance = Infinity;
+
+  for (const entity of queries.hoverable) {
+    const size = entity.renderable?.size ?? 0;
+    const position = new Vector2(entity.transform.position.x, entity.transform.position.y);
+    const dx = Math.abs(worldPosition.x - position.x);
+    const dy = Math.abs(worldPosition.y - position.y);
+    if (dx > size || dy > size) {
+      continue;
+    }
+    const distance = Vector2.distance(position, worldPosition);
+    if (distance < nearestDistance) {
+      nearest = entity;
+      nearestDistance = distance;
+    }
+  }
+
+  return nearest;
+}
+
+/**
+ * Selects the nearest `selectable` unit whose square bounding box (position
+ * +/- `renderable.size` on each axis) contains `worldPosition`.
+ *
+ * Plain click: replaces the selection with just the hit unit, or clears it
+ * entirely on a miss (clicking empty ground).
+ *
+ * Shift-click: adds the hit unit to the existing selection instead of
+ * replacing it, or toggles it off if it was already selected. A shift-click
+ * miss leaves the existing selection untouched.
+ */
+export function selectAt(
+  world: World<Entity>,
+  queries: Queries,
+  worldPosition: Vector2,
+  shiftKey = false
+): void {
+  const nearest = findUnitAt(queries, worldPosition);
 
   if (shiftKey) {
     if (nearest) {

@@ -19,6 +19,14 @@ const TEAM_COLOR: Record<Team, number> = {
  */
 export const UNIT_SIZE = 20;
 
+/** Auto-incrementing counter for entity IDs (for debugging/identification). */
+let nextEntityId = 1;
+
+/** Resets the entity ID counter (for testing). */
+export function resetEntityIdCounter(): void {
+  nextEntityId = 1;
+}
+
 export interface SpawnUnitOptions {
   type: UnitType;
   team: Team;
@@ -43,6 +51,7 @@ export function spawnUnit(
   const cellCenter = toWorldPositionCellCenter(new Vector2(position.x, position.y));
 
   const entity: Entity = {
+    id: nextEntityId++,
     transform: { position: { x: cellCenter.x, y: cellCenter.y }, rotation: 0 },
     renderable: {
       shape: definition.shape,
@@ -52,6 +61,7 @@ export function spawnUnit(
     team,
     unitType: type,
     health: { current: definition.health, max: definition.health },
+    hoverable: true,
   };
   // Only the player's own (blue) units can be click-selected; red is the
   // opposing side and has no `selectable` component at all — a query for

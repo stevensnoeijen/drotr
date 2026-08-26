@@ -40,6 +40,27 @@ export interface Health {
   max: number;
 }
 
+/** Attack range in grid cells. */
+export interface AttackRange {
+  value: number;
+}
+
+/** Damage dealt per attack. */
+export interface Damage {
+  value: number;
+}
+
+/** Cooldown time in seconds before the next attack. */
+export interface AttackCooldown {
+  /** Time until the next attack is ready, in seconds. */
+  remaining: number;
+}
+
+/** Currently targeted entity ID, if any. */
+export interface Target {
+  entityId: number;
+}
+
 /** Data describing how an entity should be drawn. The view is read-only. */
 export interface Renderable {
   shape: Shape;
@@ -67,12 +88,21 @@ export type Selectable = true;
 export type Selected = true;
 
 /**
+ * Tag marking an entity that can be hovered/inspected (for debug tooltips).
+ * Like {@link Selectable}, modelled as `true` so archetype queries can key off
+ * its presence. Includes all units regardless of team, unlike `selectable`.
+ */
+export type Hoverable = true;
+
+/**
  * The single entity contract for the whole game. Every component is optional;
  * an entity is defined by which components it happens to have, and archetype
  * queries in {@link file://./world.ts} narrow this type to the components they
  * require.
  */
 export interface Entity {
+  /** Unique identifier for this entity (for debugging/serialization). */
+  id?: number;
   transform?: Transform;
   velocity?: Velocity;
   moveSpeed?: MoveSpeed;
@@ -80,6 +110,11 @@ export interface Entity {
   renderable?: Renderable;
   selectable?: Selectable;
   selected?: Selected;
+  hoverable?: Hoverable;
   team?: Team;
   unitType?: UnitType;
+  attackRange?: AttackRange;
+  damage?: Damage;
+  attackCooldown?: AttackCooldown;
+  target?: Target;
 }
