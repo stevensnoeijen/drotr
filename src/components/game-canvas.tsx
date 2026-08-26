@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import {
   Application,
   Assets,
-  type Container,
+  Container,
   Graphics,
   Rectangle,
   Sprite,
@@ -17,7 +17,9 @@ import type { MapDefinition } from '~/game/maps';
 import { loadTiledMap, type ParsedMap, type TerrainType } from '~/game/map/loadTiledMap';
 import { applyViewportBounds, createGameViewport } from '~/game/render/create-game-viewport';
 import { RenderSystem } from '~/game/render/render-system';
+import { CameraPanSystem } from '~/game/systems/camera-pan-system';
 import { createInputSystem, InputSystem } from '~/game/systems/input-system';
+import { createSelectionBoxSystem, SelectionBoxDrag } from '~/game/systems/selection-box-system';
 import { CELL_SIZE, screenToGrid } from '~/lib/grid';
 import {
   serializeDebugFlags,
@@ -203,6 +205,8 @@ export default function GameCanvas({
     let resizeObserver: ResizeObserver | undefined;
     let renderSystem: RenderSystem | undefined;
     let inputSystem: InputSystem | undefined;
+    let selectionBoxDrag: SelectionBoxDrag | undefined;
+    let cameraPanSystem: CameraPanSystem | undefined;
     let removeKeyDownListener: (() => void) | undefined;
     let removePointerMoveListener: (() => void) | undefined;
 
@@ -239,6 +243,11 @@ export default function GameCanvas({
       });
       viewport = gameViewport;
       app.stage.addChild(gameViewport);
+      // Screen-space overlay, above the world container, for the
+      // drag-select box: it must stay put on screen while the camera pans
+      // underneath it, unlike everything added to `gameViewport`.
+      const selectionOverlay = new Container();
+      app.stage.addChild(selectionOverlay);
       gameViewport.on('moved', () =>
         onViewportChangeRef.current?.({
           x: gameViewport.x,
@@ -313,6 +322,11 @@ export default function GameCanvas({
       inputSystem = new InputSystem(canvas);
       runner.add(createInputSystem(inputSystem, queries, getViewportTransform));
 
+      selectionBoxDrag = new SelectionBoxDrag(canvas, selectionOverlay);
+      runner.add(createSelectionBoxSystem(selectionBoxDrag, queries, getViewportTransform));
+
+      cameraPanSystem = new CameraPanSystem(canvas);
+
       let hoveredCell: { x: number; y: number } | undefined;
       const handlePointerMove = (event: PointerEvent) => {
         const rect = canvas.getBoundingClientRect();
@@ -343,6 +357,7 @@ export default function GameCanvas({
 
       app.ticker.add((ticker) => {
         loop.advance(ticker.deltaMS / 1000);
+        cameraPanSystem?.update(gameViewport, ticker.deltaMS / 1000);
 
         renderSystem?.sync();
 
@@ -386,6 +401,8 @@ export default function GameCanvas({
       // Unsubscribe and destroy views before the viewport/app teardown below
       // destroys the same Pixi objects out from under it.
       inputSystem?.dispose();
+      selectionBoxDrag?.dispose();
+      cameraPanSystem?.dispose();
       renderSystem?.dispose();
       viewport?.destroy({ children: true });
       if (app) {
