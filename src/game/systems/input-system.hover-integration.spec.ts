@@ -9,16 +9,16 @@ import { units } from '~/game/data/units';
 import { spawnUnit, resetEntityIdCounter } from '~/game/data/spawn';
 
 /**
- * Integration test: verify hover detection works on red units with real spawn data,
- * matching the scenario setup in test-skirmish (blue vs red line).
+ * Integration test: verify hover detection works on red units with real
+ * spawn data, blue and red swordsmen as used by the `test` scenario.
  */
-describe('Hover detection on red units (test-skirmish scenario)', () => {
+describe('Hover detection on red units (swordsmen)', () => {
   it('detects red swordsmen when hovering, with correct stats extracted', () => {
     resetEntityIdCounter();
     const world = new World<Entity>();
     const queries = createQueries(world);
 
-    // Spawn red unit at (360, 120) matching test-skirmish setup
+    // Spawn a red swordsman at an arbitrary position
     // Note: units get snapped to cell centers by toWorldPositionCellCenter
     const redUnit = spawnUnit(world, {
       type: 'swordsmen',
@@ -77,7 +77,7 @@ describe('Hover detection on red units (test-skirmish scenario)', () => {
     const world = new World<Entity>();
     const queries = createQueries(world);
 
-    // Spawn blue unit at (120, 120) matching test-skirmish setup
+    // Spawn a blue swordsman at an arbitrary position
     // Note: units get snapped to cell centers by toWorldPositionCellCenter
     const blueUnit = spawnUnit(world, {
       type: 'swordsmen',

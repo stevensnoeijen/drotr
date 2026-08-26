@@ -76,18 +76,42 @@ export function spawnUnit(
   return world.add(entity);
 }
 
+/** World-space position of the center of grid cell (`col`, `row`). */
+function cellPosition(col: number, row: number): Point {
+  return { x: col * CELL_SIZE, y: row * CELL_SIZE };
+}
+
 /**
- * Seeds the world with a small starting group of units so there is something to
- * see on screen: a blue line facing a red line. Temporary content for the
- * primitive-foundations phase, to be replaced once maps and spawn points land.
+ * Seeds the world with two blue-vs-red swordsmen pairs, for exercising unit
+ * placement and (once combat lands) attack-range behaviour: one pair placed
+ * in adjacent cells, within attack range, so they fight immediately; the
+ * other placed four cells apart, out of attack range, so they do not.
  */
 export function spawnInitialUnits(world: World<Entity>): void {
-  const spacing = CELL_SIZE;
-  const count = 4;
+  const adjacentRow = 2;
+  const separatedRow = 5;
 
-  for (let i = 0; i < count; i++) {
-    const y = 120 + i * spacing;
-    spawnUnit(world, { type: 'swordsmen', team: 'blue', position: { x: 120, y } });
-    spawnUnit(world, { type: 'swordsmen', team: 'red', position: { x: 360, y } });
-  }
+  // Within attack range: one cell apart.
+  spawnUnit(world, {
+    type: 'swordsmen',
+    team: 'blue',
+    position: cellPosition(2, adjacentRow),
+  });
+  spawnUnit(world, {
+    type: 'swordsmen',
+    team: 'red',
+    position: cellPosition(3, adjacentRow),
+  });
+
+  // Out of attack range: four cells apart.
+  spawnUnit(world, {
+    type: 'swordsmen',
+    team: 'blue',
+    position: cellPosition(2, separatedRow),
+  });
+  spawnUnit(world, {
+    type: 'swordsmen',
+    team: 'red',
+    position: cellPosition(6, separatedRow),
+  });
 }

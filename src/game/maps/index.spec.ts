@@ -4,11 +4,11 @@ import { maps, resolveMap } from './index';
 
 describe('resolveMap', () => {
   it('resolves a known id', () => {
-    const result = resolveMap(new URLSearchParams('map=empty'));
+    const result = resolveMap(new URLSearchParams('map=grass'));
 
     expect(result.error).toBeUndefined();
     if (!result.error) {
-      expect(result.map.id).toBe('empty');
+      expect(result.map.id).toBe('grass');
     }
   });
 
@@ -31,8 +31,7 @@ describe('resolveMap', () => {
     }
   });
 
-  it('registers the empty and grass maps', () => {
-    expect(maps.some((m) => m.id === 'empty')).toBe(true);
+  it('registers the grass map', () => {
     expect(maps.some((m) => m.id === 'grass')).toBe(true);
   });
 });

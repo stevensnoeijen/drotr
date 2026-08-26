@@ -5,11 +5,6 @@ export type { MapDefinition } from './types';
 /** Every registered map, in the order they're listed on `/`. */
 export const maps: readonly MapDefinition[] = [
   {
-    id: 'empty',
-    title: 'Empty',
-    description: 'A blank canvas: no terrain, no spawn points.',
-  },
-  {
     id: 'grass',
     title: 'Grass',
     description: 'A small Tiled test map with two spawn points.',
