@@ -51,4 +51,41 @@ describe('drawTargetLines', () => {
 
     expect(() => drawTargetLines(graphics, [origin, target])).not.toThrow();
   });
+
+  it('offsets the dash phase differently for two origins sharing the same path', () => {
+    const graphics = new Graphics();
+    const target: Entity = {
+      id: 3,
+      transform: { position: { x: 200, y: 0 }, rotation: 0 },
+      team: 'red',
+    };
+    const originA: Entity = {
+      id: 1,
+      transform: { position: { x: 0, y: 0 }, rotation: 0 },
+      team: 'blue',
+      target: { entityId: 3 },
+    };
+    const originB: Entity = {
+      id: 2,
+      transform: { position: { x: 0, y: 0 }, rotation: 0 },
+      team: 'blue',
+      target: { entityId: 3 },
+    };
+
+    const moveToCallsFor = (entities: Entity[]) => {
+      const calls: Array<[number, number]> = [];
+      const original = graphics.moveTo.bind(graphics);
+      graphics.moveTo = (x: number, y: number) => {
+        calls.push([x, y]);
+        return original(x, y);
+      };
+      drawTargetLines(graphics, entities);
+      return calls;
+    };
+
+    const callsA = moveToCallsFor([originA, target]);
+    const callsB = moveToCallsFor([originB, target]);
+
+    expect(callsA).not.toEqual(callsB);
+  });
 });

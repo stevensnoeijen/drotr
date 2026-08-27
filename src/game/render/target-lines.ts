@@ -28,12 +28,19 @@ const DASH_LENGTH = 6;
  * Draws a dashed line from `from` to `to` — so overlapping target lines
  * (e.g. several units aiming at the same spot) stay visually distinguishable
  * instead of merging into one solid stroke.
+ *
+ * `phaseOffset` shifts where the dash pattern starts along the line, in
+ * world units. Two lines that run along (near enough) the same path would
+ * otherwise draw identical dashes on top of each other and still look like
+ * one solid line; giving each origin a different offset (derived from its
+ * entity id) staggers the dashes so both lines' segments remain visible.
  */
 function drawDashedLine(
   graphics: Graphics,
   from: { x: number; y: number },
   to: { x: number; y: number },
-  color: number
+  color: number,
+  phaseOffset: number
 ): void {
   const dx = to.x - from.x;
   const dy = to.y - from.y;
@@ -44,14 +51,18 @@ function drawDashedLine(
 
   const ux = dx / distance;
   const uy = dy / distance;
-  const dashCount = Math.ceil(distance / DASH_LENGTH);
+  const period = DASH_LENGTH * 2;
+  const offset = ((phaseOffset % period) + period) % period;
 
-  for (let i = 0; i < dashCount; i += 2) {
-    const start = i * DASH_LENGTH;
-    const end = Math.min(start + DASH_LENGTH, distance);
+  for (let start = -offset; start < distance; start += period) {
+    const dashStart = Math.max(start, 0);
+    const dashEnd = Math.min(start + DASH_LENGTH, distance);
+    if (dashEnd <= dashStart) {
+      continue;
+    }
     graphics
-      .moveTo(from.x + ux * start, from.y + uy * start)
-      .lineTo(from.x + ux * end, from.y + uy * end);
+      .moveTo(from.x + ux * dashStart, from.y + uy * dashStart)
+      .lineTo(from.x + ux * dashEnd, from.y + uy * dashEnd);
   }
   graphics.stroke({ width: LINE_WIDTH, color });
 }
@@ -111,8 +122,10 @@ export function drawTargetLines(graphics: Graphics, entities: Iterable<Entity>):
     const from = origin.transform.position;
     const to = targetEntity.transform.position;
 
+    const phaseOffset = (origin.id ?? 0) * DASH_LENGTH;
+
     graphics.circle(from.x, from.y, DOT_RADIUS).fill(color);
-    drawDashedLine(graphics, from, to, color);
+    drawDashedLine(graphics, from, to, color, phaseOffset);
     drawArrowHead(graphics, from, to, color);
   }
 }
