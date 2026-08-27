@@ -12,14 +12,16 @@ import type { Viewport } from 'pixi-viewport';
 
 import { GameLoop } from '~/game/game-loop';
 import { SystemRunner } from '~/game/ecs/system';
-import { queries, world } from '~/game/ecs/world';
+import { findEntityById, queries, world } from '~/game/ecs/world';
 import type { Entity } from '~/game/ecs/types';
 import type { MapDefinition } from '~/game/maps';
 import { loadTiledMap, type ParsedMap, type TerrainType } from '~/game/map/loadTiledMap';
 import { applyViewportBounds, createGameViewport } from '~/game/render/create-game-viewport';
 import { RenderSystem } from '~/game/render/render-system';
+import { drawTargetLines } from '~/game/render/target-lines';
 import { CameraPanSystem } from '~/game/systems/camera-pan-system';
 import { createInputSystem, InputSystem, findHoverableUnitAt } from '~/game/systems/input-system';
+import { createPerceptionSystem, runPerceptionScan } from '~/game/systems/perception-system';
 import { createSelectionBoxSystem, SelectionBoxDrag } from '~/game/systems/selection-box-system';
 import { CELL_SIZE, screenToGrid, screenToWorld } from '~/lib/grid';
 import {
@@ -302,6 +304,11 @@ export default function GameCanvas({
       }
       scenarioRef.current.setup(world, map);
 
+      // Units can spawn already within each other's aggro range; run one
+      // scan immediately rather than leaving them untargeted until the
+      // periodic system's first interval elapses.
+      runPerceptionScan(world, queries);
+
       // Restore a saved camera position/zoom now that the map's (clamped)
       // bounds are known. Assigned directly rather than via a pan/zoom
       // gesture, so this doesn't itself fire 'moved'/'zoomed' and re-save.
@@ -326,6 +333,8 @@ export default function GameCanvas({
 
       selectionBoxDrag = new SelectionBoxDrag(canvas, selectionOverlay);
       runner.add(createSelectionBoxSystem(selectionBoxDrag, queries, getViewportTransform));
+
+      runner.add(createPerceptionSystem(queries));
 
       cameraPanSystem = new CameraPanSystem(canvas);
 
@@ -365,11 +374,33 @@ export default function GameCanvas({
       syncGridRef.current = syncGrid;
       syncGrid();
 
+      // Redrawn every frame (below, in the ticker) rather than only on
+      // toggle, since — unlike the grid — the lines it draws move with the
+      // units.
+      const targetLines = new Graphics();
+      gameViewport.addChild(targetLines);
+
       app.ticker.add((ticker) => {
         loop.advance(ticker.deltaMS / 1000);
         cameraPanSystem?.update(gameViewport, ticker.deltaMS / 1000);
 
         renderSystem?.sync();
+
+        if (debugFlagsRef.current?.has('targets')) {
+          drawTargetLines(targetLines, queries.combatants);
+        } else {
+          targetLines.clear();
+        }
+
+        // Resolves an entity's `target.entityId` (if any) back to the
+        // targeted entity's id/type, for the entity debug dialog.
+        const resolveTarget = (entity: Entity | undefined) => {
+          if (!entity?.target) {
+            return undefined;
+          }
+          const targetEntity = findEntityById(queries.combatants, entity.target.entityId);
+          return targetEntity ? { id: targetEntity.id, type: targetEntity.unitType } : undefined;
+        };
 
         // Extract combat stats from the currently selected unit
         const selectedUnit = queries.selected.entities[0];
@@ -385,6 +416,7 @@ export default function GameCanvas({
               stamina: units[selectedUnit.unitType]?.stamina,
               speed: units[selectedUnit.unitType]?.speed,
               range: units[selectedUnit.unitType]?.range,
+              target: resolveTarget(selectedUnit),
             }
           : undefined;
 
@@ -402,6 +434,7 @@ export default function GameCanvas({
                 stamina: units[hoveredUnit.unitType]?.stamina,
                 speed: units[hoveredUnit.unitType]?.speed,
                 range: units[hoveredUnit.unitType]?.range,
+                target: resolveTarget(hoveredUnit),
               }
             : undefined;
 

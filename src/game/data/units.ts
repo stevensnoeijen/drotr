@@ -13,7 +13,8 @@ export type UnitType = 'swordsmen' | 'knight' | 'crossbowsoldier';
 /**
  * Static, per-type unit data. Core fields (type, shape, health) are present
  * on all units. Combat stats (attackDamage, accuracy, defence, stamina, speed,
- * range) are present on JSON-defined units; legacy inline units lack them.
+ * range, aggroRange) are present on JSON-defined units; legacy inline units
+ * lack them.
  */
 export interface UnitDefinition {
   type: UnitType;
@@ -25,6 +26,8 @@ export interface UnitDefinition {
   stamina?: number;
   speed?: number;
   range?: number;
+  /** Detection/aggro range in grid cells — see {@link file://../ecs/types.ts#AggroRange}. */
+  aggroRange?: number;
   assets?: unknown;
 }
 

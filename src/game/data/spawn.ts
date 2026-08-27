@@ -63,6 +63,16 @@ export function spawnUnit(
     health: { current: definition.health, max: definition.health },
     hoverable: true,
   };
+  // Legacy inline units (currently just `knight`) carry neither `range` nor
+  // `aggroRange`, so they get no `attackRange`/`aggroRange` component and
+  // simply can't acquire or be scanned as an attacker by PerceptionSystem;
+  // they can still be targeted by others via `queries.combatants`.
+  if (definition.range !== undefined) {
+    entity.attackRange = { value: definition.range };
+  }
+  if (definition.aggroRange !== undefined) {
+    entity.aggroRange = { value: definition.aggroRange };
+  }
   // Only the player's own (blue) units can be click-selected; red is the
   // opposing side and has no `selectable` component at all — a query for
   // it (as the click hit-test and RenderSystem's selection marks use) must

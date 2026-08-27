@@ -61,7 +61,7 @@ describe('DebugOverlay', () => {
       container.querySelectorAll<HTMLInputElement>('input[type="checkbox"]')
     );
     expect(checkboxes.map((c) => c.parentElement?.textContent?.trim())).toEqual(
-      ['grid', 'health', 'unit-info']
+      ['grid', 'health', 'unit-info', 'targets']
     );
     const gridCheckbox = checkboxes.find(
       (c) => c.parentElement?.textContent?.trim() === 'grid'
@@ -105,5 +105,44 @@ describe('DebugOverlay', () => {
     });
 
     expect(onToggleDebugFlag).toHaveBeenCalledWith('grid');
+  });
+
+  it('shows "none" for a selected unit with no target', () => {
+    act(() => {
+      root.render(
+        <DebugOverlay
+          stats={{
+            ...STATS,
+            selectedUnitStats: { id: 1, type: 'swordsmen', team: 'blue' },
+          }}
+          debugFlags={new Set()}
+          onToggleDebugFlag={() => {}}
+        />
+      );
+    });
+
+    expect(container.textContent).toContain('none');
+  });
+
+  it("shows a selected unit's target", () => {
+    act(() => {
+      root.render(
+        <DebugOverlay
+          stats={{
+            ...STATS,
+            selectedUnitStats: {
+              id: 1,
+              type: 'swordsmen',
+              team: 'blue',
+              target: { id: 2, type: 'crossbowsoldier' },
+            },
+          }}
+          debugFlags={new Set()}
+          onToggleDebugFlag={() => {}}
+        />
+      );
+    });
+
+    expect(container.textContent).toContain('crossbowsoldier #2');
   });
 });

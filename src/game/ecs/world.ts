@@ -27,10 +27,37 @@ export function createQueries(world: World<Entity>) {
     selected: world.with('selected'),
     /** Anything that can take damage or die. */
     living: world.with('health'),
+    /**
+     * Anything that can acquire a target: has a position, a team, an aggro
+     * (detection) range, and can be alive or dead. {@link PerceptionSystem}
+     * iterates this as the "self" side of its nearest-enemy scan.
+     */
+    targeting: world.with('transform', 'team', 'aggroRange', 'health'),
+    /**
+     * Anything that can be perceived and targeted — the candidate pool on
+     * the other side of {@link PerceptionSystem}'s scan (and any other
+     * combat system that needs "every unit with a team, alive or dead").
+     */
+    combatants: world.with('transform', 'team', 'health'),
   } as const;
 }
 
 export type Queries = ReturnType<typeof createQueries>;
+
+/**
+ * Finds the entity in `entities` whose {@link Entity.id} matches `id`, or
+ * `undefined` if none does. A plain linear scan — fine at this unit-count
+ * scale — used wherever a component stores another entity's id (e.g.
+ * {@link Target.entityId}) and needs resolving back to the entity itself.
+ */
+export function findEntityById(entities: Iterable<Entity>, id: number): Entity | undefined {
+  for (const entity of entities) {
+    if (entity.id === id) {
+      return entity;
+    }
+  }
+  return undefined;
+}
 
 /** The single, shared game world. */
 export const world = new World<Entity>();

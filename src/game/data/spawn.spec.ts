@@ -35,6 +35,54 @@ describe('spawnUnit', () => {
     expect([...queries.selectable]).toEqual([blue]);
   });
 
+  it('sets attackRange from the unit definition\'s range, in grid cells', () => {
+    const world = new World<Entity>();
+
+    const unit = spawnUnit(world, {
+      type: 'swordsmen',
+      team: 'blue',
+      position: { x: 0, y: 0 },
+    });
+
+    expect(unit.attackRange).toEqual({ value: 1 });
+  });
+
+  it('leaves attackRange unset for a unit type with no range stat', () => {
+    const world = new World<Entity>();
+
+    const unit = spawnUnit(world, {
+      type: 'knight',
+      team: 'blue',
+      position: { x: 0, y: 0 },
+    });
+
+    expect(unit.attackRange).toBeUndefined();
+  });
+
+  it('sets aggroRange from the unit definition\'s aggroRange, in grid cells', () => {
+    const world = new World<Entity>();
+
+    const unit = spawnUnit(world, {
+      type: 'swordsmen',
+      team: 'blue',
+      position: { x: 0, y: 0 },
+    });
+
+    expect(unit.aggroRange).toEqual({ value: 5 });
+  });
+
+  it('leaves aggroRange unset for a unit type with no aggroRange stat', () => {
+    const world = new World<Entity>();
+
+    const unit = spawnUnit(world, {
+      type: 'knight',
+      team: 'blue',
+      position: { x: 0, y: 0 },
+    });
+
+    expect(unit.aggroRange).toBeUndefined();
+  });
+
   it('is unaffected by later mutation of the caller-supplied position', () => {
     const world = new World<Entity>();
     const position = { x: 1, y: 2 };
