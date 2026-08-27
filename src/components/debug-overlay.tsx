@@ -13,6 +13,8 @@ export interface SelectedUnitStats {
   stamina?: number;
   speed?: number;
   range?: number;
+  /** The unit's current perception target (#94), if any. */
+  target?: { id?: number; type?: string };
 }
 
 export interface GameStats {
@@ -87,6 +89,12 @@ export default function DebugOverlay({
             <dd className="text-right tabular-nums">{stats.selectedUnitStats.speed ?? '-'}</dd>
             <dt>Range</dt>
             <dd className="text-right tabular-nums">{stats.selectedUnitStats.range ?? '-'}</dd>
+            <dt>Target</dt>
+            <dd className="text-right tabular-nums">
+              {stats.selectedUnitStats.target
+                ? `${stats.selectedUnitStats.target.type ?? '?'} #${stats.selectedUnitStats.target.id ?? '?'}`
+                : 'none'}
+            </dd>
           </>
         )}
       </dl>
