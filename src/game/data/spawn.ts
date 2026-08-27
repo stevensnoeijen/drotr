@@ -63,14 +63,15 @@ export function spawnUnit(
     health: { current: definition.health, max: definition.health },
     hoverable: true,
   };
-  // `range` (grid cells) doubles as both attack range and aggro/detection
-  // range for #94's PerceptionSystem — the issue only calls for one such
-  // stat. Legacy inline units (currently just `knight`) carry no `range` at
-  // all, so they get no `attackRange` component and simply can't acquire or
-  // be scanned as an attacker by PerceptionSystem; they can still be
-  // targeted by others via `queries.combatants`.
+  // Legacy inline units (currently just `knight`) carry neither `range` nor
+  // `aggroRange`, so they get no `attackRange`/`aggroRange` component and
+  // simply can't acquire or be scanned as an attacker by PerceptionSystem;
+  // they can still be targeted by others via `queries.combatants`.
   if (definition.range !== undefined) {
     entity.attackRange = { value: definition.range };
+  }
+  if (definition.aggroRange !== undefined) {
+    entity.aggroRange = { value: definition.aggroRange };
   }
   // Only the player's own (blue) units can be click-selected; red is the
   // opposing side and has no `selectable` component at all — a query for

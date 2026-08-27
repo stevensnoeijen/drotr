@@ -28,11 +28,11 @@ export function createQueries(world: World<Entity>) {
     /** Anything that can take damage or die. */
     living: world.with('health'),
     /**
-     * Anything that can acquire a target: has a position, a team, an attack
-     * (aggro) range, and can be alive or dead. {@link PerceptionSystem}
+     * Anything that can acquire a target: has a position, a team, an aggro
+     * (detection) range, and can be alive or dead. {@link PerceptionSystem}
      * iterates this as the "self" side of its nearest-enemy scan.
      */
-    targeting: world.with('transform', 'team', 'attackRange', 'health'),
+    targeting: world.with('transform', 'team', 'aggroRange', 'health'),
     /**
      * Anything that can be perceived and targeted — the candidate pool on
      * the other side of {@link PerceptionSystem}'s scan (and any other

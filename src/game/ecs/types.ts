@@ -45,6 +45,16 @@ export interface AttackRange {
   value: number;
 }
 
+/**
+ * Detection/aggro range in grid cells — how far a unit's `PerceptionSystem`
+ * scan looks for an enemy to target. Configured independently of
+ * {@link AttackRange} so a unit can spot an enemy from further away than it
+ * can actually hit (e.g. a melee unit aggroing before it's in strike range).
+ */
+export interface AggroRange {
+  value: number;
+}
+
 /** Damage dealt per attack. */
 export interface Damage {
   value: number;
@@ -114,6 +124,7 @@ export interface Entity {
   team?: Team;
   unitType?: UnitType;
   attackRange?: AttackRange;
+  aggroRange?: AggroRange;
   damage?: Damage;
   attackCooldown?: AttackCooldown;
   target?: Target;

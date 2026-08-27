@@ -7,11 +7,11 @@ import { CELL_SIZE } from '~/lib/grid';
 import { createPerceptionSystem, runPerceptionScan } from './perception-system';
 
 /** A minimal combatant entity, positioned in world units. */
-function makeUnit(world: World<Entity>, team: Entity['team'], x: number, attackRangeCells = 3): Entity {
+function makeUnit(world: World<Entity>, team: Entity['team'], x: number, aggroRangeCells = 3): Entity {
   return world.add({
     transform: { position: { x, y: 0 }, rotation: 0 },
     team,
-    attackRange: { value: attackRangeCells },
+    aggroRange: { value: aggroRangeCells },
     health: { current: 10, max: 10 },
   });
 }

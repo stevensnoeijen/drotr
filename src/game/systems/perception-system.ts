@@ -20,7 +20,7 @@ export const PERCEPTION_INTERVAL = 1;
  * setting or clearing its `target` component. For each attacker, the
  * candidate pool is `queries.combatants` filtered to a different team and
  * still alive (`health.current > 0`); the closest such candidate within the
- * attacker's `attackRange` (converted from grid cells to world units) wins.
+ * attacker's `aggroRange` (converted from grid cells to world units) wins.
  *
  * Re-picks from scratch every call rather than validating the existing
  * target first: a dead or out-of-range target is naturally dropped (no
@@ -45,7 +45,7 @@ export function runPerceptionScan(_world: World<Entity>, queries: Queries): void
       continue;
     }
 
-    const rangeWorld = self.attackRange.value * CELL_SIZE;
+    const rangeWorld = self.aggroRange.value * CELL_SIZE;
     const rangeSq = rangeWorld * rangeWorld;
 
     let nearest: Entity | undefined;

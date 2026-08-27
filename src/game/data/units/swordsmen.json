@@ -8,5 +8,6 @@
   "stamina": 9,
   "speed": 2,
   "range": 1,
+  "aggroRange": 5,
   "assets": null
 }
