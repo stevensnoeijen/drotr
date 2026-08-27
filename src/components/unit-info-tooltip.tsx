@@ -60,6 +60,10 @@ export default function UnitInfoTooltip({
         <dd className="text-right tabular-nums">{stats.speed ?? '-'}</dd>
         <dt>Range</dt>
         <dd className="text-right tabular-nums">{stats.range ?? '-'}</dd>
+        <dt>Target</dt>
+        <dd className="text-right tabular-nums">
+          {stats.target ? `${stats.target.type ?? '?'} #${stats.target.id ?? '?'}` : 'none'}
+        </dd>
       </dl>
     </div>
   );
