@@ -21,6 +21,41 @@ const ARROW_HEAD_LENGTH = 10;
 /** Half-angle, in radians, between the arrow head's two strokes and the shaft. */
 const ARROW_HEAD_ANGLE = Math.PI / 7;
 
+/** Length, in world units, of each dash (and the gap between dashes) in the shaft. */
+const DASH_LENGTH = 6;
+
+/**
+ * Draws a dashed line from `from` to `to` — so overlapping target lines
+ * (e.g. several units aiming at the same spot) stay visually distinguishable
+ * instead of merging into one solid stroke.
+ */
+function drawDashedLine(
+  graphics: Graphics,
+  from: { x: number; y: number },
+  to: { x: number; y: number },
+  color: number
+): void {
+  const dx = to.x - from.x;
+  const dy = to.y - from.y;
+  const distance = Math.hypot(dx, dy);
+  if (distance === 0) {
+    return;
+  }
+
+  const ux = dx / distance;
+  const uy = dy / distance;
+  const dashCount = Math.ceil(distance / DASH_LENGTH);
+
+  for (let i = 0; i < dashCount; i += 2) {
+    const start = i * DASH_LENGTH;
+    const end = Math.min(start + DASH_LENGTH, distance);
+    graphics
+      .moveTo(from.x + ux * start, from.y + uy * start)
+      .lineTo(from.x + ux * end, from.y + uy * end);
+  }
+  graphics.stroke({ width: LINE_WIDTH, color });
+}
+
 function drawArrowHead(
   graphics: Graphics,
   from: { x: number; y: number },
@@ -77,7 +112,7 @@ export function drawTargetLines(graphics: Graphics, entities: Iterable<Entity>):
     const to = targetEntity.transform.position;
 
     graphics.circle(from.x, from.y, DOT_RADIUS).fill(color);
-    graphics.moveTo(from.x, from.y).lineTo(to.x, to.y).stroke({ width: LINE_WIDTH, color });
+    drawDashedLine(graphics, from, to, color);
     drawArrowHead(graphics, from, to, color);
   }
 }
