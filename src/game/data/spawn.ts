@@ -62,6 +62,7 @@ export function spawnUnit(
     unitType: type,
     health: { current: definition.health, max: definition.health },
     hoverable: true,
+    velocity: { x: 0, y: 0 },
   };
   // Legacy inline units (currently just `knight`) carry neither `range` nor
   // `aggroRange`, so they get no `attackRange`/`aggroRange` component and
@@ -72,6 +73,9 @@ export function spawnUnit(
   }
   if (definition.aggroRange !== undefined) {
     entity.aggroRange = { value: definition.aggroRange };
+  }
+  if (definition.movementSpeed !== undefined) {
+    entity.moveSpeed = { value: definition.movementSpeed * CELL_SIZE };
   }
   // Only the player's own (blue) units can be click-selected; red is the
   // opposing side and has no `selectable` component at all — a query for

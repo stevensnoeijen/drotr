@@ -11,6 +11,7 @@ describe('Unit definitions', () => {
       defence?: number;
       stamina?: number;
       speed?: number;
+      movementSpeed?: number;
       range?: number;
     };
 
@@ -24,6 +25,8 @@ describe('Unit definitions', () => {
     expect(unit.stamina).toBeGreaterThan(0);
     expect(unit.speed).toBeDefined();
     expect(unit.speed).toBeGreaterThan(0);
+    expect(unit.movementSpeed).toBeDefined();
+    expect(unit.movementSpeed).toBeGreaterThan(0);
     expect(unit.range).toBeDefined();
     expect(unit.range).toBeGreaterThan(0);
   });
@@ -35,6 +38,7 @@ describe('Unit definitions', () => {
       defence?: number;
       stamina?: number;
       speed?: number;
+      movementSpeed?: number;
       range?: number;
     };
 
@@ -48,6 +52,8 @@ describe('Unit definitions', () => {
     expect(unit.stamina).toBeGreaterThan(0);
     expect(unit.speed).toBeDefined();
     expect(unit.speed).toBeGreaterThan(0);
+    expect(unit.movementSpeed).toBeDefined();
+    expect(unit.movementSpeed).toBeGreaterThan(0);
     expect(unit.range).toBeDefined();
     expect(unit.range).toBeGreaterThan(0);
   });
@@ -60,6 +66,7 @@ describe('Unit definitions', () => {
     expect(unit.defence).toBeUndefined();
     expect(unit.stamina).toBeUndefined();
     expect(unit.speed).toBeUndefined();
+    expect(unit.movementSpeed).toBeUndefined();
     expect(unit.range).toBeUndefined();
   });
 });
