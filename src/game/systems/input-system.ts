@@ -3,7 +3,7 @@ import type { World } from 'miniplex';
 import type { Entity } from '~/game/ecs/types';
 import type { Queries } from '~/game/ecs/world';
 import type { System } from '~/game/ecs/system';
-import { screenToWorld, type ViewportTransform } from '~/lib/grid';
+import { screenToWorld, toWorldPositionCellCenter, type ViewportTransform } from '~/lib/grid';
 import { Vector2 } from '~/lib/math/Vector2';
 import type { Point } from '~/lib/math/types';
 
@@ -238,6 +238,11 @@ export function selectAt(
  * All selected units receive the same destination, not one each spread out
  * — formation-based group orders are a later ticket (#89); for now every
  * selected unit just walks straight to the same point.
+ *
+ * The destination is snapped to the center of whichever grid cell it falls
+ * in (see {@link toWorldPositionCellCenter}) — move orders land on a cell,
+ * the same as a spawned unit's own position, rather than wherever the
+ * player happened to click.
  */
 export function moveSelectedTo(queries: Queries, worldPosition: Vector2): void {
   const selected = [...queries.selected];
@@ -246,11 +251,13 @@ export function moveSelectedTo(queries: Queries, worldPosition: Vector2): void {
     return;
   }
 
+  const destination = toWorldPositionCellCenter(worldPosition);
+
   for (const entity of selected) {
     if (entity.team !== 'blue') {
       continue;
     }
-    entity.moveTarget = { position: { x: worldPosition.x, y: worldPosition.y } };
+    entity.moveTarget = { position: { x: destination.x, y: destination.y } };
   }
 }
 
