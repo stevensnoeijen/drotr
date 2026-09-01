@@ -13,15 +13,18 @@ const TEAM_COLOR: Record<Team, number> = {
 };
 
 /**
- * Rendered radius/half-extent of a unit shape, in world units — sized so
- * the shape, its selection marks, and its health bar (drawn below it) all
- * fit inside the {@link file://../../lib/grid.ts#CELL_SIZE} (32px) grid
- * cell it's centered in, rather than spilling into neighboring cells. This
- * is placeholder-primitive sizing (one size for every type); real unit
+ * Rendered radius/half-extent of a unit shape, in world units — half of
+ * the 32x32px footprint that fills the
+ * {@link file://../../lib/grid.ts#CELL_SIZE} (32px) grid cell it's
+ * centered in. Since the shape itself already reaches the cell's edges,
+ * its selection marks and health bar (see `render-system.ts`,
+ * `health-bar.ts`) are drawn inset from those edges rather than outside
+ * them, so the whole composition still fits inside one cell. This is
+ * placeholder-primitive sizing (one size for every type); real unit
  * sprites vary (32x32 to 64x64) and per-type sizing is asset-integration
  * work (phase 6), not this constant.
  */
-export const UNIT_SIZE = 8;
+export const UNIT_SIZE = 16;
 
 /** Auto-incrementing counter for entity IDs (for debugging/identification). */
 let nextEntityId = 1;

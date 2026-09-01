@@ -26,20 +26,25 @@ interface EntityView {
   selectionMarks?: Graphics;
 }
 
-/** Gap, in world units, between a unit's shape and its selection marks. */
-const SELECTION_MARK_GAP = 3;
+/**
+ * Inset, in world units, of a unit's selection marks from its shape's own
+ * edge — inward rather than outward, so the marks stay inside the same
+ * grid cell as the shape (which already reaches the cell's edges) instead
+ * of spilling into the neighboring cell.
+ */
+const SELECTION_MARK_INSET = 2;
 
 /** Length, in world units, of each corner mark's two arms. */
 const SELECTION_MARK_ARM_LENGTH = 4;
 
 /**
  * Draws small black "⌐"-shaped marks at the top-left and top-right corners
- * of a unit's bounding box, offset outward by {@link SELECTION_MARK_GAP}.
+ * of a unit's bounding box, inset inward by {@link SELECTION_MARK_INSET}.
  */
 function drawSelectionMarks(size: number): Graphics {
-  const left = -size - SELECTION_MARK_GAP;
-  const right = size + SELECTION_MARK_GAP;
-  const top = -size - SELECTION_MARK_GAP;
+  const left = -size + SELECTION_MARK_INSET;
+  const right = size - SELECTION_MARK_INSET;
+  const top = -size + SELECTION_MARK_INSET;
   const arm = SELECTION_MARK_ARM_LENGTH;
 
   return new Graphics()
