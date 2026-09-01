@@ -25,6 +25,8 @@ export interface UnitDefinition {
   defence?: number;
   stamina?: number;
   speed?: number;
+  /** Movement speed in grid cells per second — see {@link file://../ecs/types.ts#MoveSpeed}. */
+  movementSpeed?: number;
   range?: number;
   /** Detection/aggro range in grid cells — see {@link file://../ecs/types.ts#AggroRange}. */
   aggroRange?: number;
