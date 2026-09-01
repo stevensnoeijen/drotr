@@ -21,7 +21,9 @@ import { RenderSystem } from '~/game/render/render-system';
 import { drawTargetLines } from '~/game/render/target-lines';
 import { CameraPanSystem } from '~/game/systems/camera-pan-system';
 import { createInputSystem, InputSystem, findHoverableUnitAt } from '~/game/systems/input-system';
+import { createMoveVelocitySystem } from '~/game/systems/move-velocity-system';
 import { createPerceptionSystem, runPerceptionScan } from '~/game/systems/perception-system';
+import { createSeekSystem } from '~/game/systems/seek-system';
 import { createSelectionBoxSystem, SelectionBoxDrag } from '~/game/systems/selection-box-system';
 import { CELL_SIZE, screenToGrid, screenToWorld } from '~/lib/grid';
 import {
@@ -335,6 +337,11 @@ export default function GameCanvas({
       runner.add(createSelectionBoxSystem(selectionBoxDrag, queries, getViewportTransform));
 
       runner.add(createPerceptionSystem(queries));
+      // Seek reads the target set above/by the periodic scan; movement
+      // integrates the velocity seek just set, both within the same fixed
+      // step so a freshly (re)targeted unit starts moving immediately.
+      runner.add(createSeekSystem(queries));
+      runner.add(createMoveVelocitySystem(queries));
 
       cameraPanSystem = new CameraPanSystem(canvas);
 
