@@ -54,15 +54,6 @@ export const testScenario: Scenario = {
       position: cellPosition(6, separatedRow),
     });
 
-    // Isolated, far from every red unit: for exercising click-to-move
-    // (and, once #88 lands, pathfinding around the maze block) without
-    // combat kicking in.
-    spawnUnit(world, {
-      type: 'swordsmen',
-      team: 'blue',
-      position: tilePosition(map, 55, 55),
-    });
-
     // Just below (south of) the maze block, lined up with its bottom exit
     // (tile cols 44-46), for exercising click-to-move into and through the
     // maze corridors.

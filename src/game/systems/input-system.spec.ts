@@ -205,6 +205,19 @@ describe('moveSelectedTo', () => {
     expect(blueUnit.moveTarget).toEqual({ position: { x: 10, y: 20 } });
     expect(redUnit.moveTarget).toBeUndefined();
   });
+
+  it('replaces an in-progress move order with a new one on a second right-click', () => {
+    const world = new World<Entity>();
+    const queries = createQueries(world);
+    const unit = addTeamUnit(world, 'blue', true);
+
+    moveSelectedTo(queries, new Vector2(300, 400));
+    expect(unit.moveTarget).toEqual({ position: { x: 300, y: 400 } });
+
+    moveSelectedTo(queries, new Vector2(10, 20));
+
+    expect(unit.moveTarget).toEqual({ position: { x: 10, y: 20 } });
+  });
 });
 
 describe('InputSystem', () => {
