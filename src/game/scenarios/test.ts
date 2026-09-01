@@ -50,5 +50,13 @@ export const testScenario: Scenario = {
       team: 'blue',
       position: cellPosition(55, 55),
     });
+
+    // Just below the maze block's entrance, for exercising click-to-move
+    // into and through the maze corridors.
+    spawnUnit(world, {
+      type: 'swordsmen',
+      team: 'blue',
+      position: cellPosition(18, 18),
+    });
   },
 };
