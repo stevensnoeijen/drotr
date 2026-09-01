@@ -7,7 +7,7 @@ export const HEALTH_BAR_WIDTH = 24;
 /** Overall height of a unit's health bar, in world units. */
 export const HEALTH_BAR_HEIGHT = 4;
 /** Vertical gap between the bottom of a unit's shape and its health bar. */
-export const HEALTH_BAR_GAP = 6;
+export const HEALTH_BAR_GAP = 3;
 
 /** Background fill colour, behind the (narrower) health fill. */
 const BACKGROUND_COLOR = 0x333333;

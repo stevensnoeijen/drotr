@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
 import { ALL_DEBUG_FLAGS, type DebugFlag } from '~/game/scenarios';
+import { usePageZoomCounterScale } from '~/lib/use-page-zoom-scale';
 
 export interface SelectedUnitStats {
   id?: number;
@@ -51,6 +52,11 @@ export interface DebugOverlayProps {
  * dropdown of debug flags — drawn on top of the canvas. The tick count
  * advances at the fixed-timestep rate independently of the render FPS; that
  * divergence is the point of the stats readout.
+ *
+ * Counter-scaled via {@link usePageZoomCounterScale} against the browser's
+ * own page zoom (Ctrl+scroll/pinch), so it stays a fixed physical size —
+ * unrelated to the game's own camera zoom, which is a Pixi viewport
+ * transform on the canvas and never touches this DOM overlay at all.
  */
 export default function DebugOverlay({
   stats,
@@ -59,10 +65,12 @@ export default function DebugOverlay({
   className,
 }: DebugOverlayProps) {
   const [open, setOpen] = useState(false);
+  const counterScale = usePageZoomCounterScale();
 
   return (
     <div
       className={`absolute left-2 top-2 flex flex-col items-start gap-2 font-mono text-xs text-green-400 ${className ?? ''}`}
+      style={{ transform: `scale(${counterScale})`, transformOrigin: 'top left' }}
     >
       <dl className="pointer-events-none m-0 grid grid-cols-[auto_auto] gap-x-3 rounded bg-black/60 px-3 py-2">
         <dt>FPS</dt>

@@ -27,10 +27,10 @@ interface EntityView {
 }
 
 /** Gap, in world units, between a unit's shape and its selection marks. */
-const SELECTION_MARK_GAP = 4;
+const SELECTION_MARK_GAP = 3;
 
 /** Length, in world units, of each corner mark's two arms. */
-const SELECTION_MARK_ARM_LENGTH = 6;
+const SELECTION_MARK_ARM_LENGTH = 4;
 
 /**
  * Draws small black "⌐"-shaped marks at the top-left and top-right corners

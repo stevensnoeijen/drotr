@@ -159,7 +159,7 @@ describe('moveSelectedTo', () => {
 
     moveSelectedTo(queries, new Vector2(300, 400));
 
-    expect(unit.moveTarget).toEqual({ position: { x: 288, y: 416 } });
+    expect(unit.moveTarget).toEqual({ position: { x: 304, y: 400 } });
   });
 
   it('does nothing with an empty selection', () => {
@@ -190,8 +190,8 @@ describe('moveSelectedTo', () => {
 
     moveSelectedTo(queries, new Vector2(50, 60));
 
-    expect(a.moveTarget).toEqual({ position: { x: 32, y: 32 } });
-    expect(b.moveTarget).toEqual({ position: { x: 32, y: 32 } });
+    expect(a.moveTarget).toEqual({ position: { x: 48, y: 48 } });
+    expect(b.moveTarget).toEqual({ position: { x: 48, y: 48 } });
   });
 
   it('only moves the selected blue units, leaving a selected red unit alone', () => {
@@ -202,7 +202,7 @@ describe('moveSelectedTo', () => {
 
     moveSelectedTo(queries, new Vector2(10, 20));
 
-    expect(blueUnit.moveTarget).toEqual({ position: { x: 32, y: 32 } });
+    expect(blueUnit.moveTarget).toEqual({ position: { x: 16, y: 16 } });
     expect(redUnit.moveTarget).toBeUndefined();
   });
 
@@ -212,11 +212,11 @@ describe('moveSelectedTo', () => {
     const unit = addTeamUnit(world, 'blue', true);
 
     moveSelectedTo(queries, new Vector2(300, 400));
-    expect(unit.moveTarget).toEqual({ position: { x: 288, y: 416 } });
+    expect(unit.moveTarget).toEqual({ position: { x: 304, y: 400 } });
 
     moveSelectedTo(queries, new Vector2(10, 20));
 
-    expect(unit.moveTarget).toEqual({ position: { x: 32, y: 32 } });
+    expect(unit.moveTarget).toEqual({ position: { x: 16, y: 16 } });
   });
 });
 

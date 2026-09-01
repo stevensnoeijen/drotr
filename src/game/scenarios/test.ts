@@ -1,17 +1,5 @@
 import { cellPosition, spawnUnit } from '~/game/data/spawn';
-import type { ParsedMap } from '~/game/map/loadTiledMap';
 import type { Scenario } from './types';
-
-/**
- * World-space position of the center of a map *tile* (as opposed to
- * {@link cellPosition}'s coarser 64px unit-placement grid — the `test` map's
- * tiles are 32px, so a raw `cellPosition` col/row doesn't correspond to a
- * tile at all and can land units well outside the map).
- */
-function tilePosition(map: ParsedMap | undefined, col: number, row: number) {
-  const tileSize = map?.tileSize ?? 32;
-  return { x: col * tileSize + tileSize / 2, y: row * tileSize + tileSize / 2 };
-}
 
 /**
  * Two blue-vs-red swordsmen pairs, exercising unit rendering, placement and
@@ -26,7 +14,7 @@ export const testScenario: Scenario = {
   title: 'Test',
   description:
     'Two swordsmen pairs: one within attack range fighting, one four tiles apart not fighting.',
-  setup: (world, map) => {
+  setup: (world) => {
     const adjacentRow = 2;
     const separatedRow = 9;
 
@@ -55,12 +43,13 @@ export const testScenario: Scenario = {
     });
 
     // Just below (south of) the maze block, lined up with its bottom exit
-    // (tile cols 44-46), for exercising click-to-move into and through the
-    // maze corridors.
+    // (cols 44-46), for exercising click-to-move into and through the maze
+    // corridors. CELL_SIZE matches the map's tile size, so cellPosition's
+    // col/row lines up directly with the map's own tile grid.
     spawnUnit(world, {
       type: 'swordsmen',
       team: 'blue',
-      position: tilePosition(map, 45, 50),
+      position: cellPosition(45, 50),
     });
   },
 };
