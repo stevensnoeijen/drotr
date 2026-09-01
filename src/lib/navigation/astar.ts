@@ -182,20 +182,17 @@ export const isPositionInsideGrid = (
 };
 
 /**
- * Whether a diagonal step from (`x`, `y`) by (`dx`, `dy`) squeezes between
- * two walls that both orthogonally block it — the classic "cut through a
- * wall corner" move.
+ * Whether a diagonal step from (`x`, `y`) by (`dx`, `dy`) clips a wall
+ * corner — the classic "cut through a wall corner" move.
  *
- * The rule is deliberately the *permissive* one: a diagonal is rejected only
- * when **both** orthogonal neighbours it passes between are blocked, i.e.
- * when the step would pass through a spot no unit could physically fit
- * through. Brushing a single wall corner is still allowed, which is what
- * keeps a unit hugging the outside of a wall instead of taking a detour of
- * two straight steps around every corner.
+ * The rule is strict: a diagonal is rejected when **either** orthogonal
+ * neighbour it passes between is blocked, not just when both are. A unit
+ * can never step diagonally past a wall, even brushing a single corner of
+ * it — it must take the two straight steps around instead.
  *
- * Path smoothing ({@link hasLineOfSight}) is stricter than this and refuses
- * to merge waypoints across even a single corner, so the smoothed polyline a
- * unit actually walks never clips a wall corner.
+ * Path smoothing ({@link hasLineOfSight}) applies the same rule when
+ * merging waypoints, so the smoothed polyline a unit actually walks never
+ * clips a wall corner either.
  */
 const cutsWallCorner = (
   grid: CollisionGrid,
@@ -208,7 +205,7 @@ const cutsWallCorner = (
     return false;
   }
 
-  return !isWalkable(grid, x + dx, y) && !isWalkable(grid, x, y + dy);
+  return !isWalkable(grid, x + dx, y) || !isWalkable(grid, x, y + dy);
 };
 
 export const generateAdjacentNodes = (
@@ -417,11 +414,10 @@ export const astar = (grid: GridLike, start: Point, end: Point): Path => {
  * through is tested, not just the ones a plain Bresenham line would visit.
  *
  * Where the segment crosses exactly through a shared corner, *both* cells
- * touching that corner must be walkable. That is stricter than the search's
- * own {@link cutsWallCorner} rule, and deliberately so: smoothing may only
- * ever delete waypoints from an already-valid path, so being more
- * conservative here can never invent a route the search wouldn't allow — it
- * just leaves a corner-hugging step un-merged.
+ * touching that corner must be walkable — the same strict rule the search
+ * applies via {@link cutsWallCorner}, so smoothing can only ever delete
+ * waypoints from an already-valid path and never invent a route the search
+ * wouldn't allow.
  */
 export const hasLineOfSight = (
   grid: CollisionGrid,

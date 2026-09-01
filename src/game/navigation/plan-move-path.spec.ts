@@ -43,12 +43,7 @@ describe('planMovePath', () => {
     );
 
     expect(status).toBe('found');
-    expect(waypoints).toEqual([
-      centre(3, 3),
-      centre(4, 4),
-      centre(5, 3),
-      centre(8, 0),
-    ]);
+    expect(waypoints).toEqual([centre(3, 4), centre(5, 4), centre(8, 0)]);
   });
 
   it('drops the starting cell, since the unit is already standing on it', () => {

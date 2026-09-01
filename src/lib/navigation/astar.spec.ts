@@ -209,14 +209,15 @@ describe('astar', () => {
 
     const path = astar(grid, start, end);
 
-    expect(path).toHaveLength(9);
+    expect(path).toHaveLength(10);
     expect(path[1].position).toEqual({ x: 1, y: 1 });
     expect(path[2].position).toEqual({ x: 2, y: 2 });
     expect(path[3].position).toEqual({ x: 3, y: 3 });
     expect(path[4].position).toEqual({ x: 3, y: 4 });
-    expect(path[5].position).toEqual({ x: 4, y: 5 });
-    expect(path[6].position).toEqual({ x: 5, y: 6 });
-    expect(path[7].position).toEqual({ x: 6, y: 6 });
+    expect(path[5].position).toEqual({ x: 3, y: 5 });
+    expect(path[6].position).toEqual({ x: 4, y: 5 });
+    expect(path[7].position).toEqual({ x: 5, y: 5 });
+    expect(path[8].position).toEqual({ x: 6, y: 6 });
   });
 
   it('should go though the maze', () => {
@@ -237,7 +238,7 @@ describe('astar', () => {
 
     const path = astar(maze, start, end);
 
-    expect(path).toHaveLength(39);
+    expect(path).toHaveLength(51);
   });
 });
 
@@ -336,7 +337,7 @@ describe('corner cutting', () => {
     expect(nodes).toHaveLength(0);
   });
 
-  it('allows a diagonal that only brushes one wall corner', () => {
+  it('rejects a diagonal that only brushes one wall corner', () => {
     const grid = gridFrom(`
       .#
       ..
@@ -344,10 +345,7 @@ describe('corner cutting', () => {
 
     const nodes = generateAdjacentNodes(grid, new Node(null, { x: 0, y: 0 }));
 
-    expect(nodes.map((node) => node.position)).toEqual([
-      { x: 0, y: 1 },
-      { x: 1, y: 1 },
-    ]);
+    expect(nodes.map((node) => node.position)).toEqual([{ x: 0, y: 1 }]);
   });
 
   it('cannot squeeze through a diagonal-only gap', () => {
@@ -386,9 +384,8 @@ describe('findPath', () => {
     expect(result.status).toBe('found');
     expect(result.cells).toEqual([
       { x: 0, y: 0 },
-      { x: 3, y: 3 },
-      { x: 4, y: 4 },
-      { x: 5, y: 3 },
+      { x: 3, y: 4 },
+      { x: 5, y: 4 },
       { x: 8, y: 0 },
     ]);
   });
@@ -409,7 +406,7 @@ describe('findPath', () => {
       smooth: false,
     });
 
-    expect(raw.cells).toHaveLength(9);
+    expect(raw.cells).toHaveLength(11);
     expect(raw.cells.at(0)).toEqual({ x: 0, y: 0 });
     expect(raw.cells.at(-1)).toEqual({ x: 8, y: 0 });
   });
