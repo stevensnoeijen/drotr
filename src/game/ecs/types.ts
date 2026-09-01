@@ -71,6 +71,21 @@ export interface Target {
   entityId: number;
 }
 
+/**
+ * A player-issued move order: a world-space destination a unit is walking
+ * straight toward. Added to selected blue units by a right-click (see
+ * `~/game/systems/input-system`), driven by
+ * `~/game/systems/move-target-system`, and removed once the unit arrives —
+ * its mere presence is also what `?debug=paths` draws a line for.
+ *
+ * Deliberately just a point, not a path: this ticket is straight-line-only
+ * prep for #88, which will replace this with a waypoint queue once A*
+ * lands, reusing the same `paths` debug flag.
+ */
+export interface MoveTarget {
+  position: Point;
+}
+
 /** Data describing how an entity should be drawn. The view is read-only. */
 export interface Renderable {
   shape: Shape;
@@ -128,4 +143,5 @@ export interface Entity {
   damage?: Damage;
   attackCooldown?: AttackCooldown;
   target?: Target;
+  moveTarget?: MoveTarget;
 }

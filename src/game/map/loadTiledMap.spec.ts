@@ -13,9 +13,9 @@ import {
 } from './loadTiledMap';
 
 const FIXTURE_DIR = path.resolve(import.meta.dirname, '../../../public/maps');
-const mapJson = fs.readFileSync(path.join(FIXTURE_DIR, 'grass.tmj'), 'utf-8');
+const mapJson = fs.readFileSync(path.join(FIXTURE_DIR, 'test.tmj'), 'utf-8');
 const tilesetXml = fs.readFileSync(
-  path.join(FIXTURE_DIR, 'grass.tsx'),
+  path.join(FIXTURE_DIR, 'test.tsx'),
   'utf-8'
 );
 const fixtureMap = JSON.parse(mapJson) as TiledMap;
@@ -42,7 +42,7 @@ describe('parseTiledMap', () => {
         counts[type]++;
       }
     }
-    expect(counts).toEqual({ grass: 3764, wall: 252, water: 80 });
+    expect(counts).toEqual({ grass: 3512, wall: 584, water: 0 });
     expect(result.collision.length).toBe(64 * 64);
     // Every non-grass tile blocks movement.
     expect([...result.collision].filter((v) => v === 1).length).toBe(
@@ -110,7 +110,7 @@ describe('loadTiledMap', () => {
       })
     );
 
-    const result = await loadTiledMap('/maps/grass.tmj');
+    const result = await loadTiledMap('/maps/test.tmj');
 
     expect(result.width).toBe(64);
     expect(result.spawns).toHaveLength(2);

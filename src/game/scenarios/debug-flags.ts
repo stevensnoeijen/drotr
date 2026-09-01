@@ -1,5 +1,5 @@
 /** Debug overlays a scenario can be loaded with, via `?debug=grid,health,unit-info`. */
-export type DebugFlag = 'grid' | 'health' | 'unit-info' | 'targets';
+export type DebugFlag = 'grid' | 'health' | 'unit-info' | 'targets' | 'paths';
 
 /** Every known debug flag, in the order they're offered in the UI. */
 export const ALL_DEBUG_FLAGS: readonly DebugFlag[] = [
@@ -7,6 +7,7 @@ export const ALL_DEBUG_FLAGS: readonly DebugFlag[] = [
   'health',
   'unit-info',
   'targets',
+  'paths',
 ];
 
 const VALID_DEBUG_FLAGS: ReadonlySet<string> = new Set(ALL_DEBUG_FLAGS);

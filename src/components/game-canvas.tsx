@@ -19,8 +19,10 @@ import { loadTiledMap, type ParsedMap, type TerrainType } from '~/game/map/loadT
 import { applyViewportBounds, createGameViewport } from '~/game/render/create-game-viewport';
 import { RenderSystem } from '~/game/render/render-system';
 import { drawTargetLines } from '~/game/render/target-lines';
+import { drawMoveLines } from '~/game/render/move-lines';
 import { CameraPanSystem } from '~/game/systems/camera-pan-system';
 import { createInputSystem, InputSystem, findHoverableUnitAt } from '~/game/systems/input-system';
+import { createMoveTargetSystem } from '~/game/systems/move-target-system';
 import { createMoveVelocitySystem } from '~/game/systems/move-velocity-system';
 import { createPerceptionSystem, runPerceptionScan } from '~/game/systems/perception-system';
 import { createSeekSystem } from '~/game/systems/seek-system';
@@ -341,6 +343,11 @@ export default function GameCanvas({
       // integrates the velocity seek just set, both within the same fixed
       // step so a freshly (re)targeted unit starts moving immediately.
       runner.add(createSeekSystem(queries));
+      // Runs after SeekSystem so a player-issued move order (right-click)
+      // takes priority over auto-attack seeking for any unit that somehow
+      // has both: MoveTargetSystem's velocity write wins going into the
+      // integration step below.
+      runner.add(createMoveTargetSystem(queries));
       runner.add(createMoveVelocitySystem(queries));
 
       cameraPanSystem = new CameraPanSystem(canvas);
@@ -387,6 +394,9 @@ export default function GameCanvas({
       const targetLines = new Graphics();
       gameViewport.addChild(targetLines);
 
+      const moveLines = new Graphics();
+      gameViewport.addChild(moveLines);
+
       app.ticker.add((ticker) => {
         loop.advance(ticker.deltaMS / 1000);
         cameraPanSystem?.update(gameViewport, ticker.deltaMS / 1000);
@@ -397,6 +407,12 @@ export default function GameCanvas({
           drawTargetLines(targetLines, queries.combatants);
         } else {
           targetLines.clear();
+        }
+
+        if (debugFlagsRef.current?.has('paths')) {
+          drawMoveLines(moveLines, queries.movable);
+        } else {
+          moveLines.clear();
         }
 
         // Resolves an entity's `target.entityId` (if any) back to the

@@ -4,7 +4,13 @@ import { describe, expect, it } from 'vitest';
 import type { Entity } from '~/game/ecs/types';
 import { createQueries } from '~/game/ecs/world';
 import { Vector2 } from '~/lib/math/Vector2';
-import { selectAt, findHoverableUnitAt } from './input-system';
+import {
+  selectAt,
+  findHoverableUnitAt,
+  moveSelectedTo,
+  InputSystem,
+  CLICK_MOVE_THRESHOLD,
+} from './input-system';
 
 function addUnit(world: World<Entity>, x: number, y: number, size = 20) {
   return world.add({
@@ -132,6 +138,158 @@ describe('selectAt', () => {
 
     expect(a.selected).toBeUndefined();
     expect(b.selected).toBe(true);
+  });
+});
+
+function addTeamUnit(world: World<Entity>, team: Entity['team'], selected = false) {
+  return world.add({
+    transform: { position: { x: 0, y: 0 }, rotation: 0 },
+    renderable: { shape: 'circle', color: 0x66ccff, size: 20 },
+    selectable: true,
+    team,
+    selected: selected || undefined,
+  });
+}
+
+describe('moveSelectedTo', () => {
+  it('issues a move order to a selected blue unit', () => {
+    const world = new World<Entity>();
+    const queries = createQueries(world);
+    const unit = addTeamUnit(world, 'blue', true);
+
+    moveSelectedTo(queries, new Vector2(300, 400));
+
+    expect(unit.moveTarget).toEqual({ position: { x: 300, y: 400 } });
+  });
+
+  it('does nothing with an empty selection', () => {
+    const world = new World<Entity>();
+    const queries = createQueries(world);
+    addTeamUnit(world, 'blue', false);
+
+    moveSelectedTo(queries, new Vector2(300, 400));
+
+    expect([...queries.selected]).toHaveLength(0);
+  });
+
+  it('does nothing when only a red unit is selected', () => {
+    const world = new World<Entity>();
+    const queries = createQueries(world);
+    const redUnit = addTeamUnit(world, 'red', true);
+
+    moveSelectedTo(queries, new Vector2(300, 400));
+
+    expect(redUnit.moveTarget).toBeUndefined();
+  });
+
+  it('issues a move order to every selected blue unit on a single right-click', () => {
+    const world = new World<Entity>();
+    const queries = createQueries(world);
+    const a = addTeamUnit(world, 'blue', true);
+    const b = addTeamUnit(world, 'blue', true);
+
+    moveSelectedTo(queries, new Vector2(50, 60));
+
+    expect(a.moveTarget).toEqual({ position: { x: 50, y: 60 } });
+    expect(b.moveTarget).toEqual({ position: { x: 50, y: 60 } });
+  });
+
+  it('only moves the selected blue units, leaving a selected red unit alone', () => {
+    const world = new World<Entity>();
+    const queries = createQueries(world);
+    const blueUnit = addTeamUnit(world, 'blue', true);
+    const redUnit = addTeamUnit(world, 'red', true);
+
+    moveSelectedTo(queries, new Vector2(10, 20));
+
+    expect(blueUnit.moveTarget).toEqual({ position: { x: 10, y: 20 } });
+    expect(redUnit.moveTarget).toBeUndefined();
+  });
+});
+
+describe('InputSystem', () => {
+  function makeCanvas(): HTMLCanvasElement {
+    const canvas = document.createElement('canvas');
+    canvas.getBoundingClientRect = () =>
+      ({ left: 0, top: 0, right: 800, bottom: 600, width: 800, height: 600 }) as DOMRect;
+    document.body.appendChild(canvas);
+    return canvas;
+  }
+
+  it('suppresses the browser context menu on right-click', () => {
+    const canvas = makeCanvas();
+    const input = new InputSystem(canvas);
+
+    const event = new MouseEvent('contextmenu', {
+      clientX: 100,
+      clientY: 100,
+      cancelable: true,
+    });
+    canvas.dispatchEvent(event);
+
+    expect(event.defaultPrevented).toBe(true);
+    input.dispose();
+  });
+
+  it('queues a move order from a contextmenu event, converted to canvas-relative coordinates', () => {
+    const canvas = makeCanvas();
+    const input = new InputSystem(canvas);
+
+    canvas.dispatchEvent(
+      new MouseEvent('contextmenu', { clientX: 150, clientY: 120, cancelable: true })
+    );
+
+    expect(input.drainMoveOrders()).toEqual([{ x: 150, y: 120 }]);
+    input.dispose();
+  });
+
+  it('a right-button pointerdown/up does not queue a left-click selection', () => {
+    const canvas = makeCanvas();
+    const input = new InputSystem(canvas);
+
+    canvas.dispatchEvent(
+      new PointerEvent('pointerdown', { clientX: 100, clientY: 100, button: 2 })
+    );
+    window.dispatchEvent(
+      new PointerEvent('pointerup', { clientX: 100, clientY: 100, button: 2 })
+    );
+
+    expect(input.drain()).toEqual([]);
+    input.dispose();
+  });
+
+  it('left-click selection (single click) still queues normally alongside right-click handling', () => {
+    const canvas = makeCanvas();
+    const input = new InputSystem(canvas);
+
+    canvas.dispatchEvent(
+      new PointerEvent('pointerdown', { clientX: 50, clientY: 50, button: 0 })
+    );
+    window.dispatchEvent(
+      new PointerEvent('pointerup', { clientX: 50, clientY: 50, button: 0 })
+    );
+
+    expect(input.drain()).toEqual([{ x: 50, y: 50, shiftKey: false }]);
+    input.dispose();
+  });
+
+  it('left-click drag-select gesture is unaffected: pointerdown/up beyond the click threshold queues no click', () => {
+    const canvas = makeCanvas();
+    const input = new InputSystem(canvas);
+
+    canvas.dispatchEvent(
+      new PointerEvent('pointerdown', { clientX: 0, clientY: 0, button: 0 })
+    );
+    window.dispatchEvent(
+      new PointerEvent('pointerup', {
+        clientX: CLICK_MOVE_THRESHOLD + 10,
+        clientY: 0,
+        button: 0,
+      })
+    );
+
+    expect(input.drain()).toEqual([]);
+    input.dispose();
   });
 });
 

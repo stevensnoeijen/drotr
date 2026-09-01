@@ -5,10 +5,11 @@ export type { MapDefinition } from './types';
 /** Every registered map, in the order they're listed on `/`. */
 export const maps: readonly MapDefinition[] = [
   {
-    id: 'grass',
-    title: 'Grass',
-    description: 'A small Tiled test map with two spawn points.',
-    mapSource: `${import.meta.env.BASE_URL}maps/grass.tmj`,
+    id: 'test',
+    title: 'Test',
+    description:
+      'A Tiled test map with two spawn points and a walled maze block, for exercising pathfinding around obstacles.',
+    mapSource: `${import.meta.env.BASE_URL}maps/test.tmj`,
   },
 ];
 
