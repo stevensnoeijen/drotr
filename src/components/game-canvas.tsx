@@ -117,13 +117,20 @@ function damageAllUnits(): void {
   }
 }
 
-/** Draws a light grid overlay over the given canvas size, for `?debug=grid`. */
-function drawGrid(width: number, height: number): Graphics {
+/**
+ * Draws a light grid overlay over the given canvas size, for `?debug=grid`.
+ * `cellSize` should be the loaded map's actual tile size, not
+ * {@link CELL_SIZE} (the coarser unit-placement grid) — a map's tiles can be
+ * smaller than a unit's placement cell, and drawing lines at the wrong
+ * spacing makes the overlay cut through tiles (walls included) instead of
+ * outlining them.
+ */
+function drawGrid(width: number, height: number, cellSize: number): Graphics {
   const graphics = new Graphics();
-  for (let x = 0; x <= width; x += CELL_SIZE) {
+  for (let x = 0; x <= width; x += cellSize) {
     graphics.moveTo(x, 0).lineTo(x, height);
   }
-  for (let y = 0; y <= height; y += CELL_SIZE) {
+  for (let y = 0; y <= height; y += cellSize) {
     graphics.moveTo(0, y).lineTo(width, y);
   }
   return graphics.stroke({ width: 1, color: 0xffffff, alpha: 0.15 });
@@ -381,7 +388,11 @@ export default function GameCanvas({
           // `addChildAt(grid, 0)`: a map with tile sprites already occupies
           // index 0+, which buried the grid underneath them and made the
           // overlay invisible on any map with terrain (e.g. "grass").
-          grid = drawGrid(gameViewport.worldWidth, gameViewport.worldHeight);
+          grid = drawGrid(
+            gameViewport.worldWidth,
+            gameViewport.worldHeight,
+            map?.tileSize ?? CELL_SIZE
+          );
           gameViewport.addChild(grid);
         }
       };
