@@ -1,6 +1,6 @@
 import type { World } from 'miniplex';
 
-import type { Entity, Team } from '~/game/ecs/types';
+import type { Entity, Team } from '~/game/ecs/entity';
 import { CELL_SIZE, toWorldPositionCellCenter } from '~/lib/grid';
 import { Vector2 } from '~/lib/math/Vector2';
 import type { Point } from '~/lib/math/types';

@@ -1,7 +1,7 @@
 import { Container, Graphics } from 'pixi.js';
 import type { Query, With } from 'miniplex';
 
-import type { Entity, Renderable } from '~/game/ecs/types';
+import type { Entity, Renderable } from '~/game/ecs/entity';
 import { CELL_SIZE } from '~/lib/grid';
 import {
   createHealthBar,

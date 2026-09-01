@@ -1,6 +1,6 @@
 import { Graphics } from 'pixi.js';
 
-import type { Entity } from '~/game/ecs/types';
+import type { Entity } from '~/game/ecs/entity';
 import type { Point } from '~/lib/math/types';
 
 /** Colour of a unit's move-order line, drawn regardless of team. */

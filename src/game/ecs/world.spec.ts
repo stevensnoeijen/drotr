@@ -2,7 +2,7 @@ import { World } from 'miniplex';
 import { beforeEach, describe, expect, it } from 'vitest';
 
 import { createQueries } from './world';
-import type { Entity } from './types';
+import type { Entity } from './entity';
 
 describe('archetype queries', () => {
   let world: World<Entity>;

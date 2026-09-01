@@ -2,7 +2,7 @@ import { World } from 'miniplex';
 import { describe, expect, it, vi } from 'vitest';
 
 import { SystemRunner, type System } from './system';
-import type { Entity } from './types';
+import type { Entity } from './entity';
 
 describe('SystemRunner', () => {
   it('runs systems in the order they were provided', () => {

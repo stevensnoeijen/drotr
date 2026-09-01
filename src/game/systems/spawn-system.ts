@@ -2,7 +2,7 @@ import type { World } from 'miniplex';
 
 import { spawnUnit } from '~/game/data/spawn';
 import type { UnitType } from '~/game/data/units';
-import type { Entity, Team } from '~/game/ecs/types';
+import type { Entity, Team } from '~/game/ecs/entity';
 import { CELL_SIZE } from '~/lib/grid';
 import type { SpawnPoint } from '~/game/map/loadTiledMap';
 

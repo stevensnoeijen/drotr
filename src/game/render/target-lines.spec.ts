@@ -1,7 +1,7 @@
 import { Graphics } from 'pixi.js';
 import { describe, expect, it } from 'vitest';
 
-import type { Entity } from '~/game/ecs/types';
+import type { Entity } from '~/game/ecs/entity';
 import { drawTargetLines } from './target-lines';
 
 describe('drawTargetLines', () => {

@@ -1,6 +1,6 @@
 import { Graphics } from 'pixi.js';
 
-import type { Entity, Team } from '~/game/ecs/types';
+import type { Entity, Team } from '~/game/ecs/entity';
 import { findEntityById } from '~/game/ecs/world';
 
 /** Per-team colour for a unit's target line, matching its own fill colour. */

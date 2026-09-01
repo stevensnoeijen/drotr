@@ -1,7 +1,7 @@
 import { World } from 'miniplex';
 import { describe, expect, it } from 'vitest';
 
-import type { Entity, Team } from '~/game/ecs/types';
+import type { Entity, Team } from '~/game/ecs/entity';
 import { createQueries } from '~/game/ecs/world';
 import { selectInBox } from './selection-box-system';
 
