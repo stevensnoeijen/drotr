@@ -30,8 +30,6 @@ export interface GameStats {
    * map (outside the canvas, or over the canvas but past the map's bounds).
    */
   hoveredCell?: { x: number; y: number };
-  /** Combat stats of the currently selected unit, if any. */
-  selectedUnitStats?: SelectedUnitStats;
   /** Combat stats of the unit under the pointer, if any and unit-info debug flag is on. */
   hoveredUnitStats?: SelectedUnitStats;
   /** Current pointer position in screen coordinates, for tooltip positioning. */
@@ -83,28 +81,6 @@ export default function DebugOverlay({
         <dd className="text-right tabular-nums">
           {stats.hoveredCell ? `${stats.hoveredCell.x}, ${stats.hoveredCell.y}` : '-'}
         </dd>
-        {stats.selectedUnitStats && (
-          <>
-            <dt>Damage</dt>
-            <dd className="text-right tabular-nums">{stats.selectedUnitStats.damage ?? '-'}</dd>
-            <dt>Accuracy</dt>
-            <dd className="text-right tabular-nums">{stats.selectedUnitStats.accuracy ?? '-'}</dd>
-            <dt>Defence</dt>
-            <dd className="text-right tabular-nums">{stats.selectedUnitStats.defence ?? '-'}</dd>
-            <dt>Stamina</dt>
-            <dd className="text-right tabular-nums">{stats.selectedUnitStats.stamina ?? '-'}</dd>
-            <dt>Speed</dt>
-            <dd className="text-right tabular-nums">{stats.selectedUnitStats.speed ?? '-'}</dd>
-            <dt>Range</dt>
-            <dd className="text-right tabular-nums">{stats.selectedUnitStats.range ?? '-'}</dd>
-            <dt>Target</dt>
-            <dd className="text-right tabular-nums">
-              {stats.selectedUnitStats.target
-                ? `${stats.selectedUnitStats.target.type ?? '?'} #${stats.selectedUnitStats.target.id ?? '?'}`
-                : 'none'}
-            </dd>
-          </>
-        )}
       </dl>
 
       <div className="relative">

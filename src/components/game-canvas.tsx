@@ -436,24 +436,6 @@ export default function GameCanvas({
           return targetEntity ? { id: targetEntity.id, type: targetEntity.unitType } : undefined;
         };
 
-        // Extract combat stats from the currently selected unit
-        const selectedUnit = queries.selected.entities[0];
-        const selectedUnitStats = selectedUnit?.unitType
-          ? {
-              id: selectedUnit.id,
-              type: selectedUnit.unitType,
-              team: selectedUnit.team,
-              color: selectedUnit.renderable?.color,
-              damage: units[selectedUnit.unitType]?.attackDamage,
-              accuracy: units[selectedUnit.unitType]?.accuracy,
-              defence: units[selectedUnit.unitType]?.defence,
-              stamina: units[selectedUnit.unitType]?.stamina,
-              speed: units[selectedUnit.unitType]?.speed,
-              range: units[selectedUnit.unitType]?.range,
-              target: resolveTarget(selectedUnit),
-            }
-          : undefined;
-
         // Extract combat stats from the hovered unit (unit-info debug flag only)
         const hoveredUnitStats =
           debugFlagsRef.current?.has('unit-info') && hoveredUnit?.unitType
@@ -477,7 +459,6 @@ export default function GameCanvas({
           tick: loop.tick,
           entities: world.size,
           hoveredCell,
-          selectedUnitStats,
           hoveredUnitStats,
           pointerPosition,
         });

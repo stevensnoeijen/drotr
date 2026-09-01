@@ -6,13 +6,6 @@ import type { Health, Renderable } from '~/game/ecs/types';
 export const HEALTH_BAR_WIDTH = 24;
 /** Overall height of a unit's health bar, in world units. */
 export const HEALTH_BAR_HEIGHT = 4;
-/**
- * Inset, in world units, of the health bar's bottom edge from the bottom
- * of a unit's shape — inward rather than below it, so the bar overlaps the
- * lower edge of the shape and stays inside the same grid cell instead of
- * spilling into the cell below.
- */
-export const HEALTH_BAR_INSET = 2;
 
 /** Background fill colour, behind the (narrower) health fill. */
 const BACKGROUND_COLOR = 0x333333;
@@ -75,24 +68,24 @@ export interface HealthBarView {
 }
 
 /**
- * Builds a health bar as a child `Container` positioned inset from the
- * bottom of a unit's shape (`unitSize - HEALTH_BAR_HEIGHT - HEALTH_BAR_INSET`
- * on the y axis, so the bar's own bottom edge sits `HEALTH_BAR_INSET` above
- * the shape's), with a background `Graphics` bordered by a 1px black outline
- * and a colour-coded fill `Graphics` on top. The bar is drawn as wide as the
- * unit itself (`unitSize * 2`, matching the shape's full width) rather than
- * a fixed size, so bigger units get a proportionally wider bar. The border
- * is drawn with `pixelLine: true` and `alignment: 0` (fully outside the
- * rect) so it stays a crisp, constant 1 screen-pixel line at every camera
- * zoom level instead of scaling — and shrinking to invisible, or
- * ballooning — with the world-space rect it outlines. Destroying the
+ * Builds a health bar as a child `Container` positioned so its own bottom
+ * edge sits flush with `extent` (the bottom edge of the unit's grid cell —
+ * pass {@link file://./render-system.ts#CELL_HALF_EXTENT}, not the shape's
+ * own render size, so the bar stays pinned to the cell regardless of the
+ * shape's size), with a background `Graphics` bordered by a 1px black
+ * outline and a colour-coded fill `Graphics` on top. The bar is drawn as
+ * wide as `extent * 2` (the cell's full width) rather than a fixed size.
+ * The border is drawn with `pixelLine: true` and `alignment: 0` (fully
+ * outside the rect) so it stays a crisp, constant 1 screen-pixel line at
+ * every camera zoom level instead of scaling — and shrinking to invisible,
+ * or ballooning — with the world-space rect it outlines. Destroying the
  * returned container (e.g. via the parent entity view's
  * `destroy({ children: true })`) destroys both graphics with it.
  */
-export function createHealthBar(unitSize: number): HealthBarView {
-  const width = unitSize * 2;
+export function createHealthBar(extent: number): HealthBarView {
+  const width = extent * 2;
   const container = new Container();
-  container.position.set(-width / 2, unitSize - HEALTH_BAR_HEIGHT - HEALTH_BAR_INSET);
+  container.position.set(-width / 2, extent - HEALTH_BAR_HEIGHT);
 
   const background = new Graphics()
     .rect(0, 0, width, HEALTH_BAR_HEIGHT)

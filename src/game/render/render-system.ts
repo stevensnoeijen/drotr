@@ -2,6 +2,7 @@ import { Container, Graphics } from 'pixi.js';
 import type { Query, With } from 'miniplex';
 
 import type { Entity, Renderable } from '~/game/ecs/types';
+import { CELL_SIZE } from '~/lib/grid';
 import {
   createHealthBar,
   drawDeathMark,
@@ -26,11 +27,13 @@ interface EntityView {
   selectionMarks?: Graphics;
 }
 
+/** Half the grid cell — the fixed boundary selection marks and the health bar are positioned against, independent of the unit shape's own (possibly smaller) render size. */
+const CELL_HALF_EXTENT = CELL_SIZE / 2;
+
 /**
- * Inset, in world units, of a unit's selection marks from its shape's own
- * edge — inward rather than outward, so the marks stay inside the same
- * grid cell as the shape (which already reaches the cell's edges) instead
- * of spilling into the neighboring cell.
+ * Inset, in world units, of a unit's selection marks from the cell edge —
+ * inward, so the marks stay inside the unit's own grid cell instead of
+ * spilling into the neighboring one.
  */
 const SELECTION_MARK_INSET = 2;
 
@@ -39,12 +42,14 @@ const SELECTION_MARK_ARM_LENGTH = 4;
 
 /**
  * Draws small black "⌐"-shaped marks at the top-left and top-right corners
- * of a unit's bounding box, inset inward by {@link SELECTION_MARK_INSET}.
+ * of a unit's grid cell, inset inward by {@link SELECTION_MARK_INSET} from
+ * {@link CELL_HALF_EXTENT} — the cell's own edge, not the (possibly
+ * smaller) shape's, so the marks stay put regardless of the shape's size.
  */
-function drawSelectionMarks(size: number): Graphics {
-  const left = -size + SELECTION_MARK_INSET;
-  const right = size - SELECTION_MARK_INSET;
-  const top = -size + SELECTION_MARK_INSET;
+function drawSelectionMarks(): Graphics {
+  const left = -CELL_HALF_EXTENT + SELECTION_MARK_INSET;
+  const right = CELL_HALF_EXTENT - SELECTION_MARK_INSET;
+  const top = -CELL_HALF_EXTENT + SELECTION_MARK_INSET;
   const arm = SELECTION_MARK_ARM_LENGTH;
 
   return new Graphics()
@@ -90,13 +95,13 @@ export class RenderSystem {
 
     const view: EntityView = { container };
     if (entity.selectable) {
-      const selectionMarks = drawSelectionMarks(entity.renderable.size);
+      const selectionMarks = drawSelectionMarks();
       selectionMarks.visible = Boolean(entity.selected);
       container.addChild(selectionMarks);
       view.selectionMarks = selectionMarks;
     }
     if (entity.health) {
-      const healthBar = createHealthBar(entity.renderable.size);
+      const healthBar = createHealthBar(CELL_HALF_EXTENT);
       healthBar.container.visible = this.healthBarsVisible || Boolean(entity.selected);
       container.addChild(healthBar.container);
       drawHealthBarFill(healthBar.fill, entity.health, healthBar.width);

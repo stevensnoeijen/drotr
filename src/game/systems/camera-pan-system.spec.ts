@@ -1,8 +1,20 @@
 import type { EventSystem } from 'pixi.js';
 import { describe, expect, it } from 'vitest';
 
-import { applyViewportBounds, createGameViewport } from '~/game/render/create-game-viewport';
-import { applyPan, computePanDirection, EDGE_PAN_MARGIN, PAN_SPEED } from './camera-pan-system';
+import {
+  applyViewportBounds,
+  createGameViewport,
+  MAX_ZOOM_SCALE,
+} from '~/game/render/create-game-viewport';
+import {
+  applyPan,
+  applyZoom,
+  computePanDirection,
+  computeZoomDirection,
+  EDGE_PAN_MARGIN,
+  PAN_SPEED,
+  ZOOM_SPEED,
+} from './camera-pan-system';
 
 /** Minimal stand-in for Pixi's EventSystem, matching create-game-viewport.spec.ts. */
 function fakeEvents(): EventSystem {
@@ -151,5 +163,62 @@ describe('applyPan', () => {
 
     expect(viewport.left).toBe(0);
     expect(viewport.top).toBe(0);
+  });
+});
+
+const NO_ZOOM_KEYS = { in: false, out: false };
+
+describe('computeZoomDirection', () => {
+  it('returns 0 when neither zoom key is held', () => {
+    expect(computeZoomDirection(NO_ZOOM_KEYS)).toBe(0);
+  });
+
+  it('returns 1 for zoom-in', () => {
+    expect(computeZoomDirection({ ...NO_ZOOM_KEYS, in: true })).toBe(1);
+  });
+
+  it('returns -1 for zoom-out', () => {
+    expect(computeZoomDirection({ ...NO_ZOOM_KEYS, out: true })).toBe(-1);
+  });
+
+  it('cancels out to 0 when both are held', () => {
+    expect(computeZoomDirection({ in: true, out: true })).toBe(0);
+  });
+});
+
+describe('applyZoom', () => {
+  it('does nothing for a zero direction', () => {
+    const viewport = buildViewport();
+    const before = viewport.scale.x;
+
+    applyZoom(viewport, 0, ZOOM_SPEED, 1);
+
+    expect(viewport.scale.x).toBe(before);
+  });
+
+  it('zooms in, scaling by speed^dt', () => {
+    const viewport = buildViewport();
+    const before = viewport.scale.x;
+
+    applyZoom(viewport, 1, ZOOM_SPEED, 1);
+
+    expect(viewport.scale.x).toBeCloseTo(before * ZOOM_SPEED);
+  });
+
+  it('zooms out, scaling by 1/speed^dt', () => {
+    const viewport = buildViewport();
+    const before = viewport.scale.x;
+
+    applyZoom(viewport, -1, ZOOM_SPEED, 1);
+
+    expect(viewport.scale.x).toBeCloseTo(before / ZOOM_SPEED);
+  });
+
+  it('respects the existing max-zoom clamp when zooming in a lot', () => {
+    const viewport = buildViewport();
+
+    applyZoom(viewport, 1, ZOOM_SPEED, 100);
+
+    expect(viewport.scale.x).toBeLessThanOrEqual(MAX_ZOOM_SCALE);
   });
 });
