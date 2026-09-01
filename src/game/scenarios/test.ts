@@ -41,5 +41,14 @@ export const testScenario: Scenario = {
       team: 'red',
       position: cellPosition(6, separatedRow),
     });
+
+    // Isolated, far from every red unit: for exercising click-to-move
+    // (and, once #88 lands, pathfinding around the maze block) without
+    // combat kicking in.
+    spawnUnit(world, {
+      type: 'swordsmen',
+      team: 'blue',
+      position: cellPosition(55, 55),
+    });
   },
 };

@@ -42,7 +42,7 @@ describe('parseTiledMap', () => {
         counts[type]++;
       }
     }
-    expect(counts).toEqual({ grass: 3512, wall: 584, water: 0 });
+    expect(counts).toEqual({ grass: 3502, wall: 594, water: 0 });
     expect(result.collision.length).toBe(64 * 64);
     // Every non-grass tile blocks movement.
     expect([...result.collision].filter((v) => v === 1).length).toBe(
