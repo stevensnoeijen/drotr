@@ -19,6 +19,10 @@ Guidance for Claude Code (and contributors) working in this repository.
   `Closes #75`).
 - Prefer small, focused PRs scoped to a single issue over bundling multiple
   tickets together.
+- Every issue, when created and whenever its scope is substantively updated,
+  has the drotr GitHub Project's `Model` and `Effort` custom fields set to
+  reflect the ticket's current scope. This is the model/effort a subagent
+  picking up the ticket should use.
 
 ## File naming
 
