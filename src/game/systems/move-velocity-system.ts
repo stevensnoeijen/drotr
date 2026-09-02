@@ -16,12 +16,21 @@ import type { System } from '~/game/ecs/system';
  * avoidance. Whatever set `Velocity` (currently only {@link SeekSystem}) is
  * responsible for its magnitude and direction; this system only integrates
  * it.
+ *
+ * Also turns `Transform.rotation` to face the direction of travel, whenever
+ * `Velocity` is non-zero — a stopped unit (zero velocity) keeps whatever
+ * facing it last had rather than snapping back to a default.
  */
 export function createMoveVelocitySystem(queries: Queries): System {
   return (_world: World<Entity>, dt: number) => {
     for (const entity of queries.movable) {
-      entity.transform.position.x += entity.velocity.x * dt;
-      entity.transform.position.y += entity.velocity.y * dt;
+      const { velocity, transform } = entity;
+      transform.position.x += velocity.x * dt;
+      transform.position.y += velocity.y * dt;
+
+      if (velocity.x !== 0 || velocity.y !== 0) {
+        transform.rotation = Math.atan2(velocity.x, -velocity.y);
+      }
     }
   };
 }

@@ -20,7 +20,16 @@ type LivingRenderableEntity = With<Entity, 'transform' | 'renderable' | 'health'
 
 /** Per-entity view state the render system tracks beyond the Pixi container. */
 interface EntityView {
+  /** Positioned (never rotated) — holds `shape` plus every overlay below it. */
   container: Container;
+  /**
+   * Positioned only via `container`, rotated to `Transform.rotation` each
+   * `sync()`. Holds the unit's shape and facing mark — the only parts that
+   * should turn with the unit — kept out of `container` itself so the
+   * overlays below (health bar, selection marks, death mark) stay
+   * screen-aligned regardless of which way the unit is facing.
+   */
+  shape: Container;
   healthBar?: HealthBarView;
   /** Cross drawn over the shape once the entity's HP reaches 0. */
   deathMark?: Graphics;
@@ -76,6 +85,28 @@ export function drawRenderable({ shape, color, size }: Renderable): Graphics {
   return graphics.fill(color);
 }
 
+/** Size, relative to the unit shape's own `size`, of the facing indicator. */
+const FACING_MARK_SCALE = 0.35;
+
+/**
+ * Draws a small black triangle inset from the top edge of a unit's shape,
+ * pointing toward that edge (local -y, "up" at `Transform.rotation` 0) to
+ * mark which way the unit is facing. Drawn once in local space rather than
+ * re-rotated itself — {@link RenderSystem.sync} turns the `shape` container
+ * (this mark included) to `Transform.rotation` each frame, so it swings
+ * around to trail the direction of travel while the health bar, selection
+ * marks, and death mark — siblings outside `shape` — stay screen-aligned.
+ */
+function drawFacingMark(size: number): Graphics {
+  const markSize = size * FACING_MARK_SCALE;
+  const tip = -size;
+  const base = -size + markSize;
+
+  return new Graphics()
+    .poly([0, tip, markSize, base, -markSize, base])
+    .fill(0x000000);
+}
+
 /**
  * Keeps one Pixi `Container` per renderable entity in sync with the ECS,
  * reactively: it subscribes to the query's `onEntityAdded`/`onEntityRemoved`
@@ -92,9 +123,13 @@ export class RenderSystem {
 
   private readonly handleAdded = (entity: RenderableEntity): void => {
     const container = new Container();
-    container.addChild(drawRenderable(entity.renderable));
 
-    const view: EntityView = { container };
+    const shape = new Container();
+    shape.addChild(drawRenderable(entity.renderable));
+    shape.addChild(drawFacingMark(entity.renderable.size));
+    container.addChild(shape);
+
+    const view: EntityView = { container, shape };
     if (entity.selectable) {
       const selectionMarks = drawSelectionMarks();
       selectionMarks.visible = Boolean(entity.selected);
@@ -176,7 +211,7 @@ export class RenderSystem {
   public sync(): void {
     for (const [entity, view] of this.views) {
       view.container.position.set(entity.transform.position.x, entity.transform.position.y);
-      view.container.rotation = entity.transform.rotation;
+      view.shape.rotation = entity.transform.rotation;
 
       if (view.selectionMarks) {
         view.selectionMarks.visible = Boolean(entity.selected);

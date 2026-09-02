@@ -93,6 +93,28 @@ describe('createSeekSystem', () => {
     expect(self.velocity).toEqual({ x: 0, y: 0 });
   });
 
+  it('faces the target once stopped at attackRange, even though velocity is zero', () => {
+    const world = new World<Entity>();
+    const queries = createQueries(world);
+    const system = createSeekSystem(queries);
+
+    const target = world.add({
+      transform: { position: { x: 0, y: 1.5 * CELL_SIZE }, rotation: 0 },
+    });
+    const self = world.add({
+      transform: { position: { x: 0, y: 0 }, rotation: 0 },
+      velocity: { x: 0, y: 0 },
+      moveSpeed: { value: 10 },
+      attackRange: { value: 2 },
+      target: { entityId: target.id! },
+    });
+
+    system(world, 1 / 60);
+
+    expect(self.velocity).toEqual({ x: 0, y: 0 });
+    expect(self.transform.rotation).toBeCloseTo(Math.PI);
+  });
+
   it('leaves velocity untouched for an entity with no target', () => {
     const world = new World<Entity>();
     const queries = createQueries(world);

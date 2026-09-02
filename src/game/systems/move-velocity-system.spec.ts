@@ -19,7 +19,45 @@ describe('createMoveVelocitySystem', () => {
 
     system(world, 0.5);
 
-    expect(entity.transform).toEqual({ position: { x: 5, y: -10 }, rotation: 0 });
+    expect(entity.transform.position).toEqual({ x: 5, y: -10 });
+  });
+
+  it('faces the direction of travel while moving', () => {
+    const world = new World<Entity>();
+    const queries = createQueries(world);
+    const system = createMoveVelocitySystem(queries);
+
+    const entity = world.add({
+      transform: { position: { x: 0, y: 0 }, rotation: 0 },
+      velocity: { x: 1, y: 0 },
+      moveSpeed: { value: 100 },
+    });
+
+    system(world, 1 / 60);
+
+    expect(entity.transform.rotation).toBeCloseTo(Math.PI / 2);
+  });
+
+  it('keeps the last facing once velocity returns to zero', () => {
+    const world = new World<Entity>();
+    const queries = createQueries(world);
+    const system = createMoveVelocitySystem(queries);
+
+    const entity = world.add({
+      transform: { position: { x: 0, y: 0 }, rotation: 0 },
+      velocity: { x: 0, y: 1 },
+      moveSpeed: { value: 100 },
+    });
+
+    system(world, 1 / 60);
+    const facingWhileMoving = entity.transform.rotation;
+    expect(facingWhileMoving).toBeCloseTo(Math.PI);
+
+    entity.velocity.x = 0;
+    entity.velocity.y = 0;
+    system(world, 1 / 60);
+
+    expect(entity.transform.rotation).toBe(facingWhileMoving);
   });
 
   it('does not move an entity with zero velocity', () => {

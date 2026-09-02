@@ -3,8 +3,8 @@ import { Graphics } from 'pixi.js';
 import type { Entity } from '~/game/ecs/entity';
 import type { Point } from '~/lib/math/types';
 
-/** Colour of a unit's move-order line, drawn regardless of team. */
-const LINE_COLOR = 0xffffff;
+/** Colour of a unit's move-order line, drawn regardless of team — pink marks it as a debug overlay. */
+const LINE_COLOR = 0xff69b4;
 
 /** Stroke width, in world units, of the line. */
 const LINE_WIDTH = 2;
