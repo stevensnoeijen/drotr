@@ -22,6 +22,7 @@ import { drawTargetLines } from '~/game/render/target-lines';
 import { drawMoveLines } from '~/game/render/move-lines';
 import { CameraPanSystem } from '~/game/systems/camera-pan-system';
 import { createInputSystem, InputSystem, findHoverableUnitAt } from '~/game/systems/input-system';
+import { createMovePathSystem } from '~/game/systems/move-path-system';
 import { createMoveTargetSystem } from '~/game/systems/move-target-system';
 import { createMoveVelocitySystem } from '~/game/systems/move-velocity-system';
 import { createPerceptionSystem, runPerceptionScan } from '~/game/systems/perception-system';
@@ -338,9 +339,27 @@ export default function GameCanvas({
       });
       const mapBounds = map ? { width: map.width, height: map.height } : undefined;
 
+      // The map doubles as the pathfinder's collision grid (same `width`,
+      // `height` and row-major `collision` buffer). Only handed over when
+      // its tiles are the same size as the unit-placement cell the ECS uses
+      // (`CELL_SIZE`), since the world<->cell conversion in
+      // `planMovePath` assumes one grid, not two at different resolutions;
+      // a mismatched map falls back to straight-line orders rather than
+      // routing through cells that don't line up with its terrain.
+      let navigationGrid: ParsedMap | undefined;
+      if (map) {
+        if (map.tileSize === CELL_SIZE) {
+          navigationGrid = map;
+        } else {
+          console.warn(
+            `Map tile size (${map.tileSize}) differs from CELL_SIZE (${CELL_SIZE}); move orders will not be routed around terrain.`
+          );
+        }
+      }
+
       const canvas = app.canvas;
       inputSystem = new InputSystem(canvas);
-      runner.add(createInputSystem(inputSystem, queries, getViewportTransform));
+      runner.add(createInputSystem(inputSystem, queries, getViewportTransform, navigationGrid));
 
       selectionBoxDrag = new SelectionBoxDrag(canvas, selectionOverlay);
       runner.add(createSelectionBoxSystem(selectionBoxDrag, queries, getViewportTransform));
@@ -353,7 +372,10 @@ export default function GameCanvas({
       // Runs after SeekSystem so a player-issued move order (right-click)
       // takes priority over auto-attack seeking for any unit that somehow
       // has both: MoveTargetSystem's velocity write wins going into the
-      // integration step below.
+      // integration step below. MovePathSystem goes first of the two so a
+      // route's next waypoint is steered toward in the same tick it's
+      // handed over, rather than costing an idle frame per leg.
+      runner.add(createMovePathSystem(queries));
       runner.add(createMoveTargetSystem(queries));
       runner.add(createMoveVelocitySystem(queries));
 

@@ -72,18 +72,41 @@ export interface Target {
 }
 
 /**
- * A player-issued move order: a world-space destination a unit is walking
- * straight toward. Added to selected blue units by a right-click (see
- * `~/game/systems/input-system`), driven by
- * `~/game/systems/move-target-system`, and removed once the unit arrives —
- * its mere presence is also what `?debug=paths` draws a line for.
+ * The single leg a unit is currently walking: one world-space point it heads
+ * straight for, driven by `~/game/systems/move-target-system` and removed
+ * once the unit arrives.
  *
- * Deliberately just a point, not a path: this ticket is straight-line-only
- * prep for #88, which will replace this with a waypoint queue once A*
- * lands, reusing the same `paths` debug flag.
+ * Still deliberately just a point. A routed order is a {@link MovePath},
+ * and `~/game/systems/move-path-system` feeds its waypoints through here one
+ * at a time — so "walk straight at a point" stays one system with one
+ * responsibility, and a unit with no route (a straight-line order on a map
+ * with no collision data) needs no special case.
  */
 export interface MoveTarget {
   position: Point;
+}
+
+/**
+ * A player-issued move order that has been routed around terrain: the
+ * world-space waypoints, in order, that a unit walks to reach its
+ * destination. Produced by `~/game/navigation/plan-move-path` on right-click
+ * (see `~/game/systems/input-system`), consumed one leg at a time by
+ * `~/game/systems/move-path-system`, and drawn as a polyline by
+ * `?debug=paths`.
+ *
+ * `waypoints` is already reduced to corner waypoints by the pathfinder's
+ * smoothing pass, so it holds direction changes rather than every cell along
+ * the route — a unit crossing open ground gets a single waypoint instead of
+ * stair-stepping one cell at a time.
+ *
+ * Consumed by index rather than by shifting the array, so the full route
+ * stays available for debug rendering and (later) re-planning after the
+ * order is issued.
+ */
+export interface MovePath {
+  waypoints: Point[];
+  /** Index of the next waypoint to walk to; `waypoints.length` when done. */
+  index: number;
 }
 
 /** Data describing how an entity should be drawn. The view is read-only. */
@@ -144,4 +167,5 @@ export interface Entity {
   attackCooldown?: AttackCooldown;
   target?: Target;
   moveTarget?: MoveTarget;
+  movePath?: MovePath;
 }

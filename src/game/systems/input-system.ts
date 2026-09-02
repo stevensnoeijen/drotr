@@ -3,8 +3,10 @@ import type { World } from 'miniplex';
 import type { Entity } from '~/game/ecs/types';
 import type { Queries } from '~/game/ecs/world';
 import type { System } from '~/game/ecs/system';
+import { planMovePath } from '~/game/navigation/plan-move-path';
 import { screenToWorld, toWorldPositionCellCenter, type ViewportTransform } from '~/lib/grid';
 import { Vector2 } from '~/lib/math/Vector2';
+import type { GridLike } from '~/lib/navigation/astar';
 import type { Point } from '~/lib/math/types';
 
 /** A queued, screen-space (canvas-relative) click ready to be hit-tested. */
@@ -237,14 +239,30 @@ export function selectAt(
  *
  * All selected units receive the same destination, not one each spread out
  * — formation-based group orders are a later ticket (#89); for now every
- * selected unit just walks straight to the same point.
+ * selected unit heads for the same cell.
  *
- * The destination is snapped to the center of whichever grid cell it falls
- * in (see {@link toWorldPositionCellCenter}) — move orders land on a cell,
- * the same as a spawned unit's own position, rather than wherever the
- * player happened to click.
+ * With a `grid` (the loaded map's collision data), each unit gets its own
+ * route around terrain, planned from where *it* stands — a `MovePath` whose
+ * waypoints `MovePathSystem` then walks. A destination the unit cannot reach
+ * leaves it exactly as it was: an order that can't be carried out is refused
+ * outright rather than half-applied as a walk toward a wall it can't get
+ * past. Ordering a unit to the cell it already stands in stops it, which is
+ * how a player cancels a walk in progress.
+ *
+ * Without a grid — a map with no terrain at all — the order stays what it
+ * was before pathfinding existed: a single straight-line `MoveTarget` to the
+ * clicked cell's centre (see {@link toWorldPositionCellCenter}). There is no
+ * terrain to route around, so there is nothing for A* to add.
+ *
+ * Either way an accepted order replaces the previous one outright, so a
+ * second right-click never leaves a stale route behind for the unit to
+ * resume.
  */
-export function moveSelectedTo(queries: Queries, worldPosition: Vector2): void {
+export function moveSelectedTo(
+  queries: Queries,
+  worldPosition: Vector2,
+  grid?: GridLike
+): void {
   const selected = [...queries.selected];
   const hasBlueUnit = selected.some((entity) => entity.team === 'blue');
   if (!hasBlueUnit) {
@@ -254,10 +272,42 @@ export function moveSelectedTo(queries: Queries, worldPosition: Vector2): void {
   const destination = toWorldPositionCellCenter(worldPosition);
 
   for (const entity of selected) {
-    if (entity.team !== 'blue') {
+    if (entity.team !== 'blue' || !entity.transform) {
       continue;
     }
-    entity.moveTarget = { position: { x: destination.x, y: destination.y } };
+
+    if (!grid) {
+      delete entity.movePath;
+      entity.moveTarget = { position: { x: destination.x, y: destination.y } };
+      continue;
+    }
+
+    const { status, waypoints } = planMovePath(
+      grid,
+      entity.transform.position,
+      destination
+    );
+    if (status !== 'found') {
+      continue;
+    }
+
+    delete entity.moveTarget;
+    if (waypoints.length === 0) {
+      // Ordered to the cell it is already standing in: nothing to walk, so
+      // the order reads as "stop here" rather than "carry on with whatever
+      // you were doing". Velocity has to be zeroed explicitly — nothing else
+      // will, since `MoveVelocitySystem` integrates whatever it finds and
+      // `MoveTargetSystem` only zeroes on arrival at a target that no longer
+      // exists.
+      delete entity.movePath;
+      if (entity.velocity) {
+        entity.velocity.x = 0;
+        entity.velocity.y = 0;
+      }
+      continue;
+    }
+
+    entity.movePath = { waypoints, index: 0 };
   }
 }
 
@@ -266,11 +316,16 @@ export function moveSelectedTo(queries: Queries, worldPosition: Vector2): void {
  * and right-click move orders, converts each from screen to world space via
  * the live viewport transform, and applies them: clicks hit-test against
  * selectable units, move orders are issued to the current selection.
+ *
+ * `grid` is the loaded map's collision data, used to route move orders
+ * around terrain; omit it for a map with no terrain, and orders fall back to
+ * straight lines (see {@link moveSelectedTo}).
  */
 export function createInputSystem(
   input: InputSystem,
   queries: Queries,
-  getViewport: () => ViewportTransform
+  getViewport: () => ViewportTransform,
+  grid?: GridLike
 ): System {
   return (world) => {
     const clicks = input.drain();
@@ -286,7 +341,7 @@ export function createInputSystem(
     if (moveOrders.length > 0) {
       const viewport = getViewport();
       for (const order of moveOrders) {
-        moveSelectedTo(queries, screenToWorld(order, viewport));
+        moveSelectedTo(queries, screenToWorld(order, viewport), grid);
       }
     }
   };

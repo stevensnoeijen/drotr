@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 
 import type { Entity } from '~/game/ecs/types';
 import { createQueries } from '~/game/ecs/world';
+import { CELL_SIZE } from '~/lib/grid';
 import { Vector2 } from '~/lib/math/Vector2';
 import {
   selectAt,
@@ -217,6 +218,126 @@ describe('moveSelectedTo', () => {
     moveSelectedTo(queries, new Vector2(10, 20));
 
     expect(unit.moveTarget).toEqual({ position: { x: 16, y: 16 } });
+  });
+
+  describe('with a collision grid', () => {
+    /** A collision grid in the exact shape a loaded map exposes. */
+    const gridFrom = (art: string) => {
+      const rows = art
+        .trim()
+        .split('\n')
+        .map((line) => [...line.trim()]);
+      const width = rows[0].length;
+      const collision = new Uint8Array(width * rows.length);
+      rows.forEach((row, y) =>
+        row.forEach((cell, x) => {
+          collision[y * width + x] = cell === '#' ? 1 : 0;
+        })
+      );
+
+      return { width, height: rows.length, collision };
+    };
+
+    const centre = (col: number, row: number) => ({
+      x: col * CELL_SIZE + CELL_SIZE / 2,
+      y: row * CELL_SIZE + CELL_SIZE / 2,
+    });
+
+    const wallWithGap = gridFrom(`
+      ....#....
+      ....#....
+      ....#....
+      ....#....
+      .........
+    `);
+
+    it('routes the order around a wall instead of straight through it', () => {
+      const world = new World<Entity>();
+      const queries = createQueries(world);
+      const unit = addTeamUnit(world, 'blue', true);
+      unit.transform.position = { ...centre(0, 0) };
+
+      moveSelectedTo(queries, new Vector2(centre(8, 0).x, centre(8, 0).y), wallWithGap);
+
+      expect(unit.movePath).toEqual({
+        index: 0,
+        waypoints: [centre(3, 4), centre(5, 4), centre(8, 0)],
+      });
+      // The first leg is handed over by MovePathSystem, not here.
+      expect(unit.moveTarget).toBeUndefined();
+    });
+
+    it('plans each selected unit its own route from where it stands', () => {
+      const world = new World<Entity>();
+      const queries = createQueries(world);
+      const a = addTeamUnit(world, 'blue', true);
+      const b = addTeamUnit(world, 'blue', true);
+      a.transform.position = { ...centre(0, 0) };
+      b.transform.position = { ...centre(0, 4) };
+
+      moveSelectedTo(queries, new Vector2(centre(8, 4).x, centre(8, 4).y), wallWithGap);
+
+      expect(a.movePath?.waypoints).not.toEqual(b.movePath?.waypoints);
+      expect(a.movePath?.waypoints.at(-1)).toEqual(centre(8, 4));
+      expect(b.movePath?.waypoints).toEqual([centre(8, 4)]);
+    });
+
+    it('leaves an unreachable order unissued rather than half-applied', () => {
+      const divided = gridFrom(`
+        ..#..
+        ..#..
+        ..#..
+        ..#..
+        ..#..
+      `);
+      const world = new World<Entity>();
+      const queries = createQueries(world);
+      const unit = addTeamUnit(world, 'blue', true);
+      unit.transform.position = { ...centre(0, 0) };
+
+      moveSelectedTo(queries, new Vector2(centre(4, 4).x, centre(4, 4).y), divided);
+
+      expect(unit.movePath).toBeUndefined();
+      expect(unit.moveTarget).toBeUndefined();
+    });
+
+    it('clears the previous leg so a new route starts from its first waypoint', () => {
+      const world = new World<Entity>();
+      const queries = createQueries(world);
+      const unit = addTeamUnit(world, 'blue', true);
+      unit.transform.position = { ...centre(0, 0) };
+      unit.moveTarget = { position: { x: 999, y: 999 } };
+
+      moveSelectedTo(queries, new Vector2(centre(8, 0).x, centre(8, 0).y), wallWithGap);
+
+      expect(unit.moveTarget).toBeUndefined();
+      expect(unit.movePath?.index).toBe(0);
+    });
+
+    it('drops a stale route when a later order falls back to a straight line', () => {
+      const world = new World<Entity>();
+      const queries = createQueries(world);
+      const unit = addTeamUnit(world, 'blue', true);
+      unit.transform.position = { ...centre(0, 0) };
+
+      moveSelectedTo(queries, new Vector2(centre(8, 0).x, centre(8, 0).y), wallWithGap);
+      moveSelectedTo(queries, new Vector2(10, 20));
+
+      expect(unit.movePath).toBeUndefined();
+      expect(unit.moveTarget).toEqual({ position: { x: 16, y: 16 } });
+    });
+
+    it('still refuses to route a selected red unit', () => {
+      const world = new World<Entity>();
+      const queries = createQueries(world);
+      addTeamUnit(world, 'blue', true);
+      const redUnit = addTeamUnit(world, 'red', true);
+
+      moveSelectedTo(queries, new Vector2(centre(8, 0).x, centre(8, 0).y), wallWithGap);
+
+      expect(redUnit.movePath).toBeUndefined();
+      expect(redUnit.moveTarget).toBeUndefined();
+    });
   });
 });
 
