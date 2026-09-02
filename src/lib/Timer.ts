@@ -12,6 +12,19 @@ type TimerProps = {
   onElapsed?: OnElapsed | null;
 };
 
+/**
+ * Slack allowed when testing the countdown against zero.
+ *
+ * A countdown is driven down by repeatedly subtracting a delta, and neither
+ * the delta nor the delay need be exactly representable in binary floating
+ * point: subtracting 1/60 thirty times from 0.5 leaves ~5.6e-17 rather than 0,
+ * so a strict `countdown <= 0` reports "not yet" for a timer that has, in
+ * every sense that matters, elapsed — pushing it a whole tick late. Half a
+ * nanosecond of simulated time is far below any timescale the game models, and
+ * comfortably above the rounding error it absorbs.
+ */
+const ELAPSED_EPSILON = 1e-9;
+
 export class Timer {
   public readonly delay: number;
   public readonly onElapsed: OnElapsed | null;
@@ -36,7 +49,7 @@ export class Timer {
   }
 
   public isElapsed(): boolean {
-    return this.countdown <= 0;
+    return this.countdown <= ELAPSED_EPSILON;
   }
 
   public update() {

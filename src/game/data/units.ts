@@ -12,15 +12,22 @@ export type UnitType = 'swordsmen' | 'knight' | 'crossbowsoldier';
 
 /**
  * Static, per-type unit data. Core fields (type, shape, health) are present
- * on all units. Combat stats (attackDamage, accuracy, defence, stamina, speed,
- * range, aggroRange) are present on JSON-defined units; legacy inline units
- * lack them.
+ * on all units. Combat stats (attackDamage, attackCooldown, accuracy, defence,
+ * stamina, speed, range, aggroRange) are present on JSON-defined units; legacy
+ * inline units lack them.
  */
 export interface UnitDefinition {
   type: UnitType;
   shape: Shape;
   health: number;
   attackDamage?: number;
+  /**
+   * Seconds between two consecutive attacks — the gate `CombatSystem` runs
+   * every attack through, so a unit's sustained damage output is
+   * `attackDamage / attackCooldown` per second rather than `attackDamage` per
+   * tick. See {@link file://../ecs/components/attack-cooldown.ts#AttackCooldown}.
+   */
+  attackCooldown?: number;
   accuracy?: number;
   defence?: number;
   stamina?: number;

@@ -8,6 +8,7 @@
   "stamina": 9,
   "speed": 2,
   "movementSpeed": 2,
+  "attackCooldown": 1,
   "range": 1,
   "aggroRange": 5,
   "assets": null

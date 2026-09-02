@@ -21,6 +21,7 @@ import { RenderSystem } from '~/game/render/render-system';
 import { drawTargetLines } from '~/game/render/target-lines';
 import { drawMoveLines } from '~/game/render/move-lines';
 import { CameraPanSystem } from '~/game/systems/camera-pan-system';
+import { createCombatSystem } from '~/game/systems/combat-system';
 import { createInputSystem, InputSystem, findHoverableUnitAt } from '~/game/systems/input-system';
 import { createMovePathSystem } from '~/game/systems/move-path-system';
 import { createMoveTargetSystem } from '~/game/systems/move-target-system';
@@ -100,22 +101,6 @@ async function drawTiledMap(
   }
 
   return map;
-}
-
-/** HP knocked off every living unit per press of the debug damage key. */
-const DEBUG_DAMAGE_AMOUNT = 3;
-
-/**
- * Temporary debug scaffolding (ticket #85): pressing `H` damages every unit
- * with a `health` component by {@link DEBUG_DAMAGE_AMOUNT}, clamped at 0, so
- * the overhead health bars can be exercised in the browser (colour thresholds,
- * width, redraw-on-change) before real combat exists. T3.3 (real-time combat)
- * replaces this with actual damage sources and this function goes away.
- */
-function damageAllUnits(): void {
-  for (const entity of queries.living) {
-    entity.health.current = Math.max(0, entity.health.current - DEBUG_DAMAGE_AMOUNT);
-  }
 }
 
 /**
@@ -223,7 +208,6 @@ export default function GameCanvas({
     let inputSystem: InputSystem | undefined;
     let selectionBoxDrag: SelectionBoxDrag | undefined;
     let cameraPanSystem: CameraPanSystem | undefined;
-    let removeKeyDownListener: (() => void) | undefined;
     let removePointerMoveListener: (() => void) | undefined;
 
     // No systems yet (#78 is the contract only); the runner is empty but the
@@ -378,6 +362,11 @@ export default function GameCanvas({
       runner.add(createMovePathSystem(queries));
       runner.add(createMoveTargetSystem(queries));
       runner.add(createMoveVelocitySystem(queries));
+      // Last in the step, after the integration above: a unit that arrives at
+      // `attackRange` this tick swings from where it now stands, and any
+      // damage it deals lands before `renderSystem.sync()` runs for the
+      // frame, so the health bar redraws in the very same frame.
+      runner.add(createCombatSystem(queries));
 
       cameraPanSystem = new CameraPanSystem(canvas);
 
@@ -467,6 +456,7 @@ export default function GameCanvas({
                 team: hoveredUnit.team,
                 color: hoveredUnit.renderable?.color,
                 damage: units[hoveredUnit.unitType]?.attackDamage,
+                attackCooldown: units[hoveredUnit.unitType]?.attackCooldown,
                 accuracy: units[hoveredUnit.unitType]?.accuracy,
                 defence: units[hoveredUnit.unitType]?.defence,
                 stamina: units[hoveredUnit.unitType]?.stamina,
@@ -486,14 +476,6 @@ export default function GameCanvas({
         });
       });
 
-      const handleKeyDown = (event: KeyboardEvent) => {
-        if (event.key.toLowerCase() === 'h') {
-          damageAllUnits();
-        }
-      };
-      window.addEventListener('keydown', handleKeyDown);
-      removeKeyDownListener = () => window.removeEventListener('keydown', handleKeyDown);
-
       resizeObserver = new ResizeObserver(([entry]) => {
         const { inlineSize: width, blockSize: height } =
           entry.contentBoxSize[0];
@@ -510,7 +492,6 @@ export default function GameCanvas({
 
     return () => {
       cancelled = true;
-      removeKeyDownListener?.();
       removePointerMoveListener?.();
       resizeObserver?.disconnect();
       syncGridRef.current = () => {};
