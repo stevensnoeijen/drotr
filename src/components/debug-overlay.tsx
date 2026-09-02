@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
 import { ALL_DEBUG_FLAGS, type DebugFlag } from '~/game/scenarios';
+import { usePageZoomCounterScale } from '~/lib/use-page-zoom-scale';
 
 export interface SelectedUnitStats {
   id?: number;
@@ -29,8 +30,6 @@ export interface GameStats {
    * map (outside the canvas, or over the canvas but past the map's bounds).
    */
   hoveredCell?: { x: number; y: number };
-  /** Combat stats of the currently selected unit, if any. */
-  selectedUnitStats?: SelectedUnitStats;
   /** Combat stats of the unit under the pointer, if any and unit-info debug flag is on. */
   hoveredUnitStats?: SelectedUnitStats;
   /** Current pointer position in screen coordinates, for tooltip positioning. */
@@ -51,6 +50,11 @@ export interface DebugOverlayProps {
  * dropdown of debug flags — drawn on top of the canvas. The tick count
  * advances at the fixed-timestep rate independently of the render FPS; that
  * divergence is the point of the stats readout.
+ *
+ * Counter-scaled via {@link usePageZoomCounterScale} against the browser's
+ * own page zoom (Ctrl+scroll/pinch), so it stays a fixed physical size —
+ * unrelated to the game's own camera zoom, which is a Pixi viewport
+ * transform on the canvas and never touches this DOM overlay at all.
  */
 export default function DebugOverlay({
   stats,
@@ -59,10 +63,12 @@ export default function DebugOverlay({
   className,
 }: DebugOverlayProps) {
   const [open, setOpen] = useState(false);
+  const counterScale = usePageZoomCounterScale();
 
   return (
     <div
       className={`absolute left-2 top-2 flex flex-col items-start gap-2 font-mono text-xs text-green-400 ${className ?? ''}`}
+      style={{ transform: `scale(${counterScale})`, transformOrigin: 'top left' }}
     >
       <dl className="pointer-events-none m-0 grid grid-cols-[auto_auto] gap-x-3 rounded bg-black/60 px-3 py-2">
         <dt>FPS</dt>
@@ -75,28 +81,6 @@ export default function DebugOverlay({
         <dd className="text-right tabular-nums">
           {stats.hoveredCell ? `${stats.hoveredCell.x}, ${stats.hoveredCell.y}` : '-'}
         </dd>
-        {stats.selectedUnitStats && (
-          <>
-            <dt>Damage</dt>
-            <dd className="text-right tabular-nums">{stats.selectedUnitStats.damage ?? '-'}</dd>
-            <dt>Accuracy</dt>
-            <dd className="text-right tabular-nums">{stats.selectedUnitStats.accuracy ?? '-'}</dd>
-            <dt>Defence</dt>
-            <dd className="text-right tabular-nums">{stats.selectedUnitStats.defence ?? '-'}</dd>
-            <dt>Stamina</dt>
-            <dd className="text-right tabular-nums">{stats.selectedUnitStats.stamina ?? '-'}</dd>
-            <dt>Speed</dt>
-            <dd className="text-right tabular-nums">{stats.selectedUnitStats.speed ?? '-'}</dd>
-            <dt>Range</dt>
-            <dd className="text-right tabular-nums">{stats.selectedUnitStats.range ?? '-'}</dd>
-            <dt>Target</dt>
-            <dd className="text-right tabular-nums">
-              {stats.selectedUnitStats.target
-                ? `${stats.selectedUnitStats.target.type ?? '?'} #${stats.selectedUnitStats.target.id ?? '?'}`
-                : 'none'}
-            </dd>
-          </>
-        )}
       </dl>
 
       <div className="relative">

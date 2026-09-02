@@ -28,6 +28,10 @@ describe('parseDebugFlags', () => {
   it('returns an empty set for an empty string', () => {
     expect(parseDebugFlags('')).toEqual(new Set());
   });
+
+  it('parses the paths flag', () => {
+    expect(parseDebugFlags('paths')).toEqual(new Set(['paths']));
+  });
 });
 
 describe('serializeDebugFlags', () => {

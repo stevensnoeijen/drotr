@@ -41,5 +41,15 @@ export const testScenario: Scenario = {
       team: 'red',
       position: cellPosition(6, separatedRow),
     });
+
+    // Just below (south of) the maze block, lined up with its bottom exit
+    // (cols 44-46), for exercising click-to-move into and through the maze
+    // corridors. CELL_SIZE matches the map's tile size, so cellPosition's
+    // col/row lines up directly with the map's own tile grid.
+    spawnUnit(world, {
+      type: 'swordsmen',
+      team: 'blue',
+      position: cellPosition(45, 50),
+    });
   },
 };

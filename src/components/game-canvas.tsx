@@ -19,8 +19,10 @@ import { loadTiledMap, type ParsedMap, type TerrainType } from '~/game/map/loadT
 import { applyViewportBounds, createGameViewport } from '~/game/render/create-game-viewport';
 import { RenderSystem } from '~/game/render/render-system';
 import { drawTargetLines } from '~/game/render/target-lines';
+import { drawMoveLines } from '~/game/render/move-lines';
 import { CameraPanSystem } from '~/game/systems/camera-pan-system';
 import { createInputSystem, InputSystem, findHoverableUnitAt } from '~/game/systems/input-system';
+import { createMoveTargetSystem } from '~/game/systems/move-target-system';
 import { createMoveVelocitySystem } from '~/game/systems/move-velocity-system';
 import { createPerceptionSystem, runPerceptionScan } from '~/game/systems/perception-system';
 import { createSeekSystem } from '~/game/systems/seek-system';
@@ -115,13 +117,20 @@ function damageAllUnits(): void {
   }
 }
 
-/** Draws a light grid overlay over the given canvas size, for `?debug=grid`. */
-function drawGrid(width: number, height: number): Graphics {
+/**
+ * Draws a light grid overlay over the given canvas size, for `?debug=grid`.
+ * `cellSize` should be the loaded map's actual tile size, not
+ * {@link CELL_SIZE} (the coarser unit-placement grid) — a map's tiles can be
+ * smaller than a unit's placement cell, and drawing lines at the wrong
+ * spacing makes the overlay cut through tiles (walls included) instead of
+ * outlining them.
+ */
+function drawGrid(width: number, height: number, cellSize: number): Graphics {
   const graphics = new Graphics();
-  for (let x = 0; x <= width; x += CELL_SIZE) {
+  for (let x = 0; x <= width; x += cellSize) {
     graphics.moveTo(x, 0).lineTo(x, height);
   }
-  for (let y = 0; y <= height; y += CELL_SIZE) {
+  for (let y = 0; y <= height; y += cellSize) {
     graphics.moveTo(0, y).lineTo(width, y);
   }
   return graphics.stroke({ width: 1, color: 0xffffff, alpha: 0.15 });
@@ -341,6 +350,11 @@ export default function GameCanvas({
       // integrates the velocity seek just set, both within the same fixed
       // step so a freshly (re)targeted unit starts moving immediately.
       runner.add(createSeekSystem(queries));
+      // Runs after SeekSystem so a player-issued move order (right-click)
+      // takes priority over auto-attack seeking for any unit that somehow
+      // has both: MoveTargetSystem's velocity write wins going into the
+      // integration step below.
+      runner.add(createMoveTargetSystem(queries));
       runner.add(createMoveVelocitySystem(queries));
 
       cameraPanSystem = new CameraPanSystem(canvas);
@@ -374,7 +388,11 @@ export default function GameCanvas({
           // `addChildAt(grid, 0)`: a map with tile sprites already occupies
           // index 0+, which buried the grid underneath them and made the
           // overlay invisible on any map with terrain (e.g. "grass").
-          grid = drawGrid(gameViewport.worldWidth, gameViewport.worldHeight);
+          grid = drawGrid(
+            gameViewport.worldWidth,
+            gameViewport.worldHeight,
+            map?.tileSize ?? CELL_SIZE
+          );
           gameViewport.addChild(grid);
         }
       };
@@ -386,6 +404,9 @@ export default function GameCanvas({
       // units.
       const targetLines = new Graphics();
       gameViewport.addChild(targetLines);
+
+      const moveLines = new Graphics();
+      gameViewport.addChild(moveLines);
 
       app.ticker.add((ticker) => {
         loop.advance(ticker.deltaMS / 1000);
@@ -399,6 +420,12 @@ export default function GameCanvas({
           targetLines.clear();
         }
 
+        if (debugFlagsRef.current?.has('paths')) {
+          drawMoveLines(moveLines, queries.movable);
+        } else {
+          moveLines.clear();
+        }
+
         // Resolves an entity's `target.entityId` (if any) back to the
         // targeted entity's id/type, for the entity debug dialog.
         const resolveTarget = (entity: Entity | undefined) => {
@@ -408,24 +435,6 @@ export default function GameCanvas({
           const targetEntity = findEntityById(queries.combatants, entity.target.entityId);
           return targetEntity ? { id: targetEntity.id, type: targetEntity.unitType } : undefined;
         };
-
-        // Extract combat stats from the currently selected unit
-        const selectedUnit = queries.selected.entities[0];
-        const selectedUnitStats = selectedUnit?.unitType
-          ? {
-              id: selectedUnit.id,
-              type: selectedUnit.unitType,
-              team: selectedUnit.team,
-              color: selectedUnit.renderable?.color,
-              damage: units[selectedUnit.unitType]?.attackDamage,
-              accuracy: units[selectedUnit.unitType]?.accuracy,
-              defence: units[selectedUnit.unitType]?.defence,
-              stamina: units[selectedUnit.unitType]?.stamina,
-              speed: units[selectedUnit.unitType]?.speed,
-              range: units[selectedUnit.unitType]?.range,
-              target: resolveTarget(selectedUnit),
-            }
-          : undefined;
 
         // Extract combat stats from the hovered unit (unit-info debug flag only)
         const hoveredUnitStats =
@@ -450,7 +459,6 @@ export default function GameCanvas({
           tick: loop.tick,
           entities: world.size,
           hoveredCell,
-          selectedUnitStats,
           hoveredUnitStats,
           pointerPosition,
         });

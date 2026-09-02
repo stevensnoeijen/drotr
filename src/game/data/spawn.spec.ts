@@ -12,11 +12,11 @@ describe('spawnUnit', () => {
     const unit = spawnUnit(world, {
       type: 'knight',
       team: 'red',
-      // Falls inside the [0, 64) cell on both axes, which centers on (32, 32).
+      // Falls inside the [0, 32) cell on both axes, which centers on (16, 16).
       position: { x: 10, y: 20 },
     });
 
-    expect(unit.transform?.position).toEqual({ x: 32, y: 32 });
+    expect(unit.transform?.position).toEqual({ x: 16, y: 16 });
     expect(unit.renderable?.shape).toBe('circle');
     expect(unit.team).toBe('red');
     expect(unit.unitType).toBe('knight');
@@ -90,6 +90,6 @@ describe('spawnUnit', () => {
     const unit = spawnUnit(world, { type: 'knight', team: 'blue', position });
     position.x = 999;
 
-    expect(unit.transform?.position.x).toBe(32);
+    expect(unit.transform?.position.x).toBe(16);
   });
 });

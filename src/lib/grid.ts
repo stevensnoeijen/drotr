@@ -2,7 +2,16 @@ import { Vector2 } from './math/Vector2';
 import * as PathFinding from './navigation/astar';
 import type { Point } from './math/types';
 
-export const CELL_SIZE = 64;
+/**
+ * Matches the map's own tile size — and the original game's raw infantry
+ * sprites (`raw/sprites/units/swordsmen.*`, `crossbowsoldier.*`, 32x32) —
+ * so the unit-placement grid and the terrain/collision grid are the same
+ * grid rather than two grids at different resolutions. Larger unit types
+ * (knight, juggernaut, catapult: 64x64 in the raw sprites) still place on
+ * this same grid; sizing individual units to their real sprite dimensions
+ * is asset-integration work (phase 6), not something this constant does.
+ */
+export const CELL_SIZE = 32;
 
 export const toGridPosition = (vector: Vector2): Vector2 => {
   return Vector2.divides(vector, CELL_SIZE, 'floor');
