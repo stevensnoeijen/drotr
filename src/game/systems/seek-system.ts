@@ -54,6 +54,11 @@ export function createSeekSystem(queries: Queries): System {
       if (remaining <= 0) {
         self.velocity.x = 0;
         self.velocity.y = 0;
+        // Stopped at range: MoveVelocitySystem only turns to face non-zero
+        // velocity, so keep facing the target explicitly while engaged with
+        // it — otherwise the unit would stay frozen looking the way it
+        // approached from instead of at what it's fighting.
+        self.transform.rotation = Math.atan2(dx, -dy);
         continue;
       }
 

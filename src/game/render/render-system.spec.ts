@@ -61,7 +61,7 @@ describe('RenderSystem', () => {
     expect(system.size).toBe(0);
   });
 
-  it('sync copies transform position/rotation onto each view', () => {
+  it('sync copies transform position/rotation onto each view, rotating only the shape', () => {
     const world = new World<Entity>();
     const { renderable } = createQueries(world);
     const parent = new Container();
@@ -74,8 +74,12 @@ describe('RenderSystem', () => {
     system.sync();
 
     const [view] = parent.children;
+    const [shape] = view.children;
     expect(view.position.x).toBe(42);
-    expect(view.rotation).toBe(1.5);
+    // The outer container only ever translates — rotating it would carry
+    // the health bar and selection marks around with the unit's facing.
+    expect(view.rotation).toBe(0);
+    expect(shape.rotation).toBe(1.5);
   });
 
   it('gives an entity with health a health bar child, redrawn only when HP changes', () => {
@@ -91,7 +95,7 @@ describe('RenderSystem', () => {
     });
 
     const [view] = parent.children;
-    // shape graphic + health bar container + death-mark graphic.
+    // shape (holding the shape graphic + facing mark) + health bar container + death-mark graphic.
     expect(view.children.length).toBe(3);
 
     // Unchanged HP: sync must not mark the entity dirty.

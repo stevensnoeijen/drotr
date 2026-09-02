@@ -1,14 +1,10 @@
 import { Graphics } from 'pixi.js';
 
 import type { Entity } from '~/game/ecs/entity';
-import type { Team } from '~/game/ecs/components';
 import { findEntityById } from '~/game/ecs/world';
 
-/** Per-team colour for a unit's target line, matching its own fill colour. */
-const TEAM_LINE_COLOR: Record<Team, number> = {
-  blue: 0x66ccff,
-  red: 0xff6b6b,
-};
+/** Colour of a unit's target line, drawn regardless of team — pink marks it as a debug overlay. */
+const LINE_COLOR = 0xff69b4;
 
 /** Radius, in world units, of the dot drawn at the origin unit. */
 const DOT_RADIUS = 4;
@@ -96,8 +92,7 @@ function drawArrowHead(
  * Redraws `graphics` from scratch (`?debug=targets`) with one dot-and-arrow
  * per entity in `entities` that currently has a `target`: a dot at the
  * origin unit's position, and an arrow from the dot to the target's
- * position, coloured by the *origin* unit's team — so a blue unit's line is
- * always blue even when it points at a red target, and vice versa.
+ * position.
  *
  * `entities` doubles as both the set of possible origins and the pool a
  * `target.entityId` is resolved against (typically `queries.combatants`,
@@ -119,14 +114,13 @@ export function drawTargetLines(graphics: Graphics, entities: Iterable<Entity>):
       continue;
     }
 
-    const color = TEAM_LINE_COLOR[origin.team];
     const from = origin.transform.position;
     const to = targetEntity.transform.position;
 
     const phaseOffset = (origin.id ?? 0) * DASH_LENGTH;
 
-    graphics.circle(from.x, from.y, DOT_RADIUS).fill(color);
-    drawDashedLine(graphics, from, to, color, phaseOffset);
-    drawArrowHead(graphics, from, to, color);
+    graphics.circle(from.x, from.y, DOT_RADIUS).fill(LINE_COLOR);
+    drawDashedLine(graphics, from, to, LINE_COLOR, phaseOffset);
+    drawArrowHead(graphics, from, to, LINE_COLOR);
   }
 }
