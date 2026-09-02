@@ -1,7 +1,7 @@
 import { Graphics } from 'pixi.js';
 import { describe, expect, it } from 'vitest';
 
-import type { Health, Renderable } from '~/game/ecs/types';
+import type { Health, Renderable } from '~/game/ecs/components';
 import {
   HEALTH_BAR_WIDTH,
   createHealthBar,

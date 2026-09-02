@@ -1,6 +1,6 @@
 import { World } from 'miniplex';
 
-import type { Entity } from './types';
+import type { Entity } from './entity';
 
 /**
  * Named archetype queries over a world. Each query holds exactly the entities

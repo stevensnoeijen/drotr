@@ -1,6 +1,6 @@
 import type { World } from 'miniplex';
 
-import type { Entity } from './types';
+import type { Entity } from './entity';
 
 /**
  * A system is a pure step over the world: given the world and the fixed

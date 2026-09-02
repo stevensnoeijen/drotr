@@ -3,7 +3,7 @@ import { Container, Graphics } from 'pixi.js';
 import { describe, expect, it } from 'vitest';
 
 import { createQueries } from '~/game/ecs/world';
-import type { Entity } from '~/game/ecs/types';
+import type { Entity } from '~/game/ecs/entity';
 import { RenderSystem } from './render-system';
 
 function addEntity(world: World<Entity>, x = 0): Entity {

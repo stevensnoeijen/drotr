@@ -1,6 +1,6 @@
 import type { World } from 'miniplex';
 
-import type { Entity } from '~/game/ecs/types';
+import type { Entity } from '~/game/ecs/entity';
 import type { ParsedMap } from '~/game/map/loadTiledMap';
 
 /**

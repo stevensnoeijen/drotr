@@ -1,4 +1,4 @@
-import type { Shape } from '~/game/ecs/types';
+import type { Shape } from '~/game/ecs/components';
 import swordsmenData from './units/swordsmen.json';
 import crossbowsoldierData from './units/crossbowsoldier.json';
 

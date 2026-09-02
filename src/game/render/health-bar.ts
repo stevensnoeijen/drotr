@@ -1,6 +1,6 @@
 import { Container, Graphics } from 'pixi.js';
 
-import type { Health, Renderable } from '~/game/ecs/types';
+import type { Health, Renderable } from '~/game/ecs/components';
 
 /** Overall width of a unit's health bar, in world units. */
 export const HEALTH_BAR_WIDTH = 24;

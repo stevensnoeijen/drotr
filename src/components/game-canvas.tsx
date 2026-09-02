@@ -13,7 +13,7 @@ import type { Viewport } from 'pixi-viewport';
 import { GameLoop } from '~/game/game-loop';
 import { SystemRunner } from '~/game/ecs/system';
 import { findEntityById, queries, world } from '~/game/ecs/world';
-import type { Entity } from '~/game/ecs/types';
+import type { Entity } from '~/game/ecs/entity';
 import type { MapDefinition } from '~/game/maps';
 import { loadTiledMap, type ParsedMap, type TerrainType } from '~/game/map/loadTiledMap';
 import { applyViewportBounds, createGameViewport } from '~/game/render/create-game-viewport';

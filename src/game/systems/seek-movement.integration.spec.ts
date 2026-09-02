@@ -2,7 +2,7 @@ import { World } from 'miniplex';
 import { describe, expect, it } from 'vitest';
 
 import { createQueries } from '~/game/ecs/world';
-import type { Entity } from '~/game/ecs/types';
+import type { Entity } from '~/game/ecs/entity';
 import { CELL_SIZE } from '~/lib/grid';
 import { createMoveVelocitySystem } from './move-velocity-system';
 import { createSeekSystem } from './seek-system';
