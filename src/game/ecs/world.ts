@@ -39,6 +39,23 @@ export function createQueries(world: World<Entity>) {
      * combat system that needs "every unit with a team, alive or dead").
      */
     combatants: world.with('transform', 'team', 'health'),
+    /**
+     * Anything that can actually land an attack: a combatant that also knows
+     * how far it can reach (`attackRange`), how hard it hits (`damage`) and
+     * how often (`attackCooldown`). {@link CombatSystem} iterates this as the
+     * attacker side of its swing scheduling. A unit missing any of the three
+     * (a legacy inline definition with no combat stats) is deliberately
+     * excluded rather than defaulted — it can still be targeted and killed
+     * via `combatants`, it just never swings back.
+     */
+    attackers: world.with(
+      'transform',
+      'team',
+      'health',
+      'attackRange',
+      'damage',
+      'attackCooldown'
+    ),
   } as const;
 }
 
@@ -49,8 +66,14 @@ export type Queries = ReturnType<typeof createQueries>;
  * `undefined` if none does. A plain linear scan — fine at this unit-count
  * scale — used wherever a component stores another entity's id (e.g.
  * {@link Target.entityId}) and needs resolving back to the entity itself.
+ *
+ * Generic in the element type so searching an archetype query hands back that
+ * archetype, not a bare {@link Entity}: resolving a target against
+ * `queries.combatants` yields something already known to have `transform`,
+ * `team` and `health`, which is exactly what a caller then wants to read off
+ * it.
  */
-export function findEntityById(entities: Iterable<Entity>, id: number): Entity | undefined {
+export function findEntityById<T extends Entity>(entities: Iterable<T>, id: number): T | undefined {
   for (const entity of entities) {
     if (entity.id === id) {
       return entity;

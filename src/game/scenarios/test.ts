@@ -2,12 +2,14 @@ import { cellPosition, spawnUnit } from '~/game/data/spawn';
 import type { Scenario } from './types';
 
 /**
- * Two blue-vs-red swordsmen pairs, exercising unit rendering, placement and
- * (once combat lands) attack-range behaviour independent of any map: one
- * pair placed next to each other so they're immediately within attack
- * range, the other placed four tiles apart so they're not. Prefixed
- * `test`: it exists to test the engine, not to demonstrate a real gameplay
- * setup.
+ * Two blue-vs-red swordsmen pairs, exercising unit rendering, placement,
+ * attack-range behaviour and real-time combat independent of any map: one
+ * pair placed next to each other so they're immediately within attack range
+ * and start trading blows on the spot, the other placed four tiles apart so
+ * they have to close the distance under `SeekSystem` first, then stop at
+ * range and fight. Either way the health bars drain a swing at a time, one
+ * `attackCooldown` apart. Prefixed `test`: it exists to test the engine, not
+ * to demonstrate a real gameplay setup.
  */
 export const testScenario: Scenario = {
   id: 'test',

@@ -50,6 +50,10 @@ export default function UnitInfoTooltip({
         )}
         <dt>Damage</dt>
         <dd className="text-right tabular-nums">{stats.damage ?? '-'}</dd>
+        <dt>Cooldown</dt>
+        <dd className="text-right tabular-nums">
+          {stats.attackCooldown !== undefined ? `${stats.attackCooldown}s` : '-'}
+        </dd>
         <dt>Accuracy</dt>
         <dd className="text-right tabular-nums">{stats.accuracy ?? '-'}</dd>
         <dt>Defence</dt>

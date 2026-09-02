@@ -83,6 +83,37 @@ describe('spawnUnit', () => {
     expect(unit.aggroRange).toBeUndefined();
   });
 
+  it('sets damage and attackCooldown from the unit definition\'s combat stats', () => {
+    const world = new World<Entity>();
+
+    const unit = spawnUnit(world, {
+      type: 'swordsmen',
+      team: 'blue',
+      position: { x: 0, y: 0 },
+    });
+
+    expect(unit.damage).toEqual({ value: 3 });
+    expect(unit.attackCooldown).toEqual({ duration: 1 });
+  });
+
+  it('leaves a unit type with no combat stats out of the attackers query', () => {
+    const world = new World<Entity>();
+    const queries = createQueries(world);
+
+    const knight = spawnUnit(world, { type: 'knight', team: 'blue', position: { x: 0, y: 0 } });
+    const swordsmen = spawnUnit(world, {
+      type: 'swordsmen',
+      team: 'red',
+      position: { x: 64, y: 0 },
+    });
+
+    expect(knight.damage).toBeUndefined();
+    expect(knight.attackCooldown).toBeUndefined();
+    expect([...queries.attackers]).toEqual([swordsmen]);
+    // Still a valid victim, though.
+    expect(queries.combatants.size).toBe(2);
+  });
+
   it('is unaffected by later mutation of the caller-supplied position', () => {
     const world = new World<Entity>();
     const position = { x: 1, y: 2 };

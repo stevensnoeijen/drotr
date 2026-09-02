@@ -7,6 +7,7 @@ describe('Unit definitions', () => {
   it('swordsmen JSON has complete, non-zero combat stats', () => {
     const unit = swordsmenData as typeof swordsmenData & {
       attackDamage?: number;
+      attackCooldown?: number;
       accuracy?: number;
       defence?: number;
       stamina?: number;
@@ -17,6 +18,8 @@ describe('Unit definitions', () => {
 
     expect(unit.attackDamage).toBeDefined();
     expect(unit.attackDamage).toBeGreaterThan(0);
+    expect(unit.attackCooldown).toBeDefined();
+    expect(unit.attackCooldown).toBeGreaterThan(0);
     expect(unit.accuracy).toBeDefined();
     expect(unit.accuracy).toBeGreaterThanOrEqual(0);
     expect(unit.defence).toBeDefined();
@@ -34,6 +37,7 @@ describe('Unit definitions', () => {
   it('crossbowsoldier JSON has complete, non-zero combat stats', () => {
     const unit = crossbowsoldierData as typeof crossbowsoldierData & {
       attackDamage?: number;
+      attackCooldown?: number;
       accuracy?: number;
       defence?: number;
       stamina?: number;
@@ -44,6 +48,8 @@ describe('Unit definitions', () => {
 
     expect(unit.attackDamage).toBeDefined();
     expect(unit.attackDamage).toBeGreaterThan(0);
+    expect(unit.attackCooldown).toBeDefined();
+    expect(unit.attackCooldown).toBeGreaterThan(0);
     expect(unit.accuracy).toBeDefined();
     expect(unit.accuracy).toBeGreaterThanOrEqual(0);
     expect(unit.defence).toBeDefined();
@@ -62,6 +68,7 @@ describe('Unit definitions', () => {
     const unit = units.knight;
 
     expect(unit.attackDamage).toBeUndefined();
+    expect(unit.attackCooldown).toBeUndefined();
     expect(unit.accuracy).toBeUndefined();
     expect(unit.defence).toBeUndefined();
     expect(unit.stamina).toBeUndefined();

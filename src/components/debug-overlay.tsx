@@ -9,6 +9,8 @@ export interface SelectedUnitStats {
   team?: string;
   color?: number;
   damage?: number;
+  /** Seconds between attacks (#95), gating how often `damage` is applied. */
+  attackCooldown?: number;
   accuracy?: number;
   defence?: number;
   stamina?: number;

@@ -72,15 +72,23 @@ export function spawnUnit(
     hoverable: true,
     velocity: { x: 0, y: 0 },
   };
-  // Legacy inline units (currently just `knight`) carry neither `range` nor
-  // `aggroRange`, so they get no `attackRange`/`aggroRange` component and
-  // simply can't acquire or be scanned as an attacker by PerceptionSystem;
-  // they can still be targeted by others via `queries.combatants`.
+  // Legacy inline units (currently just `knight`) carry no combat stats at
+  // all, so they get none of the components below and simply can't acquire a
+  // target (PerceptionSystem), or land an attack (CombatSystem, which needs
+  // all three of `attackRange`, `damage` and `attackCooldown` to schedule
+  // one); they can still be targeted and killed by others via
+  // `queries.combatants`.
   if (definition.range !== undefined) {
     entity.attackRange = { value: definition.range };
   }
   if (definition.aggroRange !== undefined) {
     entity.aggroRange = { value: definition.aggroRange };
+  }
+  if (definition.attackDamage !== undefined) {
+    entity.damage = { value: definition.attackDamage };
+  }
+  if (definition.attackCooldown !== undefined) {
+    entity.attackCooldown = { duration: definition.attackCooldown };
   }
   if (definition.movementSpeed !== undefined) {
     entity.moveSpeed = { value: definition.movementSpeed * CELL_SIZE };

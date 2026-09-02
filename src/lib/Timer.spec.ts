@@ -36,6 +36,20 @@ describe('Timer', () => {
 
       expect(timer.isElapsed()).toBe(true);
     });
+
+    it('should return true when float rounding leaves a hair above 0', () => {
+      // Exactly the shape a fixed-timestep cooldown hits: 0.5s stepped down
+      // 30 times by 1/60 lands on ~5.6e-17, not 0. Without the epsilon the
+      // timer reports "not yet" and fires a whole tick late.
+      const timer = new Timer({ delay: 0.5 });
+      GameTime.delta = 1 / 60;
+      for (let i = 0; i < 30; i++) {
+        timer.update();
+      }
+
+      expect(timer.countdown).toBeGreaterThan(0);
+      expect(timer.isElapsed()).toBe(true);
+    });
   });
 
   describe('reset', () => {
