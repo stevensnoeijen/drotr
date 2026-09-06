@@ -61,27 +61,32 @@ export const testScenario: Scenario = {
       position: cellPosition(45, 50),
     });
 
-    // Knight vs. swordsman, same starting row, both given the same distant
-    // move order: exercises per-unit-type MoveSpeed (#90) — the knight's
-    // higher movementSpeed makes it visibly arrive first. Started one cell
-    // apart (rather than the same cell) so cell-occupancy doesn't block
-    // either from moving off its spawn cell; they converge on, and settle
-    // near, the same destination.
-    const speedRaceRow = 15;
-    const speedRaceDestination = cellPosition(20, speedRaceRow);
+    // Knight vs. swordsman, each on its own row, ordered the same distance
+    // in parallel: exercises per-unit-type MoveSpeed (#90) — the knight's
+    // higher movementSpeed makes it visibly pull ahead. Each targets a
+    // point on its own row (not a shared point) so the two straight-line
+    // paths run side by side instead of converging onto one destination,
+    // where the trailing unit would otherwise look like it's following the
+    // leader in single file.
+    const knightRow = 15;
+    const swordsmanRow = 16;
+    const raceStartCol = 2;
+    const raceDistanceCols = 18;
 
     const knight = spawnUnit(world, {
       type: 'knight',
       team: 'blue',
-      position: cellPosition(2, speedRaceRow),
+      position: cellPosition(raceStartCol, knightRow),
     });
-    knight.moveTarget = { position: speedRaceDestination };
+    knight.moveTarget = { position: cellPosition(raceStartCol + raceDistanceCols, knightRow) };
 
     const swordsman = spawnUnit(world, {
       type: 'swordsmen',
       team: 'blue',
-      position: cellPosition(3, speedRaceRow),
+      position: cellPosition(raceStartCol, swordsmanRow),
     });
-    swordsman.moveTarget = { position: speedRaceDestination };
+    swordsman.moveTarget = {
+      position: cellPosition(raceStartCol + raceDistanceCols, swordsmanRow),
+    };
   },
 };
