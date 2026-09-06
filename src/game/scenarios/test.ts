@@ -1,4 +1,5 @@
 import { cellPosition, spawnUnit } from '~/game/data/spawn';
+import { cellPositionToVector } from '~/lib/grid';
 import type { Scenario } from './types';
 
 /**
@@ -80,7 +81,9 @@ export const testScenario: Scenario = {
       team: 'blue',
       position: cellPosition(raceStartCol, knightRow),
     });
-    knight.moveTarget = { position: cellPosition(raceStartCol + raceDistanceCols, knightRow) };
+    knight.moveTarget = {
+      position: cellPositionToVector(raceStartCol + raceDistanceCols, knightRow),
+    };
 
     const swordsman = spawnUnit(world, {
       type: 'swordsmen',
@@ -88,7 +91,7 @@ export const testScenario: Scenario = {
       position: cellPosition(raceStartCol, swordsmanRow),
     });
     swordsman.moveTarget = {
-      position: cellPosition(raceStartCol + raceDistanceCols, swordsmanRow),
+      position: cellPositionToVector(raceStartCol + raceDistanceCols, swordsmanRow),
     };
   },
 };
