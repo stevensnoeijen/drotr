@@ -20,7 +20,9 @@ import { applyViewportBounds, createGameViewport } from '~/game/render/create-ga
 import { RenderSystem } from '~/game/render/render-system';
 import { drawTargetLines } from '~/game/render/target-lines';
 import { drawMoveLines } from '~/game/render/move-lines';
+import { OccupancyGrid } from '~/game/navigation/occupancy-grid';
 import { CameraPanSystem } from '~/game/systems/camera-pan-system';
+import { createCellOccupancySystem } from '~/game/systems/cell-occupancy-system';
 import { createCombatSystem } from '~/game/systems/combat-system';
 import { createInputSystem, InputSystem, findHoverableUnitAt } from '~/game/systems/input-system';
 import { createMovePathSystem } from '~/game/systems/move-path-system';
@@ -341,9 +343,24 @@ export default function GameCanvas({
         }
       }
 
+      // Unit-to-unit collision layers straight over the same grid A* routes
+      // on, so a cell index means the same thing to terrain, pathfinding and
+      // occupancy. No navigation grid (no map, or a tile size that doesn't
+      // line up with CELL_SIZE) means no occupancy either — there is no
+      // agreed cell grid to reserve cells in.
+      const occupancyGrid = navigationGrid ? new OccupancyGrid(navigationGrid) : undefined;
+
       const canvas = app.canvas;
       inputSystem = new InputSystem(canvas);
-      runner.add(createInputSystem(inputSystem, queries, getViewportTransform, navigationGrid));
+      runner.add(
+        createInputSystem(
+          inputSystem,
+          queries,
+          getViewportTransform,
+          navigationGrid,
+          occupancyGrid
+        )
+      );
 
       selectionBoxDrag = new SelectionBoxDrag(canvas, selectionOverlay);
       runner.add(createSelectionBoxSystem(selectionBoxDrag, queries, getViewportTransform));
@@ -361,6 +378,13 @@ export default function GameCanvas({
       // handed over, rather than costing an idle frame per leg.
       runner.add(createMovePathSystem(queries));
       runner.add(createMoveTargetSystem(queries));
+      // Between the systems that decide a velocity and the one that acts on
+      // it: the last chance to veto a step that would put two units in one
+      // cell, and the only place unit collision is decided regardless of
+      // whether a player order or auto-attack seeking aimed the unit.
+      if (occupancyGrid) {
+        runner.add(createCellOccupancySystem(queries, occupancyGrid));
+      }
       runner.add(createMoveVelocitySystem(queries));
       // Last in the step, after the integration above: a unit that arrives at
       // `attackRange` this tick swings from where it now stands, and any

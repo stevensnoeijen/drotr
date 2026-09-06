@@ -12,10 +12,16 @@ import type { System } from '~/game/ecs/system';
  * the same accumulated simulated time produces the same final position
  * regardless of how it was chopped into fixed steps.
  *
- * Deliberately dumb: no clamping to `moveSpeed`, no collision, no obstacle
- * avoidance. Whatever set `Velocity` (currently only {@link SeekSystem}) is
- * responsible for its magnitude and direction; this system only integrates
- * it.
+ * Deliberately dumb: no clamping to `moveSpeed`, no obstacle avoidance, and
+ * no collision resolution. Whatever set `Velocity` ({@link SeekSystem},
+ * {@link MoveTargetSystem}) is responsible for its magnitude and direction;
+ * this system only integrates it.
+ *
+ * Unit-to-unit collision is handled *upstream* rather than here, by
+ * {@link CellOccupancySystem}: a step that would carry a unit into a cell
+ * another unit holds has its velocity zeroed before this system ever sees
+ * it, so the integration below stays a pure "position += velocity * dt" and
+ * never has to undo a move it shouldn't have made.
  *
  * Also turns `Transform.rotation` to face the direction of travel, whenever
  * `Velocity` is non-zero — a stopped unit (zero velocity) keeps whatever
