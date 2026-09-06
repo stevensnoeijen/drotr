@@ -47,6 +47,10 @@ export const units: Record<UnitType, UnitDefinition> = {
     type: 'knight',
     shape: 'circle',
     health: 12,
+    // Mounted, so faster than the JSON-defined infantry (swordsmen and
+    // crossbowsoldier both move at 2 cells/sec) — see the ticket's
+    // indicative ordering: knight > swordsman > crossbowman > ...
+    movementSpeed: 3,
   },
   crossbowsoldier: crossbowsoldierData as UnitDefinition,
 };

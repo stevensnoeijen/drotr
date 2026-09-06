@@ -64,7 +64,7 @@ describe('Unit definitions', () => {
     expect(unit.range).toBeGreaterThan(0);
   });
 
-  it('knight definition lacks combat stats (legacy inline definition)', () => {
+  it('knight definition has a movementSpeed but otherwise lacks combat stats (legacy inline definition)', () => {
     const unit = units.knight;
 
     expect(unit.attackDamage).toBeUndefined();
@@ -73,7 +73,8 @@ describe('Unit definitions', () => {
     expect(unit.defence).toBeUndefined();
     expect(unit.stamina).toBeUndefined();
     expect(unit.speed).toBeUndefined();
-    expect(unit.movementSpeed).toBeUndefined();
+    expect(unit.movementSpeed).toBeDefined();
+    expect(unit.movementSpeed).toBeGreaterThan(0);
     expect(unit.range).toBeUndefined();
   });
 });
