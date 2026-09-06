@@ -1,6 +1,7 @@
 import type { Shape } from '~/game/ecs/components';
 import swordsmenData from './units/swordsmen.json';
 import crossbowsoldierData from './units/crossbowsoldier.json';
+import knightData from './units/knight.json';
 
 /**
  * The kinds of unit in the game. Names and starting HP match
@@ -13,8 +14,10 @@ export type UnitType = 'swordsmen' | 'knight' | 'crossbowsoldier';
 /**
  * Static, per-type unit data. Core fields (type, shape, health) are present
  * on all units. Combat stats (attackDamage, attackCooldown, accuracy, defence,
- * stamina, speed, range, aggroRange) are present on JSON-defined units; legacy
- * inline units lack them.
+ * stamina, speed, range, aggroRange) are present on some JSON-defined units
+ * (swordsmen, crossbowsoldier); knight is JSON-defined too but, being a
+ * placeholder without a finished combat kit yet, only carries movementSpeed
+ * alongside the core fields.
  */
 export interface UnitDefinition {
   type: UnitType;
@@ -43,14 +46,9 @@ export interface UnitDefinition {
 /** All unit definitions, keyed by {@link UnitType}. */
 export const units: Record<UnitType, UnitDefinition> = {
   swordsmen: swordsmenData as UnitDefinition,
-  knight: {
-    type: 'knight',
-    shape: 'circle',
-    health: 12,
-    // Mounted, so faster than the JSON-defined infantry (swordsmen and
-    // crossbowsoldier both move at 2 cells/sec) — see the ticket's
-    // indicative ordering: knight > swordsman > crossbowman > ...
-    movementSpeed: 3,
-  },
+  // Mounted, so faster than the infantry (swordsmen and crossbowsoldier
+  // both move at 2 cells/sec) — see the ticket's indicative ordering:
+  // knight > swordsman > crossbowman > ...
+  knight: knightData as UnitDefinition,
   crossbowsoldier: crossbowsoldierData as UnitDefinition,
 };

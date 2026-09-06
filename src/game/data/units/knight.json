@@ -1,0 +1,6 @@
+{
+  "type": "knight",
+  "shape": "circle",
+  "health": 12,
+  "movementSpeed": 3
+}
