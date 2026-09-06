@@ -75,6 +75,18 @@ describe('OccupancyGrid', () => {
       expect(centre).toEqual({ x: 3 * CELL_SIZE + CELL_SIZE / 2, y: 2 * CELL_SIZE + CELL_SIZE / 2 });
       expect(grid.indexAt(centre)).toBe(grid.indexOf(3, 2));
     });
+
+    it('decodes a row-major index back to its (col, row)', () => {
+      const grid = open();
+
+      expect(grid.colRowOf(grid.indexOf(3, 2))).toEqual({ x: 3, y: 2 });
+    });
+
+    it('has no (col, row) for NO_CELL', () => {
+      const grid = open();
+
+      expect(grid.colRowOf(NO_CELL)).toBeUndefined();
+    });
   });
 
   describe('reservations', () => {

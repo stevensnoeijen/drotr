@@ -101,6 +101,14 @@ export class OccupancyGrid {
     return this.indexAtWorld(position.x, position.y);
   }
 
+  /** The (col, row) a row-major index decodes to, or `undefined` for {@link NO_CELL}. */
+  public colRowOf(index: number): { x: number; y: number } | undefined {
+    if (index === NO_CELL) {
+      return undefined;
+    }
+    return { x: index % this.width, y: Math.floor(index / this.width) };
+  }
+
   /** World-space centre of a cell, i.e. where a unit standing in it rests. */
   public centreOf(index: number): Point {
     const centre = toWorldPosition(

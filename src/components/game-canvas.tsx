@@ -20,7 +20,7 @@ import { applyViewportBounds, createGameViewport } from '~/game/render/create-ga
 import { RenderSystem } from '~/game/render/render-system';
 import { drawTargetLines } from '~/game/render/target-lines';
 import { drawMoveLines } from '~/game/render/move-lines';
-import { OccupancyGrid } from '~/game/navigation/occupancy-grid';
+import { NO_CELL, OccupancyGrid } from '~/game/navigation/occupancy-grid';
 import { CameraPanSystem } from '~/game/systems/camera-pan-system';
 import { createCellOccupancySystem } from '~/game/systems/cell-occupancy-system';
 import { createCombatSystem } from '~/game/systems/combat-system';
@@ -487,6 +487,12 @@ export default function GameCanvas({
                 speed: units[hoveredUnit.unitType]?.speed,
                 range: units[hoveredUnit.unitType]?.range,
                 target: resolveTarget(hoveredUnit),
+                cell: occupancyGrid
+                  ? occupancyGrid.colRowOf(hoveredUnit.cellOccupancy?.cell ?? NO_CELL)
+                  : undefined,
+                movingTo: occupancyGrid
+                  ? occupancyGrid.colRowOf(hoveredUnit.cellOccupancy?.reserved ?? NO_CELL)
+                  : undefined,
               }
             : undefined;
 

@@ -68,6 +68,14 @@ export default function UnitInfoTooltip({
         <dd className="text-right tabular-nums">
           {stats.target ? `${stats.target.type ?? '?'} #${stats.target.id ?? '?'}` : 'none'}
         </dd>
+        <dt>Cell</dt>
+        <dd className="text-right tabular-nums">
+          {stats.cell
+            ? stats.movingTo
+              ? `${stats.cell.x},${stats.cell.y} -> ${stats.movingTo.x},${stats.movingTo.y}`
+              : `${stats.cell.x},${stats.cell.y}`
+            : '-'}
+        </dd>
       </dl>
     </div>
   );

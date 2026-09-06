@@ -18,6 +18,13 @@ export interface SelectedUnitStats {
   range?: number;
   /** The unit's current perception target (#94), if any. */
   target?: { id?: number; type?: string };
+  /** Grid cell the unit currently stands in (#158), if it has claimed one. */
+  cell?: { x: number; y: number };
+  /**
+   * Grid cell the unit is walking into (#158), if it's currently straddling
+   * two cells. Absent when the unit is at rest in {@link cell}.
+   */
+  movingTo?: { x: number; y: number };
 }
 
 export interface GameStats {
