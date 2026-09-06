@@ -5,7 +5,7 @@ import type { Scenario } from './types';
  * Two blue-vs-red swordsmen pairs, exercising unit rendering, placement,
  * attack-range behaviour and real-time combat independent of any map: one
  * pair placed next to each other so they're immediately within attack range
- * and start trading blows on the spot, the other placed four tiles apart so
+ * and start trading blows on the spot, the other placed five tiles apart so
  * they have to close the distance under `SeekSystem` first, then stop at
  * range and fight. Either way the health bars drain a swing at a time, one
  * `attackCooldown` apart. Prefixed `test`: it exists to test the engine, not
@@ -15,7 +15,7 @@ export const testScenario: Scenario = {
   id: 'test',
   title: 'Test',
   description:
-    'Two swordsmen pairs: one within attack range fighting, one four tiles apart not fighting.',
+    'Two swordsmen pairs: one within attack range fighting, one five tiles apart not fighting.',
   setup: (world) => {
     const adjacentRow = 2;
     const separatedRow = 9;
@@ -32,7 +32,14 @@ export const testScenario: Scenario = {
       position: cellPosition(3, adjacentRow),
     });
 
-    // Out of attack range: four cells apart.
+    // Out of attack range: five cells apart. An odd column gap (rather than
+    // four) keeps their eventual meeting point off any shared grid line —
+    // closing symmetrically at equal speed over an even gap lands the
+    // resting boundary exactly on a cell edge, which floating-point noise
+    // then resolves to one cell or its neighbour unpredictably from run to
+    // run. Nothing to do with collision correctness (cell-occupancy never
+    // lets them share a cell either way), but it made this scenario's own
+    // resting cell flicker for no reason.
     spawnUnit(world, {
       type: 'swordsmen',
       team: 'blue',
@@ -41,7 +48,7 @@ export const testScenario: Scenario = {
     spawnUnit(world, {
       type: 'swordsmen',
       team: 'red',
-      position: cellPosition(6, separatedRow),
+      position: cellPosition(7, separatedRow),
     });
 
     // Just below (south of) the maze block, lined up with its bottom exit
