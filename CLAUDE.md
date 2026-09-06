@@ -19,6 +19,13 @@ Guidance for Claude Code (and contributors) working in this repository.
   `Closes #75`).
 - Prefer small, focused PRs scoped to a single issue over bundling multiple
   tickets together.
+- Commit in small, atomic commits rather than one large commit per ticket:
+  group each commit around one logical change (a fix, a feature slice, a
+  follow-up correction), and make sure the check suite is green at each
+  commit — never leave a commit that doesn't build, typecheck, lint, and
+  pass tests on its own. If work-in-progress needs setting aside mid-change,
+  use a WIP commit or stash rather than committing a broken intermediate
+  state to the branch.
 - Every issue, when created and whenever its scope is substantively updated,
   has the drotr GitHub Project's `Model` and `Effort` custom fields set to
   reflect the ticket's current scope. This is the model/effort a subagent
