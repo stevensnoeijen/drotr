@@ -218,6 +218,97 @@ describe('RenderSystem', () => {
     expect((deathMark as Graphics).context.instructions.length).toBeGreaterThan(0);
   });
 
+  it('hides a dead unit\'s health bar even with health bars globally visible', () => {
+    const world = new World<Entity>();
+    const { renderable } = createQueries(world);
+    const parent = new Container();
+    const system = new RenderSystem(renderable, parent, true);
+
+    const entity = world.add({
+      transform: { position: { x: 0, y: 0 }, rotation: 0 },
+      renderable: { shape: 'circle', color: 0xffffff, size: 4 },
+      health: { current: 10, max: 10 },
+    });
+
+    const [view] = parent.children;
+    const [, healthBarContainer] = view.children;
+    expect(healthBarContainer.visible).toBe(true);
+
+    entity.health!.current = 0;
+    system.sync();
+
+    expect(healthBarContainer.visible).toBe(false);
+  });
+
+  it('hides a dead unit\'s health bar even while selected', () => {
+    const world = new World<Entity>();
+    const { renderable } = createQueries(world);
+    const parent = new Container();
+    const system = new RenderSystem(renderable, parent);
+
+    world.add({
+      transform: { position: { x: 0, y: 0 }, rotation: 0 },
+      renderable: { shape: 'circle', color: 0xffffff, size: 4 },
+      health: { current: 0, max: 10 },
+      selectable: true,
+      selected: true,
+    });
+
+    const [view] = parent.children;
+    const [, , healthBarContainer] = view.children;
+
+    system.sync();
+
+    expect(healthBarContainer.visible).toBe(false);
+  });
+
+  it('draws a living unit above a dead one regardless of spawn order', () => {
+    const world = new World<Entity>();
+    const { renderable } = createQueries(world);
+    const parent = new Container();
+    new RenderSystem(renderable, parent);
+
+    world.add({
+      transform: { position: { x: 0, y: 0 }, rotation: 0 },
+      renderable: { shape: 'circle', color: 0xffffff, size: 4 },
+      health: { current: 0, max: 10 },
+    });
+    world.add({
+      transform: { position: { x: 0, y: 0 }, rotation: 0 },
+      renderable: { shape: 'circle', color: 0xffffff, size: 4 },
+      health: { current: 10, max: 10 },
+    });
+
+    const [dead, alive] = parent.children;
+    expect(alive.zIndex).toBeGreaterThan(dead.zIndex);
+  });
+
+  it('sorts a unit behind once it dies, so a live unit passing over it stays on top', () => {
+    const world = new World<Entity>();
+    const { renderable } = createQueries(world);
+    const parent = new Container();
+    const system = new RenderSystem(renderable, parent);
+
+    const entity = world.add({
+      transform: { position: { x: 0, y: 0 }, rotation: 0 },
+      renderable: { shape: 'circle', color: 0xffffff, size: 4 },
+      health: { current: 10, max: 10 },
+    });
+    world.add({
+      transform: { position: { x: 0, y: 0 }, rotation: 0 },
+      renderable: { shape: 'circle', color: 0xffffff, size: 4 },
+      health: { current: 10, max: 10 },
+    });
+
+    const [view, otherView] = parent.children;
+    expect(view.zIndex).toBe(otherView.zIndex);
+
+    entity.health!.current = 0;
+    system.sync();
+
+    expect(view.zIndex).toBeLessThan(otherView.zIndex);
+  });
+
   it('destroys the health bar along with its parent container', () => {
     const world = new World<Entity>();
     const { renderable } = createQueries(world);

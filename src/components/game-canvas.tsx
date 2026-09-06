@@ -265,13 +265,22 @@ export default function GameCanvas({
         })
       );
 
+      // Own layer for unit views, sorted by `zIndex` (dead behind alive —
+      // see `RenderSystem`) independent of spawn/removal order. Kept out of
+      // `gameViewport` directly and out of the terrain/overlay ordering
+      // below: sorting only this layer's own children means the terrain
+      // (added beneath it) and the debug/target/move overlays (added above
+      // it) are unaffected by enabling `sortableChildren` here.
+      const entitiesLayer = new Container();
+      entitiesLayer.sortableChildren = true;
+
       // Reactively mirrors `queries.renderable` into Pixi views: it must be
       // live before any spawning happens below so every unit — whether
       // added by the map's spawns or by the scenario's own setup — gets a
       // view, and every removal cleans its view up.
       renderSystem = new RenderSystem(
         queries.renderable,
-        gameViewport,
+        entitiesLayer,
         debugFlagsRef.current?.has('health') ?? false
       );
       syncHealthBarsRef.current = () => {
@@ -297,6 +306,12 @@ export default function GameCanvas({
           console.error(`Failed to load map "${mapSource}":`, error);
         }
       }
+      // After terrain (units draw over it), before the scenario spawns any
+      // (so every unit's view lands in this layer, not directly in
+      // `gameViewport`) and before the debug/target/move overlays below
+      // (which must stay drawn over every unit regardless of z-order within
+      // this layer).
+      gameViewport.addChild(entitiesLayer);
       if (cancelled) {
         return;
       }

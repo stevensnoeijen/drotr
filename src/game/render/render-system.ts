@@ -41,6 +41,29 @@ interface EntityView {
 const CELL_HALF_EXTENT = CELL_SIZE / 2;
 
 /**
+ * `zIndex` a unit's container sorts at within its (sortable) parent layer —
+ * dead units drawn behind every living one, so a corpse never visually sits
+ * on top of (and gets mistaken for occluding) a live unit passing over its
+ * cell. Two fixed values rather than, say, HP-based sorting: this is the
+ * only distinction that currently matters, and it only ever moves one way
+ * (alive to dead), so there's no ordering to maintain among the living or
+ * among the dead themselves.
+ */
+const ALIVE_Z_INDEX = 1;
+const DEAD_Z_INDEX = 0;
+
+/**
+ * Whether a unit's health bar should be shown: the usual
+ * globally-toggled-or-selected rule, but never for a dead unit — a corpse's
+ * HP is a fixed, uninteresting 0, and its bar would just be another static
+ * shape cluttering a battle's aftermath. The death mark ({@link drawDeathMark})
+ * is the death indicator; the bar has nothing left to say once it's earned.
+ */
+function shouldShowHealthBar(entity: LivingRenderableEntity, healthBarsVisible: boolean): boolean {
+  return entity.health.current > 0 && (healthBarsVisible || Boolean(entity.selected));
+}
+
+/**
  * Inset, in world units, of a unit's selection marks from the cell edge —
  * inward, so the marks stay inside the unit's own grid cell instead of
  * spilling into the neighboring one.
@@ -123,6 +146,8 @@ export class RenderSystem {
 
   private readonly handleAdded = (entity: RenderableEntity): void => {
     const container = new Container();
+    container.zIndex =
+      entity.health && entity.health.current <= 0 ? DEAD_Z_INDEX : ALIVE_Z_INDEX;
 
     const shape = new Container();
     shape.addChild(drawRenderable(entity.renderable));
@@ -138,7 +163,10 @@ export class RenderSystem {
     }
     if (entity.health) {
       const healthBar = createHealthBar(CELL_HALF_EXTENT);
-      healthBar.container.visible = this.healthBarsVisible || Boolean(entity.selected);
+      healthBar.container.visible = shouldShowHealthBar(
+        entity as LivingRenderableEntity,
+        this.healthBarsVisible
+      );
       container.addChild(healthBar.container);
       drawHealthBarFill(healthBar.fill, entity.health, healthBar.width);
       view.healthBar = healthBar;
@@ -189,8 +217,11 @@ export class RenderSystem {
   public setHealthBarsVisible(visible: boolean): void {
     this.healthBarsVisible = visible;
     for (const [entity, view] of this.views) {
-      if (view.healthBar) {
-        view.healthBar.container.visible = visible || Boolean(entity.selected);
+      if (view.healthBar && entity.health) {
+        view.healthBar.container.visible = shouldShowHealthBar(
+          entity as LivingRenderableEntity,
+          visible
+        );
       }
     }
   }
@@ -220,7 +251,10 @@ export class RenderSystem {
       if (entity.health) {
         markDirtyOnHealthChange(entity as LivingRenderableEntity, this.lastHealth);
         if (view.healthBar) {
-          view.healthBar.container.visible = this.healthBarsVisible || Boolean(entity.selected);
+          view.healthBar.container.visible = shouldShowHealthBar(
+            entity as LivingRenderableEntity,
+            this.healthBarsVisible
+          );
         }
       }
 
@@ -229,6 +263,7 @@ export class RenderSystem {
         if (view.deathMark) {
           drawDeathMark(view.deathMark, entity.renderable.size, entity.health.current <= 0);
         }
+        view.container.zIndex = entity.health.current <= 0 ? DEAD_Z_INDEX : ALIVE_Z_INDEX;
         entity.renderable.dirty = false;
       }
     }
