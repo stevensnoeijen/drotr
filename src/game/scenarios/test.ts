@@ -67,11 +67,13 @@ export const testScenario: Scenario = {
     // point on its own row (not a shared point) so the two straight-line
     // paths run side by side instead of converging onto one destination,
     // where the trailing unit would otherwise look like it's following the
-    // leader in single file.
-    const knightRow = 15;
-    const swordsmanRow = 16;
+    // leader in single file. Run in the open area above the maze block
+    // (which starts at col 16, row 16), so the straight-line paths don't
+    // clip its walls.
+    const knightRow = 5;
+    const swordsmanRow = 6;
     const raceStartCol = 2;
-    const raceDistanceCols = 18;
+    const raceDistanceCols = 10;
 
     const knight = spawnUnit(world, {
       type: 'knight',
