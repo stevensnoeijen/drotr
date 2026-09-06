@@ -60,5 +60,28 @@ export const testScenario: Scenario = {
       team: 'blue',
       position: cellPosition(45, 50),
     });
+
+    // Knight vs. swordsman, same starting row, both given the same distant
+    // move order: exercises per-unit-type MoveSpeed (#90) — the knight's
+    // higher movementSpeed makes it visibly arrive first. Started one cell
+    // apart (rather than the same cell) so cell-occupancy doesn't block
+    // either from moving off its spawn cell; they converge on, and settle
+    // near, the same destination.
+    const speedRaceRow = 15;
+    const speedRaceDestination = cellPosition(20, speedRaceRow);
+
+    const knight = spawnUnit(world, {
+      type: 'knight',
+      team: 'blue',
+      position: cellPosition(2, speedRaceRow),
+    });
+    knight.moveTarget = { position: speedRaceDestination };
+
+    const swordsman = spawnUnit(world, {
+      type: 'swordsmen',
+      team: 'blue',
+      position: cellPosition(3, speedRaceRow),
+    });
+    swordsman.moveTarget = { position: speedRaceDestination };
   },
 };
