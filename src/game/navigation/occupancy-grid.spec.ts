@@ -209,6 +209,52 @@ describe('OccupancyGrid', () => {
       expect(grid.isTerrainBlocked(grid.indexOf(1, 0))).toBe(true);
     });
   });
+
+  describe('asBlockedGridExcluding', () => {
+    it('blocks a cell held by another occupant', () => {
+      const grid = open();
+      const other = grid.indexOf(2, 2);
+      grid.reserve(other, 7);
+
+      const snapshot = grid.asBlockedGridExcluding(1);
+
+      expect(snapshot.collision[other]).toBe(1);
+    });
+
+    it('leaves the excluded occupant\'s own cell open', () => {
+      const grid = open();
+      const own = grid.indexOf(2, 2);
+      grid.reserve(own, 1);
+
+      const snapshot = grid.asBlockedGridExcluding(1);
+
+      expect(snapshot.collision[own]).toBe(0);
+    });
+
+    it('carries terrain blocking over unchanged', () => {
+      const grid = new OccupancyGrid(
+        gridFrom(`
+          ...
+          .#.
+          ...
+        `)
+      );
+
+      const snapshot = grid.asBlockedGridExcluding(1);
+
+      expect(snapshot.collision[grid.indexOf(1, 1)]).toBe(1);
+    });
+
+    it('leaves the live grid\'s own occupants untouched', () => {
+      const grid = open();
+      const held = grid.indexOf(0, 0);
+      grid.reserve(held, 3);
+
+      grid.asBlockedGridExcluding(1);
+
+      expect(grid.occupantAt(held)).toBe(3);
+    });
+  });
 });
 
 describe('findNearestAvailableCell', () => {

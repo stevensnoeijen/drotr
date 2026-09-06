@@ -43,4 +43,12 @@ export interface CellOccupancy {
    * re-scan every unit to find the blocked ones.
    */
   blockedFor: number;
+  /**
+   * Whether a re-route has already been attempted for the current
+   * unbroken stretch of being blocked. Reset to `false` the same moment
+   * `blockedFor` resets to zero, so each fresh blockage gets exactly one
+   * attempt to route around whoever is in the way — never a cascade of
+   * replans against a corridor that just stays jammed.
+   */
+  rerouted: boolean;
 }

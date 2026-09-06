@@ -95,6 +95,12 @@ describe('cell occupancy + move order integration', () => {
     .........
   `;
 
+  const CORRIDOR = `
+    #####
+    .....
+    #####
+  `;
+
   describe('group orders', () => {
     it('never assigns two units the same destination cell', () => {
       const { tick, addUnit, order, occupancy } = setup(OPEN);
@@ -176,12 +182,6 @@ describe('cell occupancy + move order integration', () => {
   });
 
   describe('blocked routes', () => {
-    const CORRIDOR = `
-      #####
-      .....
-      #####
-    `;
-
     it('holds a unit behind a parked one instead of clipping through it', () => {
       const { tick, addUnit, order, cellOf, occupancy, deselect } = setup(CORRIDOR);
       const parked = addUnit(2, 1);
@@ -247,6 +247,53 @@ describe('cell occupancy + move order integration', () => {
           false
         );
       }
+    });
+  });
+
+  describe('rerouting around a blocker', () => {
+    it('routes around a stationary unit in an open room rather than giving up', () => {
+      const { tick, addUnit, order, cellOf, occupancy, deselect } = setup(OPEN);
+      const blocker = addUnit(3, 2);
+      const mover = addUnit(0, 2);
+      tick();
+
+      // Order only the mover straight through the blocker's cell.
+      deselect(blocker);
+      order(6, 2);
+
+      for (let i = 0; i < 600; i++) {
+        tick();
+        expect(cellOf(mover)).not.toBe(cellOf(blocker));
+      }
+
+      // With open ground on either side, a detour exists — arrival beats
+      // giving up.
+      expect(cellOf(mover)).toBe(occupancy.indexOf(6, 2));
+      expect(mover.moveTarget).toBeUndefined();
+      expect(mover.movePath).toBeUndefined();
+    });
+
+    it('still just waits, then gives up, when no detour exists', () => {
+      const { tick, addUnit, order, cellOf, occupancy, deselect } = setup(CORRIDOR);
+      const blocker = addUnit(2, 1);
+      const mover = addUnit(0, 1);
+      tick();
+
+      deselect(blocker);
+      order(4, 1);
+
+      // Long past both the reroute attempt and the give-up threshold: a
+      // 1-wide corridor has no detour to find, so the mover neither clips
+      // through nor teleports around the blocker — it waits, then gives up
+      // exactly as it did before rerouting existed.
+      for (let i = 0; i < 600; i++) {
+        tick();
+      }
+
+      expect(cellOf(mover)).toBe(occupancy.indexOf(1, 1));
+      expect(cellOf(blocker)).toBe(occupancy.indexOf(2, 1));
+      expect(mover.moveTarget).toBeUndefined();
+      expect(mover.movePath).toBeUndefined();
     });
   });
 });

@@ -1,7 +1,7 @@
 import { CELL_SIZE, toWorldPosition } from '~/lib/grid';
 import { Vector2 } from '~/lib/math/Vector2';
 import type { Point } from '~/lib/math/types';
-import { toCollisionGrid, type GridLike } from '~/lib/navigation/astar';
+import { toCollisionGrid, type CollisionGrid, type GridLike } from '~/lib/navigation/astar';
 
 /** Value stored in a cell that no unit holds. */
 export const NO_OCCUPANT = 0;
@@ -171,6 +171,30 @@ export class OccupancyGrid {
     if (this.occupants[index] === occupantId) {
       this.occupants[index] = NO_OCCUPANT;
     }
+  }
+
+  /**
+   * A one-off snapshot grid for re-routing a specific blocked unit: terrain
+   * blocking is carried over unchanged, and every cell currently held by
+   * some *other* occupant is blocked too, so `planMovePath` can route a
+   * stuck unit around whoever is in its way right now. `occupantId`'s own
+   * claim (its current and any straddled cell) never counts against it —
+   * a unit is never blocked by the ground it's already standing on.
+   *
+   * Deliberately a fresh copy taken only when a reroute is actually
+   * attempted, not a view kept live: unit positions change every tick, but a
+   * plan is only ever as good as the instant it was made, so there is
+   * nothing to gain from the copy tracking further ticks it will never see.
+   */
+  public asBlockedGridExcluding(occupantId: number): CollisionGrid {
+    const collision = new Uint8Array(this.collision);
+    for (let i = 0; i < this.occupants.length; i++) {
+      const occupant = this.occupants[i];
+      if (occupant !== NO_OCCUPANT && occupant !== occupantId) {
+        collision[i] = 1;
+      }
+    }
+    return { width: this.width, height: this.height, collision };
   }
 
   /** Drops every claim, leaving terrain untouched. */

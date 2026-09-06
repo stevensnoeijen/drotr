@@ -4,6 +4,7 @@ import type { Entity } from '~/game/ecs/entity';
 import type { Queries } from '~/game/ecs/world';
 import type { System } from '~/game/ecs/system';
 import { NO_CELL, type OccupancyGrid } from '~/game/navigation/occupancy-grid';
+import { planMovePath } from '~/game/navigation/plan-move-path';
 
 /**
  * How long, in seconds, a unit will stand and wait for the cell ahead of it
@@ -18,6 +19,20 @@ import { NO_CELL, type OccupancyGrid } from '~/game/navigation/occupancy-grid';
  * the player to issue a better order.
  */
 export const BLOCKED_GIVE_UP_SECONDS = 2;
+
+/**
+ * How long, in seconds, a routed unit waits before trying to route *around*
+ * whoever is blocking it, rather than just standing there — well short of
+ * {@link BLOCKED_GIVE_UP_SECONDS} so a corridor that clears on its own is
+ * still preferred (no wasted search) but a unit stuck behind something that
+ * isn't moving gets a real second chance before giving up outright.
+ *
+ * Deliberately not attempted on the very first blocked tick: another unit
+ * crossing the same corridor a moment ahead is the common case, and it is
+ * usually gone before this threshold is even reached — routing around it
+ * would just be a search spent on a jam that was about to clear by itself.
+ */
+export const REROUTE_AFTER_SECONDS = 0.5;
 
 /**
  * Unit-to-unit collision, enforced as cell occupancy over the map's terrain
@@ -56,6 +71,24 @@ export const BLOCKED_GIVE_UP_SECONDS = 2;
  * Dead units vacate their cells: a corpse is not an obstacle, and releasing
  * here means no cell can be left permanently claimed by something that will
  * never move again.
+ *
+ * A routed unit (one with a `MovePath`, i.e. a player order on a map with
+ * collision data) that stays blocked past {@link REROUTE_AFTER_SECONDS}
+ * gets one attempt to route *around* the obstruction: a fresh, one-off A*
+ * search from where it now stands to its original destination, over a
+ * snapshot grid that layers current unit occupancy on top of terrain (see
+ * {@link OccupancyGrid.asBlockedGridExcluding}). This is deliberately
+ * reactive rather than baked into the order at dispatch time — planning
+ * around every unit on the map up front is wasted work for a search whose
+ * result is stale the moment anyone else moves, whereas re-planning only
+ * when a unit is actually, sustainedly stuck stays cheap regardless of unit
+ * count and only pays the search cost where a real conflict exists. It is
+ * also tried at most once per unbroken stretch of being blocked (see
+ * `CellOccupancy.rerouted`), so a corridor that stays jammed doesn't turn
+ * into a cascade of re-searches — the unit just waits out the rest of
+ * {@link BLOCKED_GIVE_UP_SECONDS} and gives up like any other stuck order. A
+ * seek-driven attacker (no `MovePath`) is left alone: it has nothing to
+ * route around, since it re-aims at its live target every tick regardless.
  */
 export function createCellOccupancySystem(queries: Queries, grid: OccupancyGrid): System {
   return (_world: World<Entity>, dt: number) => {
@@ -81,6 +114,7 @@ export function createCellOccupancySystem(queries: Queries, grid: OccupancyGrid)
           cell: NO_CELL,
           reserved: NO_CELL,
           blockedFor: 0,
+          rerouted: false,
         };
         self.cellOccupancy = occupancy;
       }
@@ -131,6 +165,7 @@ export function createCellOccupancySystem(queries: Queries, grid: OccupancyGrid)
 
       if (!moving) {
         occupancy.blockedFor = 0;
+        occupancy.rerouted = false;
         continue;
       }
 
@@ -144,6 +179,7 @@ export function createCellOccupancySystem(queries: Queries, grid: OccupancyGrid)
       if (!entersNewCell) {
         // Still inside ground this unit already holds.
         occupancy.blockedFor = 0;
+        occupancy.rerouted = false;
         continue;
       }
 
@@ -151,6 +187,7 @@ export function createCellOccupancySystem(queries: Queries, grid: OccupancyGrid)
         grid.reserve(next, occupancy.occupantId);
         occupancy.reserved = next;
         occupancy.blockedFor = 0;
+        occupancy.rerouted = false;
         continue;
       }
 
@@ -161,10 +198,33 @@ export function createCellOccupancySystem(queries: Queries, grid: OccupancyGrid)
       velocity.y = 0;
       occupancy.blockedFor += dt;
 
+      if (
+        !occupancy.rerouted &&
+        occupancy.blockedFor >= REROUTE_AFTER_SECONDS &&
+        self.movePath
+      ) {
+        occupancy.rerouted = true;
+        const { waypoints } = self.movePath;
+        const destination = waypoints[waypoints.length - 1];
+        if (destination) {
+          const blockedGrid = grid.asBlockedGridExcluding(occupancy.occupantId);
+          const planned = planMovePath(blockedGrid, transform.position, destination);
+          if (planned.status === 'found' && planned.waypoints.length > 0) {
+            self.movePath = { waypoints: planned.waypoints, index: 0 };
+            // MovePathSystem only hands over a waypoint when there's no
+            // current `moveTarget` — clearing it here is what lets the
+            // new route's first leg take over next tick instead of the
+            // stale one this unit was just blocked on.
+            delete self.moveTarget;
+          }
+        }
+      }
+
       if (occupancy.blockedFor >= BLOCKED_GIVE_UP_SECONDS) {
         delete self.moveTarget;
         delete self.movePath;
         occupancy.blockedFor = 0;
+        occupancy.rerouted = false;
       }
     }
   };

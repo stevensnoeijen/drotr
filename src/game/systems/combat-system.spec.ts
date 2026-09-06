@@ -211,7 +211,7 @@ describe('CombatSystem', () => {
       damage: 5,
       attackCooldown: 0.5,
     });
-    attacker.cellOccupancy = { occupantId: 0, cell: 0, reserved: 1, blockedFor: 0 };
+    attacker.cellOccupancy = { occupantId: 0, cell: 0, reserved: 1, blockedFor: 0, rerouted: false };
 
     run(system, world, 30);
 
@@ -225,7 +225,7 @@ describe('CombatSystem', () => {
       damage: 5,
       attackCooldown: 0.5,
     });
-    target.cellOccupancy = { occupantId: 1, cell: 1, reserved: 2, blockedFor: 0 };
+    target.cellOccupancy = { occupantId: 1, cell: 1, reserved: 2, blockedFor: 0, rerouted: false };
 
     run(system, world, 30);
 
@@ -239,12 +239,12 @@ describe('CombatSystem', () => {
       damage: 5,
       attackCooldown: 0.5,
     });
-    attacker.cellOccupancy = { occupantId: 0, cell: 0, reserved: 1, blockedFor: 0 };
+    attacker.cellOccupancy = { occupantId: 0, cell: 0, reserved: 1, blockedFor: 0, rerouted: false };
 
     run(system, world, 30);
     expect(target.health!.current).toBe(100);
 
-    attacker.cellOccupancy.reserved = NO_CELL;
+    attacker.cellOccupancy!.reserved = NO_CELL;
     run(system, world, 30);
 
     expect(target.health!.current).toBe(95);
