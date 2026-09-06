@@ -6,6 +6,7 @@ import { createQueries, type Queries } from '~/game/ecs/world';
 import { markDirtyOnHealthChange } from '~/game/render/health-bar';
 import type { Health, Renderable } from '~/game/ecs/components';
 import { CELL_SIZE } from '~/lib/grid';
+import { NO_CELL } from '~/game/navigation/occupancy-grid';
 import { createCombatSystem } from './combat-system';
 
 /** The fixed timestep the game loop runs systems at (60 Hz). */
@@ -198,6 +199,52 @@ describe('CombatSystem', () => {
     });
     target.transform!.position.x = CELL_SIZE + Number.EPSILON * CELL_SIZE * 4;
 
+    run(system, world, 30);
+
+    expect(target.health!.current).toBe(95);
+  });
+
+  it('withholds a swing while the attacker is still mid-step between two cells', () => {
+    const { world, attacker, target, system } = setupDuel({
+      gapCells: 1,
+      attackRangeCells: 1,
+      damage: 5,
+      attackCooldown: 0.5,
+    });
+    attacker.cellOccupancy = { occupantId: 0, cell: 0, reserved: 1, blockedFor: 0 };
+
+    run(system, world, 30);
+
+    expect(target.health!.current).toBe(100);
+  });
+
+  it('withholds a swing while the target is still mid-step between two cells', () => {
+    const { world, target, system } = setupDuel({
+      gapCells: 1,
+      attackRangeCells: 1,
+      damage: 5,
+      attackCooldown: 0.5,
+    });
+    target.cellOccupancy = { occupantId: 1, cell: 1, reserved: 2, blockedFor: 0 };
+
+    run(system, world, 30);
+
+    expect(target.health!.current).toBe(100);
+  });
+
+  it('resumes swinging once both combatants settle back into a single cell', () => {
+    const { world, attacker, target, system } = setupDuel({
+      gapCells: 1,
+      attackRangeCells: 1,
+      damage: 5,
+      attackCooldown: 0.5,
+    });
+    attacker.cellOccupancy = { occupantId: 0, cell: 0, reserved: 1, blockedFor: 0 };
+
+    run(system, world, 30);
+    expect(target.health!.current).toBe(100);
+
+    attacker.cellOccupancy.reserved = NO_CELL;
     run(system, world, 30);
 
     expect(target.health!.current).toBe(95);
