@@ -62,17 +62,18 @@ export const testScenario: Scenario = {
       position: cellPosition(45, 50),
     });
 
-    // Knight vs. swordsman, each on its own row, ordered the same distance
-    // in parallel: exercises per-unit-type MoveSpeed (#90) — the knight's
-    // higher movementSpeed makes it visibly pull ahead. Each targets a
-    // point on its own row (not a shared point) so the two straight-line
-    // paths run side by side instead of converging onto one destination,
-    // where the trailing unit would otherwise look like it's following the
-    // leader in single file. Run in the open area above the maze block
-    // (which starts at col 16, row 16), so the straight-line paths don't
-    // clip its walls.
+    // Knight, swordsman and crossbowsoldier, each on its own row, ordered
+    // the same distance in parallel: exercises per-unit-type MoveSpeed
+    // (#90) — the knight's higher movementSpeed makes it visibly pull
+    // ahead. Each targets a point on its own row (not a shared point) so
+    // the straight-line paths run side by side instead of converging onto
+    // one destination, where a trailing unit would otherwise look like
+    // it's following the leader in single file. Run in the open area above
+    // the maze block (which starts at col 16, row 16), so the straight-line
+    // paths don't clip its walls.
     const knightRow = 5;
     const swordsmanRow = 6;
+    const crossbowsoldierRow = 7;
     const raceStartCol = 2;
     const raceDistanceCols = 10;
 
@@ -92,6 +93,15 @@ export const testScenario: Scenario = {
     });
     swordsman.moveTarget = {
       position: cellPositionToVector(raceStartCol + raceDistanceCols, swordsmanRow),
+    };
+
+    const crossbowsoldier = spawnUnit(world, {
+      type: 'crossbowsoldier',
+      team: 'blue',
+      position: cellPosition(raceStartCol, crossbowsoldierRow),
+    });
+    crossbowsoldier.moveTarget = {
+      position: cellPositionToVector(raceStartCol + raceDistanceCols, crossbowsoldierRow),
     };
   },
 };
