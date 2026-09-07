@@ -72,8 +72,9 @@ export function spawnUnit(
     hoverable: true,
     velocity: { x: 0, y: 0 },
   };
-  // Legacy inline units (currently just `knight`) carry no combat stats at
-  // all, so they get none of the components below and simply can't acquire a
+  // Placeholder units without a finished combat kit (currently just
+  // `knight`) carry no combat stats at all, so they get none of the
+  // components below and simply can't acquire a
   // target (PerceptionSystem), or land an attack (CombatSystem, which needs
   // all three of `attackRange`, `damage` and `attackCooldown` to schedule
   // one); they can still be targeted and killed by others via

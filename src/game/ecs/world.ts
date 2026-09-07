@@ -44,7 +44,7 @@ export function createQueries(world: World<Entity>) {
      * how far it can reach (`attackRange`), how hard it hits (`damage`) and
      * how often (`attackCooldown`). {@link CombatSystem} iterates this as the
      * attacker side of its swing scheduling. A unit missing any of the three
-     * (a legacy inline definition with no combat stats) is deliberately
+     * (a placeholder definition with no combat stats, e.g. knight) is deliberately
      * excluded rather than defaulted — it can still be targeted and killed
      * via `combatants`, it just never swings back.
      */
