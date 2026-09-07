@@ -53,12 +53,15 @@ export const REROUTE_AFTER_SECONDS = 0.5;
  *    other than movement) re-claims from scratch.
  * 2. A unit at rest holds exactly one cell, so a stale reservation ahead of
  *    a stopped unit is released rather than left pinned.
- * 3. A unit under way looks one integration step ahead. Staying inside a
- *    cell it already holds needs no permission. Crossing into a new one
+ * 3. A unit under way looks one integration step ahead, extended by its own
+ *    rendered half-extent (see `margin` below) so a cell is refused before
+ *    the unit's edge — not just its centre — would reach it. Staying inside
+ *    a cell it already holds needs no permission. Crossing into a new one
  *    reserves it first — and if that cell is held by another unit, blocked
  *    by terrain, or off the map, the step is refused: velocity is zeroed for
  *    the tick, so `MoveVelocitySystem` integrates nothing and the unit holds
- *    position instead of clipping through.
+ *    position — with a safety margin still intact, never mid-clip — instead
+ *    of clipping through or visibly encroaching on it.
  *
  * Order of operations matters and is deliberate: release-on-arrival happens
  * before any new reservation, so a unit never briefly holds three cells; and
@@ -141,15 +144,31 @@ export function createCellOccupancySystem(queries: Queries, grid: OccupancyGrid)
         }
       }
 
-      const moving = velocity.x !== 0 || velocity.y !== 0;
+      const speed = Math.hypot(velocity.x, velocity.y);
+      const moving = speed > 0;
 
-      // Where this tick's step would put the unit — its own cell when it
-      // isn't going anywhere. Asked by coordinate rather than by point so the
-      // lookahead costs no allocation per unit per tick.
+      // How far past this tick's own step to keep looking, in world units —
+      // this unit's own rendered half-extent, so blocking is decided by
+      // whether its rendered edge (not just its centre point) would reach
+      // occupied ground, not only whether the centre itself would. Without
+      // this, a unit could ease its centre right up to a shared boundary
+      // over many perfectly legal single-tick steps — each one still inside
+      // its own cell by a point-based check — and only be refused on the
+      // step that would finally cross it, by which point its rendered width
+      // is already overlapping the neighbour's cell. Checked this way
+      // instead, the cell the unit is denied is the one it would need to
+      // start visibly encroaching on, so it simply never gets that close:
+      // no approach-and-bounce, because there is nothing to correct.
+      const margin = self.renderable?.size ?? 0;
+
+      // Where this tick's step, extended by that margin, would put the
+      // unit — its own cell when it isn't going anywhere. Asked by
+      // coordinate rather than by point so the lookahead costs no
+      // allocation per unit per tick.
       const next = moving
         ? grid.indexAtWorld(
-            transform.position.x + velocity.x * dt,
-            transform.position.y + velocity.y * dt
+            transform.position.x + (velocity.x / speed) * (speed * dt + margin),
+            transform.position.y + (velocity.y / speed) * (speed * dt + margin)
           )
         : occupancy.cell;
 

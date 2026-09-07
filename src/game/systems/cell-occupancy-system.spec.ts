@@ -264,6 +264,32 @@ describe('createCellOccupancySystem', () => {
       expect(mover.cellOccupancy?.reserved).toBe(NO_CELL);
     });
 
+    it('stops a rendered unit short of the boundary by its own half-extent, never touching it', () => {
+      // Without accounting for render size, a point-based check would let
+      // the mover's centre ease right up to the boundary line over several
+      // legal single-tick steps, only refusing the one that would finally
+      // cross it — by which point a unit half this wide already visibly
+      // overlaps the blocker's cell. Checked against the unit's own
+      // half-extent instead, the boundary cell is denied while there's
+      // still at least that much clearance, so the unit never gets close
+      // enough to need correcting afterward.
+      const { grid, addUnit, drive, tick } = setup();
+      const halfExtent = 13;
+      addUnit(1, 0);
+      const mover = addUnit(0, 0, { renderable: { shape: 'square', color: 0, size: halfExtent } });
+      drive(mover, SPEED, 0);
+
+      const boundary = grid.centreOf(grid.indexOf(0, 0)).x + CELL_SIZE / 2;
+      for (let i = 0; i < 10; i++) {
+        tick();
+        expect(mover.transform.position.x).toBeLessThanOrEqual(boundary - halfExtent);
+      }
+
+      // And it actually closed the gap down to that limit rather than
+      // stopping arbitrarily early.
+      expect(mover.transform.position.x).toBeGreaterThan(boundary - halfExtent - STEP);
+    });
+
     it('sets off again the moment the cell ahead clears', () => {
       const { grid, addUnit, drive, tick, cellOf } = setup();
       const blocker = addUnit(1, 0);
