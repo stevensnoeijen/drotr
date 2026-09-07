@@ -3,6 +3,7 @@ import type {
   AggroRange,
   AttackCooldown,
   AttackRange,
+  CellOccupancy,
   Damage,
   Health,
   Hoverable,
@@ -44,4 +45,5 @@ export interface Entity {
   target?: Target;
   moveTarget?: MoveTarget;
   movePath?: MovePath;
+  cellOccupancy?: CellOccupancy;
 }

@@ -4,6 +4,12 @@ import type { Entity } from '~/game/ecs/entity';
 import type { Queries } from '~/game/ecs/world';
 import type { System } from '~/game/ecs/system';
 import { planMovePath } from '~/game/navigation/plan-move-path';
+import {
+  findNearestAvailableCell,
+  NO_CELL,
+  NO_OCCUPANT,
+  type OccupancyGrid,
+} from '~/game/navigation/occupancy-grid';
 import { screenToWorld, toWorldPositionCellCenter, type ViewportTransform } from '~/lib/grid';
 import { Vector2 } from '~/lib/math/Vector2';
 import type { GridLike } from '~/lib/navigation/astar';
@@ -237,9 +243,18 @@ export function selectAt(
  * right-click with only red units selected (or nothing selected at all) is
  * a no-op rather than silently moving red units around.
  *
- * All selected units receive the same destination, not one each spread out
- * — formation-based group orders are a later ticket (#89); for now every
- * selected unit heads for the same cell.
+ * With an `occupancy` grid, no two units are ever sent to the same cell: the
+ * clicked cell goes to the first unit that can have it, and everyone else is
+ * relocated to the nearest cell that is walkable, unclaimed, and not already
+ * handed out earlier in this same batch (see {@link findNearestAvailableCell}).
+ * Cells occupied by units *outside* the selection are excluded too, which is
+ * conservative — the occupier may itself be about to walk away — but it makes
+ * a group order fan out around the click instead of resolving into a shoving
+ * match at the destination. This is destination *deconfliction*, not
+ * formations: the shape a group settles into is whatever the ring search
+ * finds, and real formation-based group orders remain a later ticket (#89).
+ * Without an occupancy grid every selected unit heads for the same cell, as
+ * before.
  *
  * With a `grid` (the loaded map's collision data), each unit gets its own
  * route around terrain, planned from where *it* stands — a `MovePath` whose
@@ -261,7 +276,8 @@ export function selectAt(
 export function moveSelectedTo(
   queries: Queries,
   worldPosition: Vector2,
-  grid?: GridLike
+  grid?: GridLike,
+  occupancy?: OccupancyGrid
 ): void {
   const selected = [...queries.selected];
   const hasBlueUnit = selected.some((entity) => entity.team === 'blue');
@@ -269,11 +285,31 @@ export function moveSelectedTo(
     return;
   }
 
-  const destination = toWorldPositionCellCenter(worldPosition);
+  const clicked = toWorldPositionCellCenter(worldPosition);
+  /** Destination cells already handed out within this one order. */
+  const assigned = new Set<number>();
 
   for (const entity of selected) {
     if (entity.team !== 'blue' || !entity.transform) {
       continue;
+    }
+
+    let destination: Point = { x: clicked.x, y: clicked.y };
+    if (occupancy) {
+      const cell = findNearestAvailableCell(
+        occupancy,
+        occupancy.indexAt(destination),
+        entity.cellOccupancy?.occupantId ?? NO_OCCUPANT,
+        assigned
+      );
+      if (cell === NO_CELL) {
+        // Nowhere within the search radius for this unit to stand. Refusing
+        // outright beats sending it to a cell it would only be turned away
+        // from on arrival.
+        continue;
+      }
+      assigned.add(cell);
+      destination = occupancy.centreOf(cell);
     }
 
     if (!grid) {
@@ -319,13 +355,16 @@ export function moveSelectedTo(
  *
  * `grid` is the loaded map's collision data, used to route move orders
  * around terrain; omit it for a map with no terrain, and orders fall back to
- * straight lines (see {@link moveSelectedTo}).
+ * straight lines (see {@link moveSelectedTo}). `occupancy` is the live
+ * unit-occupancy layer over that same grid, used to give each unit in a
+ * group order a destination cell of its own; omit it and they all share one.
  */
 export function createInputSystem(
   input: InputSystem,
   queries: Queries,
   getViewport: () => ViewportTransform,
-  grid?: GridLike
+  grid?: GridLike,
+  occupancy?: OccupancyGrid
 ): System {
   return (world) => {
     const clicks = input.drain();
@@ -341,7 +380,7 @@ export function createInputSystem(
     if (moveOrders.length > 0) {
       const viewport = getViewport();
       for (const order of moveOrders) {
-        moveSelectedTo(queries, screenToWorld(order, viewport), grid);
+        moveSelectedTo(queries, screenToWorld(order, viewport), grid, occupancy);
       }
     }
   };

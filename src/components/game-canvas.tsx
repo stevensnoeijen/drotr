@@ -20,7 +20,9 @@ import { applyViewportBounds, createGameViewport } from '~/game/render/create-ga
 import { RenderSystem } from '~/game/render/render-system';
 import { drawTargetLines } from '~/game/render/target-lines';
 import { drawMoveLines } from '~/game/render/move-lines';
+import { NO_CELL, OccupancyGrid } from '~/game/navigation/occupancy-grid';
 import { CameraPanSystem } from '~/game/systems/camera-pan-system';
+import { createCellOccupancySystem } from '~/game/systems/cell-occupancy-system';
 import { createCombatSystem } from '~/game/systems/combat-system';
 import { createInputSystem, InputSystem, findHoverableUnitAt } from '~/game/systems/input-system';
 import { createMovePathSystem } from '~/game/systems/move-path-system';
@@ -263,13 +265,22 @@ export default function GameCanvas({
         })
       );
 
+      // Own layer for unit views, sorted by `zIndex` (dead behind alive —
+      // see `RenderSystem`) independent of spawn/removal order. Kept out of
+      // `gameViewport` directly and out of the terrain/overlay ordering
+      // below: sorting only this layer's own children means the terrain
+      // (added beneath it) and the debug/target/move overlays (added above
+      // it) are unaffected by enabling `sortableChildren` here.
+      const entitiesLayer = new Container();
+      entitiesLayer.sortableChildren = true;
+
       // Reactively mirrors `queries.renderable` into Pixi views: it must be
       // live before any spawning happens below so every unit — whether
       // added by the map's spawns or by the scenario's own setup — gets a
       // view, and every removal cleans its view up.
       renderSystem = new RenderSystem(
         queries.renderable,
-        gameViewport,
+        entitiesLayer,
         debugFlagsRef.current?.has('health') ?? false
       );
       syncHealthBarsRef.current = () => {
@@ -295,6 +306,12 @@ export default function GameCanvas({
           console.error(`Failed to load map "${mapSource}":`, error);
         }
       }
+      // After terrain (units draw over it), before the scenario spawns any
+      // (so every unit's view lands in this layer, not directly in
+      // `gameViewport`) and before the debug/target/move overlays below
+      // (which must stay drawn over every unit regardless of z-order within
+      // this layer).
+      gameViewport.addChild(entitiesLayer);
       if (cancelled) {
         return;
       }
@@ -341,9 +358,24 @@ export default function GameCanvas({
         }
       }
 
+      // Unit-to-unit collision layers straight over the same grid A* routes
+      // on, so a cell index means the same thing to terrain, pathfinding and
+      // occupancy. No navigation grid (no map, or a tile size that doesn't
+      // line up with CELL_SIZE) means no occupancy either — there is no
+      // agreed cell grid to reserve cells in.
+      const occupancyGrid = navigationGrid ? new OccupancyGrid(navigationGrid) : undefined;
+
       const canvas = app.canvas;
       inputSystem = new InputSystem(canvas);
-      runner.add(createInputSystem(inputSystem, queries, getViewportTransform, navigationGrid));
+      runner.add(
+        createInputSystem(
+          inputSystem,
+          queries,
+          getViewportTransform,
+          navigationGrid,
+          occupancyGrid
+        )
+      );
 
       selectionBoxDrag = new SelectionBoxDrag(canvas, selectionOverlay);
       runner.add(createSelectionBoxSystem(selectionBoxDrag, queries, getViewportTransform));
@@ -361,6 +393,13 @@ export default function GameCanvas({
       // handed over, rather than costing an idle frame per leg.
       runner.add(createMovePathSystem(queries));
       runner.add(createMoveTargetSystem(queries));
+      // Between the systems that decide a velocity and the one that acts on
+      // it: the last chance to veto a step that would put two units in one
+      // cell, and the only place unit collision is decided regardless of
+      // whether a player order or auto-attack seeking aimed the unit.
+      if (occupancyGrid) {
+        runner.add(createCellOccupancySystem(queries, occupancyGrid));
+      }
       runner.add(createMoveVelocitySystem(queries));
       // Last in the step, after the integration above: a unit that arrives at
       // `attackRange` this tick swings from where it now stands, and any
@@ -463,6 +502,12 @@ export default function GameCanvas({
                 speed: units[hoveredUnit.unitType]?.speed,
                 range: units[hoveredUnit.unitType]?.range,
                 target: resolveTarget(hoveredUnit),
+                cell: occupancyGrid
+                  ? occupancyGrid.colRowOf(hoveredUnit.cellOccupancy?.cell ?? NO_CELL)
+                  : undefined,
+                movingTo: occupancyGrid
+                  ? occupancyGrid.colRowOf(hoveredUnit.cellOccupancy?.reserved ?? NO_CELL)
+                  : undefined,
               }
             : undefined;
 

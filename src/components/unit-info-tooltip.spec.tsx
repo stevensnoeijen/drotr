@@ -59,4 +59,51 @@ describe('UnitInfoTooltip', () => {
 
     expect(container.textContent).toContain('crossbowsoldier #2');
   });
+
+  it('shows "-" for a unit with no claimed cell', () => {
+    act(() => {
+      root.render(
+        <UnitInfoTooltip
+          stats={{ id: 1, type: 'swordsmen', team: 'blue' }}
+          pointerPosition={{ x: 10, y: 20 }}
+        />
+      );
+    });
+
+    expect(container.textContent).toContain('Cell');
+    expect(container.textContent).toContain('-');
+  });
+
+  it('shows a stationary unit\'s cell alone', () => {
+    act(() => {
+      root.render(
+        <UnitInfoTooltip
+          stats={{ id: 1, type: 'swordsmen', team: 'blue', cell: { x: 3, y: 9 } }}
+          pointerPosition={{ x: 10, y: 20 }}
+        />
+      );
+    });
+
+    expect(container.textContent).toContain('3,9');
+    expect(container.textContent).not.toContain('->');
+  });
+
+  it('shows a moving unit\'s origin and destination cell', () => {
+    act(() => {
+      root.render(
+        <UnitInfoTooltip
+          stats={{
+            id: 1,
+            type: 'swordsmen',
+            team: 'blue',
+            cell: { x: 3, y: 9 },
+            movingTo: { x: 4, y: 9 },
+          }}
+          pointerPosition={{ x: 10, y: 20 }}
+        />
+      );
+    });
+
+    expect(container.textContent).toContain('3,9 -> 4,9');
+  });
 });

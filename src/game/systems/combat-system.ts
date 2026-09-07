@@ -7,6 +7,7 @@ import type { System } from '~/game/ecs/system';
 import { Cooldown } from '~/lib/Cooldown';
 import { GameTime } from '~/lib/GameTime';
 import { CELL_SIZE } from '~/lib/grid';
+import { NO_CELL } from '~/game/navigation/occupancy-grid';
 
 /** An entity that can schedule and land attacks — see `queries.attackers`. */
 export type AttackerEntity = With<
@@ -29,6 +30,24 @@ export type AttackerEntity = With<
  * absorbs.
  */
 export const ATTACK_RANGE_EPSILON = 0.01;
+
+/**
+ * True once a unit is standing fully inside one cell rather than straddling
+ * two mid-step.
+ *
+ * `SeekSystem` stops an attacker at a world-space distance, not a cell
+ * boundary, so two units closing on each other can both still be mid-transit
+ * (each holding an origin *and* a reserved destination cell in
+ * {@link CellOccupancy}) the instant they come within range — trading blows
+ * while straddling a cell line instead of standing in one. A unit with no
+ * `cellOccupancy` at all (never claimed a cell — stationary and never
+ * visited by `CellOccupancySystem`) can't be mid-transit, so it counts as
+ * settled by default.
+ */
+function isSettled(entity: Entity): boolean {
+  const occupancy = entity.cellOccupancy;
+  return !occupancy || occupancy.reserved === NO_CELL;
+}
 
 /**
  * Resolves `self`'s current target and, if it is a live entity within reach,
@@ -57,6 +76,15 @@ function attack(queries: Queries, self: AttackerEntity): void {
   const other = findEntityById(queries.combatants, target.entityId);
   if (!other || other.health.current <= 0) {
     delete self.target;
+    return;
+  }
+
+  // Neither combatant may be mid-step between two cells: a swing only lands
+  // once both are standing still inside the cell they occupy. The target
+  // keeps its `target` here (unlike the dead-target case above) — it's still
+  // a live, in-range foe, just not settled yet, and the swing is simply
+  // deferred to a later tick.
+  if (!isSettled(self) || !isSettled(other)) {
     return;
   }
 
