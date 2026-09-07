@@ -95,8 +95,8 @@ describe('RenderSystem', () => {
     });
 
     const [view] = parent.children;
-    // shape (holding the shape graphic + facing mark) + health bar container + death-mark graphic.
-    expect(view.children.length).toBe(3);
+    // shape (holding the shape graphic, facing mark, and death-mark graphic) + health bar container.
+    expect(view.children.length).toBe(2);
 
     // Unchanged HP: sync must not mark the entity dirty.
     system.sync();
@@ -209,12 +209,37 @@ describe('RenderSystem', () => {
     });
 
     const [view] = parent.children;
-    const [, , deathMark] = view.children;
+    const [shape] = view.children;
+    const [, , deathMark] = shape.children;
     expect((deathMark as Graphics).context.instructions.length).toBe(0);
 
     entity.health!.current = 0;
     system.sync();
 
+    expect((deathMark as Graphics).context.instructions.length).toBeGreaterThan(0);
+  });
+
+  it('turns the death mark with the unit\'s facing rather than leaving it screen-aligned', () => {
+    const world = new World<Entity>();
+    const { renderable } = createQueries(world);
+    const parent = new Container();
+    const system = new RenderSystem(renderable, parent);
+
+    const entity = world.add({
+      transform: { position: { x: 0, y: 0 }, rotation: 0.8 },
+      renderable: { shape: 'circle', color: 0xffffff, size: 4 },
+      health: { current: 0, max: 10 },
+    });
+
+    system.sync();
+
+    const [view] = parent.children;
+    const [shape] = view.children;
+    const [, , deathMark] = shape.children;
+    // The mark rotates as part of `shape`, the same container the unit's
+    // own body and facing indicator turn with — not `container`, which
+    // stays screen-aligned for the health bar and selection marks.
+    expect(shape.rotation).toBe(entity.transform!.rotation);
     expect((deathMark as Graphics).context.instructions.length).toBeGreaterThan(0);
   });
 

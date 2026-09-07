@@ -24,14 +24,14 @@ interface EntityView {
   container: Container;
   /**
    * Positioned only via `container`, rotated to `Transform.rotation` each
-   * `sync()`. Holds the unit's shape and facing mark — the only parts that
-   * should turn with the unit — kept out of `container` itself so the
-   * overlays below (health bar, selection marks, death mark) stay
-   * screen-aligned regardless of which way the unit is facing.
+   * `sync()`. Holds the unit's shape, facing mark and death mark — the
+   * parts that should turn with the unit — kept out of `container` itself
+   * so the overlays below (health bar, selection marks) stay screen-aligned
+   * regardless of which way the unit is facing.
    */
   shape: Container;
   healthBar?: HealthBarView;
-  /** Cross drawn over the shape once the entity's HP reaches 0. */
+  /** Cross drawn over the shape once the entity's HP reaches 0, turning with it. */
   deathMark?: Graphics;
   /** Black corner marks shown while the entity has a `selected` component. */
   selectionMarks?: Graphics;
@@ -173,7 +173,12 @@ export class RenderSystem {
 
       const deathMark = new Graphics();
       drawDeathMark(deathMark, entity.renderable.size, entity.health.current <= 0);
-      container.addChild(deathMark);
+      // Added to `shape`, not `container`: unlike the health bar and
+      // selection marks (which stay screen-aligned on purpose), the death
+      // mark reads as damage to the unit's own body — it should turn with
+      // whichever way the unit was facing when it fell, not sit fixed
+      // regardless of orientation.
+      shape.addChild(deathMark);
       view.deathMark = deathMark;
 
       this.lastHealth.set(entity as LivingRenderableEntity, entity.health.current);
