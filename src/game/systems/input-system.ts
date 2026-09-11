@@ -3,6 +3,7 @@ import type { World } from 'miniplex';
 import type { Entity } from '~/game/ecs/entity';
 import type { Queries } from '~/game/ecs/world';
 import type { System } from '~/game/ecs/system';
+import { applyMoveOrder, type MoveOrderResult } from '~/game/navigation/move-order';
 import { planMovePath } from '~/game/navigation/plan-move-path';
 import {
   findNearestAvailableCell,
@@ -272,6 +273,17 @@ export function selectAt(
  * Either way an accepted order replaces the previous one outright, so a
  * second right-click never leaves a stale route behind for the unit to
  * resume.
+ *
+ * A unit already mid-transition between two cells (`MoveTarget` set, still
+ * walking toward it) never has that redirected immediately — movement is
+ * only ever an atomic step from one cell to an adjacent one in one of the 8
+ * allowed directions (#178), and swapping the target mid-step would send it
+ * off at whatever arbitrary angle its current position happens to be from
+ * the new destination. Instead the planned order is staged as a
+ * `PendingMoveOrder`, which `PendingMoveOrderSystem` applies once the unit
+ * actually finishes that step. A unit that isn't mid-transition (already at
+ * rest, or exactly at a cell boundary with no `MoveTarget`) still gets its
+ * order applied immediately, same as before.
  */
 export function moveSelectedTo(
   queries: Queries,
@@ -312,38 +324,38 @@ export function moveSelectedTo(
       destination = occupancy.centreOf(cell);
     }
 
+    let result: MoveOrderResult;
     if (!grid) {
-      delete entity.movePath;
-      entity.moveTarget = { position: { x: destination.x, y: destination.y } };
-      continue;
-    }
-
-    const { status, waypoints } = planMovePath(
-      grid,
-      entity.transform.position,
-      destination
-    );
-    if (status !== 'found') {
-      continue;
-    }
-
-    delete entity.moveTarget;
-    if (waypoints.length === 0) {
-      // Ordered to the cell it is already standing in: nothing to walk, so
-      // the order reads as "stop here" rather than "carry on with whatever
-      // you were doing". Velocity has to be zeroed explicitly — nothing else
-      // will, since `MoveVelocitySystem` integrates whatever it finds and
-      // `MoveTargetSystem` only zeroes on arrival at a target that no longer
-      // exists.
-      delete entity.movePath;
-      if (entity.velocity) {
-        entity.velocity.x = 0;
-        entity.velocity.y = 0;
+      result = {
+        kind: 'target',
+        moveTarget: { position: { x: destination.x, y: destination.y } },
+      };
+    } else {
+      const { status, waypoints } = planMovePath(
+        grid,
+        entity.transform.position,
+        destination
+      );
+      if (status !== 'found') {
+        continue;
       }
-      continue;
+
+      result =
+        waypoints.length === 0
+          ? { kind: 'stop' }
+          : { kind: 'path', movePath: { waypoints, index: 0 } };
     }
 
-    entity.movePath = { waypoints, index: 0 };
+    if (entity.moveTarget) {
+      // Mid-transition: stage the order rather than redirecting now — see
+      // the doc comment above. A later order staged this same tick simply
+      // overwrites an earlier one, since only the most recent order should
+      // take effect once the unit is free to receive it.
+      entity.pendingMoveOrder = result;
+    } else {
+      delete entity.pendingMoveOrder;
+      applyMoveOrder(entity, result);
+    }
   }
 }
 

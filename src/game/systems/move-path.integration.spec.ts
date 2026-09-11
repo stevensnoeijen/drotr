@@ -8,8 +8,9 @@ import { Vector2 } from '~/lib/math/Vector2';
 import { isWalkable } from '~/lib/navigation/astar';
 import { moveSelectedTo } from './input-system';
 import { createMovePathSystem } from './move-path-system';
-import { createMoveTargetSystem } from './move-target-system';
+import { ARRIVAL_TOLERANCE, createMoveTargetSystem } from './move-target-system';
 import { createMoveVelocitySystem } from './move-velocity-system';
+import { createPendingMoveOrderSystem } from './pending-move-order-system';
 
 /** A collision grid in the exact shape a loaded map exposes. */
 const gridFrom = (art: string) => {
@@ -51,6 +52,7 @@ describe('move order + path + movement integration', () => {
     const dt = 1 / 60;
     const world = new World<Entity>();
     const queries = createQueries(world);
+    const pendingOrder = createPendingMoveOrderSystem(queries);
     const path = createMovePathSystem(queries);
     const target = createMoveTargetSystem(queries);
     const move = createMoveVelocitySystem(queries);
@@ -65,6 +67,7 @@ describe('move order + path + movement integration', () => {
     });
 
     const tick = () => {
+      pendingOrder(world, dt);
       path(world, dt);
       target(world, dt);
       move(world, dt);
@@ -132,7 +135,7 @@ describe('move order + path + movement integration', () => {
     expect(reached).toEqual(waypoints.map((_, index) => index));
   });
 
-  it('replaces the route outright when a second order is given mid-walk', () => {
+  it('stages a second order given mid-walk, applying it once the in-progress leg finishes (#178)', () => {
     const { queries, unit, tick } = setup();
 
     moveSelectedTo(queries, new Vector2(centre(8, 0).x, centre(8, 0).y), wallWithGap);
@@ -140,21 +143,34 @@ describe('move order + path + movement integration', () => {
       tick();
     }
 
+    // Still mid-transition toward the leg it already committed to: a new
+    // order here must not redirect it immediately, which would change its
+    // direction of travel mid-cell.
+    const previousMoveTarget = { ...unit.moveTarget!.position };
     const destination = centre(0, 4);
     moveSelectedTo(queries, new Vector2(destination.x, destination.y), wallWithGap);
 
-    expect(unit.movePath?.index).toBe(0);
-    expect(unit.movePath?.waypoints.at(-1)).toEqual(destination);
+    expect(unit.moveTarget).toEqual({ position: previousMoveTarget });
+    expect(unit.pendingMoveOrder).toBeDefined();
 
-    for (let i = 0; i < 1200; i++) {
+    // Extra headroom over the usual 1200 ticks: the order only starts being
+    // walked once the leg already in progress finishes.
+    for (let i = 0; i < 2400; i++) {
       tick();
     }
 
-    expect(unit.transform.position.x).toBeCloseTo(destination.x, 5);
-    expect(unit.transform.position.y).toBeCloseTo(destination.y, 5);
+    // The staged order still takes effect eventually, once the unit is free
+    // to receive it. The final leg starts from wherever the interrupted leg
+    // left off rather than a cell boundary, so arrival is only guaranteed
+    // within ARRIVAL_TOLERANCE rather than exactly at the destination.
+    const distance = Math.hypot(
+      unit.transform.position.x - destination.x,
+      unit.transform.position.y - destination.y
+    );
+    expect(distance).toBeLessThanOrEqual(ARRIVAL_TOLERANCE);
   });
 
-  it('stops a walking unit when ordered to the cell it already occupies', () => {
+  it('stages a stop order given mid-walk, only halting once the in-progress leg finishes (#178)', () => {
     const { queries, unit, tick } = setup();
 
     moveSelectedTo(queries, new Vector2(centre(8, 0).x, centre(8, 0).y), wallWithGap);
@@ -166,15 +182,26 @@ describe('move order + path + movement integration', () => {
     const here = { ...unit.transform.position };
     moveSelectedTo(queries, new Vector2(here.x, here.y), wallWithGap);
 
+    // Still mid-transition: the stop order is staged, not applied yet, so
+    // the unit keeps moving toward the cell it already committed to.
+    expect(unit.pendingMoveOrder).toEqual({ kind: 'stop' });
+    expect(unit.velocity).not.toEqual({ x: 0, y: 0 });
+
+    for (let i = 0; i < 1200; i++) {
+      tick();
+    }
+
     expect(unit.movePath).toBeUndefined();
     expect(unit.moveTarget).toBeUndefined();
     expect(unit.velocity).toEqual({ x: 0, y: 0 });
+    expect(unit.pendingMoveOrder).toBeUndefined();
 
     // And it stays stopped: nothing left to integrate it forward.
+    const stoppedAt = { ...unit.transform.position };
     for (let i = 0; i < 60; i++) {
       tick();
     }
-    expect(unit.transform.position).toEqual(here);
+    expect(unit.transform.position).toEqual(stoppedAt);
   });
 
   it('leaves a unit untouched when the destination is unreachable', () => {

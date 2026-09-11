@@ -207,7 +207,7 @@ describe('moveSelectedTo', () => {
     expect(redUnit.moveTarget).toBeUndefined();
   });
 
-  it('replaces an in-progress move order with a new one on a second right-click', () => {
+  it('stages a second right-click instead of redirecting a unit still mid-transition (#178)', () => {
     const world = new World<Entity>();
     const queries = createQueries(world);
     const unit = addTeamUnit(world, 'blue', true);
@@ -215,9 +215,32 @@ describe('moveSelectedTo', () => {
     moveSelectedTo(queries, new Vector2(300, 400));
     expect(unit.moveTarget).toEqual({ position: { x: 304, y: 400 } });
 
+    // The unit hasn't arrived (MoveTargetSystem never ran), so it's still
+    // mid-transition: a new order here must not redirect it immediately —
+    // that would change its direction mid-cell, which #178 disallows.
+    moveSelectedTo(queries, new Vector2(10, 20));
+
+    expect(unit.moveTarget).toEqual({ position: { x: 304, y: 400 } });
+    expect(unit.pendingMoveOrder).toEqual({
+      kind: 'target',
+      moveTarget: { position: { x: 16, y: 16 } },
+    });
+  });
+
+  it('applies a move order immediately once the unit is no longer mid-transition', () => {
+    const world = new World<Entity>();
+    const queries = createQueries(world);
+    const unit = addTeamUnit(world, 'blue', true);
+
+    moveSelectedTo(queries, new Vector2(300, 400));
+    // Simulate arrival: MoveTargetSystem clears MoveTarget once the unit
+    // reaches it.
+    delete unit.moveTarget;
+
     moveSelectedTo(queries, new Vector2(10, 20));
 
     expect(unit.moveTarget).toEqual({ position: { x: 16, y: 16 } });
+    expect(unit.pendingMoveOrder).toBeUndefined();
   });
 
   describe('with a collision grid', () => {
@@ -307,7 +330,7 @@ describe('moveSelectedTo', () => {
       expect(unit.moveTarget).toBeUndefined();
     });
 
-    it('clears the previous leg so a new route starts from its first waypoint', () => {
+    it('stages a routed order rather than clearing the in-progress leg (#178)', () => {
       const world = new World<Entity>();
       const queries = createQueries(world);
       const unit = addTeamUnit(world, 'blue', true);
@@ -316,8 +339,23 @@ describe('moveSelectedTo', () => {
 
       moveSelectedTo(queries, new Vector2(centre(8, 0).x, centre(8, 0).y), wallWithGap);
 
-      expect(unit.moveTarget).toBeUndefined();
-      expect(unit.movePath?.index).toBe(0);
+      // Still mid-transition toward the leg it already committed to: the new
+      // route must not take over yet.
+      expect(unit.moveTarget).toEqual({ position: { x: 999, y: 999 } });
+      expect(unit.movePath).toBeUndefined();
+      expect(unit.pendingMoveOrder).toEqual({
+        kind: 'path',
+        movePath: {
+          waypoints: [
+            centre(3, 3),
+            centre(3, 4),
+            centre(5, 4),
+            centre(8, 1),
+            centre(8, 0),
+          ],
+          index: 0,
+        },
+      });
     });
 
     it('drops a stale route when a later order falls back to a straight line', () => {
