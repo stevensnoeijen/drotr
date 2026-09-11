@@ -3,6 +3,7 @@ import type { World } from 'miniplex';
 import type { Entity } from '~/game/ecs/entity';
 import type { Queries } from '~/game/ecs/world';
 import type { System } from '~/game/ecs/system';
+import { quantizeAngle } from '~/lib/math/angle';
 
 /**
  * Integrates `Transform.position` from `Velocity` for every entity in
@@ -25,7 +26,10 @@ import type { System } from '~/game/ecs/system';
  *
  * Also turns `Transform.rotation` to face the direction of travel, whenever
  * `Velocity` is non-zero — a stopped unit (zero velocity) keeps whatever
- * facing it last had rather than snapping back to a default.
+ * facing it last had rather than snapping back to a default. The facing
+ * angle is quantized ({@link quantizeAngle}) to the nearest of the 8
+ * compass directions (45° apart) rather than following the raw velocity
+ * angle continuously — see #178.
  */
 export function createMoveVelocitySystem(queries: Queries): System {
   return (_world: World<Entity>, dt: number) => {
@@ -35,7 +39,7 @@ export function createMoveVelocitySystem(queries: Queries): System {
       transform.position.y += velocity.y * dt;
 
       if (velocity.x !== 0 || velocity.y !== 0) {
-        transform.rotation = Math.atan2(velocity.x, -velocity.y);
+        transform.rotation = quantizeAngle(Math.atan2(velocity.x, -velocity.y));
       }
     }
   };

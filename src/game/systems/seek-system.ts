@@ -5,6 +5,7 @@ import type { Queries } from '~/game/ecs/world';
 import { findEntityById } from '~/game/ecs/world';
 import type { System } from '~/game/ecs/system';
 import { CELL_SIZE } from '~/lib/grid';
+import { quantizeAngle } from '~/lib/math/angle';
 
 /**
  * For every entity with a `Target`, points `Velocity` straight at the
@@ -57,8 +58,9 @@ export function createSeekSystem(queries: Queries): System {
         // Stopped at range: MoveVelocitySystem only turns to face non-zero
         // velocity, so keep facing the target explicitly while engaged with
         // it — otherwise the unit would stay frozen looking the way it
-        // approached from instead of at what it's fighting.
-        self.transform.rotation = Math.atan2(dx, -dy);
+        // approached from instead of at what it's fighting. Quantized to
+        // the same 8 compass directions as MoveVelocitySystem — see #178.
+        self.transform.rotation = quantizeAngle(Math.atan2(dx, -dy));
         continue;
       }
 

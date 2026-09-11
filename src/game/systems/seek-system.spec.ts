@@ -115,6 +115,29 @@ describe('createSeekSystem', () => {
     expect(self.transform.rotation).toBeCloseTo(Math.PI);
   });
 
+  it('quantizes the facing set while stopped at range to the nearest of 8 directions (#178)', () => {
+    const world = new World<Entity>();
+    const queries = createQueries(world);
+    const system = createSeekSystem(queries);
+
+    // Shallow, off-diagonal offset from self to target.
+    const target = world.add({
+      transform: { position: { x: 10 * CELL_SIZE, y: -1 * CELL_SIZE }, rotation: 0 },
+    });
+    const self = world.add({
+      transform: { position: { x: 0, y: 0 }, rotation: 0 },
+      velocity: { x: 0, y: 0 },
+      moveSpeed: { value: 10 },
+      attackRange: { value: 20 },
+      target: { entityId: target.id! },
+    });
+
+    system(world, 1 / 60);
+
+    // Snapped to due east rather than the raw shallow atan2 angle.
+    expect(self.transform.rotation).toBeCloseTo(Math.PI / 2);
+  });
+
   it('leaves velocity untouched for an entity with no target', () => {
     const world = new World<Entity>();
     const queries = createQueries(world);
