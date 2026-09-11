@@ -261,7 +261,13 @@ describe('moveSelectedTo', () => {
 
       expect(unit.movePath).toEqual({
         index: 0,
-        waypoints: [centre(3, 4), centre(5, 4), centre(8, 0)],
+        waypoints: [
+          centre(3, 3),
+          centre(3, 4),
+          centre(5, 4),
+          centre(8, 1),
+          centre(8, 0),
+        ],
       });
       // The first leg is handed over by MovePathSystem, not here.
       expect(unit.moveTarget).toBeUndefined();

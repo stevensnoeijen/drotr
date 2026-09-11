@@ -506,15 +506,36 @@ export const hasLineOfSight = (
 };
 
 /**
+ * Whether a straight run from `a` to `b` is one of the 8 directions a unit
+ * is allowed to move in: purely horizontal, purely vertical, or a true
+ * (45°) diagonal. `hasLineOfSight` alone only guarantees the run doesn't
+ * cross a wall — on open ground it happily reports sight along, say, a
+ * 3-across/1-down line, which is not a direction the movement/facing
+ * systems can express. Smoothing must never merge two waypoints into a
+ * segment like that.
+ */
+const isEightWayAligned = (a: Point, b: Point): boolean => {
+  const dx = b.x - a.x;
+  const dy = b.y - a.y;
+
+  return dx === 0 || dy === 0 || Math.abs(dx) === Math.abs(dy);
+};
+
+/**
  * Reduces a cell-by-cell path to just the cells where it changes direction
  * around an obstacle ("string pulling"): walk forward from an anchor while
- * the anchor still has {@link hasLineOfSight} to the candidate, and drop
- * every cell in between.
+ * the anchor still has {@link hasLineOfSight} to the candidate *and* the
+ * resulting segment stays {@link isEightWayAligned}, and drop every cell in
+ * between.
  *
  * Without this a unit stair-steps its way across open ground, visibly
- * zig-zagging one cell at a time; with it, an unobstructed order is a single
- * straight segment. The result is always a subsequence of the input, so it
- * never introduces a step the search itself rejected.
+ * zig-zagging one cell at a time; with it, an unobstructed straight or
+ * diagonal run collapses to a single segment. The alignment check keeps
+ * every merged segment a straight, vertical or 45°-diagonal cell-to-cell
+ * move — the only directions movement and facing are allowed to take — so
+ * smoothing can never invent an arbitrary-angle shortcut the underlying
+ * 8-way search never actually walked. The result is always a subsequence of
+ * the input, so it never introduces a step the search itself rejected.
  */
 export const smoothCellPath = (
   grid: CollisionGrid,
@@ -528,7 +549,10 @@ export const smoothCellPath = (
   let anchor = cells[0];
 
   for (let i = 2; i < cells.length; i++) {
-    if (!hasLineOfSight(grid, anchor, cells[i])) {
+    if (
+      !hasLineOfSight(grid, anchor, cells[i]) ||
+      !isEightWayAligned(anchor, cells[i])
+    ) {
       anchor = cells[i - 1];
       smoothed.push({ ...anchor });
     }
