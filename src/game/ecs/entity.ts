@@ -5,6 +5,7 @@ import type {
   AttackRange,
   CellOccupancy,
   Damage,
+  Dead,
   Health,
   Hoverable,
   MovePath,
@@ -46,4 +47,5 @@ export interface Entity {
   moveTarget?: MoveTarget;
   movePath?: MovePath;
   cellOccupancy?: CellOccupancy;
+  dead?: Dead;
 }

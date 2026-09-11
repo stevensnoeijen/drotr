@@ -56,6 +56,15 @@ export function createQueries(world: World<Entity>) {
       'damage',
       'attackCooldown'
     ),
+    /**
+     * Entities marked dead (`health.current` reached 0 and {@link DeathSystem}
+     * has tagged them, via `world.addComponent` so this query actually picks
+     * them up) and still pending their delayed removal from the world.
+     * {@link DeathSystem} counts each one's `dead.elapsed` up to the removal
+     * delay against this query rather than `living`, so it never re-marks an
+     * entity that's already counting down.
+     */
+    dead: world.with('health', 'dead'),
   } as const;
 }
 
