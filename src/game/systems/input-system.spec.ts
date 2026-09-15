@@ -221,10 +221,10 @@ describe('moveSelectedTo', () => {
     moveSelectedTo(queries, new Vector2(10, 20));
 
     expect(unit.moveTarget).toEqual({ position: { x: 304, y: 400 } });
-    expect(unit.pendingMoveOrder).toEqual({
-      kind: 'target',
-      moveTarget: { position: { x: 16, y: 16 } },
-    });
+    // Only the destination is staged — not a route planned from the unit's
+    // current (still mid-transition) position — so it can be (re)planned
+    // from wherever the unit actually ends up once free to receive it.
+    expect(unit.pendingMoveOrder).toEqual({ destination: { x: 16, y: 16 } });
   });
 
   it('applies a move order immediately once the unit is no longer mid-transition', () => {
@@ -330,7 +330,7 @@ describe('moveSelectedTo', () => {
       expect(unit.moveTarget).toBeUndefined();
     });
 
-    it('stages a routed order rather than clearing the in-progress leg (#178)', () => {
+    it('stages just the destination rather than a route planned now, so the in-progress leg is left alone (#178)', () => {
       const world = new World<Entity>();
       const queries = createQueries(world);
       const unit = addTeamUnit(world, 'blue', true);
@@ -340,22 +340,13 @@ describe('moveSelectedTo', () => {
       moveSelectedTo(queries, new Vector2(centre(8, 0).x, centre(8, 0).y), wallWithGap);
 
       // Still mid-transition toward the leg it already committed to: the new
-      // route must not take over yet.
+      // order must not take over yet, and must not be planned from the
+      // unit's current (still mid-transition) position either — that's
+      // deferred to PendingMoveOrderSystem, once the unit is actually
+      // standing wherever this leg ends up (#178).
       expect(unit.moveTarget).toEqual({ position: { x: 999, y: 999 } });
       expect(unit.movePath).toBeUndefined();
-      expect(unit.pendingMoveOrder).toEqual({
-        kind: 'path',
-        movePath: {
-          waypoints: [
-            centre(3, 3),
-            centre(3, 4),
-            centre(5, 4),
-            centre(8, 1),
-            centre(8, 0),
-          ],
-          index: 0,
-        },
-      });
+      expect(unit.pendingMoveOrder).toEqual({ destination: centre(8, 0) });
     });
 
     it('drops a stale route when a later order falls back to a straight line', () => {

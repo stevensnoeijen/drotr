@@ -52,7 +52,7 @@ describe('move order + path + movement integration', () => {
     const dt = 1 / 60;
     const world = new World<Entity>();
     const queries = createQueries(world);
-    const pendingOrder = createPendingMoveOrderSystem(queries);
+    const pendingOrder = createPendingMoveOrderSystem(queries, wallWithGap);
     const path = createMovePathSystem(queries);
     const target = createMoveTargetSystem(queries);
     const move = createMoveVelocitySystem(queries);
@@ -179,12 +179,15 @@ describe('move order + path + movement integration', () => {
     }
     expect(unit.velocity).not.toEqual({ x: 0, y: 0 });
 
-    const here = { ...unit.transform.position };
-    moveSelectedTo(queries, new Vector2(here.x, here.y), wallWithGap);
+    // Order a stop at the cell the unit's current leg is already headed
+    // toward — once it arrives there, the destination and its position
+    // coincide, so the staged order resolves to a stop.
+    const legTarget = { ...unit.moveTarget!.position };
+    moveSelectedTo(queries, new Vector2(legTarget.x, legTarget.y), wallWithGap);
 
     // Still mid-transition: the stop order is staged, not applied yet, so
     // the unit keeps moving toward the cell it already committed to.
-    expect(unit.pendingMoveOrder).toEqual({ kind: 'stop' });
+    expect(unit.pendingMoveOrder).toEqual({ destination: legTarget });
     expect(unit.velocity).not.toEqual({ x: 0, y: 0 });
 
     for (let i = 0; i < 1200; i++) {

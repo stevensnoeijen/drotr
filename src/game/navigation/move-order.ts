@@ -1,6 +1,9 @@
 import type { Entity } from '~/game/ecs/entity';
 import type { MovePath } from '~/game/ecs/components/move-path';
 import type { MoveTarget } from '~/game/ecs/components/move-target';
+import { planMovePath } from '~/game/navigation/plan-move-path';
+import type { GridLike } from '~/lib/navigation/astar';
+import type { Point } from '~/lib/math/types';
 
 /**
  * The outcome of planning a single unit's move order (see
@@ -22,13 +25,39 @@ export type MoveOrderResult =
   | { kind: 'path'; movePath: MovePath };
 
 /**
- * A planned order staged on `Entity.pendingMoveOrder` while its unit is
- * mid-transition between two cells, and applied once that transition
- * completes (see `~/game/systems/pending-move-order-system`). `'none'` is
- * deliberately excluded — a refused order is simply never staged, so it
- * can't later clobber whatever the unit ends up doing.
+ * Plans what a move order to `destination` resolves to for a unit standing
+ * at `from`: a straight-line `'target'` with no `grid` to route through, or
+ * otherwise a routed `'path'` (or `'stop'`, if `destination` is the cell
+ * `from` is already in). Shared by `moveSelectedTo` (planning immediately,
+ * from the unit's current position) and `PendingMoveOrderSystem` (planning
+ * once a staged order's unit is free to receive it, from *that* position) —
+ * see #178. Deliberately takes `from` as a parameter rather than reading it
+ * off an entity itself: planning always has to happen against whatever
+ * position is current at plan time, and a caller that plans from a stale
+ * position is exactly the bug (see `PendingMoveOrder`) this split guards
+ * against.
  */
-export type StagedMoveOrder = Exclude<MoveOrderResult, { kind: 'none' }>;
+export function planMoveOrder(
+  grid: GridLike | undefined,
+  from: Point,
+  destination: Point
+): MoveOrderResult {
+  if (!grid) {
+    return {
+      kind: 'target',
+      moveTarget: { position: { x: destination.x, y: destination.y } },
+    };
+  }
+
+  const { status, waypoints } = planMovePath(grid, from, destination);
+  if (status !== 'found') {
+    return { kind: 'none' };
+  }
+
+  return waypoints.length === 0
+    ? { kind: 'stop' }
+    : { kind: 'path', movePath: { waypoints, index: 0 } };
+}
 
 /**
  * Applies a planned {@link MoveOrderResult} to an entity: clears whatever

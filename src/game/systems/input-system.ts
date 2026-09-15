@@ -3,8 +3,7 @@ import type { World } from 'miniplex';
 import type { Entity } from '~/game/ecs/entity';
 import type { Queries } from '~/game/ecs/world';
 import type { System } from '~/game/ecs/system';
-import { applyMoveOrder, type MoveOrderResult } from '~/game/navigation/move-order';
-import { planMovePath } from '~/game/navigation/plan-move-path';
+import { applyMoveOrder, planMoveOrder } from '~/game/navigation/move-order';
 import {
   findNearestAvailableCell,
   NO_CELL,
@@ -279,11 +278,15 @@ export function selectAt(
  * only ever an atomic step from one cell to an adjacent one in one of the 8
  * allowed directions (#178), and swapping the target mid-step would send it
  * off at whatever arbitrary angle its current position happens to be from
- * the new destination. Instead the planned order is staged as a
- * `PendingMoveOrder`, which `PendingMoveOrderSystem` applies once the unit
- * actually finishes that step. A unit that isn't mid-transition (already at
- * rest, or exactly at a cell boundary with no `MoveTarget`) still gets its
- * order applied immediately, same as before.
+ * the new destination. Instead just the `destination` is staged as a
+ * `PendingMoveOrder`, which `PendingMoveOrderSystem` plans and applies once
+ * the unit actually finishes that step — deliberately *not* planned here:
+ * `entity.transform.position` right now is still interpolating mid-cell, so
+ * routing from it immediately can round to the cell the unit is leaving
+ * rather than the one it's about to arrive in (see `PendingMoveOrder`). A
+ * unit that isn't mid-transition (already at rest, or exactly at a cell
+ * boundary with no `MoveTarget`) still gets its order planned and applied
+ * immediately, same as before.
  */
 export function moveSelectedTo(
   queries: Queries,
@@ -324,38 +327,19 @@ export function moveSelectedTo(
       destination = occupancy.centreOf(cell);
     }
 
-    let result: MoveOrderResult;
-    if (!grid) {
-      result = {
-        kind: 'target',
-        moveTarget: { position: { x: destination.x, y: destination.y } },
-      };
-    } else {
-      const { status, waypoints } = planMovePath(
-        grid,
-        entity.transform.position,
-        destination
-      );
-      if (status !== 'found') {
-        continue;
-      }
-
-      result =
-        waypoints.length === 0
-          ? { kind: 'stop' }
-          : { kind: 'path', movePath: { waypoints, index: 0 } };
-    }
-
     if (entity.moveTarget) {
-      // Mid-transition: stage the order rather than redirecting now — see
-      // the doc comment above. A later order staged this same tick simply
-      // overwrites an earlier one, since only the most recent order should
-      // take effect once the unit is free to receive it.
-      entity.pendingMoveOrder = result;
-    } else {
-      delete entity.pendingMoveOrder;
-      applyMoveOrder(entity, result);
+      // Mid-transition: stage just the destination rather than planning and
+      // redirecting now — see the doc comment above. A later order staged
+      // this same tick simply overwrites an earlier one, since only the
+      // most recent order should take effect once the unit is free to
+      // receive it.
+      entity.pendingMoveOrder = { destination };
+      continue;
     }
+
+    delete entity.pendingMoveOrder;
+    const result = planMoveOrder(grid, entity.transform.position, destination);
+    applyMoveOrder(entity, result);
   }
 }
 

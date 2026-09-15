@@ -399,7 +399,7 @@ export default function GameCanvas({
       // finally handed to the unit, once MoveTarget confirms the unit is no
       // longer mid-step — early enough that, for a routed order, MovePathSystem
       // below still steers toward its first waypoint within this same tick.
-      runner.add(createPendingMoveOrderSystem(queries));
+      runner.add(createPendingMoveOrderSystem(queries, navigationGrid));
       runner.add(createMovePathSystem(queries));
       runner.add(createMoveTargetSystem(queries));
       // Between the systems that decide a velocity and the one that acts on
