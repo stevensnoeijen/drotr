@@ -3,6 +3,7 @@ export type { AttackCooldown } from '~/game/ecs/components/attack-cooldown';
 export type { AttackRange } from '~/game/ecs/components/attack-range';
 export type { CellOccupancy } from '~/game/ecs/components/cell-occupancy';
 export type { Damage } from '~/game/ecs/components/damage';
+export type { Dead } from '~/game/ecs/components/dead';
 export type { Health } from '~/game/ecs/components/health';
 export type { Hoverable } from '~/game/ecs/components/hoverable';
 export type { MovePath } from '~/game/ecs/components/move-path';

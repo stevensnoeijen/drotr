@@ -24,6 +24,8 @@ import { NO_CELL, OccupancyGrid } from '~/game/navigation/occupancy-grid';
 import { CameraPanSystem } from '~/game/systems/camera-pan-system';
 import { createCellOccupancySystem } from '~/game/systems/cell-occupancy-system';
 import { createCombatSystem } from '~/game/systems/combat-system';
+import { DeathCleanupSystem } from '~/game/systems/death-cleanup-system';
+import { createDeathSystem } from '~/game/systems/death-system';
 import { createInputSystem, InputSystem, findHoverableUnitAt } from '~/game/systems/input-system';
 import { createMovePathSystem } from '~/game/systems/move-path-system';
 import { createMoveTargetSystem } from '~/game/systems/move-target-system';
@@ -210,6 +212,7 @@ export default function GameCanvas({
     let inputSystem: InputSystem | undefined;
     let selectionBoxDrag: SelectionBoxDrag | undefined;
     let cameraPanSystem: CameraPanSystem | undefined;
+    let deathCleanupSystem: DeathCleanupSystem | undefined;
     let removePointerMoveListener: (() => void) | undefined;
 
     // No systems yet (#78 is the contract only); the runner is empty but the
@@ -286,6 +289,11 @@ export default function GameCanvas({
       syncHealthBarsRef.current = () => {
         renderSystem?.setHealthBarsVisible(debugFlagsRef.current?.has('health') ?? false);
       };
+
+      // Must also be live before any spawning: clears dangling `Target`
+      // references the instant an entity leaves the world, however early
+      // that happens to be.
+      deathCleanupSystem = new DeathCleanupSystem(world);
 
       // Draw the selected map (terrain tiles), then hand it to the
       // scenario's own setup to decide what to spawn at which of the map's
@@ -406,6 +414,11 @@ export default function GameCanvas({
       // damage it deals lands before `renderSystem.sync()` runs for the
       // frame, so the health bar redraws in the very same frame.
       runner.add(createCombatSystem(queries));
+      // Last of all: marks anything the combat pass just brought to 0 HP,
+      // and removes anything whose removal delay elapsed this tick — after
+      // every system above has had its chance to read `health.current` for
+      // this frame.
+      runner.add(createDeathSystem(queries));
 
       cameraPanSystem = new CameraPanSystem(canvas);
 
@@ -546,6 +559,7 @@ export default function GameCanvas({
       inputSystem?.dispose();
       selectionBoxDrag?.dispose();
       cameraPanSystem?.dispose();
+      deathCleanupSystem?.dispose();
       renderSystem?.dispose();
       viewport?.destroy({ children: true });
       if (app) {
