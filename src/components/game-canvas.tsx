@@ -480,7 +480,7 @@ export default function GameCanvas({
         }
 
         if (debugFlagsRef.current?.has('paths')) {
-          drawMoveLines(moveLines, queries.movable);
+          drawMoveLines(moveLines, queries.movable, navigationGrid);
         } else {
           moveLines.clear();
         }
