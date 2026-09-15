@@ -21,6 +21,21 @@ function trackLineTo() {
   return { graphics, points };
 }
 
+/** A `Graphics` that records every colour passed to `stroke`, in order. */
+function trackStrokeColors() {
+  const graphics = new Graphics();
+  const colors: number[] = [];
+  const original = graphics.stroke.bind(graphics);
+  graphics.stroke = (options: Parameters<Graphics['stroke']>[0]) => {
+    if (options && typeof options === 'object' && 'color' in options) {
+      colors.push(options.color as number);
+    }
+    return original(options);
+  };
+
+  return { graphics, colors };
+}
+
 describe('drawMoveLines', () => {
   it('clears the graphics and draws nothing when no entity has a moveTarget', () => {
     const graphics = new Graphics();
@@ -148,5 +163,48 @@ describe('drawMoveLines', () => {
     drawMoveLines(graphics, [{ moveTarget: { position: { x: 1, y: 2 } } }]);
 
     expect(points).toEqual([]);
+  });
+
+  it('draws a segment to the pending destination for an entity with only a pendingMoveOrder, without throwing', () => {
+    const { graphics, points } = trackLineTo();
+    const entity: Entity = {
+      transform: { position: { x: 0, y: 0 }, rotation: 0 },
+      pendingMoveOrder: { destination: { x: 100, y: 50 } },
+    };
+
+    expect(() => drawMoveLines(graphics, [entity])).not.toThrow();
+    expect(points).toEqual([{ x: 100, y: 50 }]);
+  });
+
+  it('draws both the committed route and the pending reroute for an entity with both', () => {
+    const { graphics, points } = trackLineTo();
+    const entity: Entity = {
+      transform: { position: { x: 0, y: 0 }, rotation: 0 },
+      moveTarget: { position: { x: 64, y: 0 } },
+      pendingMoveOrder: { destination: { x: 200, y: 200 } },
+    };
+
+    drawMoveLines(graphics, [entity]);
+
+    // The committed leg's segment, then the pending reroute's segment —
+    // both drawn, neither replacing the other (#178).
+    expect(points).toEqual([
+      { x: 64, y: 0 },
+      { x: 200, y: 200 },
+    ]);
+  });
+
+  it('draws the committed route and the pending reroute in visually distinct colours', () => {
+    const { graphics, colors } = trackStrokeColors();
+    const entity: Entity = {
+      transform: { position: { x: 0, y: 0 }, rotation: 0 },
+      moveTarget: { position: { x: 64, y: 0 } },
+      pendingMoveOrder: { destination: { x: 200, y: 200 } },
+    };
+
+    drawMoveLines(graphics, [entity]);
+
+    expect(colors).toHaveLength(2);
+    expect(colors[0]).not.toBe(colors[1]);
   });
 });

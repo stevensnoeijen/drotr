@@ -6,6 +6,16 @@ import type { Point } from '~/lib/math/types';
 /** Colour of a unit's move-order line, drawn regardless of team — pink marks it as a debug overlay. */
 const LINE_COLOR = 0xff69b4;
 
+/**
+ * Colour of a unit's queued reroute (`entity.pendingMoveOrder`) — a move
+ * order issued while the unit was mid-transition, staged rather than
+ * applied immediately (see #178). Deliberately distinct from `LINE_COLOR`:
+ * the pink line is the committed transition still being finished, this
+ * amber one is where the unit will peel off to the moment that finishes,
+ * so the two are never mistaken for one continuous route.
+ */
+const PENDING_LINE_COLOR = 0xffa500;
+
 /** Stroke width, in world units, of the line. */
 const LINE_WIDTH = 2;
 
@@ -50,6 +60,15 @@ function remainingWaypoints(entity: Entity): Point[] {
  * A unit with a plain straight-line `moveTarget` and no route (a map with no
  * terrain to route around) draws exactly what it did before pathfinding: a
  * single segment to its destination.
+ *
+ * An entity with a `pendingMoveOrder` (a reroute issued mid-transition and
+ * staged rather than applied — see #178) additionally gets a second,
+ * `PENDING_LINE_COLOR` segment from its live position straight to the
+ * staged destination, with a matching dot. This is drawn regardless of
+ * whether the entity also has a committed route: the point is to make the
+ * two visually distinct at a glance — solid pink is the leg still being
+ * finished, amber is where the unit peels off to the instant that leg
+ * completes — so a queued reroute reads as "queued", not "stuck".
  */
 export function drawMoveLines(graphics: Graphics, entities: Iterable<Entity>): void {
   graphics.clear();
@@ -59,23 +78,30 @@ export function drawMoveLines(graphics: Graphics, entities: Iterable<Entity>): v
       continue;
     }
 
-    const waypoints = remainingWaypoints(entity);
-    if (waypoints.length === 0) {
-      continue;
-    }
-
     const from = entity.transform.position;
-    graphics.moveTo(from.x, from.y);
-    for (const waypoint of waypoints) {
-      graphics.lineTo(waypoint.x, waypoint.y);
-    }
-    graphics.stroke({ width: LINE_WIDTH, color: LINE_COLOR });
+    const waypoints = remainingWaypoints(entity);
 
-    for (let i = 0; i < waypoints.length - 1; i++) {
-      graphics.circle(waypoints[i].x, waypoints[i].y, WAYPOINT_RADIUS).fill(LINE_COLOR);
+    if (waypoints.length > 0) {
+      graphics.moveTo(from.x, from.y);
+      for (const waypoint of waypoints) {
+        graphics.lineTo(waypoint.x, waypoint.y);
+      }
+      graphics.stroke({ width: LINE_WIDTH, color: LINE_COLOR });
+
+      for (let i = 0; i < waypoints.length - 1; i++) {
+        graphics.circle(waypoints[i].x, waypoints[i].y, WAYPOINT_RADIUS).fill(LINE_COLOR);
+      }
+
+      const destination = waypoints[waypoints.length - 1];
+      graphics.circle(destination.x, destination.y, DOT_RADIUS).fill(LINE_COLOR);
     }
 
-    const destination = waypoints[waypoints.length - 1];
-    graphics.circle(destination.x, destination.y, DOT_RADIUS).fill(LINE_COLOR);
+    if (entity.pendingMoveOrder) {
+      const { destination } = entity.pendingMoveOrder;
+      graphics.moveTo(from.x, from.y);
+      graphics.lineTo(destination.x, destination.y);
+      graphics.stroke({ width: LINE_WIDTH, color: PENDING_LINE_COLOR });
+      graphics.circle(destination.x, destination.y, DOT_RADIUS).fill(PENDING_LINE_COLOR);
+    }
   }
 }
