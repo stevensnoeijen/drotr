@@ -29,7 +29,7 @@ export type AttackerEntity = With<
  * player could perceive as extra reach, and far above the rounding error it
  * absorbs.
  */
-export const ATTACK_RANGE_EPSILON = 0.01;
+const ATTACK_RANGE_EPSILON = 0.01;
 
 /**
  * True once a unit is standing fully inside one cell rather than straddling

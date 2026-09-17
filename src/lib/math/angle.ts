@@ -4,7 +4,7 @@ const TAU = Math.PI * 2;
  * Number of facing directions a unit can be quantized to: N, NE, E, SE, S,
  * SW, W, NW — the 8 directions 45° apart. See #178.
  */
-export const FACING_DIRECTIONS = 8;
+const FACING_DIRECTIONS = 8;
 
 /**
  * Snaps an angle (radians) to the nearest of `divisions` evenly spaced
