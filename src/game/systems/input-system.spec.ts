@@ -285,9 +285,14 @@ describe('moveSelectedTo', () => {
       expect(unit.movePath).toEqual({
         index: 0,
         waypoints: [
+          centre(1, 1),
+          centre(2, 2),
           centre(3, 3),
           centre(3, 4),
+          centre(4, 4),
           centre(5, 4),
+          centre(6, 3),
+          centre(7, 2),
           centre(8, 1),
           centre(8, 0),
         ],
@@ -308,7 +313,16 @@ describe('moveSelectedTo', () => {
 
       expect(a.movePath?.waypoints).not.toEqual(b.movePath?.waypoints);
       expect(a.movePath?.waypoints.at(-1)).toEqual(centre(8, 4));
-      expect(b.movePath?.waypoints).toEqual([centre(8, 4)]);
+      expect(b.movePath?.waypoints).toEqual([
+        centre(1, 4),
+        centre(2, 4),
+        centre(3, 4),
+        centre(4, 4),
+        centre(5, 4),
+        centre(6, 4),
+        centre(7, 4),
+        centre(8, 4),
+      ]);
     });
 
     it('leaves an unreachable order unissued rather than half-applied', () => {

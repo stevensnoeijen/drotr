@@ -31,6 +31,18 @@ export interface PlannedMovePath {
  * Waypoints are snapped to cell centres — the same placement every spawned
  * unit gets (see `spawnUnit`) — so a unit walking a path ends up centred in
  * its destination cell rather than wherever the click happened to land.
+ *
+ * Deliberately requests the *unsmoothed* cell-by-cell path (`smooth: false`),
+ * even though `findPath` defaults to corner-reduced waypoints: `MovePath` is
+ * consumed one waypoint per `MoveTarget` leg, and a reroute issued while a
+ * unit is mid-transition only redirects once `MoveTarget` clears (see
+ * `PendingMoveOrder`) — movement is only ever an atomic step to one adjacent
+ * cell (#178). A smoothed, multi-cell leg would keep `MoveTarget` set across
+ * several cells' worth of travel, delaying a staged reroute until that whole
+ * run finished instead of just the next cell. Every intermediate cell in an
+ * unsmoothed run is still 8-way aligned with its neighbours (the search never
+ * generates anything else), so the unit's visible trajectory is unchanged —
+ * only the leg granularity is.
  */
 export function planMovePath(
   grid: GridLike,
@@ -41,7 +53,7 @@ export function planMovePath(
   const start = toGridPosition(new Vector2(from.x, from.y));
   const end = toGridPosition(new Vector2(to.x, to.y));
 
-  const { status, cells } = findPath(grid, start, end, options);
+  const { status, cells } = findPath(grid, start, end, { ...options, smooth: false });
   if (status !== 'found') {
     return { status, waypoints: [] };
   }

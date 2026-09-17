@@ -49,7 +49,9 @@ describe('planMoveOrder', () => {
       // route must bend — proving it was actually planned from (16, 144)
       // rather than some other position.
       expect(result.movePath.waypoints).toEqual([
+        { x: 48, y: 112 },
         { x: 80, y: 80 },
+        { x: 112, y: 80 },
         { x: 144, y: 80 },
       ]);
     }
