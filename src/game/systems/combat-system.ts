@@ -7,7 +7,7 @@ import type { System } from '~/game/ecs/system';
 import { cellSteps } from '~/game/combat/attack-cell';
 import { Cooldown } from '~/lib/cooldown';
 import { GameTime } from '~/lib/game-time';
-import { toGridPosition } from '~/lib/grid';
+import { isAtCellCentre, toGridPosition } from '~/lib/grid';
 import { Vector2 } from '~/lib/math/vector2';
 import type { Point } from '~/lib/math/types';
 import { NO_CELL } from '~/game/navigation/occupancy-grid';
@@ -31,25 +31,29 @@ export function cellDistance(a: Point, b: Point): number {
 }
 
 /**
- * True once a unit is standing fully inside one cell, at rest, rather than
- * straddling two mid-step.
+ * True once a unit has *finished* moving into a cell: standing still, on that
+ * cell's centre, rather than part-way across it or between two.
  *
- * Two things have to hold:
+ * This is the gate on combat in both directions (#201) — a unit may neither
+ * swing nor be swung at until it holds, which is what stops two units
+ * trading blows while they are still visibly sliding past each other.
+ *
+ * Three things have to hold:
  *
  * - **Not mid-transit by cell occupancy**: `entity.cellOccupancy.reserved`
  *   is `NO_CELL` (or the entity has no `cellOccupancy` at all — never
  *   claimed a cell, so it can't be mid-transit; stationary test fixtures
  *   and units `CellOccupancySystem` hasn't visited yet fall in here).
- * - **Actually at rest**: `entity.velocity` is exactly zero (or absent).
- *   `CellOccupancySystem` clears `reserved` back to `NO_CELL` the instant a
- *   unit stops needing to cross into a *new* cell — which happens the
- *   moment it settles anywhere inside the cell it's already claimed, not
- *   only once it has finished sliding to a full stop there. `SeekSystem`
- *   only actually zeroes `velocity` once it has decided to stop chasing (at
- *   `attackRange`), so requiring zero velocity here is what keeps a unit
- *   that's still visibly closing the last stretch of its approach — sliding
- *   across ground it already owns, `reserved` cleared the whole way — from
- *   reading as "settled" purely on the occupancy proxy (#201).
+ * - **At rest**: `entity.velocity` is exactly zero (or absent).
+ * - **On the cell's centre** ({@link isAtCellCentre}). The other two are
+ *   proxies that a unit can satisfy anywhere at all: `reserved` clears the
+ *   moment a unit stops needing to cross into a *new* cell, and a unit can
+ *   be brought to a halt part-way across one (an order it gave up on, a
+ *   step vetoed by a neighbour). Only this one is the fact the player can
+ *   see. `SeekSystem` walks a unit onto the centre before it will let it
+ *   fight, so in practice a unit reaches this state within a tick or two of
+ *   arriving; the check is what makes that a guarantee rather than a
+ *   convention.
  */
 export function isSettled(entity: Entity): boolean {
   const occupancy = entity.cellOccupancy;
@@ -58,7 +62,12 @@ export function isSettled(entity: Entity): boolean {
   }
 
   const velocity = entity.velocity;
-  return !velocity || (velocity.x === 0 && velocity.y === 0);
+  if (velocity && (velocity.x !== 0 || velocity.y !== 0)) {
+    return false;
+  }
+
+  const transform = entity.transform;
+  return !transform || isAtCellCentre(transform.position);
 }
 
 /**

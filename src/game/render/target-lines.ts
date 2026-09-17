@@ -101,15 +101,17 @@ function drawArrowHead(
  * `target`); a target outside this pool (or already removed from the world)
  * is silently skipped rather than throwing.
  *
- * A pair only gets a line once both `CombatSystem.isSettled` (see there) —
- * not mid-step between two cells — and, when the origin carries an
- * `attackRange`, within that range in 8-way cell steps. Without this, the
- * arrow would appear the instant a unit picks a target from clear across the
- * map, and keep pointing at it — rotating to track — through the entire
- * chase, well before the unit is anywhere near settled enough to actually
- * fight (#201). An origin with no `attackRange` at all (not itself an
- * attacker) still gets a line once both sides are settled: it has no range
- * to check against.
+ * A pair only gets a line under exactly the conditions a swing would land:
+ * both sides `CombatSystem.isSettled` (see there — at rest, on the centre of
+ * the cell they stand in) and, when the origin carries an `attackRange`,
+ * within that range in 8-way cell steps. Sharing the predicate rather than
+ * approximating it is the point: the overlay is how #201 is checked by eye,
+ * so a line on screen has to mean "these two can fight right now", not
+ * "these two are near each other". Without it the arrow would appear the
+ * instant a unit picked a target from clear across the map and keep pointing
+ * at it — rotating to track — through the entire chase. An origin with no
+ * `attackRange` at all (not itself an attacker) still gets a line once both
+ * sides are settled: it has no range to check against.
  */
 export function drawTargetLines(graphics: Graphics, entities: Iterable<Entity>): void {
   graphics.clear();

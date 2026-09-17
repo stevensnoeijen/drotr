@@ -2,9 +2,20 @@ import { Graphics } from 'pixi.js';
 import { describe, expect, it } from 'vitest';
 
 import type { Entity } from '~/game/ecs/entity';
-import { CELL_SIZE } from '~/lib/grid';
+import { cellCentreCoordinate } from '~/lib/grid';
 import { NO_CELL } from '~/game/navigation/occupancy-grid';
 import { drawTargetLines } from './target-lines';
+
+/**
+ * A unit's resting position: the centre of cell (`col`, `row`). A line is
+ * only drawn for a pair that is *settled*, and standing on the cell centre is
+ * part of what that means (#201), so every fixture here has to be placed the
+ * way a real unit comes to rest.
+ */
+const centre = (col: number, row = 0) => ({
+  x: cellCentreCoordinate(col),
+  y: cellCentreCoordinate(row),
+});
 
 describe('drawTargetLines', () => {
   it('clears the graphics and draws nothing when no entity has a target', () => {
@@ -17,7 +28,7 @@ describe('drawTargetLines', () => {
     };
 
     const entities: Entity[] = [
-      { transform: { position: { x: 0, y: 0 }, rotation: 0 }, team: 'blue' },
+      { transform: { position: centre(0), rotation: 0 }, team: 'blue' },
     ];
 
     drawTargetLines(graphics, entities);
@@ -29,7 +40,7 @@ describe('drawTargetLines', () => {
     const graphics = new Graphics();
     const origin: Entity = {
       id: 1,
-      transform: { position: { x: 0, y: 0 }, rotation: 0 },
+      transform: { position: centre(0), rotation: 0 },
       team: 'blue',
       target: { entityId: 999 },
     };
@@ -41,13 +52,13 @@ describe('drawTargetLines', () => {
     const graphics = new Graphics();
     const origin: Entity = {
       id: 1,
-      transform: { position: { x: 0, y: 0 }, rotation: 0 },
+      transform: { position: centre(0), rotation: 0 },
       team: 'blue',
       target: { entityId: 2 },
     };
     const target: Entity = {
       id: 2,
-      transform: { position: { x: 64, y: 0 }, rotation: 0 },
+      transform: { position: centre(2), rotation: 0 },
       team: 'red',
     };
 
@@ -58,18 +69,18 @@ describe('drawTargetLines', () => {
     const graphics = new Graphics();
     const target: Entity = {
       id: 3,
-      transform: { position: { x: 200, y: 0 }, rotation: 0 },
+      transform: { position: centre(6), rotation: 0 },
       team: 'red',
     };
     const originA: Entity = {
       id: 1,
-      transform: { position: { x: 0, y: 0 }, rotation: 0 },
+      transform: { position: centre(0), rotation: 0 },
       team: 'blue',
       target: { entityId: 3 },
     };
     const originB: Entity = {
       id: 2,
-      transform: { position: { x: 0, y: 0 }, rotation: 0 },
+      transform: { position: centre(0), rotation: 0 },
       team: 'blue',
       target: { entityId: 3 },
     };
@@ -95,12 +106,12 @@ describe('drawTargetLines', () => {
     const graphics = new Graphics();
     const target: Entity = {
       id: 2,
-      transform: { position: { x: CELL_SIZE, y: 0 }, rotation: 0 },
+      transform: { position: centre(1), rotation: 0 },
       team: 'red',
     };
     const origin: Entity = {
       id: 1,
-      transform: { position: { x: 0, y: 0 }, rotation: 0 },
+      transform: { position: centre(0), rotation: 0 },
       team: 'blue',
       attackRange: { value: 1 },
       target: { entityId: 2 },
@@ -118,16 +129,46 @@ describe('drawTargetLines', () => {
     expect(drawn).toHaveLength(0);
   });
 
-  it('skips a pair beyond the origin attackRange even when both are settled', () => {
+  it('skips a pair where the origin is at rest but part-way across its cell (#201)', () => {
     const graphics = new Graphics();
     const target: Entity = {
       id: 2,
-      transform: { position: { x: CELL_SIZE * 5, y: 0 }, rotation: 0 },
+      transform: { position: centre(1), rotation: 0 },
       team: 'red',
     };
     const origin: Entity = {
       id: 1,
-      transform: { position: { x: 0, y: 0 }, rotation: 0 },
+      // Standing still, holding exactly one cell — and visibly off its
+      // centre, which is the state the overlay must not draw from.
+      transform: { position: { x: centre(0).x - 8, y: centre(0).y }, rotation: 0 },
+      team: 'blue',
+      attackRange: { value: 1 },
+      target: { entityId: 2 },
+      velocity: { x: 0, y: 0 },
+      cellOccupancy: { occupantId: 0, cell: 0, reserved: NO_CELL, blockedFor: 0, rerouted: false },
+    };
+
+    const drawn: unknown[] = [];
+    graphics.circle = ((...args: unknown[]) => {
+      drawn.push(args);
+      return graphics;
+    }) as typeof graphics.circle;
+
+    drawTargetLines(graphics, [origin, target]);
+
+    expect(drawn).toHaveLength(0);
+  });
+
+  it('skips a pair beyond the origin attackRange even when both are settled', () => {
+    const graphics = new Graphics();
+    const target: Entity = {
+      id: 2,
+      transform: { position: centre(5), rotation: 0 },
+      team: 'red',
+    };
+    const origin: Entity = {
+      id: 1,
+      transform: { position: centre(0), rotation: 0 },
       team: 'blue',
       attackRange: { value: 1 },
       target: { entityId: 2 },
@@ -148,13 +189,13 @@ describe('drawTargetLines', () => {
     const graphics = new Graphics();
     const target: Entity = {
       id: 2,
-      transform: { position: { x: CELL_SIZE, y: 0 }, rotation: 0 },
+      transform: { position: centre(1), rotation: 0 },
       team: 'red',
       cellOccupancy: { occupantId: 1, cell: 1, reserved: NO_CELL, blockedFor: 0, rerouted: false },
     };
     const origin: Entity = {
       id: 1,
-      transform: { position: { x: 0, y: 0 }, rotation: 0 },
+      transform: { position: centre(0), rotation: 0 },
       team: 'blue',
       attackRange: { value: 1 },
       target: { entityId: 2 },
