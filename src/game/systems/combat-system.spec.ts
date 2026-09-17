@@ -204,6 +204,50 @@ describe('CombatSystem', () => {
     expect(target.health!.current).toBe(95);
   });
 
+  it('hits a target one cell diagonally away at attack range 1 (#201)', () => {
+    // A Euclidean range check would reject this: a diagonal neighbour is
+    // `CELL_SIZE * sqrt(2)` away, further than one cell's width. Range is
+    // measured in 8-way cell steps instead, so a diagonal neighbour counts
+    // the same as an orthogonal one.
+    const world = new World<Entity>();
+    const queries = createQueries(world);
+    const target = makeUnit(world, { team: 'red', x: CELL_SIZE });
+    target.transform!.position.y = CELL_SIZE;
+    const attacker = makeUnit(world, {
+      team: 'blue',
+      x: 0,
+      attackRangeCells: 1,
+      damage: 5,
+      attackCooldown: 0.5,
+    });
+    attacker.target = { entityId: target.id! };
+    const system = createCombatSystem(queries);
+
+    run(system, world, 30);
+
+    expect(target.health!.current).toBe(95);
+  });
+
+  it('does not hit a target two cells diagonally away at attack range 1', () => {
+    const world = new World<Entity>();
+    const queries = createQueries(world);
+    const target = makeUnit(world, { team: 'red', x: CELL_SIZE * 2 });
+    target.transform!.position.y = CELL_SIZE * 2;
+    const attacker = makeUnit(world, {
+      team: 'blue',
+      x: 0,
+      attackRangeCells: 1,
+      damage: 5,
+      attackCooldown: 0.5,
+    });
+    attacker.target = { entityId: target.id! };
+    const system = createCombatSystem(queries);
+
+    run(system, world, 30);
+
+    expect(target.health!.current).toBe(100);
+  });
+
   it('withholds a swing while the attacker is still mid-step between two cells', () => {
     const { world, attacker, target, system } = setupDuel({
       gapCells: 1,

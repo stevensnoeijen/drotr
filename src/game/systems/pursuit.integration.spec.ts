@@ -141,7 +141,7 @@ describe('pursuit + movement integration', () => {
 
     expect(distanceToEnemy()).toBeLessThanOrEqual(1 * CELL_SIZE + 1e-6);
     // At rest, to within the float slack a clamped final approach leaves
-    // behind (the same slack `ATTACK_RANGE_EPSILON` absorbs in CombatSystem).
+    // behind.
     expect(Math.hypot(self.velocity.x, self.velocity.y)).toBeLessThan(1e-6);
   });
 

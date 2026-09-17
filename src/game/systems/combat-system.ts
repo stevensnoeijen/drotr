@@ -6,7 +6,9 @@ import { findEntityById } from '~/game/ecs/world';
 import type { System } from '~/game/ecs/system';
 import { Cooldown } from '~/lib/cooldown';
 import { GameTime } from '~/lib/game-time';
-import { CELL_SIZE } from '~/lib/grid';
+import { toGridPosition } from '~/lib/grid';
+import { Vector2 } from '~/lib/math/vector2';
+import type { Point } from '~/lib/math/types';
 import { NO_CELL } from '~/game/navigation/occupancy-grid';
 
 /** An entity that can schedule and land attacks — see `queries.attackers`. */
@@ -16,20 +18,22 @@ export type AttackerEntity = With<
 >;
 
 /**
- * Slack, in world units, added to an attacker's reach when deciding whether
- * its target is close enough to hit.
+ * Chebyshev (chessboard) distance, in grid cells, between two world-space
+ * points: the number of 8-way (horizontal/vertical/diagonal) cell steps that
+ * separate them, matching the 8-way movement grid from #194.
  *
- * `SeekSystem` deliberately stops a unit *exactly* at `attackRange * CELL_SIZE`
- * by clamping its final approach step to close the remaining gap precisely.
- * "Precisely" is floating-point precise, though: that last step can leave the
- * unit a few ulps beyond the boundary, where a strict `distance <= rangeWorld`
- * test fails — and, since the unit has already stopped, would keep failing
- * forever, leaving two units standing nose to nose refusing to fight. A
- * hundredth of a world unit (~0.03% of a 32px cell) is far below anything the
- * player could perceive as extra reach, and far above the rounding error it
- * absorbs.
+ * Deliberately not the Euclidean distance divided by `CELL_SIZE`: a target
+ * one cell diagonally away is one 8-way step (`attackRange` 1 should reach
+ * it), but its Euclidean distance is `CELL_SIZE * sqrt(2)`, further than a
+ * range-1 Euclidean check would allow. Chebyshev distance is exactly "how
+ * many cell steps away", so a diagonal neighbour counts the same as an
+ * orthogonal one — see #201.
  */
-const ATTACK_RANGE_EPSILON = 0.01;
+function cellDistance(a: Point, b: Point): number {
+  const cellA = toGridPosition(new Vector2(a.x, a.y));
+  const cellB = toGridPosition(new Vector2(b.x, b.y));
+  return Math.max(Math.abs(cellA.x - cellB.x), Math.abs(cellA.y - cellB.y));
+}
 
 /**
  * True once a unit is standing fully inside one cell rather than straddling
@@ -88,11 +92,12 @@ function attack(queries: Queries, self: AttackerEntity): void {
     return;
   }
 
-  const dx = other.transform.position.x - self.transform.position.x;
-  const dy = other.transform.position.y - self.transform.position.y;
-  const distSq = dx * dx + dy * dy;
-  const rangeWorld = self.attackRange.value * CELL_SIZE + ATTACK_RANGE_EPSILON;
-  if (distSq > rangeWorld * rangeWorld) {
+  // Cell-based (Chebyshev) range, not Euclidean world distance: `other` must
+  // be within `attackRange` 8-way cell steps, diagonal steps counting the
+  // same as orthogonal ones (#201). A plain Euclidean check would wrongly
+  // reject a target one cell diagonally away at `attackRange` 1, since its
+  // straight-line distance (`CELL_SIZE * sqrt(2)`) exceeds one cell width.
+  if (cellDistance(self.transform.position, other.transform.position) > self.attackRange.value) {
     return;
   }
 
