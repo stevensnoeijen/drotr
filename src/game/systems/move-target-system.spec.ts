@@ -3,7 +3,8 @@ import { describe, expect, it } from 'vitest';
 
 import { createQueries } from '~/game/ecs/world';
 import type { Entity } from '~/game/ecs/entity';
-import { createMoveTargetSystem } from './move-target-system';
+import { CELL_CENTRE_TOLERANCE } from '~/lib/grid';
+import { ARRIVAL_TOLERANCE, createMoveTargetSystem } from './move-target-system';
 
 describe('createMoveTargetSystem', () => {
   it('sets velocity toward the move target, scaled to moveSpeed', () => {
@@ -210,5 +211,17 @@ describe('createMoveTargetSystem', () => {
     system(world, 1 / 60);
 
     expect(self.velocity).toEqual({ x: 3, y: 4 });
+  });
+});
+
+describe('ARRIVAL_TOLERANCE', () => {
+  it('is no looser than what still counts as standing on a cell centre', () => {
+    // A unit walking onto a cell centre stops as soon as it is within
+    // ARRIVAL_TOLERANCE of it and never gets any closer, so anything that
+    // asks "is this unit centred in its cell" (isAtCellCentre, and through it
+    // CombatSystem.isSettled and SeekSystem) has to accept at least that much
+    // slack — otherwise a unit that has genuinely finished its move would
+    // never read as settled, and could never fight (#201).
+    expect(ARRIVAL_TOLERANCE).toBeLessThanOrEqual(CELL_CENTRE_TOLERANCE);
   });
 });

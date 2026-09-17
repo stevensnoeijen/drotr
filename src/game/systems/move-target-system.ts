@@ -10,6 +10,11 @@ import type { System } from '~/game/ecs/system';
  * theory, but a fixed-step integration can overshoot a zero-width point by a
  * fraction of a unit and then oscillate trying to correct for it; a small
  * tolerance lets the unit settle exactly once instead.
+ *
+ * Because a unit stops here and never closes the remaining gap, this is also
+ * the floor on how precisely a unit can ever be standing on a cell centre —
+ * see `CELL_CENTRE_TOLERANCE` in {@link file://../../lib/grid.ts}, which must
+ * stay at least this loose.
  */
 export const ARRIVAL_TOLERANCE = 1;
 

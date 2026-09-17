@@ -47,6 +47,53 @@ export const toWorldPositionCellCenter = (vector: Vector2): Vector2 => {
   return toWorldPosition(cell);
 };
 
+/**
+ * World-space coordinate of the centre of the cell at grid index `index`
+ * along one axis — the x of column `index`, or the y of row `index`.
+ *
+ * The scalar half of {@link toWorldPosition}, kept separate because the
+ * movement hot path asks this per axis, per unit, per tick and has no use for
+ * the `Vector2` that version allocates.
+ */
+export const cellCentreCoordinate = (index: number): number => {
+  return index * CELL_SIZE + CELL_SIZE / 2;
+};
+
+/**
+ * How far, in world units, a position may sit from its cell's centre and
+ * still count as standing *in* that cell rather than somewhere across it.
+ *
+ * Must never be tighter than `ARRIVAL_TOLERANCE` in
+ * {@link file://../game/systems/move-target-system.ts}: that is the distance
+ * within which a unit walking to a point stops moving, so a unit that has
+ * genuinely finished a move onto a cell centre can be up to that far from it
+ * and must still read as centred here. `move-target-system.spec.ts` asserts
+ * the relationship holds.
+ */
+export const CELL_CENTRE_TOLERANCE = 1;
+
+/**
+ * Whether `point` is at the centre of whichever cell it falls in, to within
+ * {@link CELL_CENTRE_TOLERANCE}.
+ *
+ * This is the engine's definition of "fully arrived in a cell, not part-way
+ * across it" (#201). Combat reads it to decide whether a unit may swing or be
+ * swung at, and `SeekSystem` reads it to decide whether an approach is
+ * finished — both of which need the *visible* fact (is the unit drawn in the
+ * middle of a cell?) rather than a proxy such as "has zero velocity", which a
+ * unit stopped anywhere at all satisfies.
+ *
+ * Deliberately allocation-free: it runs per unit, per tick.
+ */
+export const isAtCellCentre = (
+  point: Point,
+  tolerance: number = CELL_CENTRE_TOLERANCE
+): boolean => {
+  const centreX = cellCentreCoordinate(Math.floor(point.x / CELL_SIZE));
+  const centreY = cellCentreCoordinate(Math.floor(point.y / CELL_SIZE));
+  return Math.abs(point.x - centreX) <= tolerance && Math.abs(point.y - centreY) <= tolerance;
+};
+
 /** The camera's current pan/zoom, as needed to invert screen -> world. */
 export interface ViewportTransform {
   /** World-container x offset, in screen pixels. */
