@@ -2,7 +2,13 @@ import { Graphics } from 'pixi.js';
 import { describe, expect, it } from 'vitest';
 
 import type { Entity } from '~/game/ecs/entity';
+import { planMovePath } from '~/game/navigation/plan-move-path';
+import { cellPositionToVector } from '~/lib/grid';
+import type { CollisionGrid } from '~/lib/navigation/astar';
 import { drawMoveLines } from './move-lines';
+
+/** A fully open 10x10 collision grid — mirrors the fixture in `pending-move-order-system.spec.ts`. */
+const openGrid: CollisionGrid = { width: 10, height: 10, collision: new Uint8Array(100) };
 
 /**
  * A `Graphics` that records every `lineTo` the renderer issues, in order —
@@ -19,6 +25,21 @@ function trackLineTo() {
   };
 
   return { graphics, points };
+}
+
+/** A `Graphics` that records every colour passed to `stroke`, in order. */
+function trackStrokeColors() {
+  const graphics = new Graphics();
+  const colors: number[] = [];
+  const original = graphics.stroke.bind(graphics);
+  graphics.stroke = (options: Parameters<Graphics['stroke']>[0]) => {
+    if (options && typeof options === 'object' && 'color' in options) {
+      colors.push(options.color as number);
+    }
+    return original(options);
+  };
+
+  return { graphics, colors };
 }
 
 describe('drawMoveLines', () => {
@@ -148,5 +169,97 @@ describe('drawMoveLines', () => {
     drawMoveLines(graphics, [{ moveTarget: { position: { x: 1, y: 2 } } }]);
 
     expect(points).toEqual([]);
+  });
+
+  it('does not throw for an entity with a pendingMoveOrder but no moveTarget (does not occur in practice — a staged order always has one — but must not crash)', () => {
+    const { graphics, points } = trackLineTo();
+    const entity: Entity = {
+      transform: { position: { x: 0, y: 0 }, rotation: 0 },
+      pendingMoveOrder: { destination: { x: 100, y: 50 } },
+    };
+
+    expect(() => drawMoveLines(graphics, [entity])).not.toThrow();
+    expect(points).toEqual([]);
+  });
+
+  it('splices the in-flight leg and a preview of the pending reroute into one continuous line (no grid: straight-line preview) (#178)', () => {
+    const { graphics, points } = trackLineTo();
+    const entity: Entity = {
+      transform: { position: { x: 0, y: 0 }, rotation: 0 },
+      moveTarget: { position: { x: 64, y: 0 } },
+      pendingMoveOrder: { destination: { x: 200, y: 200 } },
+    };
+
+    drawMoveLines(graphics, [entity]);
+
+    // One continuous polyline: the exact in-flight destination, then
+    // straight on to the pending destination (no grid to route through).
+    expect(points).toEqual([
+      { x: 64, y: 0 },
+      { x: 200, y: 200 },
+    ]);
+  });
+
+  it('draws the merged in-flight-leg-plus-preview line in a single colour', () => {
+    const { graphics, colors } = trackStrokeColors();
+    const entity: Entity = {
+      transform: { position: { x: 0, y: 0 }, rotation: 0 },
+      moveTarget: { position: { x: 64, y: 0 } },
+      pendingMoveOrder: { destination: { x: 200, y: 200 } },
+    };
+
+    drawMoveLines(graphics, [entity]);
+
+    // Exactly one stroke call — one line, not a separate "committed" vs
+    // "pending" one — necessarily in one colour.
+    expect(colors).toHaveLength(1);
+  });
+
+  it('previews a routed reroute (with a grid) from the exact in-flight destination, not the pending order alone', () => {
+    const { graphics, points } = trackLineTo();
+    const legTarget = cellPositionToVector(2, 2);
+    const destination = cellPositionToVector(9, 3);
+    const entity: Entity = {
+      // Deliberately a stale live position: the preview must be planned
+      // from `moveTarget.position` (the exact upcoming cell), not this.
+      transform: { position: { x: 500, y: 500 }, rotation: 0 },
+      moveTarget: { position: { x: legTarget.x, y: legTarget.y } },
+      pendingMoveOrder: { destination: { x: destination.x, y: destination.y } },
+    };
+
+    drawMoveLines(graphics, [entity], openGrid);
+
+    const expectedRoute = planMovePath(
+      openGrid,
+      { x: legTarget.x, y: legTarget.y },
+      { x: destination.x, y: destination.y }
+    );
+    expect(expectedRoute.status).toBe('found');
+
+    // The in-flight leg's exact destination, then the previewed route's
+    // waypoints — one continuous line, not the pending destination alone.
+    expect(points).toEqual([{ x: legTarget.x, y: legTarget.y }, ...expectedRoute.waypoints]);
+  });
+
+  it('falls back to the unchanged moveTarget + remaining movePath behaviour when there is no pendingMoveOrder', () => {
+    const { graphics, points } = trackLineTo();
+    const entity: Entity = {
+      transform: { position: { x: 0, y: 0 }, rotation: 0 },
+      moveTarget: { position: { x: 10, y: 10 } },
+      movePath: {
+        waypoints: [
+          { x: 10, y: 10 },
+          { x: 20, y: 40 },
+        ],
+        index: 1,
+      },
+    };
+
+    drawMoveLines(graphics, [entity], openGrid);
+
+    expect(points).toEqual([
+      { x: 10, y: 10 },
+      { x: 20, y: 40 },
+    ]);
   });
 });

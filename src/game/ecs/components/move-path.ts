@@ -8,10 +8,13 @@ import type { Point } from '~/lib/math/types';
  * `~/game/systems/move-path-system`, and drawn as a polyline by
  * `?debug=paths`.
  *
- * `waypoints` is already reduced to corner waypoints by the pathfinder's
- * smoothing pass, so it holds direction changes rather than every cell along
- * the route — a unit crossing open ground gets a single waypoint instead of
- * stair-stepping one cell at a time.
+ * `waypoints` holds every cell along the route, not just corners: each leg is
+ * an atomic single-cell step in one of the 8 allowed directions (#178), which
+ * is what lets a reroute issued mid-transition (see `PendingMoveOrder`) take
+ * effect after just the current cell rather than after a longer smoothed run.
+ * The unit's visible trajectory is unaffected — every cell in an unsmoothed
+ * run is still 8-way aligned with its neighbours, so consecutive legs sum to
+ * the same straight or diagonal line a smoothed path would have drawn.
  *
  * Consumed by index rather than by shifting the array, so the full route
  * stays available for debug rendering and (later) re-planning after the

@@ -3,7 +3,7 @@ import type { World } from 'miniplex';
 import type { Entity } from '~/game/ecs/entity';
 import type { Queries } from '~/game/ecs/world';
 import type { System } from '~/game/ecs/system';
-import { planMovePath } from '~/game/navigation/plan-move-path';
+import { applyMoveOrder, planMoveOrder } from '~/game/navigation/move-order';
 import {
   findNearestAvailableCell,
   NO_CELL,
@@ -272,6 +272,21 @@ export function selectAt(
  * Either way an accepted order replaces the previous one outright, so a
  * second right-click never leaves a stale route behind for the unit to
  * resume.
+ *
+ * A unit already mid-transition between two cells (`MoveTarget` set, still
+ * walking toward it) never has that redirected immediately — movement is
+ * only ever an atomic step from one cell to an adjacent one in one of the 8
+ * allowed directions (#178), and swapping the target mid-step would send it
+ * off at whatever arbitrary angle its current position happens to be from
+ * the new destination. Instead just the `destination` is staged as a
+ * `PendingMoveOrder`, which `PendingMoveOrderSystem` plans and applies once
+ * the unit actually finishes that step — deliberately *not* planned here:
+ * `entity.transform.position` right now is still interpolating mid-cell, so
+ * routing from it immediately can round to the cell the unit is leaving
+ * rather than the one it's about to arrive in (see `PendingMoveOrder`). A
+ * unit that isn't mid-transition (already at rest, or exactly at a cell
+ * boundary with no `MoveTarget`) still gets its order planned and applied
+ * immediately, same as before.
  */
 export function moveSelectedTo(
   queries: Queries,
@@ -312,38 +327,19 @@ export function moveSelectedTo(
       destination = occupancy.centreOf(cell);
     }
 
-    if (!grid) {
-      delete entity.movePath;
-      entity.moveTarget = { position: { x: destination.x, y: destination.y } };
+    if (entity.moveTarget) {
+      // Mid-transition: stage just the destination rather than planning and
+      // redirecting now — see the doc comment above. A later order staged
+      // this same tick simply overwrites an earlier one, since only the
+      // most recent order should take effect once the unit is free to
+      // receive it.
+      entity.pendingMoveOrder = { destination };
       continue;
     }
 
-    const { status, waypoints } = planMovePath(
-      grid,
-      entity.transform.position,
-      destination
-    );
-    if (status !== 'found') {
-      continue;
-    }
-
-    delete entity.moveTarget;
-    if (waypoints.length === 0) {
-      // Ordered to the cell it is already standing in: nothing to walk, so
-      // the order reads as "stop here" rather than "carry on with whatever
-      // you were doing". Velocity has to be zeroed explicitly — nothing else
-      // will, since `MoveVelocitySystem` integrates whatever it finds and
-      // `MoveTargetSystem` only zeroes on arrival at a target that no longer
-      // exists.
-      delete entity.movePath;
-      if (entity.velocity) {
-        entity.velocity.x = 0;
-        entity.velocity.y = 0;
-      }
-      continue;
-    }
-
-    entity.movePath = { waypoints, index: 0 };
+    delete entity.pendingMoveOrder;
+    const result = planMoveOrder(grid, entity.transform.position, destination);
+    applyMoveOrder(entity, result);
   }
 }
 

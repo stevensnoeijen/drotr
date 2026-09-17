@@ -9,6 +9,7 @@ export type { Hoverable } from '~/game/ecs/components/hoverable';
 export type { MovePath } from '~/game/ecs/components/move-path';
 export type { MoveSpeed } from '~/game/ecs/components/move-speed';
 export type { MoveTarget } from '~/game/ecs/components/move-target';
+export type { PendingMoveOrder } from '~/game/ecs/components/pending-move-order';
 export type { Renderable } from '~/game/ecs/components/renderable';
 export type { Selectable } from '~/game/ecs/components/selectable';
 export type { Selected } from '~/game/ecs/components/selected';

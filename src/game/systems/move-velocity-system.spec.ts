@@ -38,6 +38,26 @@ describe('createMoveVelocitySystem', () => {
     expect(entity.transform.rotation).toBeCloseTo(Math.PI / 2);
   });
 
+  it('quantizes facing to the nearest of the 8 compass directions (#178)', () => {
+    const world = new World<Entity>();
+    const queries = createQueries(world);
+    const system = createMoveVelocitySystem(queries);
+
+    const entity = world.add({
+      transform: { position: { x: 0, y: 0 }, rotation: 0 },
+      // A shallow, off-diagonal direction of travel — nowhere near a
+      // straight or 45° diagonal line.
+      velocity: { x: 1, y: -10 },
+      moveSpeed: { value: 100 },
+    });
+
+    system(world, 1 / 60);
+
+    // Snapped to due north (0 rad in this engine's facing convention)
+    // rather than the raw, continuous atan2 angle.
+    expect(entity.transform.rotation).toBeCloseTo(0);
+  });
+
   it('keeps the last facing once velocity returns to zero', () => {
     const world = new World<Entity>();
     const queries = createQueries(world);

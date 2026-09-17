@@ -1,6 +1,8 @@
 import { Graphics } from 'pixi.js';
 
 import type { Entity } from '~/game/ecs/entity';
+import { planMoveOrder } from '~/game/navigation/move-order';
+import type { GridLike } from '~/lib/navigation/astar';
 import type { Point } from '~/lib/math/types';
 
 /** Colour of a unit's move-order line, drawn regardless of team — pink marks it as a debug overlay. */
@@ -22,14 +24,49 @@ const WAYPOINT_RADIUS = 2;
  *
  * `movePath.index` is the *next* waypoint to be handed to `moveTarget`, so
  * the two never overlap — the current leg is already `index - 1`.
+ *
+ * When the entity also has a `pendingMoveOrder` (a reroute issued
+ * mid-transition and staged rather than applied immediately — see #178),
+ * `entity.movePath`'s remaining waypoints are stale: they get discarded the
+ * instant the pending order actually applies, once the in-flight leg
+ * finishes. So instead of appending those, this previews the route the
+ * pending order will actually produce — from `moveTarget.position` (the
+ * exact, uninterruptible cell the unit is about to land on, not its live
+ * interpolated position, which is still moving and would make the preview
+ * flicker) to `pendingMoveOrder.destination` — via the same `planMoveOrder`
+ * helper `PendingMoveOrderSystem` uses to apply it for real. The result is
+ * one continuous preview: the in-flight step seamlessly continuing into the
+ * routed road to the new destination, rather than two disjoint routes.
+ *
+ * Calling `planMoveOrder` (which can run A*) here means every draw frame
+ * potentially replans for any entity with a pending order — acceptable
+ * because `pendingMoveOrder` is short-lived and rare (cleared within ~1
+ * tick once the current leg completes), not a steady per-frame cost across
+ * the whole unit roster.
  */
-function remainingWaypoints(entity: Entity): Point[] {
+function remainingWaypoints(entity: Entity, grid: GridLike | undefined): Point[] {
   const points: Point[] = [];
 
   if (entity.moveTarget) {
     points.push(entity.moveTarget.position);
   }
-  if (entity.movePath) {
+
+  if (entity.pendingMoveOrder) {
+    if (entity.moveTarget) {
+      const preview = planMoveOrder(grid, entity.moveTarget.position, entity.pendingMoveOrder.destination);
+      switch (preview.kind) {
+        case 'path':
+          points.push(...preview.movePath.waypoints);
+          break;
+        case 'target':
+          points.push(preview.moveTarget.position);
+          break;
+        case 'stop':
+        case 'none':
+          break;
+      }
+    }
+  } else if (entity.movePath) {
     points.push(...entity.movePath.waypoints.slice(entity.movePath.index));
   }
 
@@ -50,8 +87,16 @@ function remainingWaypoints(entity: Entity): Point[] {
  * A unit with a plain straight-line `moveTarget` and no route (a map with no
  * terrain to route around) draws exactly what it did before pathfinding: a
  * single segment to its destination.
+ *
+ * An entity with a `pendingMoveOrder` (a reroute issued mid-transition and
+ * staged rather than applied — see #178) still gets exactly one line, not a
+ * separate "committed" vs "pending" one: `remainingWaypoints` splices the
+ * in-flight leg's exact destination together with a preview of the route
+ * the pending order will actually produce, so the in-flight step reads as
+ * continuing seamlessly into the routed road to the new destination. `grid`
+ * is what makes that preview possible — see `remainingWaypoints`.
  */
-export function drawMoveLines(graphics: Graphics, entities: Iterable<Entity>): void {
+export function drawMoveLines(graphics: Graphics, entities: Iterable<Entity>, grid?: GridLike): void {
   graphics.clear();
 
   for (const entity of entities) {
@@ -59,12 +104,13 @@ export function drawMoveLines(graphics: Graphics, entities: Iterable<Entity>): v
       continue;
     }
 
-    const waypoints = remainingWaypoints(entity);
+    const from = entity.transform.position;
+    const waypoints = remainingWaypoints(entity, grid);
+
     if (waypoints.length === 0) {
       continue;
     }
 
-    const from = entity.transform.position;
     graphics.moveTo(from.x, from.y);
     for (const waypoint of waypoints) {
       graphics.lineTo(waypoint.x, waypoint.y);

@@ -382,10 +382,16 @@ describe('findPath', () => {
     const result = findPath(wallWithGap, { x: 0, y: 0 }, { x: 8, y: 0 });
 
     expect(result.status).toBe('found');
+    // Every corner is where the walk changes between a straight and a 45°
+    // diagonal run — e.g. (0,0)->(3,3) is diagonal, (3,3)->(3,4) is
+    // vertical — rather than a single line-of-sight shortcut like
+    // (0,0)->(3,4), which would not be a direction a unit can move in.
     expect(result.cells).toEqual([
       { x: 0, y: 0 },
+      { x: 3, y: 3 },
       { x: 3, y: 4 },
       { x: 5, y: 4 },
+      { x: 8, y: 1 },
       { x: 8, y: 0 },
     ]);
   });
@@ -411,7 +417,7 @@ describe('findPath', () => {
     expect(raw.cells.at(-1)).toEqual({ x: 8, y: 0 });
   });
 
-  it('reduces an unobstructed route to just its endpoints', () => {
+  it('reduces an unobstructed diagonal-then-straight route to its corner', () => {
     const open = gridFrom(`
       ......
       ......
@@ -419,9 +425,30 @@ describe('findPath', () => {
       ......
     `);
 
+    // (0,0) to (5,3) is not itself a horizontal, vertical, or 45° diagonal
+    // line, so — even with nothing in the way — the route must still bend
+    // at (3,3), where the diagonal run gives way to a straight one, rather
+    // than collapsing to a single off-angle segment.
     expect(findPath(open, { x: 0, y: 0 }, { x: 5, y: 3 }).cells).toEqual([
       { x: 0, y: 0 },
+      { x: 3, y: 3 },
       { x: 5, y: 3 },
+    ]);
+  });
+
+  it('reduces a purely diagonal unobstructed route to just its endpoints', () => {
+    const open = gridFrom(`
+      ......
+      ......
+      ......
+      ......
+      ......
+      ......
+    `);
+
+    expect(findPath(open, { x: 0, y: 0 }, { x: 4, y: 4 }).cells).toEqual([
+      { x: 0, y: 0 },
+      { x: 4, y: 4 },
     ]);
   });
 
@@ -649,6 +676,51 @@ describe('smoothCellPath', () => {
     smoothed[0].x = 99;
 
     expect(cells[0]).toEqual({ x: 0, y: 0 });
+  });
+
+  it('never merges cells into a segment that is not horizontal, vertical, or a 45° diagonal (#178)', () => {
+    // A wide-open grid, big enough for the 9x4 offset path below.
+    const wideOpen = gridFrom(`
+      ..........
+      ..........
+      ..........
+      ..........
+      ..........
+    `);
+
+    // An 8-way A* path across open ground for a 9-wide, 4-tall offset: a
+    // diagonal run followed by a straight run. `hasLineOfSight` alone would
+    // happily merge the whole thing into one (9, 4) segment — a ~24° line —
+    // since nothing blocks the view; that is not a direction a unit is
+    // allowed to move in.
+    const cells = [
+      { x: 0, y: 0 },
+      { x: 1, y: 1 },
+      { x: 2, y: 2 },
+      { x: 3, y: 3 },
+      { x: 4, y: 4 },
+      { x: 5, y: 4 },
+      { x: 6, y: 4 },
+      { x: 7, y: 4 },
+      { x: 8, y: 4 },
+      { x: 9, y: 4 },
+    ];
+
+    const smoothed = smoothCellPath(wideOpen, cells);
+
+    expect(smoothed).toEqual([
+      { x: 0, y: 0 },
+      { x: 4, y: 4 },
+      { x: 9, y: 4 },
+    ]);
+
+    for (let i = 1; i < smoothed.length; i++) {
+      const dx = smoothed[i].x - smoothed[i - 1].x;
+      const dy = smoothed[i].y - smoothed[i - 1].y;
+      expect(dx === 0 || dy === 0 || Math.abs(dx) === Math.abs(dy)).toBe(
+        true
+      );
+    }
   });
 });
 

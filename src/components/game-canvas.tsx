@@ -30,6 +30,7 @@ import { createInputSystem, InputSystem, findHoverableUnitAt } from '~/game/syst
 import { createMovePathSystem } from '~/game/systems/move-path-system';
 import { createMoveTargetSystem } from '~/game/systems/move-target-system';
 import { createMoveVelocitySystem } from '~/game/systems/move-velocity-system';
+import { createPendingMoveOrderSystem } from '~/game/systems/pending-move-order-system';
 import { createPerceptionSystem, runPerceptionScan } from '~/game/systems/perception-system';
 import { createSeekSystem } from '~/game/systems/seek-system';
 import { createSelectionBoxSystem, SelectionBoxDrag } from '~/game/systems/selection-box-system';
@@ -399,6 +400,14 @@ export default function GameCanvas({
       // integration step below. MovePathSystem goes first of the two so a
       // route's next waypoint is steered toward in the same tick it's
       // handed over, rather than costing an idle frame per leg.
+      //
+      // PendingMoveOrderSystem runs first of all of these: a move order
+      // issued while a unit was mid-transition between two cells (#178) was
+      // staged rather than applied immediately, and this is where it's
+      // finally handed to the unit, once MoveTarget confirms the unit is no
+      // longer mid-step — early enough that, for a routed order, MovePathSystem
+      // below still steers toward its first waypoint within this same tick.
+      runner.add(createPendingMoveOrderSystem(queries, navigationGrid));
       runner.add(createMovePathSystem(queries));
       runner.add(createMoveTargetSystem(queries));
       // Between the systems that decide a velocity and the one that acts on
@@ -484,7 +493,7 @@ export default function GameCanvas({
         }
 
         if (debugFlagsRef.current?.has('paths')) {
-          drawMoveLines(moveLines, queries.movable);
+          drawMoveLines(moveLines, queries.movable, navigationGrid);
         } else {
           moveLines.clear();
         }
