@@ -48,6 +48,12 @@ export default function UnitInfoTooltip({
             <dd className="text-right">{stats.team}</dd>
           </>
         )}
+        {stats.status && (
+          <>
+            <dt>Status</dt>
+            <dd className="text-right">{stats.status}</dd>
+          </>
+        )}
         <dt>Damage</dt>
         <dd className="text-right tabular-nums">{stats.damage ?? '-'}</dd>
         <dt>Cooldown</dt>

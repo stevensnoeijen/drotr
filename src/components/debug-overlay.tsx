@@ -8,6 +8,8 @@ export interface SelectedUnitStats {
   type?: string;
   team?: string;
   color?: number;
+  /** Whether the hovered unit has died (#197's `dead` component), vs. still alive. */
+  status?: 'alive' | 'dead';
   damage?: number;
   /** Seconds between attacks (#95), gating how often `damage` is applied. */
   attackCooldown?: number;

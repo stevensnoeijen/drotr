@@ -516,6 +516,7 @@ export default function GameCanvas({
                 type: hoveredUnit.unitType,
                 team: hoveredUnit.team,
                 color: hoveredUnit.renderable?.color,
+                status: hoveredUnit.dead ? ('dead' as const) : ('alive' as const),
                 damage: units[hoveredUnit.unitType]?.attackDamage,
                 attackCooldown: units[hoveredUnit.unitType]?.attackCooldown,
                 accuracy: units[hoveredUnit.unitType]?.accuracy,
