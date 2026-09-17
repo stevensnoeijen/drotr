@@ -1,5 +1,7 @@
-import type { World } from 'miniplex';
+import type { With, World } from 'miniplex';
 
+import { cancelAttackOrder, issueAttackOrder } from '~/game/combat/attack-order';
+import type { Team } from '~/game/ecs/components';
 import type { Entity } from '~/game/ecs/entity';
 import type { Queries } from '~/game/ecs/world';
 import type { System } from '~/game/ecs/system';
@@ -136,24 +138,30 @@ export class InputSystem {
 }
 
 /**
- * Finds the nearest `selectable` unit whose square bounding box (position
- * +/- `renderable.size` on each axis) contains `worldPosition`, or undefined
- * if no unit is hit. Dead units (marked `dead` by `DeathSystem`, whose corpse
- * lingers in the world — and in `queries.selectable` — for its removal
- * delay, see #197) are skipped: a corpse can still be seen and rendered, but
- * it should never be selectable again.
+ * The team the player commands. Selection (#87), move orders and attack
+ * orders are all restricted to it; red is the opposing side, which the player
+ * may click *at* (as an attack target) but never *with*.
  */
-export function findUnitAt(
-  queries: Queries,
+export const PLAYER_TEAM: Team = 'blue';
+
+/**
+ * The nearest of `entities` whose square bounding box (position +/-
+ * `renderable.size` on each axis) contains `worldPosition`, or undefined if
+ * none does.
+ *
+ * The one hit test behind every pointer query in this module — which unit
+ * did the player click? — with the candidate pool (selectable, hoverable,
+ * enemy) left entirely to the caller, so the pools can never drift apart in
+ * *how* a hit is decided, only in what may be hit.
+ */
+function findNearestUnitAt<T extends With<Entity, 'transform'>>(
+  entities: Iterable<T>,
   worldPosition: Vector2
-): Entity | undefined {
-  let nearest: Entity | undefined;
+): T | undefined {
+  let nearest: T | undefined;
   let nearestDistance = Infinity;
 
-  for (const entity of queries.selectable) {
-    if (entity.dead) {
-      continue;
-    }
+  for (const entity of entities) {
     const size = entity.renderable?.size ?? 0;
     const position = new Vector2(entity.transform.position.x, entity.transform.position.y);
     const dx = Math.abs(worldPosition.x - position.x);
@@ -172,34 +180,54 @@ export function findUnitAt(
 }
 
 /**
- * Finds the nearest `hoverable` unit whose square bounding box (position
- * +/- `renderable.size` on each axis) contains `worldPosition`, or undefined
- * if no unit is hit. Similar to {@link findUnitAt} but includes all hoverable
- * units regardless of team (for debug tooltips).
+ * Finds the nearest `selectable` unit hit by `worldPosition` — the player's
+ * own units only, since that is all `selectable` ever holds (see `spawnUnit`).
+ * Dead units (marked `dead` by `DeathSystem`, whose corpse lingers in the
+ * world — and in `queries.selectable` — for its removal delay, see #197) are
+ * skipped: a corpse can still be seen and rendered, but it should never be
+ * selectable again.
+ */
+export function findUnitAt(
+  queries: Queries,
+  worldPosition: Vector2
+): Entity | undefined {
+  const alive = [...queries.selectable].filter((entity) => !entity.dead);
+  return findNearestUnitAt(alive, worldPosition);
+}
+
+/**
+ * Finds the nearest `hoverable` unit hit by `worldPosition`. Like
+ * {@link findUnitAt} but team-unrestricted (for debug tooltips).
  */
 export function findHoverableUnitAt(
   queries: Queries,
   worldPosition: Vector2
 ): Entity | undefined {
-  let nearest: Entity | undefined;
-  let nearestDistance = Infinity;
+  return findNearestUnitAt(queries.hoverable, worldPosition);
+}
 
-  for (const entity of queries.hoverable) {
-    const size = entity.renderable?.size ?? 0;
-    const position = new Vector2(entity.transform.position.x, entity.transform.position.y);
-    const dx = Math.abs(worldPosition.x - position.x);
-    const dy = Math.abs(worldPosition.y - position.y);
-    if (dx > size || dy > size) {
-      continue;
-    }
-    const distance = Vector2.distance(position, worldPosition);
-    if (distance < nearestDistance) {
-      nearest = entity;
-      nearestDistance = distance;
-    }
-  }
+/**
+ * Finds the nearest live unit hit by `worldPosition` that is *not* on `team`
+ * — the hit test behind a right-click attack order (#195).
+ *
+ * Deliberately not built on `selectable` (the player's own team only) or
+ * `hoverable` (a debug-tooltip concern that happens to include every unit):
+ * it asks `combatants` for exactly what an attack order needs — something
+ * with a team, on the other side, still alive, and carrying an `id` for
+ * `Target` to reference. A corpse awaiting cleanup is not a valid order, so
+ * clicking one falls through to an ordinary move order rather than sending
+ * the selection off to fight it.
+ */
+export function findEnemyUnitAt(
+  queries: Queries,
+  worldPosition: Vector2,
+  team: Team = PLAYER_TEAM
+): Entity | undefined {
+  const enemies = [...queries.combatants].filter(
+    (entity) => entity.team !== team && entity.health.current > 0 && entity.id !== undefined
+  );
 
-  return nearest;
+  return findNearestUnitAt(enemies, worldPosition);
 }
 
 /**
@@ -301,7 +329,7 @@ export function moveSelectedTo(
   occupancy?: OccupancyGrid
 ): void {
   const selected = [...queries.selected];
-  const hasBlueUnit = selected.some((entity) => entity.team === 'blue');
+  const hasBlueUnit = selected.some((entity) => entity.team === PLAYER_TEAM);
   if (!hasBlueUnit) {
     return;
   }
@@ -311,7 +339,7 @@ export function moveSelectedTo(
   const assigned = new Set<number>();
 
   for (const entity of selected) {
-    if (entity.team !== 'blue' || !entity.transform) {
+    if (entity.team !== PLAYER_TEAM || !entity.transform) {
       continue;
     }
 
@@ -339,6 +367,13 @@ export function moveSelectedTo(
       // this same tick simply overwrites an earlier one, since only the
       // most recent order should take effect once the unit is free to
       // receive it.
+      //
+      // Any standing attack order gives way immediately, though, rather than
+      // when the staged order lands: a `Pursuit` left alive here would have
+      // `SeekSystem` go on replanning and re-filling `MoveTarget` for the old
+      // target, and `PendingMoveOrderSystem` — which waits for `MoveTarget`
+      // to clear — might then never get its turn at all.
+      cancelAttackOrder(entity);
       entity.pendingMoveOrder = { destination };
       continue;
     }
@@ -350,10 +385,55 @@ export function moveSelectedTo(
 }
 
 /**
+ * Orders every selected unit on the player's team to attack one specific
+ * enemy unit — a right-click that landed on an enemy rather than on ground
+ * (#195).
+ *
+ * Restricted to the player's own team on exactly the same terms as
+ * {@link moveSelectedTo}: the player never directs red units, so a
+ * right-click with only red units selected (or nothing selected) is a no-op
+ * rather than silently sending red units to fight each other.
+ *
+ * Unlike a move order, no destination is computed and no cell is
+ * deconflicted: each unit is given the target and left to `SeekSystem` to
+ * reach it, routing around whatever terrain is in the way and closing to
+ * attack range on its own. Where several units get the same order they
+ * converge on the same enemy and `CellOccupancySystem` sorts out who ends up
+ * standing where, which is the melee equivalent of the destination
+ * deconfliction a move order does up front. Group *formation* remains #89.
+ *
+ * The order is sticky — see {@link issueAttackOrder}.
+ */
+export function attackSelectedTarget(queries: Queries, enemy: Entity): void {
+  const targetId = enemy.id;
+  if (targetId === undefined) {
+    return;
+  }
+
+  const selected = [...queries.selected];
+  if (!selected.some((entity) => entity.team === PLAYER_TEAM)) {
+    return;
+  }
+
+  for (const entity of selected) {
+    if (entity.team !== PLAYER_TEAM || entity === enemy) {
+      continue;
+    }
+    issueAttackOrder(entity, targetId);
+  }
+}
+
+/**
  * Builds the fixed-step {@link System} that drains `input`'s queued clicks
  * and right-click move orders, converts each from screen to world space via
  * the live viewport transform, and applies them: clicks hit-test against
  * selectable units, move orders are issued to the current selection.
+ *
+ * A right-click is one gesture with two meanings, decided by what it lands
+ * on: an enemy unit makes it an attack order against that unit specifically
+ * ({@link attackSelectedTarget}), anything else — empty ground, terrain, one
+ * of the player's own units — makes it a move order ({@link moveSelectedTo}),
+ * as it always was.
  *
  * `grid` is the loaded map's collision data, used to route move orders
  * around terrain; omit it for a map with no terrain, and orders fall back to
@@ -382,7 +462,13 @@ export function createInputSystem(
     if (moveOrders.length > 0) {
       const viewport = getViewport();
       for (const order of moveOrders) {
-        moveSelectedTo(queries, screenToWorld(order, viewport), grid, occupancy);
+        const worldPosition = screenToWorld(order, viewport);
+        const enemy = findEnemyUnitAt(queries, worldPosition);
+        if (enemy) {
+          attackSelectedTarget(queries, enemy);
+        } else {
+          moveSelectedTo(queries, worldPosition, grid, occupancy);
+        }
       }
     }
   };
