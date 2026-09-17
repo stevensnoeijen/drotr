@@ -5,11 +5,15 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { cellPosition, resetEntityIdCounter, spawnUnit } from '~/game/data/spawn';
 import type { Entity } from '~/game/ecs/entity';
 import { createQueries } from '~/game/ecs/world';
+import { OccupancyGrid } from '~/game/navigation/occupancy-grid';
 import { RenderSystem } from '~/game/render/render-system';
 import { DEFAULT_FIXED_STEP } from '~/game/game-loop';
+import { createCellOccupancySystem } from './cell-occupancy-system';
 import { createCombatSystem } from './combat-system';
 import { DeathCleanupSystem } from './death-cleanup-system';
 import { createDeathSystem, DEATH_REMOVAL_DELAY_SECONDS } from './death-system';
+import { createMovePathSystem } from './move-path-system';
+import { createMoveTargetSystem } from './move-target-system';
 import { createMoveVelocitySystem } from './move-velocity-system';
 import { createPerceptionSystem, runPerceptionScan } from './perception-system';
 import { createSeekSystem } from './seek-system';
@@ -21,8 +25,9 @@ import { createSeekSystem } from './seek-system';
  * pre-battle baseline once every corpse's removal delay has elapsed, and no
  * dead entity's container reference is retained by `RenderSystem`.
  *
- * Wired in the same order as `game-canvas.tsx`: perception, seek, move,
- * combat, then death.
+ * Wired in the same order as `game-canvas.tsx`: perception, seek, the move
+ * pipeline (path -> target -> cell occupancy -> velocity), combat, then
+ * death.
  */
 describe('death + render cleanup integration', () => {
   const DT = DEFAULT_FIXED_STEP;
@@ -42,8 +47,14 @@ describe('death + render cleanup integration', () => {
     const red = spawnUnit(world, { type: 'swordsmen', team: 'red', position: cellPosition(6, 0) });
 
     runPerceptionScan(world, queries);
+    const grid = { width: 16, height: 4, collision: new Uint8Array(16 * 4) };
+    const occupancy = new OccupancyGrid(grid);
+
     const perception = createPerceptionSystem(queries);
-    const seek = createSeekSystem(queries);
+    const seek = createSeekSystem(queries, grid, occupancy);
+    const movePath = createMovePathSystem(queries);
+    const moveTarget = createMoveTargetSystem(queries);
+    const cellOccupancy = createCellOccupancySystem(queries, occupancy);
     const move = createMoveVelocitySystem(queries);
     const combat = createCombatSystem(queries);
     const death = createDeathSystem(queries);
@@ -51,6 +62,9 @@ describe('death + render cleanup integration', () => {
     const tick = () => {
       perception(world, DT);
       seek(world, DT);
+      movePath(world, DT);
+      moveTarget(world, DT);
+      cellOccupancy(world, DT);
       move(world, DT);
       combat(world, DT);
       death(world, DT);

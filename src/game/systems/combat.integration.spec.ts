@@ -5,10 +5,14 @@ import { cellPosition, resetEntityIdCounter, spawnUnit } from '~/game/data/spawn
 import type { Entity } from '~/game/ecs/entity';
 import { createQueries } from '~/game/ecs/world';
 import type { Renderable, Health } from '~/game/ecs/components';
+import { OccupancyGrid } from '~/game/navigation/occupancy-grid';
 import { markDirtyOnHealthChange } from '~/game/render/health-bar';
 import { DEFAULT_FIXED_STEP } from '~/game/game-loop';
 import { CELL_SIZE } from '~/lib/grid';
+import { createCellOccupancySystem } from './cell-occupancy-system';
 import { createCombatSystem } from './combat-system';
+import { createMovePathSystem } from './move-path-system';
+import { createMoveTargetSystem } from './move-target-system';
 import { createMoveVelocitySystem } from './move-velocity-system';
 import { createPerceptionSystem, runPerceptionScan } from './perception-system';
 import { createSeekSystem } from './seek-system';
@@ -37,6 +41,13 @@ describe('perception + seek + move + combat integration', () => {
     const world = new World<Entity>();
     const queries = createQueries(world);
 
+    // Open ground, with the unit-to-unit collision layer the real game always
+    // has over it. Two units walking head-on at each other both want the cell
+    // between them; the occupancy grid is what decides which one gets it (and
+    // so stops them walking through one another) — see #201.
+    const grid = { width: 16, height: 4, collision: new Uint8Array(16 * 4) };
+    const occupancy = new OccupancyGrid(grid);
+
     // Four cells apart: outside swordsmen's 1-cell attack range, inside
     // their 5-cell aggro range.
     const blue = spawnUnit(world, { type: 'swordsmen', team: 'blue', position: cellPosition(2, 0) });
@@ -46,13 +57,19 @@ describe('perception + seek + move + combat integration', () => {
     // periodic system, then seek, then integration, then combat.
     runPerceptionScan(world, queries);
     const perception = createPerceptionSystem(queries);
-    const seek = createSeekSystem(queries);
+    const seek = createSeekSystem(queries, grid, occupancy);
+    const movePath = createMovePathSystem(queries);
+    const moveTarget = createMoveTargetSystem(queries);
+    const cellOccupancy = createCellOccupancySystem(queries, occupancy);
     const move = createMoveVelocitySystem(queries);
     const combat = createCombatSystem(queries);
 
     const tick = () => {
       perception(world, DT);
       seek(world, DT);
+      movePath(world, DT);
+      moveTarget(world, DT);
+      cellOccupancy(world, DT);
       move(world, DT);
       combat(world, DT);
     };

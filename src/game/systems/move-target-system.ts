@@ -49,6 +49,21 @@ export function createMoveTargetSystem(queries: Queries): System {
       const distance = Math.hypot(dx, dy);
 
       if (distance <= ARRIVAL_TOLERANCE) {
+        // Close the last sub-tolerance sliver outright instead of stopping
+        // short of it. Without this the unit comes to rest wherever the final
+        // step left it — up to `ARRIVAL_TOLERANCE` off the spot it was
+        // ordered to — and since every destination in the game is a cell
+        // centre (`moveSelectedTo` snaps the click; `planMovePath` emits
+        // centres; `SeekSystem` picks a cell to attack from), "arrived" then
+        // means "near enough the centre" rather than "on it" (#201).
+        //
+        // Safe as a direct write: the gap being closed is at most one world
+        // unit toward a point the unit is already that close to, which is
+        // half a unit's width inside the cell it is standing in — it cannot
+        // carry the unit into a cell `CellOccupancySystem` hasn't already
+        // granted it.
+        self.transform.position.x = position.x;
+        self.transform.position.y = position.y;
         self.velocity.x = 0;
         self.velocity.y = 0;
         delete self.moveTarget;
