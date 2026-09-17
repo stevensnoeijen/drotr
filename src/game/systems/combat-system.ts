@@ -4,6 +4,7 @@ import type { Entity } from '~/game/ecs/entity';
 import type { Queries } from '~/game/ecs/world';
 import { findEntityById } from '~/game/ecs/world';
 import type { System } from '~/game/ecs/system';
+import { cellSteps } from '~/game/combat/attack-cell';
 import { Cooldown } from '~/lib/cooldown';
 import { GameTime } from '~/lib/game-time';
 import { toGridPosition } from '~/lib/grid';
@@ -18,21 +19,15 @@ export type AttackerEntity = With<
 >;
 
 /**
- * Chebyshev (chessboard) distance, in grid cells, between two world-space
- * points: the number of 8-way (horizontal/vertical/diagonal) cell steps that
- * separate them, matching the 8-way movement grid from #194.
- *
- * Deliberately not the Euclidean distance divided by `CELL_SIZE`: a target
- * one cell diagonally away is one 8-way step (`attackRange` 1 should reach
- * it), but its Euclidean distance is `CELL_SIZE * sqrt(2)`, further than a
- * range-1 Euclidean check would allow. Chebyshev distance is exactly "how
- * many cell steps away", so a diagonal neighbour counts the same as an
- * orthogonal one — see #201.
+ * {@link cellSteps} between the cells two world-space points fall in: how
+ * many 8-way cell steps separate them, which is the unit `attackRange` is
+ * measured in (#201).
  */
 export function cellDistance(a: Point, b: Point): number {
-  const cellA = toGridPosition(new Vector2(a.x, a.y));
-  const cellB = toGridPosition(new Vector2(b.x, b.y));
-  return Math.max(Math.abs(cellA.x - cellB.x), Math.abs(cellA.y - cellB.y));
+  return cellSteps(
+    toGridPosition(new Vector2(a.x, a.y)),
+    toGridPosition(new Vector2(b.x, b.y))
+  );
 }
 
 /**
