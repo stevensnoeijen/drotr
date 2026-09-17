@@ -1,4 +1,4 @@
-import { Node, State } from '../Node';
+import { Node, State } from '../node';
 
 /**
  * Processes all of its children at the same time and only "computes" its success/failure state at the end of all child executions

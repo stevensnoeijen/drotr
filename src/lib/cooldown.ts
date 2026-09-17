@@ -1,4 +1,4 @@
-import { Timer } from './Timer';
+import { Timer } from './timer';
 
 type OnAction = () => void;
 

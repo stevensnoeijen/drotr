@@ -4,8 +4,8 @@ import type { Entity } from '~/game/ecs/entity';
 import type { Queries } from '~/game/ecs/world';
 import { findEntityById } from '~/game/ecs/world';
 import type { System } from '~/game/ecs/system';
-import { Cooldown } from '~/lib/Cooldown';
-import { GameTime } from '~/lib/GameTime';
+import { Cooldown } from '~/lib/cooldown';
+import { GameTime } from '~/lib/game-time';
 import { CELL_SIZE } from '~/lib/grid';
 import { NO_CELL } from '~/game/navigation/occupancy-grid';
 

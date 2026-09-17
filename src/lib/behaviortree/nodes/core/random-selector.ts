@@ -1,4 +1,4 @@
-import { Node, State } from '../Node';
+import { Node, State } from '../node';
 
 /**
  * Select randomly an item in the selector and run it.

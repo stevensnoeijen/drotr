@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { Node, State } from './Node';
+import { Node, State } from './node';
 
 describe('Node', () => {
   describe('constructor', () => {

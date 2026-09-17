@@ -10,7 +10,7 @@ import {
   parseTiledTileset,
   TiledMapError,
   type TerrainType,
-} from './loadTiledMap';
+} from './load-tiled-map';
 
 const FIXTURE_DIR = path.resolve(import.meta.dirname, '../../../public/maps');
 const mapJson = fs.readFileSync(path.join(FIXTURE_DIR, 'test.tmj'), 'utf-8');

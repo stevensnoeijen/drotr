@@ -1,4 +1,4 @@
-import { Node } from './nodes/Node';
+import { Node } from './nodes/node';
 
 export class Tree {
   constructor(public readonly root: Node) {}

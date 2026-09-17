@@ -15,7 +15,7 @@ import { SystemRunner } from '~/game/ecs/system';
 import { findEntityById, queries, world } from '~/game/ecs/world';
 import type { Entity } from '~/game/ecs/entity';
 import type { MapDefinition } from '~/game/maps';
-import { loadTiledMap, type ParsedMap, type TerrainType } from '~/game/map/loadTiledMap';
+import { loadTiledMap, type ParsedMap, type TerrainType } from '~/game/map/load-tiled-map';
 import { applyViewportBounds, createGameViewport } from '~/game/render/create-game-viewport';
 import { RenderSystem } from '~/game/render/render-system';
 import { drawTargetLines } from '~/game/render/target-lines';

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { GameTime } from './GameTime';
-import { Timer } from './Timer';
+import { GameTime } from './game-time';
+import { Timer } from './timer';
 
 describe('Timer', () => {
   const successProps = {

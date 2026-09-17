@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
-import { State } from '../Node';
+import { State } from '../node';
 
-import { Always } from './Always';
+import { Always } from './always';
 
 describe('Always', () => {
   describe('evaluate', () => {

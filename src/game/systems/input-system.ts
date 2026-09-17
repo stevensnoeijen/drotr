@@ -13,7 +13,7 @@ import {
   type OccupancyGrid,
 } from '~/game/navigation/occupancy-grid';
 import { screenToWorld, toWorldPositionCellCenter, type ViewportTransform } from '~/lib/grid';
-import { Vector2 } from '~/lib/math/Vector2';
+import { Vector2 } from '~/lib/math/vector2';
 import type { GridLike } from '~/lib/navigation/astar';
 import type { Point } from '~/lib/math/types';
 

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { Range } from './Range';
+import { Range } from './range';
 
 describe('Range', () => {
   describe('constructor', () => {

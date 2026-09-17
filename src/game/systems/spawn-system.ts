@@ -5,7 +5,7 @@ import type { UnitType } from '~/game/data/units';
 import type { Entity } from '~/game/ecs/entity';
 import type { Team } from '~/game/ecs/components';
 import { CELL_SIZE } from '~/lib/grid';
-import type { SpawnPoint } from '~/game/map/loadTiledMap';
+import type { SpawnPoint } from '~/game/map/load-tiled-map';
 
 /**
  * Gap, in world units, between adjacent units claiming the same spawn point —

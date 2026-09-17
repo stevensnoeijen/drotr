@@ -3,7 +3,7 @@ import type { World } from 'miniplex';
 import type { Entity } from '~/game/ecs/entity';
 import type { Team } from '~/game/ecs/components';
 import { CELL_SIZE, toWorldPositionCellCenter } from '~/lib/grid';
-import { Vector2 } from '~/lib/math/Vector2';
+import { Vector2 } from '~/lib/math/vector2';
 import type { Point } from '~/lib/math/types';
 import { units, type UnitType } from './units';
 

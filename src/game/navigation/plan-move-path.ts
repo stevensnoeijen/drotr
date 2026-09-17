@@ -5,7 +5,7 @@ import {
   type PathStatus,
 } from '~/lib/navigation/astar';
 import { toGridPosition, toWorldPosition } from '~/lib/grid';
-import { Vector2 } from '~/lib/math/Vector2';
+import { Vector2 } from '~/lib/math/vector2';
 import type { Point } from '~/lib/math/types';
 
 export interface PlannedMovePath {

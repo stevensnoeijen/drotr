@@ -1,7 +1,7 @@
 import type { World } from 'miniplex';
 
 import type { Entity } from '~/game/ecs/entity';
-import type { ParsedMap } from '~/game/map/loadTiledMap';
+import type { ParsedMap } from '~/game/map/load-tiled-map';
 
 /**
  * Name of a system in a future system registry. No such registry exists yet
