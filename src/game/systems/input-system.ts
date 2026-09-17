@@ -416,7 +416,9 @@ export function attackSelectedTarget(queries: Queries, enemy: Entity): void {
   }
 
   for (const entity of selected) {
-    if (entity.team !== PLAYER_TEAM || entity === enemy) {
+    // The team check also rules out ordering a unit to attack itself: the
+    // clicked unit is by definition not on the player's team.
+    if (entity.team !== PLAYER_TEAM) {
       continue;
     }
     issueAttackOrder(entity, targetId);
