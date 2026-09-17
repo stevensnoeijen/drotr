@@ -89,6 +89,26 @@ describe('createDeathSystem', () => {
     expect(entity.dead!.elapsed).toBeCloseTo(firstElapsed + DT, 10);
   });
 
+  it('drops the selected component the instant a selected unit dies (#197)', () => {
+    const world = new World<Entity>();
+    const queries = createQueries(world);
+    const system = createDeathSystem(queries);
+
+    const entity = world.add({
+      id: 1,
+      transform: { position: { x: 0, y: 0 }, rotation: 0 },
+      health: { current: 0, max: 10 },
+      selected: true,
+    });
+
+    system(world, DT);
+
+    expect(entity.selected).toBeUndefined();
+    expect([...queries.selected]).toHaveLength(0);
+    // Still marked dead as usual — only selection is affected.
+    expect(entity.dead).toEqual({ elapsed: DT });
+  });
+
   it('leaves a still-alive entity with a dying neighbor untouched', () => {
     const world = new World<Entity>();
     const queries = createQueries(world);
