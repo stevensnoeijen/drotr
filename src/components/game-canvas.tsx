@@ -392,14 +392,19 @@ export default function GameCanvas({
       runner.add(createPerceptionSystem(queries));
       // Seek reads the target set above/by the periodic scan; movement
       // integrates the velocity seek just set, both within the same fixed
-      // step so a freshly (re)targeted unit starts moving immediately.
-      runner.add(createSeekSystem(queries));
-      // Runs after SeekSystem so a player-issued move order (right-click)
-      // takes priority over auto-attack seeking for any unit that somehow
-      // has both: MoveTargetSystem's velocity write wins going into the
-      // integration step below. MovePathSystem goes first of the two so a
-      // route's next waypoint is steered toward in the same tick it's
-      // handed over, rather than costing an idle frame per leg.
+      // step so a freshly (re)targeted unit starts moving immediately. The
+      // navigation grid is what lets it route a target around a wall instead
+      // of walking into it (#195) — the same collision data the player's own
+      // move orders are routed with; without one it stays straight-line only.
+      runner.add(createSeekSystem(queries, navigationGrid));
+      // Runs after SeekSystem, which is also what makes a routed pursuit
+      // (#195) move within the tick it was planned: SeekSystem sets the
+      // MovePath, and these two pick it up immediately below. MovePathSystem
+      // goes first of the two so a route's next waypoint is steered toward in
+      // the same tick it's handed over, rather than costing an idle frame per
+      // leg. A player-issued move order still takes priority over auto-attack
+      // movement — SeekSystem skips any unit holding one outright, rather
+      // than fighting it for the velocity (see `hasPlayerMoveOrder`).
       //
       // PendingMoveOrderSystem runs first of all of these: a move order
       // issued while a unit was mid-transition between two cells (#178) was

@@ -12,6 +12,7 @@ import type {
   MoveSpeed,
   MoveTarget,
   PendingMoveOrder,
+  Pursuit,
   Renderable,
   Selectable,
   Selected,
@@ -48,6 +49,7 @@ export interface Entity {
   moveTarget?: MoveTarget;
   movePath?: MovePath;
   pendingMoveOrder?: PendingMoveOrder;
+  pursuit?: Pursuit;
   cellOccupancy?: CellOccupancy;
   dead?: Dead;
 }
