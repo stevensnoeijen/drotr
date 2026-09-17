@@ -30,7 +30,7 @@ const cellOf = (position: { x: number; y: number }) => ({
  * in open space a distance check ran out.
  */
 describe('seek + move integration', () => {
-  function setup(dt: number) {
+  function setup(dt: number, range = 1) {
     const world = new World<Entity>();
     const queries = createQueries(world);
     const seek = createSeekSystem(queries);
@@ -46,7 +46,7 @@ describe('seek + move integration', () => {
       transform: { position: centre(0, 0), rotation: 0 },
       velocity: { x: 0, y: 0 },
       moveSpeed: { value: 3 * CELL_SIZE },
-      attackRange: { value: 1 },
+      attackRange: { value: range },
       target: { entityId: target.id! },
     });
 
@@ -110,6 +110,22 @@ describe('seek + move integration', () => {
         expect(isAtCellCentre(self.transform.position)).toBe(true);
       }
     }
+  });
+
+  it('stops a ranged unit on the cell centre at the edge of its range, not in melee', () => {
+    const dt = 1 / 60;
+    // A crossbow soldier's reach: five cells, so it has no business closing
+    // all the way to its target (#201).
+    const { self, target, tick } = setup(dt, 5);
+
+    for (let i = 0; i < 600; i++) {
+      tick();
+    }
+
+    expect(self.transform.position).toEqual(centre(5, 0));
+    expect(isAtCellCentre(self.transform.position)).toBe(true);
+    expect(cellSteps(cellOf(self.transform.position), cellOf(target.transform.position))).toBe(5);
+    expect(self.velocity).toEqual({ x: 0, y: 0 });
   });
 
   it('movement is framerate-independent: the same total simulated time produces identical positions regardless of step count', () => {
