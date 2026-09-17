@@ -29,28 +29,41 @@ export type AttackerEntity = With<
  * many cell steps away", so a diagonal neighbour counts the same as an
  * orthogonal one — see #201.
  */
-function cellDistance(a: Point, b: Point): number {
+export function cellDistance(a: Point, b: Point): number {
   const cellA = toGridPosition(new Vector2(a.x, a.y));
   const cellB = toGridPosition(new Vector2(b.x, b.y));
   return Math.max(Math.abs(cellA.x - cellB.x), Math.abs(cellA.y - cellB.y));
 }
 
 /**
- * True once a unit is standing fully inside one cell rather than straddling
- * two mid-step.
+ * True once a unit is standing fully inside one cell, at rest, rather than
+ * straddling two mid-step.
  *
- * `SeekSystem` stops an attacker at a world-space distance, not a cell
- * boundary, so two units closing on each other can both still be mid-transit
- * (each holding an origin *and* a reserved destination cell in
- * {@link CellOccupancy}) the instant they come within range — trading blows
- * while straddling a cell line instead of standing in one. A unit with no
- * `cellOccupancy` at all (never claimed a cell — stationary and never
- * visited by `CellOccupancySystem`) can't be mid-transit, so it counts as
- * settled by default.
+ * Two things have to hold:
+ *
+ * - **Not mid-transit by cell occupancy**: `entity.cellOccupancy.reserved`
+ *   is `NO_CELL` (or the entity has no `cellOccupancy` at all — never
+ *   claimed a cell, so it can't be mid-transit; stationary test fixtures
+ *   and units `CellOccupancySystem` hasn't visited yet fall in here).
+ * - **Actually at rest**: `entity.velocity` is exactly zero (or absent).
+ *   `CellOccupancySystem` clears `reserved` back to `NO_CELL` the instant a
+ *   unit stops needing to cross into a *new* cell — which happens the
+ *   moment it settles anywhere inside the cell it's already claimed, not
+ *   only once it has finished sliding to a full stop there. `SeekSystem`
+ *   only actually zeroes `velocity` once it has decided to stop chasing (at
+ *   `attackRange`), so requiring zero velocity here is what keeps a unit
+ *   that's still visibly closing the last stretch of its approach — sliding
+ *   across ground it already owns, `reserved` cleared the whole way — from
+ *   reading as "settled" purely on the occupancy proxy (#201).
  */
-function isSettled(entity: Entity): boolean {
+export function isSettled(entity: Entity): boolean {
   const occupancy = entity.cellOccupancy;
-  return !occupancy || occupancy.reserved === NO_CELL;
+  if (occupancy && occupancy.reserved !== NO_CELL) {
+    return false;
+  }
+
+  const velocity = entity.velocity;
+  return !velocity || (velocity.x === 0 && velocity.y === 0);
 }
 
 /**

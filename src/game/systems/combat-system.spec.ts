@@ -276,6 +276,57 @@ describe('CombatSystem', () => {
     expect(target.health!.current).toBe(100);
   });
 
+  it('withholds a swing while the attacker still has nonzero velocity, even with no active cell reservation (#201)', () => {
+    const { world, attacker, target, system } = setupDuel({
+      gapCells: 1,
+      attackRangeCells: 1,
+      damage: 5,
+      attackCooldown: 0.5,
+    });
+    // Occupancy proxy alone says "settled" (reserved cleared), but the unit
+    // is still visibly sliding across ground it already owns — SeekSystem
+    // hasn't yet decided to stop chasing and zero this.
+    attacker.cellOccupancy = { occupantId: 0, cell: 0, reserved: NO_CELL, blockedFor: 0, rerouted: false };
+    attacker.velocity = { x: 12, y: 0 };
+
+    run(system, world, 30);
+
+    expect(target.health!.current).toBe(100);
+  });
+
+  it('withholds a swing while the target still has nonzero velocity, even with no active cell reservation (#201)', () => {
+    const { world, target, system } = setupDuel({
+      gapCells: 1,
+      attackRangeCells: 1,
+      damage: 5,
+      attackCooldown: 0.5,
+    });
+    target.cellOccupancy = { occupantId: 1, cell: 1, reserved: NO_CELL, blockedFor: 0, rerouted: false };
+    target.velocity = { x: -12, y: 0 };
+
+    run(system, world, 30);
+
+    expect(target.health!.current).toBe(100);
+  });
+
+  it('resumes swinging once velocity settles back to zero', () => {
+    const { world, attacker, target, system } = setupDuel({
+      gapCells: 1,
+      attackRangeCells: 1,
+      damage: 5,
+      attackCooldown: 0.5,
+    });
+    attacker.velocity = { x: 12, y: 0 };
+
+    run(system, world, 30);
+    expect(target.health!.current).toBe(100);
+
+    attacker.velocity = { x: 0, y: 0 };
+    run(system, world, 30);
+
+    expect(target.health!.current).toBe(95);
+  });
+
   it('resumes swinging once both combatants settle back into a single cell', () => {
     const { world, attacker, target, system } = setupDuel({
       gapCells: 1,

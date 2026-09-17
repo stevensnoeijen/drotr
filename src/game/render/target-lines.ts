@@ -2,6 +2,7 @@ import { Graphics } from 'pixi.js';
 
 import type { Entity } from '~/game/ecs/entity';
 import { findEntityById } from '~/game/ecs/world';
+import { cellDistance, isSettled } from '~/game/systems/combat-system';
 
 /** Colour of a unit's target line, drawn regardless of team — pink marks it as a debug overlay. */
 const LINE_COLOR = 0xff69b4;
@@ -99,6 +100,16 @@ function drawArrowHead(
  * since only a `queries.targeting` entity — a subset of it — ever has a
  * `target`); a target outside this pool (or already removed from the world)
  * is silently skipped rather than throwing.
+ *
+ * A pair only gets a line once both `CombatSystem.isSettled` (see there) —
+ * not mid-step between two cells — and, when the origin carries an
+ * `attackRange`, within that range in 8-way cell steps. Without this, the
+ * arrow would appear the instant a unit picks a target from clear across the
+ * map, and keep pointing at it — rotating to track — through the entire
+ * chase, well before the unit is anywhere near settled enough to actually
+ * fight (#201). An origin with no `attackRange` at all (not itself an
+ * attacker) still gets a line once both sides are settled: it has no range
+ * to check against.
  */
 export function drawTargetLines(graphics: Graphics, entities: Iterable<Entity>): void {
   graphics.clear();
@@ -111,6 +122,18 @@ export function drawTargetLines(graphics: Graphics, entities: Iterable<Entity>):
 
     const targetEntity = findEntityById(pool, origin.target.entityId);
     if (!targetEntity?.transform) {
+      continue;
+    }
+
+    if (!isSettled(origin) || !isSettled(targetEntity)) {
+      continue;
+    }
+
+    if (
+      origin.attackRange &&
+      cellDistance(origin.transform.position, targetEntity.transform.position) >
+        origin.attackRange.value
+    ) {
       continue;
     }
 

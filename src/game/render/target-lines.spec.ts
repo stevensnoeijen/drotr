@@ -2,6 +2,8 @@ import { Graphics } from 'pixi.js';
 import { describe, expect, it } from 'vitest';
 
 import type { Entity } from '~/game/ecs/entity';
+import { CELL_SIZE } from '~/lib/grid';
+import { NO_CELL } from '~/game/navigation/occupancy-grid';
 import { drawTargetLines } from './target-lines';
 
 describe('drawTargetLines', () => {
@@ -87,5 +89,86 @@ describe('drawTargetLines', () => {
     const callsB = moveToCallsFor([originB, target]);
 
     expect(callsA).not.toEqual(callsB);
+  });
+
+  it('skips a pair where the origin is still mid-step between two cells (#201)', () => {
+    const graphics = new Graphics();
+    const target: Entity = {
+      id: 2,
+      transform: { position: { x: CELL_SIZE, y: 0 }, rotation: 0 },
+      team: 'red',
+    };
+    const origin: Entity = {
+      id: 1,
+      transform: { position: { x: 0, y: 0 }, rotation: 0 },
+      team: 'blue',
+      attackRange: { value: 1 },
+      target: { entityId: 2 },
+      cellOccupancy: { occupantId: 0, cell: 0, reserved: 1, blockedFor: 0, rerouted: false },
+    };
+
+    const drawn: unknown[] = [];
+    graphics.circle = ((...args: unknown[]) => {
+      drawn.push(args);
+      return graphics;
+    }) as typeof graphics.circle;
+
+    drawTargetLines(graphics, [origin, target]);
+
+    expect(drawn).toHaveLength(0);
+  });
+
+  it('skips a pair beyond the origin attackRange even when both are settled', () => {
+    const graphics = new Graphics();
+    const target: Entity = {
+      id: 2,
+      transform: { position: { x: CELL_SIZE * 5, y: 0 }, rotation: 0 },
+      team: 'red',
+    };
+    const origin: Entity = {
+      id: 1,
+      transform: { position: { x: 0, y: 0 }, rotation: 0 },
+      team: 'blue',
+      attackRange: { value: 1 },
+      target: { entityId: 2 },
+    };
+
+    const drawn: unknown[] = [];
+    graphics.circle = ((...args: unknown[]) => {
+      drawn.push(args);
+      return graphics;
+    }) as typeof graphics.circle;
+
+    drawTargetLines(graphics, [origin, target]);
+
+    expect(drawn).toHaveLength(0);
+  });
+
+  it('draws a line once both sides are settled and within the origin attackRange', () => {
+    const graphics = new Graphics();
+    const target: Entity = {
+      id: 2,
+      transform: { position: { x: CELL_SIZE, y: 0 }, rotation: 0 },
+      team: 'red',
+      cellOccupancy: { occupantId: 1, cell: 1, reserved: NO_CELL, blockedFor: 0, rerouted: false },
+    };
+    const origin: Entity = {
+      id: 1,
+      transform: { position: { x: 0, y: 0 }, rotation: 0 },
+      team: 'blue',
+      attackRange: { value: 1 },
+      target: { entityId: 2 },
+      cellOccupancy: { occupantId: 0, cell: 0, reserved: NO_CELL, blockedFor: 0, rerouted: false },
+    };
+
+    const drawn: unknown[] = [];
+    graphics.circle = ((...args: unknown[]) => {
+      drawn.push(args);
+      return graphics;
+    }) as typeof graphics.circle;
+
+    drawTargetLines(graphics, [origin, target]);
+
+    expect(drawn).toHaveLength(1);
   });
 });
