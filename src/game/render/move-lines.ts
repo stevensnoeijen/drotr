@@ -88,6 +88,12 @@ function remainingWaypoints(entity: Entity, grid: GridLike | undefined): Point[]
  * terrain to route around) draws exactly what it did before pathfinding: a
  * single segment to its destination.
  *
+ * An attacker routing around a wall to reach its target (#195) walks the
+ * same `MovePath`/`MoveTarget` components, so its route is drawn here too,
+ * with no special handling — which is exactly how a pursuit that bends the
+ * wrong way is meant to be spotted. Pair it with `?debug=targets` to see
+ * which enemy the route is aimed at.
+ *
  * An entity with a `pendingMoveOrder` (a reroute issued mid-transition and
  * staged rather than applied — see #178) still gets exactly one line, not a
  * separate "committed" vs "pending" one: `remainingWaypoints` splices the
