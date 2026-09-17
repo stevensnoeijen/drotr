@@ -92,6 +92,43 @@ function aimAt(entity: Entity, x: number, y: number): void {
 }
 
 /**
+ * Brings a unit seeking has just stopped owning — its target died, or was
+ * cleared out from under it — to a *proper* stop: not frozen wherever the
+ * step it was half-way through left it, but walked the last fraction of a
+ * cell onto the centre of the cell it is standing in.
+ *
+ * Freezing in place is what the old system did, and it leaves units dotted
+ * around a finished battlefield part-way across their cells — visibly
+ * off-grid, and (since `isSettled` gates being attacked as well as attacking)
+ * unhittable where they stand until something moves them again (#201).
+ *
+ * The move order it issues carries no `Pursuit`, so seeking treats it as a
+ * player order and keeps out of the way while `MoveTargetSystem` finishes it.
+ * That is the right reading: there is no target left for this unit, nothing
+ * to own, and the order cancels itself the moment it completes.
+ */
+function comeToRest(entity: Entity): void {
+  delete entity.pursuit;
+  delete entity.movePath;
+
+  const position = entity.transform!.position;
+  if (isAtCellCentre(position)) {
+    delete entity.moveTarget;
+    if (entity.velocity) {
+      entity.velocity.x = 0;
+      entity.velocity.y = 0;
+    }
+    return;
+  }
+
+  aimAt(
+    entity,
+    cellCentreCoordinate(Math.floor(position.x / CELL_SIZE)),
+    cellCentreCoordinate(Math.floor(position.y / CELL_SIZE))
+  );
+}
+
+/**
  * Records that seeking — not the player — owns this unit's current movement,
  * so `hasPlayerMoveOrder` keeps hands off it and a later tick knows which
  * target the movement was for.
@@ -184,8 +221,9 @@ function markPursuit(
  *   entity, is left alone — `SeekSystem` never touches its velocity, so
  *   anything another system set survives this pass untouched. The exception
  *   is an entity that was *pursuing* that target: seeking owns the movement
- *   of a unit it is steering, so abandoning the pursuit stops the unit rather
- *   than leaving it coasting toward a corpse.
+ *   of a unit it is steering, so abandoning the pursuit stops the unit —
+ *   {@link comeToRest}, on a cell centre — rather than leaving it coasting
+ *   toward a corpse or frozen half-way across a cell.
  * - An entity under a player move order is skipped outright; see
  *   {@link hasPlayerMoveOrder}.
  * - `moveSpeed` and `attackRange` are both required: an entity missing either
@@ -251,9 +289,7 @@ export function createSeekSystem(
 
       if (!target || !attackRange) {
         if (pursuit) {
-          clearPursuitRoute(self);
-          self.velocity.x = 0;
-          self.velocity.y = 0;
+          comeToRest(self);
         }
         continue;
       }
@@ -265,9 +301,7 @@ export function createSeekSystem(
       // the meantime is worse than simply stopping.
       if (!other?.transform || (other.health && other.health.current <= 0)) {
         if (pursuit) {
-          clearPursuitRoute(self);
-          self.velocity.x = 0;
-          self.velocity.y = 0;
+          comeToRest(self);
         }
         continue;
       }

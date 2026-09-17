@@ -469,6 +469,22 @@ describe('createSeekSystem', () => {
       expect(self.velocity).toEqual({ x: 0, y: 0 });
     });
 
+    it('walks onto its cell centre rather than freezing mid-step when its target dies (#201)', () => {
+      // Part-way across cell (0, 0) when the enemy it was walking toward
+      // dies. Stopping dead here would leave it standing visibly off-grid —
+      // and, since `isSettled` gates being attacked as well as attacking,
+      // unhittable where it stands.
+      const { world, system, self, enemy } = setup(wallWithGap, { x: 26, y: 16 });
+
+      system(world, 1 / 60);
+      enemy.health!.current = 0;
+      system(world, 1 / 60);
+
+      expect(self.pursuit).toBeUndefined();
+      expect(self.movePath).toBeUndefined();
+      expect(self.moveTarget).toEqual({ position: centre(0, 0) });
+    });
+
     it('abandons the route and stops when the target is cleared outright', () => {
       const { world, system, self } = setup(wallWithGap);
 
