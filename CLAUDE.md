@@ -34,10 +34,14 @@ Guidance for Claude Code (and contributors) working in this repository.
 ## File naming
 
 - All new file names (source files, test files, scripts, docs) use
-  kebab-case, e.g. `unit-health-bar.tsx`, `pathfinding-grid.ts`.
+  kebab-case, e.g. `unit-health-bar.tsx`, `pathfinding-grid.ts`,
+  `behaviour-trees.md`.
 - Existing non-kebab-case files may be renamed opportunistically when you're
   already touching them, but renaming purely for style is not itself worth a
   PR — don't go out of your way to do it.
+- Exception: filenames whose exact casing is mandated by an external tool or
+  convention are kept as-is — e.g. `README.md`, `CLAUDE.md`, `SKILL.md`,
+  dotfiles like `.editorconfig`/`.prettierrc.json`, and `package.json`.
 
 ## Maps and scenarios
 
