@@ -10,6 +10,4 @@ type BuildArrayMinLength<
 
 export type ArrayMinLength<T, N extends number> = BuildArrayMinLength<T, N, []>;
 
-export type Comparator<T> = (a: T, b: T) => number;
-
 export type HasEquals = { equals: (other: unknown) => boolean };

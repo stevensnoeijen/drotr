@@ -96,7 +96,7 @@ function drawSelectionMarks(): Graphics {
 }
 
 /** Draws a {@link Renderable}'s primitive shape into a fresh Graphics. */
-export function drawRenderable({ shape, color, size }: Renderable): Graphics {
+function drawRenderable({ shape, color, size }: Renderable): Graphics {
   const graphics = new Graphics();
   if (shape === 'circle') {
     graphics.circle(0, 0, size);

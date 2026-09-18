@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { GameTime } from './GameTime';
-import { Cooldown } from './Cooldown';
+import { GameTime } from './game-time';
+import { Cooldown } from './cooldown';
 
 describe('Cooldown', () => {
   const delayTime = 1000;

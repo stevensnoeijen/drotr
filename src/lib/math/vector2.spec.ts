@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 
-import { Vector2 } from './Vector2';
+import { Vector2 } from './vector2';
 
 describe('Vector2', () => {
   describe('ZERO', () => {

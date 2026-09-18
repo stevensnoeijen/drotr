@@ -1,4 +1,4 @@
-import type { IValue } from './IValue';
+import type { IValue } from './i-value';
 
 export class RandomNumber implements IValue<number> {
   constructor(

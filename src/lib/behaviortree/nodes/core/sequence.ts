@@ -1,4 +1,4 @@
-import { Node, State } from '../Node';
+import { Node, State } from '../node';
 
 /**
  * This is the "And" operator.

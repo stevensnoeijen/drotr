@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { Vector2 } from './math/Vector2';
+import { Vector2 } from './math/vector2';
 import * as aStar from './navigation/astar';
 
 import {

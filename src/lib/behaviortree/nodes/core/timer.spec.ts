@@ -1,12 +1,12 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { Value } from '../../values/Value';
-import { State } from '../Node';
+import { Value } from '../../values/value';
+import { State } from '../node';
 
-import { GameTime } from '~/lib/GameTime';
+import { GameTime } from '~/lib/game-time';
 
-import { Always } from './Always';
-import { Timer } from './Timer';
+import { Always } from './always';
+import { Timer } from './timer';
 
 describe('Timer', () => {
   const success = new Always(State.SUCCESS);

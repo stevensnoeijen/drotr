@@ -2,7 +2,7 @@ import { World } from 'miniplex';
 import { describe, expect, it } from 'vitest';
 
 import type { Entity } from '~/game/ecs/entity';
-import type { SpawnPoint } from '~/game/map/loadTiledMap';
+import type { SpawnPoint } from '~/game/map/load-tiled-map';
 import { claimSpawn } from './spawn-system';
 
 const spawns: SpawnPoint[] = [

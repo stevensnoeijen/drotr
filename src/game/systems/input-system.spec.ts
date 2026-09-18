@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import type { Entity } from '~/game/ecs/entity';
 import { createQueries } from '~/game/ecs/world';
 import { CELL_SIZE } from '~/lib/grid';
-import { Vector2 } from '~/lib/math/Vector2';
+import { Vector2 } from '~/lib/math/vector2';
 import {
   attackSelectedTarget,
   createInputSystem,

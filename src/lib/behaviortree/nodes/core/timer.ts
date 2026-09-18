@@ -1,7 +1,7 @@
-import type { IValue } from '../../values/IValue';
-import { Node, State } from '../Node';
+import type { IValue } from '../../values/i-value';
+import { Node, State } from '../node';
 
-import { Timer as DeltaTimer } from '~/lib/Timer';
+import { Timer as DeltaTimer } from '~/lib/timer';
 
 type OnElapsed = () => void;
 

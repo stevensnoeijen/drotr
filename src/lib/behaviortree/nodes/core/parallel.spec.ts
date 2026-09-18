@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
-import { State } from '../Node';
+import { State } from '../node';
 
-import { Parallel } from './Parallel';
-import { Always } from './Always';
+import { Parallel } from './parallel';
+import { Always } from './always';
 
 describe('Parallel', () => {
   describe('constructor', () => {

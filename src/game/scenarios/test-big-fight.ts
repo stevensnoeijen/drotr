@@ -1,5 +1,5 @@
 import { cellPosition, spawnUnit } from '~/game/data/spawn';
-import type { ParsedMap } from '~/game/map/loadTiledMap';
+import type { ParsedMap } from '~/game/map/load-tiled-map';
 import type { Scenario } from './types';
 
 /**

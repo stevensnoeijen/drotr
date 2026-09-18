@@ -5,7 +5,7 @@ import type { Entity } from '~/game/ecs/entity';
 import { createQueries } from '~/game/ecs/world';
 import { NO_OCCUPANT, OccupancyGrid } from '~/game/navigation/occupancy-grid';
 import { CELL_SIZE } from '~/lib/grid';
-import { Vector2 } from '~/lib/math/Vector2';
+import { Vector2 } from '~/lib/math/vector2';
 import { createCellOccupancySystem } from './cell-occupancy-system';
 import { moveSelectedTo } from './input-system';
 import { createMovePathSystem } from './move-path-system';

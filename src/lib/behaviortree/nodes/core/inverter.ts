@@ -1,4 +1,4 @@
-import { Node, State } from '../Node';
+import { Node, State } from '../node';
 
 const invertStateMap = new Map<State, State>([
   [State.FAILURE, State.SUCCESS],

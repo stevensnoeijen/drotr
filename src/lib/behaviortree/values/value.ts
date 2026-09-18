@@ -1,6 +1,6 @@
-import { StaticValue } from './StaticValue';
-import { RandomNumber } from './RandomNumber';
-import type { IValue } from './IValue';
+import { StaticValue } from './static-value';
+import { RandomNumber } from './random-number';
+import type { IValue } from './i-value';
 
 export class Value {
   static static<Type>(value: Type): IValue<Type> {

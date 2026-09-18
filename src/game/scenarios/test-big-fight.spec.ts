@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 
 import { createQueries } from '~/game/ecs/world';
 import type { Entity } from '~/game/ecs/entity';
-import type { ParsedMap } from '~/game/map/loadTiledMap';
+import type { ParsedMap } from '~/game/map/load-tiled-map';
 import { testBigFightScenario } from './test-big-fight';
 
 /** A small map with a wall down its middle column, to verify units never land on it. */

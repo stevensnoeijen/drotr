@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 
 import type { Entity } from '~/game/ecs/entity';
 import { createQueries } from '~/game/ecs/world';
-import { Vector2 } from '~/lib/math/Vector2';
+import { Vector2 } from '~/lib/math/vector2';
 import { findHoverableUnitAt } from './input-system';
 import { units } from '~/game/data/units';
 import { spawnUnit, resetEntityIdCounter } from '~/game/data/spawn';

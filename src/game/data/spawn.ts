@@ -3,7 +3,7 @@ import type { World } from 'miniplex';
 import type { Entity } from '~/game/ecs/entity';
 import type { Team } from '~/game/ecs/components';
 import { CELL_SIZE, toWorldPositionCellCenter } from '~/lib/grid';
-import { Vector2 } from '~/lib/math/Vector2';
+import { Vector2 } from '~/lib/math/vector2';
 import type { Point } from '~/lib/math/types';
 import { units, type UnitType } from './units';
 
@@ -25,7 +25,7 @@ const TEAM_COLOR: Record<Team, number> = {
  * sprites vary (32x32 to 64x64) and per-type sizing is asset-integration
  * work (phase 6), not this constant.
  */
-export const UNIT_SIZE = 13;
+const UNIT_SIZE = 13;
 
 /** Auto-incrementing counter for entity IDs (for debugging/identification). */
 let nextEntityId = 1;
