@@ -46,7 +46,7 @@ jobs:
         run: npm run test-coverage
 
       - name: Test Report
-        uses: dorny/test-reporter@v2
+        uses: dorny/test-reporter@v3
         if: success() || failure()
         with:
           name: Vitest Tests
