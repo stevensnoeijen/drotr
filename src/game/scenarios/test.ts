@@ -114,22 +114,22 @@ export const testScenario: Scenario = {
     spawnUnit(world, {
       type: 'crossbowsoldier',
       team: 'blue',
-      position: cellPosition(60, crossbowRow),
+      position: cellPosition(56, crossbowRow),
     });
     spawnUnit(world, {
       type: 'crossbowsoldier',
       team: 'red',
-      position: cellPosition(63, crossbowRow),
+      position: cellPosition(59, crossbowRow),
     });
     spawnUnit(world, {
       type: 'crossbowsoldier',
       team: 'blue',
-      position: cellPosition(60, crossbowRow + 2),
+      position: cellPosition(56, crossbowRow + 2),
     });
     spawnUnit(world, {
       type: 'crossbowsoldier',
       team: 'red',
-      position: cellPosition(63, crossbowRow + 2),
+      position: cellPosition(59, crossbowRow + 2),
     });
   },
 };
