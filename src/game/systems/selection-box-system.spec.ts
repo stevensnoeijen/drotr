@@ -63,6 +63,18 @@ describe('selectInBox', () => {
     expect([...queries.selected]).toHaveLength(0);
   });
 
+  it('never selects a dead unit, even fully inside the box', () => {
+    const world = new World<Entity>();
+    const queries = createQueries(world);
+    const dead = addUnit(world, 100, 100);
+    world.addComponent(dead, 'dead', { elapsed: 0 });
+
+    selectInBox(world, queries, { x: 0, y: 0 }, { x: 200, y: 200 });
+
+    expect(dead.selected).toBeUndefined();
+    expect([...queries.selected]).toHaveLength(0);
+  });
+
   it('replaces the existing selection on a plain drag', () => {
     const world = new World<Entity>();
     const queries = createQueries(world);

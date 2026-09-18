@@ -138,7 +138,10 @@ export class InputSystem {
 /**
  * Finds the nearest `selectable` unit whose square bounding box (position
  * +/- `renderable.size` on each axis) contains `worldPosition`, or undefined
- * if no unit is hit.
+ * if no unit is hit. Dead units (marked `dead` by `DeathSystem`, whose corpse
+ * lingers in the world — and in `queries.selectable` — for its removal
+ * delay, see #197) are skipped: a corpse can still be seen and rendered, but
+ * it should never be selectable again.
  */
 export function findUnitAt(
   queries: Queries,
@@ -148,6 +151,9 @@ export function findUnitAt(
   let nearestDistance = Infinity;
 
   for (const entity of queries.selectable) {
+    if (entity.dead) {
+      continue;
+    }
     const size = entity.renderable?.size ?? 0;
     const position = new Vector2(entity.transform.position.x, entity.transform.position.y);
     const dx = Math.abs(worldPosition.x - position.x);

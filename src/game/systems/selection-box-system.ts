@@ -138,7 +138,8 @@ export class SelectionBoxDrag {
  * `renderable.size`) overlaps the world-space box `[topLeft, bottomRight]` —
  * an AABB-vs-AABB overlap test, so units only partially inside the box are
  * still included. Red-team units are never selectable, even fully inside
- * the box.
+ * the box, nor are dead units (their corpse lingers in `queries.selectable`
+ * for the removal delay — see #197).
  *
  * Shift held: unions the hits into the existing selection. Otherwise:
  * replaces the selection with exactly the hits (a box with no hits clears
@@ -153,7 +154,7 @@ export function selectInBox(
 ): void {
   const hits = new Set<Entity>();
   for (const entity of queries.selectable) {
-    if (entity.team !== 'blue') {
+    if (entity.team !== 'blue' || entity.dead) {
       continue;
     }
     const size = entity.renderable?.size ?? 0;

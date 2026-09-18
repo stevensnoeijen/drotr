@@ -126,6 +126,50 @@ describe('selectAt', () => {
     expect([...queries.selected]).toEqual([a]);
   });
 
+  it('does not select a dead unit under the click point (#197)', () => {
+    const world = new World<Entity>();
+    const queries = createQueries(world);
+    const unit = addUnit(world, 100, 100);
+    world.addComponent(unit, 'dead', { elapsed: 0 });
+
+    selectAt(world, queries, new Vector2(105, 100));
+
+    expect(unit.selected).toBeUndefined();
+    expect([...queries.selected]).toHaveLength(0);
+  });
+
+  it('a plain click that only hits a dead unit is treated as a miss, clearing the selection like any other miss (#197)', () => {
+    const world = new World<Entity>();
+    const queries = createQueries(world);
+    const live = addUnit(world, 0, 0);
+    const dead = addUnit(world, 200, 200);
+    world.addComponent(dead, 'dead', { elapsed: 0 });
+
+    selectAt(world, queries, new Vector2(0, 0));
+    expect(live.selected).toBe(true);
+
+    selectAt(world, queries, new Vector2(200, 200));
+
+    expect(live.selected).toBeUndefined();
+    expect(dead.selected).toBeUndefined();
+    expect([...queries.selected]).toHaveLength(0);
+  });
+
+  it('does not shift-click-add a dead unit to the selection (#197)', () => {
+    const world = new World<Entity>();
+    const queries = createQueries(world);
+    const live = addUnit(world, 0, 0);
+    const dead = addUnit(world, 200, 200);
+    world.addComponent(dead, 'dead', { elapsed: 0 });
+
+    selectAt(world, queries, new Vector2(0, 0));
+    selectAt(world, queries, new Vector2(200, 200), true);
+
+    expect(live.selected).toBe(true);
+    expect(dead.selected).toBeUndefined();
+    expect([...queries.selected]).toEqual([live]);
+  });
+
   it('replaces the selection with the newly clicked unit', () => {
     const world = new World<Entity>();
     const queries = createQueries(world);

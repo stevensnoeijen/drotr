@@ -46,6 +46,14 @@ export function createDeathSystem(queries: Queries): System {
         // (rather than mutating the entity object in place) reindexes it
         // into that query so the loop below sees it this same tick.
         world.addComponent(entity, 'dead', { elapsed: 0 });
+        // A dying unit is dropped from `queries.selected` (rather than left
+        // there for the whole removal delay) so nothing downstream — a
+        // subsequent move order, most notably — can still act on a corpse
+        // as if it were the live unit the player selected. Selection is
+        // only ever meant to land on a living unit (#197).
+        if (entity.selected) {
+          world.removeComponent(entity, 'selected');
+        }
       }
     }
 
