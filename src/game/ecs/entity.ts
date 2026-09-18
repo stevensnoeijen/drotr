@@ -1,6 +1,7 @@
 import type { UnitType } from '~/game/data/units';
 import type {
   AggroRange,
+  AttachedTo,
   AttackCooldown,
   AttackRange,
   CellOccupancy,
@@ -52,4 +53,5 @@ export interface Entity {
   pursuit?: Pursuit;
   cellOccupancy?: CellOccupancy;
   dead?: Dead;
+  attachedTo?: AttachedTo;
 }

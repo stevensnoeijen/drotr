@@ -65,6 +65,12 @@ export function createQueries(world: World<Entity>) {
      * entity that's already counting down.
      */
     dead: world.with('health', 'dead'),
+    /**
+     * Purely visual attachments — currently just the crossbow unit's static
+     * projectile stripe (#161) — kept in lockstep with their parent's
+     * transform by {@link file://../systems/attachment-system.ts#createAttachmentSystem}.
+     */
+    attached: world.with('transform', 'attachedTo'),
   } as const;
 }
 
