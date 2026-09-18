@@ -63,6 +63,39 @@ describe('DeathCleanupSystem', () => {
     expect([...queries.selected]).not.toContain(entity);
   });
 
+  it('removes an AttachedTo entity from the world when its parent is removed', () => {
+    const world = new World<Entity>();
+    new DeathCleanupSystem(world);
+
+    const parent = world.add({ id: 1, health: { current: 0, max: 10 } });
+    const attachment = world.add({
+      id: 2,
+      transform: { position: { x: 0, y: 0 }, rotation: 0 },
+      attachedTo: { entityId: 1 },
+    });
+
+    world.remove(parent);
+
+    expect(world.entities).not.toContain(attachment);
+  });
+
+  it('leaves an AttachedTo entity alone when a different entity is removed', () => {
+    const world = new World<Entity>();
+    new DeathCleanupSystem(world);
+
+    world.add({ id: 1, health: { current: 5, max: 10 } });
+    const other = world.add({ id: 2, health: { current: 0, max: 10 } });
+    const attachment = world.add({
+      id: 3,
+      transform: { position: { x: 0, y: 0 }, rotation: 0 },
+      attachedTo: { entityId: 1 },
+    });
+
+    world.remove(other);
+
+    expect(world.entities).toContain(attachment);
+  });
+
   it('dispose stops reacting to further removals', () => {
     const world = new World<Entity>();
     const system = new DeathCleanupSystem(world);

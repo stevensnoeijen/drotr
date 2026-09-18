@@ -29,6 +29,11 @@ import type { Entity } from '~/game/ecs/entity';
  * clears it the instant the unit dies (#197), rather than leaving a
  * selected corpse sitting in `queries.selected` for its whole removal
  * delay.
+ *
+ * Also removes any purely visual attachment (`AttachedTo`, #161 — e.g. the
+ * crossbow unit's projectile stripe) whose parent was the removed entity, so
+ * a dead unit's corpse being swept up doesn't leave its projectile orphaned
+ * in the world (and its Pixi view leaked) with nothing left to follow.
  */
 export class DeathCleanupSystem {
   private readonly handleRemoved = (removed: Entity): void => {
@@ -38,12 +43,15 @@ export class DeathCleanupSystem {
     }
     // Snapshotted defensively even though `delete entity.target` doesn't
     // itself remove `entity` from `world.entities` (only from any query
-    // keyed on `target`): consistent with every other removal-during-
-    // iteration guard in this codebase (e.g. `DeathSystem`'s own `dead`
-    // sweep).
+    // keyed on `target`, or, for an attachment, `world.remove` below):
+    // consistent with every other removal-during-iteration guard in this
+    // codebase (e.g. `DeathSystem`'s own `dead` sweep).
     for (const entity of [...this.world.entities]) {
       if (entity.target?.entityId === removedId) {
         delete entity.target;
+      }
+      if (entity.attachedTo?.entityId === removedId) {
+        this.world.remove(entity);
       }
     }
   };

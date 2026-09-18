@@ -21,6 +21,7 @@ import { RenderSystem } from '~/game/render/render-system';
 import { drawTargetLines } from '~/game/render/target-lines';
 import { drawMoveLines } from '~/game/render/move-lines';
 import { NO_CELL, OccupancyGrid } from '~/game/navigation/occupancy-grid';
+import { createAttachmentSystem } from '~/game/systems/attachment-system';
 import { CameraPanSystem } from '~/game/systems/camera-pan-system';
 import { createCellOccupancySystem } from '~/game/systems/cell-occupancy-system';
 import { createCombatSystem } from '~/game/systems/combat-system';
@@ -428,6 +429,11 @@ export default function GameCanvas({
       // damage it deals lands before `renderSystem.sync()` runs for the
       // frame, so the health bar redraws in the very same frame.
       runner.add(createCombatSystem(queries));
+      // After movement and combat resolve this tick's positions: a purely
+      // visual attachment (currently just the crossbow projectile stripe,
+      // #161) should mirror wherever its unit actually ended up, not where
+      // it started the tick.
+      runner.add(createAttachmentSystem(queries));
       // Last of all: marks anything the combat pass just brought to 0 HP,
       // and removes anything whose removal delay elapsed this tick — after
       // every system above has had its chance to read `health.current` for

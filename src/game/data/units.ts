@@ -40,6 +40,13 @@ export interface UnitDefinition {
   range?: number;
   /** Detection/aggro range in grid cells — see {@link file://../ecs/types.ts#AggroRange}. */
   aggroRange?: number;
+  /**
+   * Whether this unit carries a visible projectile attached to it (#161) —
+   * currently just a static purple stripe primitive rendered on top of the
+   * unit, with no firing, travel or damage of its own yet. `crossbowsoldier`
+   * is the only unit that sets this so far.
+   */
+  projectile?: boolean;
   assets?: unknown;
 }
 
