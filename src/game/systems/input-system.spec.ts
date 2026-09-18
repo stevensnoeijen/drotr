@@ -6,6 +6,9 @@ import { createQueries } from '~/game/ecs/world';
 import { CELL_SIZE } from '~/lib/grid';
 import { Vector2 } from '~/lib/math/Vector2';
 import {
+  attackSelectedTarget,
+  createInputSystem,
+  findEnemyUnitAt,
   selectAt,
   findHoverableUnitAt,
   moveSelectedTo,
@@ -516,6 +519,225 @@ describe('InputSystem', () => {
     );
 
     expect(input.drain()).toEqual([]);
+    input.dispose();
+  });
+});
+
+/** A combatant on `team`, hit-testable at (`x`, `y`). */
+function addCombatant(
+  world: World<Entity>,
+  team: Entity['team'],
+  x: number,
+  y: number,
+  id: number
+) {
+  return world.add({
+    id,
+    transform: { position: { x, y }, rotation: 0 },
+    renderable: { shape: 'circle' as const, color: 0xff6b6b, size: 13 },
+    team,
+    health: { current: 10, max: 10 },
+    velocity: { x: 0, y: 0 },
+  });
+}
+
+describe('findEnemyUnitAt', () => {
+  it('finds a red unit under the click point', () => {
+    const world = new World<Entity>();
+    const queries = createQueries(world);
+    const enemy = addCombatant(world, 'red', 100, 100, 1);
+
+    expect(findEnemyUnitAt(queries, new Vector2(105, 100))).toBe(enemy);
+  });
+
+  it('ignores the player\'s own units', () => {
+    const world = new World<Entity>();
+    const queries = createQueries(world);
+    addCombatant(world, 'blue', 100, 100, 1);
+
+    expect(findEnemyUnitAt(queries, new Vector2(100, 100))).toBeUndefined();
+  });
+
+  it('ignores a corpse awaiting cleanup', () => {
+    const world = new World<Entity>();
+    const queries = createQueries(world);
+    const enemy = addCombatant(world, 'red', 100, 100, 1);
+    enemy.health!.current = 0;
+
+    expect(findEnemyUnitAt(queries, new Vector2(100, 100))).toBeUndefined();
+  });
+
+  it('ignores an enemy with no id for a Target to reference', () => {
+    const world = new World<Entity>();
+    const queries = createQueries(world);
+    world.add({
+      transform: { position: { x: 100, y: 100 }, rotation: 0 },
+      renderable: { shape: 'circle' as const, color: 0xff6b6b, size: 13 },
+      team: 'red' as const,
+      health: { current: 10, max: 10 },
+    });
+
+    expect(findEnemyUnitAt(queries, new Vector2(100, 100))).toBeUndefined();
+  });
+
+  it('picks the nearest of two overlapping enemies', () => {
+    const world = new World<Entity>();
+    const queries = createQueries(world);
+    const far = addCombatant(world, 'red', 95, 100, 1);
+    const near = addCombatant(world, 'red', 105, 100, 2);
+
+    expect(findEnemyUnitAt(queries, new Vector2(107, 100))).toBe(near);
+    expect(far.id).toBe(1);
+  });
+
+  it('returns nothing for a click on empty ground', () => {
+    const world = new World<Entity>();
+    const queries = createQueries(world);
+    addCombatant(world, 'red', 100, 100, 1);
+
+    expect(findEnemyUnitAt(queries, new Vector2(5000, 5000))).toBeUndefined();
+  });
+});
+
+describe('attackSelectedTarget', () => {
+  it('gives every selected blue unit a sticky manual target', () => {
+    const world = new World<Entity>();
+    const queries = createQueries(world);
+    const a = addTeamUnit(world, 'blue', true);
+    const b = addTeamUnit(world, 'blue', true);
+    const enemy = addCombatant(world, 'red', 500, 500, 9);
+
+    attackSelectedTarget(queries, enemy);
+
+    expect(a.target).toEqual({ entityId: 9, manual: true });
+    expect(b.target).toEqual({ entityId: 9, manual: true });
+  });
+
+  it('issues no move order: reaching the target is SeekSystem\'s job', () => {
+    const world = new World<Entity>();
+    const queries = createQueries(world);
+    const unit = addTeamUnit(world, 'blue', true);
+    const enemy = addCombatant(world, 'red', 500, 500, 9);
+
+    attackSelectedTarget(queries, enemy);
+
+    expect(unit.moveTarget).toBeUndefined();
+    expect(unit.movePath).toBeUndefined();
+    expect(unit.pendingMoveOrder).toBeUndefined();
+  });
+
+  it('replaces a move order the unit was already carrying', () => {
+    const world = new World<Entity>();
+    const queries = createQueries(world);
+    const unit = addTeamUnit(world, 'blue', true);
+    const enemy = addCombatant(world, 'red', 500, 500, 9);
+
+    moveSelectedTo(queries, new Vector2(300, 400));
+    expect(unit.moveTarget).toBeDefined();
+
+    attackSelectedTarget(queries, enemy);
+
+    expect(unit.moveTarget).toBeUndefined();
+    expect(unit.target).toEqual({ entityId: 9, manual: true });
+  });
+
+  it('does nothing when only a red unit is selected', () => {
+    const world = new World<Entity>();
+    const queries = createQueries(world);
+    const redUnit = addTeamUnit(world, 'red', true);
+    const enemy = addCombatant(world, 'red', 500, 500, 9);
+
+    attackSelectedTarget(queries, enemy);
+
+    expect(redUnit.target).toBeUndefined();
+  });
+
+  it('does nothing with an empty selection', () => {
+    const world = new World<Entity>();
+    const queries = createQueries(world);
+    const unit = addTeamUnit(world, 'blue', false);
+    const enemy = addCombatant(world, 'red', 500, 500, 9);
+
+    attackSelectedTarget(queries, enemy);
+
+    expect(unit.target).toBeUndefined();
+  });
+
+  it('only orders the selected blue units, leaving a selected red unit alone', () => {
+    const world = new World<Entity>();
+    const queries = createQueries(world);
+    const blueUnit = addTeamUnit(world, 'blue', true);
+    const redUnit = addTeamUnit(world, 'red', true);
+    const enemy = addCombatant(world, 'red', 500, 500, 9);
+
+    attackSelectedTarget(queries, enemy);
+
+    expect(blueUnit.target).toEqual({ entityId: 9, manual: true });
+    expect(redUnit.target).toBeUndefined();
+  });
+});
+
+describe('createInputSystem right-click handling (#195)', () => {
+  const viewport = { x: 0, y: 0, scale: 1 };
+
+  function makeCanvas(): HTMLCanvasElement {
+    const canvas = document.createElement('canvas');
+    canvas.getBoundingClientRect = () =>
+      ({ left: 0, top: 0, right: 800, bottom: 600, width: 800, height: 600 }) as DOMRect;
+    document.body.appendChild(canvas);
+    return canvas;
+  }
+
+  function setup() {
+    const world = new World<Entity>();
+    const queries = createQueries(world);
+    const canvas = makeCanvas();
+    const input = new InputSystem(canvas);
+    const system = createInputSystem(input, queries, () => viewport);
+    const rightClick = (x: number, y: number) => {
+      canvas.dispatchEvent(
+        new MouseEvent('contextmenu', { clientX: x, clientY: y, cancelable: true })
+      );
+      system(world, 1 / 60);
+    };
+
+    return { world, queries, input, rightClick };
+  }
+
+  it('orders an attack when the right-click lands on an enemy unit', () => {
+    const { world, queries, input, rightClick } = setup();
+    const unit = addTeamUnit(world, 'blue', true);
+    addCombatant(world, 'red', 200, 200, 9);
+    expect([...queries.selected]).toEqual([unit]);
+
+    rightClick(200, 200);
+
+    expect(unit.target).toEqual({ entityId: 9, manual: true });
+    expect(unit.moveTarget).toBeUndefined();
+    input.dispose();
+  });
+
+  it('issues an ordinary move order when it lands on empty ground', () => {
+    const { world, input, rightClick } = setup();
+    const unit = addTeamUnit(world, 'blue', true);
+    addCombatant(world, 'red', 200, 200, 9);
+
+    rightClick(600, 500);
+
+    expect(unit.target).toBeUndefined();
+    expect(unit.moveTarget).toEqual({ position: { x: 592, y: 496 } });
+    input.dispose();
+  });
+
+  it('issues a move order when it lands on one of the player\'s own units', () => {
+    const { world, input, rightClick } = setup();
+    const unit = addTeamUnit(world, 'blue', true);
+    addCombatant(world, 'blue', 200, 200, 9);
+
+    rightClick(200, 200);
+
+    expect(unit.target).toBeUndefined();
+    expect(unit.moveTarget).toEqual({ position: { x: 208, y: 208 } });
     input.dispose();
   });
 });

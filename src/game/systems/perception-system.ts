@@ -28,6 +28,17 @@ export const PERCEPTION_INTERVAL = 1;
  * is never a candidate at all, so friendly fire targeting is unrepresentable
  * regardless of scan order. No separate "clear" pass is needed.
  *
+ * The one exception is a *manual* target (`target.manual` — the player
+ * right-clicked one specific enemy, see `attackSelectedTarget` in
+ * `~/game/systems/input-system`): that entity is skipped entirely while its
+ * target is still alive, so the order survives both a closer enemy wandering
+ * past and the target itself being (or moving) outside `aggroRange` — a unit
+ * ordered at something across the map has to be able to walk there. The
+ * order is deliberately *not* skipped once the target is dead or gone from
+ * the world: it then falls through to the ordinary re-pick below, which is
+ * what "the order clears when the targeted unit dies" amounts to, with no
+ * separate expiry path to keep in step with the rest of this scan.
+ *
  * Exported (as opposed to only wiring it into {@link createPerceptionSystem})
  * so callers can also run it once, synchronously, right after a scenario's
  * `setup` — units can spawn already within each other's aggro range, and the
@@ -43,6 +54,15 @@ export function runPerceptionScan(_world: World<Entity>, queries: Queries): void
         delete self.target;
       }
       continue;
+    }
+
+    const manualTargetId = self.target?.manual ? self.target.entityId : undefined;
+    if (manualTargetId !== undefined) {
+      if (candidates.some((candidate) => candidate.id === manualTargetId)) {
+        // Player-ordered and still alive: leave it exactly as it is, range
+        // and closer enemies notwithstanding.
+        continue;
+      }
     }
 
     const rangeWorld = self.aggroRange.value * CELL_SIZE;

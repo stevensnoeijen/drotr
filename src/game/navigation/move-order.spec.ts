@@ -100,6 +100,41 @@ describe('applyMoveOrder', () => {
     expect(entity.moveTarget).toBeUndefined();
   });
 
+  it('gives up a standing manual attack order, since a move order supersedes it (#195)', () => {
+    const entity: Entity = {
+      ...baseEntity(),
+      target: { entityId: 3, manual: true },
+      pursuit: { entityId: 3, plannedPosition: { x: 9, y: 9 }, sinceReplan: 0 },
+    };
+
+    applyMoveOrder(entity, {
+      kind: 'target',
+      moveTarget: { position: { x: 16, y: 16 } },
+    });
+
+    // Demoted, not dropped: the unit can still defend itself against what it
+    // was fighting, it just no longer insists on that one enemy.
+    expect(entity.target).toEqual({ entityId: 3 });
+    expect(entity.pursuit).toBeUndefined();
+  });
+
+  it('leaves a standing attack order intact when the move order is refused', () => {
+    const entity: Entity = {
+      ...baseEntity(),
+      target: { entityId: 3, manual: true },
+      pursuit: { entityId: 3, plannedPosition: { x: 9, y: 9 }, sinceReplan: 0 },
+    };
+
+    applyMoveOrder(entity, { kind: 'none' });
+
+    expect(entity.target).toEqual({ entityId: 3, manual: true });
+    expect(entity.pursuit).toEqual({
+      entityId: 3,
+      plannedPosition: { x: 9, y: 9 },
+      sinceReplan: 0,
+    });
+  });
+
   it('zeroes velocity and clears both route components for a "stop" result', () => {
     const entity = {
       ...baseEntity(),

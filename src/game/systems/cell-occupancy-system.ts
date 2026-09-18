@@ -75,8 +75,9 @@ export const REROUTE_AFTER_SECONDS = 0.5;
  * here means no cell can be left permanently claimed by something that will
  * never move again.
  *
- * A routed unit (one with a `MovePath`, i.e. a player order on a map with
- * collision data) that stays blocked past {@link REROUTE_AFTER_SECONDS}
+ * A routed unit (one with a `MovePath` — a player order, or an attacker
+ * routing around a wall to reach its target, on a map with collision data)
+ * that stays blocked past {@link REROUTE_AFTER_SECONDS}
  * gets one attempt to route *around* the obstruction: a fresh, one-off A*
  * search from where it now stands to its original destination, over a
  * snapshot grid that layers current unit occupancy on top of terrain (see
@@ -89,9 +90,14 @@ export const REROUTE_AFTER_SECONDS = 0.5;
  * also tried at most once per unbroken stretch of being blocked (see
  * `CellOccupancy.rerouted`), so a corridor that stays jammed doesn't turn
  * into a cascade of re-searches — the unit just waits out the rest of
- * {@link BLOCKED_GIVE_UP_SECONDS} and gives up like any other stuck order. A
- * seek-driven attacker (no `MovePath`) is left alone: it has nothing to
- * route around, since it re-aims at its live target every tick regardless.
+ * {@link BLOCKED_GIVE_UP_SECONDS} and gives up like any other stuck order.
+ *
+ * An attacker steering straight at a target in sight (no `MovePath`) is left
+ * alone: it has nothing to route around, since it re-aims at its live target
+ * every tick regardless. Giving up on a *pursuit* route is not the end of
+ * that pursuit either — `SeekSystem` still holds the `Pursuit`, and plans
+ * another route once its own replan throttle allows, which is what gets an
+ * attacker jammed in a corridor moving again rather than stranding it.
  */
 export function createCellOccupancySystem(queries: Queries, grid: OccupancyGrid): System {
   return (_world: World<Entity>, dt: number) => {
