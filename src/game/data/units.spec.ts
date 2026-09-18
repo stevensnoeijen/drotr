@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { units } from './units';
 import swordsmenData from './units/swordsmen.json';
 import crossbowsoldierData from './units/crossbowsoldier.json';
+import crossbowData from './units/crossbow.json';
 
 describe('Unit definitions', () => {
   it('swordsmen JSON has complete, non-zero combat stats', () => {
@@ -62,6 +63,47 @@ describe('Unit definitions', () => {
     expect(unit.movementSpeed).toBeGreaterThan(0);
     expect(unit.range).toBeDefined();
     expect(unit.range).toBeGreaterThan(0);
+  });
+
+  it('crossbow JSON has complete, non-zero combat stats', () => {
+    const unit = crossbowData as typeof crossbowData & {
+      attackDamage?: number;
+      attackCooldown?: number;
+      accuracy?: number;
+      defence?: number;
+      stamina?: number;
+      speed?: number;
+      movementSpeed?: number;
+      range?: number;
+    };
+
+    expect(unit.attackDamage).toBeDefined();
+    expect(unit.attackDamage).toBeGreaterThan(0);
+    expect(unit.attackCooldown).toBeDefined();
+    expect(unit.attackCooldown).toBeGreaterThan(0);
+    expect(unit.accuracy).toBeDefined();
+    expect(unit.accuracy).toBeGreaterThanOrEqual(0);
+    expect(unit.defence).toBeDefined();
+    expect(unit.defence).toBeGreaterThan(0);
+    expect(unit.stamina).toBeDefined();
+    expect(unit.stamina).toBeGreaterThan(0);
+    expect(unit.speed).toBeDefined();
+    expect(unit.speed).toBeGreaterThan(0);
+    expect(unit.movementSpeed).toBeDefined();
+    expect(unit.movementSpeed).toBeGreaterThan(0);
+    expect(unit.range).toBeDefined();
+    expect(unit.range).toBeGreaterThan(0);
+  });
+
+  it('crossbow is distinct from crossbowsoldier', () => {
+    const crossbow = units.crossbow;
+    const crossbowsoldier = units.crossbowsoldier;
+
+    expect(crossbow.health).not.toBe(crossbowsoldier.health);
+    expect(crossbow.attackDamage).not.toBe(crossbowsoldier.attackDamage);
+    expect(crossbow.range).not.toBe(crossbowsoldier.range);
+    expect(crossbow.attackCooldown).not.toBe(crossbowsoldier.attackCooldown);
+    expect(crossbow.movementSpeed).toBeDefined();
   });
 
   it('knight definition has a movementSpeed but otherwise lacks combat stats (placeholder JSON definition)', () => {
