@@ -1,6 +1,7 @@
 import type { Shape } from '~/game/ecs/components';
 import swordsmenData from './units/swordsmen.json';
 import crossbowsoldierData from './units/crossbowsoldier.json';
+import crossbowData from './units/crossbow.json';
 import knightData from './units/knight.json';
 
 /**
@@ -9,7 +10,7 @@ import knightData from './units/knight.json';
  * so `unitType` stays stable once real sprites replace these primitives in
  * the asset-integration phase.
  */
-export type UnitType = 'swordsmen' | 'knight' | 'crossbowsoldier';
+export type UnitType = 'swordsmen' | 'knight' | 'crossbowsoldier' | 'crossbow';
 
 /**
  * Static, per-type unit data. Core fields (type, shape, health) are present
@@ -51,4 +52,7 @@ export const units: Record<UnitType, UnitDefinition> = {
   // knight > swordsman > crossbowman > ...
   knight: knightData as UnitDefinition,
   crossbowsoldier: crossbowsoldierData as UnitDefinition,
+  // Distinct from crossbowsoldier: lighter (lower health/defence), longer
+  // range and higher per-shot damage, but a slower attack cooldown.
+  crossbow: crossbowData as UnitDefinition,
 };

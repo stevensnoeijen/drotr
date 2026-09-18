@@ -1,0 +1,15 @@
+{
+  "type": "crossbow",
+  "shape": "triangle",
+  "health": 8,
+  "attackDamage": 3,
+  "accuracy": 5,
+  "defence": 2,
+  "stamina": 5,
+  "speed": 2,
+  "movementSpeed": 2,
+  "attackCooldown": 2,
+  "range": 6,
+  "aggroRange": 6,
+  "assets": null
+}
