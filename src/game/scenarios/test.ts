@@ -107,9 +107,10 @@ export const testScenario: Scenario = {
     // Two blue-vs-red crossbowsoldier pairs, top-right of the layout and
     // away from the swordsmen groups above: within each other's attack
     // range from the moment they spawn, so they start auto-engaging on
-    // load. This is what exercises/verifies the projectile-on-unit visual
-    // (#161) — each crossbowsoldier's purple projectile stripe rendering
-    // and following its unit — even though nothing actually fires yet.
+    // load. This is what exercises/verifies the dropped-projectile visual
+    // (#161) — each crossbowsoldier's purple projectile stripe rendered on
+    // the ground at its spawn location — even though nothing actually
+    // fires yet.
     const crossbowRow = 2;
     spawnUnit(world, {
       type: 'crossbowsoldier',

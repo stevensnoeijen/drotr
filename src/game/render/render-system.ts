@@ -160,11 +160,11 @@ export class RenderSystem {
 
     const shape = new Container();
     shape.addChild(drawRenderable(entity.renderable));
-    // A visual attachment (currently just the crossbow projectile stripe,
-    // #161) has no facing of its own to mark — it just mirrors whatever
-    // unit it's attached to (see `AttachmentSystem`), and a facing mark
-    // drawn on top of it would only clutter the tiny shape.
-    if (!entity.attachedTo) {
+    // A dropped projectile (currently just the crossbow's static arrow
+    // stripe, #161) has no facing of its own to mark — it's a stationary
+    // prop on the ground, and a facing mark on it would only clutter the
+    // tiny shape.
+    if (entity.renderable.shape !== 'stripe') {
       shape.addChild(drawFacingMark(entity.renderable.size));
     }
     container.addChild(shape);

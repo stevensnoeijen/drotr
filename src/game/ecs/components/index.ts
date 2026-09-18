@@ -1,5 +1,4 @@
 export type { AggroRange } from '~/game/ecs/components/aggro-range';
-export type { AttachedTo } from '~/game/ecs/components/attached-to';
 export type { AttackCooldown } from '~/game/ecs/components/attack-cooldown';
 export type { AttackRange } from '~/game/ecs/components/attack-range';
 export type { CellOccupancy } from '~/game/ecs/components/cell-occupancy';

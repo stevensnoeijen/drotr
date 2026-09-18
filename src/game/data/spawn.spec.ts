@@ -114,9 +114,8 @@ describe('spawnUnit', () => {
     expect(queries.combatants.size).toBe(2);
   });
 
-  it('spawns an attached projectile entity for a crossbowsoldier, on top of and following it', () => {
+  it("spawns a standalone projectile entity dropped at a crossbowsoldier's spawn location", () => {
     const world = new World<Entity>();
-    const queries = createQueries(world);
 
     const unit = spawnUnit(world, {
       type: 'crossbowsoldier',
@@ -124,11 +123,10 @@ describe('spawnUnit', () => {
       position: { x: 0, y: 0 },
     });
 
-    const projectile = [...queries.attached].find(
-      (entity) => entity.attachedTo.entityId === unit.id
+    const projectile = [...world.entities].find(
+      (entity) => entity.renderable?.shape === 'stripe'
     );
     expect(projectile).toBeDefined();
-    expect(projectile?.renderable?.shape).toBe('stripe');
     expect(projectile?.transform?.position).toEqual(unit.transform?.position);
     // No firing, travel, targeting or damage — that's #97's job.
     expect(projectile?.velocity).toBeUndefined();
@@ -136,13 +134,12 @@ describe('spawnUnit', () => {
     expect(projectile?.target).toBeUndefined();
   });
 
-  it('spawns no attached projectile for a unit type without one', () => {
+  it('spawns no projectile for a unit type without one', () => {
     const world = new World<Entity>();
-    const queries = createQueries(world);
 
     spawnUnit(world, { type: 'knight', team: 'blue', position: { x: 0, y: 0 } });
 
-    expect([...queries.attached]).toHaveLength(0);
+    expect([...world.entities].filter((entity) => entity.renderable?.shape === 'stripe')).toHaveLength(0);
   });
 
   it('is unaffected by later mutation of the caller-supplied position', () => {
