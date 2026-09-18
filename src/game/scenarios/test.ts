@@ -103,5 +103,33 @@ export const testScenario: Scenario = {
     crossbowsoldier.moveTarget = {
       position: cellPositionToVector(raceStartCol + raceDistanceCols, crossbowsoldierRow),
     };
+
+    // Two blue-vs-red crossbowsoldier pairs, top-right of the layout and
+    // away from the swordsmen groups above: within each other's attack
+    // range from the moment they spawn, so they start auto-engaging on
+    // load. This is what exercises/verifies the projectile-on-unit visual
+    // (#161) — each crossbowsoldier's purple projectile stripe rendering
+    // and following its unit — even though nothing actually fires yet.
+    const crossbowRow = 2;
+    spawnUnit(world, {
+      type: 'crossbowsoldier',
+      team: 'blue',
+      position: cellPosition(60, crossbowRow),
+    });
+    spawnUnit(world, {
+      type: 'crossbowsoldier',
+      team: 'red',
+      position: cellPosition(63, crossbowRow),
+    });
+    spawnUnit(world, {
+      type: 'crossbowsoldier',
+      team: 'blue',
+      position: cellPosition(60, crossbowRow + 2),
+    });
+    spawnUnit(world, {
+      type: 'crossbowsoldier',
+      team: 'red',
+      position: cellPosition(63, crossbowRow + 2),
+    });
   },
 };
