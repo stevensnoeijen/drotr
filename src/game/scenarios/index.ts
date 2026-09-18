@@ -1,5 +1,4 @@
 import { testBigFightScenario } from './test-big-fight';
-import { testWallFightScenario } from './test-wall-fight';
 import { testScenario } from './test';
 import type { Scenario } from './types';
 
@@ -8,11 +7,7 @@ export { ALL_DEBUG_FLAGS, parseDebugFlags, serializeDebugFlags } from './debug-f
 export type { DebugFlag } from './debug-flags';
 
 /** Every registered scenario, in the order they're listed on `/`. */
-export const scenarios: readonly Scenario[] = [
-  testScenario,
-  testBigFightScenario,
-  testWallFightScenario,
-];
+export const scenarios: readonly Scenario[] = [testScenario, testBigFightScenario];
 
 const scenariosById = new Map(scenarios.map((scenario) => [scenario.id, scenario]));
 
