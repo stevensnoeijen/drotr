@@ -9,6 +9,12 @@ if (!('ResizeObserver' in globalThis)) {
     ResizeObserverStub as unknown as typeof ResizeObserver;
 }
 
+// jsdom doesn't implement canvas rendering contexts, which logs a "Not
+// implemented" error whenever Pixi probes for WebGL support. Stub it out
+// since tests never rely on actual canvas drawing.
+HTMLCanvasElement.prototype.getContext = (() =>
+  null) as typeof HTMLCanvasElement.prototype.getContext;
+
 declare global {
   var IS_REACT_ACT_ENVIRONMENT: boolean;
 }
