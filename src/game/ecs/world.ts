@@ -72,6 +72,13 @@ export function createQueries(world: World<Entity>) {
      * {@link file://../systems/projectile-aim-system.ts#createProjectileAimSystem}.
      */
     aiming: world.with('transform', 'aimSource'),
+    /**
+     * Fired, travelling projectiles (#97) — a `Transform` position moving
+     * under a fixed `Velocity`, dealing `Damage` on impact, tracked by
+     * `Projectile`. {@link file://../systems/projectile-system.ts#createProjectileSystem}
+     * iterates this to move, hit-test and expire each one.
+     */
+    projectiles: world.with('transform', 'velocity', 'damage', 'projectile'),
   } as const;
 }
 

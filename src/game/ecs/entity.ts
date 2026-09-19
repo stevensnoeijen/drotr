@@ -13,7 +13,9 @@ import type {
   MoveSpeed,
   MoveTarget,
   PendingMoveOrder,
+  Projectile,
   Pursuit,
+  Ranged,
   Renderable,
   Selectable,
   Selected,
@@ -54,4 +56,6 @@ export interface Entity {
   cellOccupancy?: CellOccupancy;
   dead?: Dead;
   aimSource?: AimSource;
+  ranged?: Ranged;
+  projectile?: Projectile;
 }
