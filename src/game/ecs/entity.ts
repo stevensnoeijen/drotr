@@ -1,7 +1,6 @@
 import type { UnitType } from '~/game/data/units';
 import type {
   AggroRange,
-  AimSource,
   AttackCooldown,
   AttackRange,
   CellOccupancy,
@@ -13,7 +12,9 @@ import type {
   MoveSpeed,
   MoveTarget,
   PendingMoveOrder,
+  Projectile,
   Pursuit,
+  Ranged,
   Renderable,
   Selectable,
   Selected,
@@ -53,5 +54,6 @@ export interface Entity {
   pursuit?: Pursuit;
   cellOccupancy?: CellOccupancy;
   dead?: Dead;
-  aimSource?: AimSource;
+  ranged?: Ranged;
+  projectile?: Projectile;
 }

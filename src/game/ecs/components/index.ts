@@ -1,5 +1,4 @@
 export type { AggroRange } from '~/game/ecs/components/aggro-range';
-export type { AimSource } from '~/game/ecs/components/aim-source';
 export type { AttackCooldown } from '~/game/ecs/components/attack-cooldown';
 export type { AttackRange } from '~/game/ecs/components/attack-range';
 export type { CellOccupancy } from '~/game/ecs/components/cell-occupancy';
@@ -11,7 +10,9 @@ export type { MovePath } from '~/game/ecs/components/move-path';
 export type { MoveSpeed } from '~/game/ecs/components/move-speed';
 export type { MoveTarget } from '~/game/ecs/components/move-target';
 export type { PendingMoveOrder } from '~/game/ecs/components/pending-move-order';
+export type { Projectile } from '~/game/ecs/components/projectile';
 export type { Pursuit } from '~/game/ecs/components/pursuit';
+export type { Ranged } from '~/game/ecs/components/ranged';
 export type { Renderable } from '~/game/ecs/components/renderable';
 export type { Selectable } from '~/game/ecs/components/selectable';
 export type { Selected } from '~/game/ecs/components/selected';

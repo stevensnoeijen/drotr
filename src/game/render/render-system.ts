@@ -97,9 +97,9 @@ function drawSelectionMarks(): Graphics {
 
 /**
  * Width, relative to `size`, of a `stripe` shape's short axis — thin enough
- * to read as an arrow shaft rather than a bar.
+ * to read as a travelling bolt's shaft rather than a bar.
  */
-const STRIPE_WIDTH_SCALE = 0.3;
+const STRIPE_WIDTH_SCALE = 0.12;
 
 /** Draws a {@link Renderable}'s primitive shape into a fresh Graphics. */
 function drawRenderable({ shape, color, size }: Renderable): Graphics {
@@ -160,10 +160,9 @@ export class RenderSystem {
 
     const shape = new Container();
     shape.addChild(drawRenderable(entity.renderable));
-    // A dropped projectile (currently just the crossbow's static arrow
-    // stripe, #161) has no facing of its own to mark — it's a stationary
-    // prop on the ground, and a facing mark on it would only clutter the
-    // tiny shape.
+    // A fired projectile (currently just the crossbow's bolt, #97) is
+    // already drawn as a thin stripe pointing the way it's travelling — a
+    // separate facing mark would only clutter the tiny shape.
     if (entity.renderable.shape !== 'stripe') {
       shape.addChild(drawFacingMark(entity.renderable.size));
     }

@@ -101,7 +101,19 @@ export const REROUTE_AFTER_SECONDS = 0.5;
  */
 export function createCellOccupancySystem(queries: Queries, grid: OccupancyGrid): System {
   return (_world: World<Entity>, dt: number) => {
-    for (const self of queries.moving) {
+    // `queries.movable`, not the broader `queries.moving`: this system's
+    // whole job is grid-cell collision between navigable units, and
+    // `moving` also matches anything else with a `transform` and
+    // `velocity` — a fired `Projectile` (#97), most notably, which has
+    // neither a `moveSpeed` nor any business being claimed into a unit's
+    // occupancy grid. A projectile crossing a cell boundary at its own
+    // (much higher) speed would otherwise have its step "refused" here
+    // like a blocked unit and its velocity zeroed for the tick — and,
+    // since nothing ever un-blocks a projectile the way a cleared corridor
+    // un-blocks a unit, that zeroing is permanent: the projectile freezes
+    // mid-flight, `ProjectileSystem` never sees it travel far enough to
+    // hit or expire, and it leaks for the rest of the match.
+    for (const self of queries.movable) {
       const { transform, velocity } = self;
 
       if (self.health && self.health.current <= 0) {

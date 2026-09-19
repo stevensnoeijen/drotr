@@ -28,17 +28,12 @@ const TEAM_COLOR: Record<Team, number> = {
 const UNIT_SIZE = 13;
 
 /**
- * Colour of a crossbow unit's dropped projectile visual (#161) — purple,
- * independent of team, since it's a piece of equipment, not a combatant.
+ * World units per second a fired projectile (currently just the crossbow
+ * soldier's bolt, #97) travels. Fast enough to visibly cross the map as a
+ * "shot" rather than a crawl, while still taking a handful of ticks to reach
+ * `attackRange` so the travel actually reads on screen.
  */
-const PROJECTILE_COLOR = 0x9b59b6;
-
-/**
- * Half-length, in world units, of a dropped projectile stripe — smaller
- * than {@link UNIT_SIZE} so it reads as a shaft lying on the ground rather
- * than another unit-sized shape.
- */
-const PROJECTILE_SIZE = 8;
+const PROJECTILE_SPEED = 10 * CELL_SIZE;
 
 /** Auto-incrementing counter for entity IDs (for debugging/identification). */
 let nextEntityId = 1;
@@ -46,6 +41,16 @@ let nextEntityId = 1;
 /** Resets the entity ID counter (for testing). */
 export function resetEntityIdCounter(): void {
   nextEntityId = 1;
+}
+
+/**
+ * Hands out the next entity id from the same counter {@link spawnUnit} uses,
+ * for callers elsewhere in the ECS that create standalone entities of their
+ * own (currently just `fireProjectile`) and need an id that can't collide
+ * with a spawned unit's.
+ */
+export function allocateEntityId(): number {
+  return nextEntityId++;
 }
 
 export interface SpawnUnitOptions {
@@ -107,6 +112,12 @@ export function spawnUnit(
   if (definition.movementSpeed !== undefined) {
     entity.moveSpeed = { value: definition.movementSpeed * CELL_SIZE };
   }
+  // Marks this unit type's attacks as fired projectiles rather than instant
+  // melee damage — read by `CombatSystem` to fire a travelling `Projectile`
+  // (`fireProjectile`) instead of applying damage directly.
+  if (definition.projectile) {
+    entity.ranged = { projectileSpeed: PROJECTILE_SPEED };
+  }
   // Only the player's own (blue) units can be click-selected; red is the
   // opposing side and has no `selectable` component at all — a query for
   // it (as the click hit-test and RenderSystem's selection marks use) must
@@ -117,29 +128,7 @@ export function spawnUnit(
     entity.selectable = true;
   }
 
-  const spawned = world.add(entity);
-
-  // Static visual prep for #97's real projectile entity (#161): a purple
-  // stripe dropped on the map at the unit's own spawn location — a standalone
-  // entity, not attached to or following the unit, so moving the unit
-  // afterwards leaves the projectile behind. Its rotation tracks the unit's
-  // current combat target (via `aimSource`, see `ProjectileAimSystem`), but
-  // it never gains a position, velocity or damage of its own — it never
-  // fires or travels on its own.
-  if (definition.projectile) {
-    world.add({
-      id: nextEntityId++,
-      transform: { position: { x: cellCenter.x, y: cellCenter.y }, rotation: 0 },
-      renderable: {
-        shape: 'stripe',
-        color: PROJECTILE_COLOR,
-        size: PROJECTILE_SIZE,
-      },
-      aimSource: { unitId: spawned.id as number },
-    });
-  }
-
-  return spawned;
+  return world.add(entity);
 }
 
 /** World-space position of the center of grid cell (`col`, `row`). */
