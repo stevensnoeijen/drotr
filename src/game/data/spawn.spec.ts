@@ -128,6 +128,7 @@ describe('spawnUnit', () => {
     );
     expect(projectile).toBeDefined();
     expect(projectile?.transform?.position).toEqual(unit.transform?.position);
+    expect(projectile?.aimSource).toEqual({ unitId: unit.id });
     // No firing, travel, targeting or damage — that's #97's job.
     expect(projectile?.velocity).toBeUndefined();
     expect(projectile?.damage).toBeUndefined();

@@ -122,8 +122,10 @@ export function spawnUnit(
   // Static visual prep for #97's real projectile entity (#161): a purple
   // stripe dropped on the map at the unit's own spawn location — a standalone
   // entity, not attached to or following the unit, so moving the unit
-  // afterwards leaves the projectile behind. No velocity, targeting or
-  // damage — it never fires or travels on its own.
+  // afterwards leaves the projectile behind. Its rotation tracks the unit's
+  // current combat target (via `aimSource`, see `ProjectileAimSystem`), but
+  // it never gains a position, velocity or damage of its own — it never
+  // fires or travels on its own.
   if (definition.projectile) {
     world.add({
       id: nextEntityId++,
@@ -133,6 +135,7 @@ export function spawnUnit(
         color: PROJECTILE_COLOR,
         size: PROJECTILE_SIZE,
       },
+      aimSource: { unitId: spawned.id as number },
     });
   }
 
