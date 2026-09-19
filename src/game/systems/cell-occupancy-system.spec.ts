@@ -451,4 +451,28 @@ describe('createCellOccupancySystem', () => {
       expect(cellOf(mover)).toBe(grid.indexOf(1, 0));
     });
   });
+
+  describe('entities with no moveSpeed', () => {
+    it('leaves a fired projectile untouched, even crossing several cells in one tick', () => {
+      // Stands in for a `Projectile` (#97): `transform` and `velocity`, like
+      // any grid-bound unit, but deliberately no `moveSpeed` -- fired
+      // projectiles travel far faster than any unit's own movement speed and
+      // have no business being claimed into a unit's occupancy grid. Regression
+      // for a bug where this system read the broader `queries.moving` (anything
+      // with `transform` + `velocity`) instead of `queries.movable` (which also
+      // requires `moveSpeed`): a projectile crossing a cell boundary at its own
+      // speed had its step "refused" here like a blocked unit, permanently
+      // zeroing its velocity and leaking it for the rest of the match.
+      const { world, addUnit, drive, tick } = setup();
+      const projectile: Entity = addUnit(0, 0);
+      delete projectile.moveSpeed;
+      drive(projectile, SPEED * 10, 0);
+
+      tick();
+
+      expect(projectile.velocity).toEqual({ x: SPEED * 10, y: 0 });
+      expect(projectile.cellOccupancy).toBeUndefined();
+      expect(world.entities).toContain(projectile);
+    });
+  });
 });
