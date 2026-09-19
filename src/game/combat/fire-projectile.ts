@@ -11,19 +11,10 @@ export type RangedAttacker = With<
   'transform' | 'team' | 'damage' | 'attackRange' | 'ranged'
 >;
 
-/**
- * Half-length, in world units, a fired projectile's `stripe` is drawn at —
- * same as the crossbow's static dropped-arrow prop (#161), so an in-flight
- * bolt and the resting one it's drawn from read as the same piece of
- * equipment, just moving.
- */
+/** Half-length, in world units, a fired projectile's `stripe` is drawn at. */
 const PROJECTILE_SIZE = 8;
 
-/**
- * Colour of a fired projectile — the same purple as the crossbow's static
- * dropped-arrow prop (#161), since it's the same piece of equipment, now
- * actually in flight instead of sitting on the ground.
- */
+/** Colour a fired projectile is drawn in — a crossbow bolt's own purple. */
 const PROJECTILE_COLOR = 0x9b59b6;
 
 /**
@@ -64,10 +55,9 @@ export function fireProjectile(
       : { x: 0, y: speed };
 
   // Non-homing (see the doc comment above): rotation, like velocity, is set
-  // once here from the aim at fire time and never touched again — nothing
-  // re-aims a `stripe` shape that isn't an `AimSource` (that's #161's own,
-  // separate static prop), so a fired bolt would otherwise be drawn stuck
-  // at rotation 0 regardless of which way it's actually travelling.
+  // once here from the aim at fire time and never touched again, so the
+  // `stripe` shape is drawn pointing the way it's actually travelling
+  // instead of stuck at rotation 0.
   const rotation = quantizeAngle(Math.atan2(dx, -dy));
 
   world.add({

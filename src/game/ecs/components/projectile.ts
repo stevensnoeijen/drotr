@@ -2,10 +2,9 @@ import type { Team } from '~/game/ecs/components/team';
 
 /**
  * Marks an entity as a fired, travelling projectile (#97) — a crossbow bolt
- * in flight, as opposed to {@link file://./aim-source.ts#AimSource}'s
- * stationary, never-firing dropped-arrow prop (#161). Always paired with
- * `Transform` (current position), `Velocity` (fixed at fire time — see
- * `fireProjectile`) and `Damage` (how hard it hits on impact), which is what
+ * in flight. Always paired with `Transform` (current position), `Velocity`
+ * (fixed at fire time — see `fireProjectile`) and `Damage` (how hard it hits
+ * on impact), which is what
  * {@link file://../../systems/projectile-system.ts#createProjectileSystem}
  * requires to move, hit-test and damage it.
  */

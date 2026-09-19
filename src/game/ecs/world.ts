@@ -66,13 +66,6 @@ export function createQueries(world: World<Entity>) {
      */
     dead: world.with('health', 'dead'),
     /**
-     * Entities whose rotation tracks another entity's combat target —
-     * currently just the crossbow unit's dropped projectile stripe (#161),
-     * kept pointed at whatever the unit is attacking by
-     * {@link file://../systems/projectile-aim-system.ts#createProjectileAimSystem}.
-     */
-    aiming: world.with('transform', 'aimSource'),
-    /**
      * Fired, travelling projectiles (#97) — a `Transform` position moving
      * under a fixed `Velocity`, dealing `Damage` on impact, tracked by
      * `Projectile`. {@link file://../systems/projectile-system.ts#createProjectileSystem}

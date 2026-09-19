@@ -28,19 +28,6 @@ const TEAM_COLOR: Record<Team, number> = {
 const UNIT_SIZE = 13;
 
 /**
- * Colour of a crossbow unit's dropped projectile visual (#161) — purple,
- * independent of team, since it's a piece of equipment, not a combatant.
- */
-const PROJECTILE_COLOR = 0x9b59b6;
-
-/**
- * Half-length, in world units, of a dropped projectile stripe — smaller
- * than {@link UNIT_SIZE} so it reads as a shaft lying on the ground rather
- * than another unit-sized shape.
- */
-const PROJECTILE_SIZE = 8;
-
-/**
  * World units per second a fired projectile (currently just the crossbow
  * soldier's bolt, #97) travels. Fast enough to visibly cross the map as a
  * "shot" rather than a crawl, while still taking a handful of ticks to reach
@@ -125,10 +112,9 @@ export function spawnUnit(
   if (definition.movementSpeed !== undefined) {
     entity.moveSpeed = { value: definition.movementSpeed * CELL_SIZE };
   }
-  // Same flag that drops the static aimed-arrow prop (#161) below also
-  // marks this unit type's attacks as fired projectiles rather than instant
-  // melee damage — one flag, "this unit fights with a projectile weapon",
-  // read by two different systems for two different visuals.
+  // Marks this unit type's attacks as fired projectiles rather than instant
+  // melee damage — read by `CombatSystem` to fire a travelling `Projectile`
+  // (`fireProjectile`) instead of applying damage directly.
   if (definition.projectile) {
     entity.ranged = { projectileSpeed: PROJECTILE_SPEED };
   }
@@ -142,29 +128,7 @@ export function spawnUnit(
     entity.selectable = true;
   }
 
-  const spawned = world.add(entity);
-
-  // Static visual prep for #97's real projectile entity (#161): a purple
-  // stripe dropped on the map at the unit's own spawn location — a standalone
-  // entity, not attached to or following the unit, so moving the unit
-  // afterwards leaves the projectile behind. Its rotation tracks the unit's
-  // current combat target (via `aimSource`, see `ProjectileAimSystem`), but
-  // it never gains a position, velocity or damage of its own — it never
-  // fires or travels on its own.
-  if (definition.projectile) {
-    world.add({
-      id: nextEntityId++,
-      transform: { position: { x: cellCenter.x, y: cellCenter.y }, rotation: 0 },
-      renderable: {
-        shape: 'stripe',
-        color: PROJECTILE_COLOR,
-        size: PROJECTILE_SIZE,
-      },
-      aimSource: { unitId: spawned.id as number },
-    });
-  }
-
-  return spawned;
+  return world.add(entity);
 }
 
 /** World-space position of the center of grid cell (`col`, `row`). */
