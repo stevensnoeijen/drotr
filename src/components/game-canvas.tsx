@@ -33,6 +33,7 @@ import { createMoveVelocitySystem } from '~/game/systems/move-velocity-system';
 import { createPendingMoveOrderSystem } from '~/game/systems/pending-move-order-system';
 import { createPerceptionSystem, runPerceptionScan } from '~/game/systems/perception-system';
 import { createProjectileAimSystem } from '~/game/systems/projectile-aim-system';
+import { createProjectileSystem } from '~/game/systems/projectile-system';
 import { createSeekSystem } from '~/game/systems/seek-system';
 import { createSelectionBoxSystem, SelectionBoxDrag } from '~/game/systems/selection-box-system';
 import { CELL_SIZE, screenToGrid, screenToWorld } from '~/lib/grid';
@@ -433,6 +434,11 @@ export default function GameCanvas({
       // damage it deals lands before `renderSystem.sync()` runs for the
       // frame, so the health bar redraws in the very same frame.
       runner.add(createCombatSystem(queries));
+      // Right after combat: lands or expires whatever fired projectiles
+      // (currently just crossbow bolts) CombatSystem's swings just spawned
+      // or that are still in flight from an earlier tick, so a killing hit
+      // is reflected in `health.current` before DeathSystem marks the frame.
+      runner.add(createProjectileSystem(queries));
       // After combat resolves this tick's targeting: a dropped projectile
       // (currently just the crossbow projectile stripe, #161) should point
       // at whichever enemy its unit is now attacking.
