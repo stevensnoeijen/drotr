@@ -3,6 +3,7 @@ import type { With, World } from 'miniplex';
 import type { Entity } from '~/game/ecs/entity';
 import { allocateEntityId } from '~/game/data/spawn';
 import { CELL_SIZE } from '~/lib/grid';
+import { quantizeAngle } from '~/lib/math/angle';
 
 /** An entity whose landed swing fires a projectile rather than hitting instantly. */
 export type RangedAttacker = With<
@@ -10,8 +11,13 @@ export type RangedAttacker = With<
   'transform' | 'team' | 'damage' | 'attackRange' | 'ranged'
 >;
 
-/** Radius, in world units, a fired projectile is drawn at by the reactive render path. */
-const PROJECTILE_RADIUS = 3;
+/**
+ * Half-length, in world units, a fired projectile's `stripe` is drawn at —
+ * same as the crossbow's static dropped-arrow prop (#161), so an in-flight
+ * bolt and the resting one it's drawn from read as the same piece of
+ * equipment, just moving.
+ */
+const PROJECTILE_SIZE = 8;
 
 /**
  * Colour of a fired projectile — the same purple as the crossbow's static
@@ -57,9 +63,16 @@ export function fireProjectile(
       ? { x: (dx / distance) * speed, y: (dy / distance) * speed }
       : { x: 0, y: speed };
 
+  // Non-homing (see the doc comment above): rotation, like velocity, is set
+  // once here from the aim at fire time and never touched again — nothing
+  // re-aims a `stripe` shape that isn't an `AimSource` (that's #161's own,
+  // separate static prop), so a fired bolt would otherwise be drawn stuck
+  // at rotation 0 regardless of which way it's actually travelling.
+  const rotation = quantizeAngle(Math.atan2(dx, -dy));
+
   world.add({
     id: allocateEntityId(),
-    transform: { position: { ...attacker.transform.position }, rotation: 0 },
+    transform: { position: { ...attacker.transform.position }, rotation },
     velocity,
     damage: { value: attacker.damage.value },
     projectile: {
@@ -68,6 +81,6 @@ export function fireProjectile(
       maxRange: attacker.attackRange.value * CELL_SIZE,
       traveled: 0,
     },
-    renderable: { shape: 'circle', color: PROJECTILE_COLOR, size: PROJECTILE_RADIUS },
+    renderable: { shape: 'stripe', color: PROJECTILE_COLOR, size: PROJECTILE_SIZE },
   });
 }

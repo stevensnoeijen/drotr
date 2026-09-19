@@ -37,8 +37,9 @@ describe('fireProjectile', () => {
     // Aimed straight up (target due north) at the firer's projectile speed.
     expect(spawned!.velocity!.x).toBeCloseTo(0);
     expect(spawned!.velocity!.y).toBeCloseTo(-300);
-    // Drawn by the existing reactive render path as a small circle.
-    expect(spawned!.renderable?.shape).toBe('circle');
+    // Drawn by the existing reactive render path as a thin stripe, aimed
+    // (rotation 0, since the target is due north) the same way it travels.
+    expect(spawned!.renderable?.shape).toBe('stripe');
   });
 
   it('gives every fired projectile a distinct id', () => {

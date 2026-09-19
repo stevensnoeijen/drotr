@@ -59,6 +59,30 @@ describe('createProjectileSystem', () => {
     expect(target.health!.current).toBe(6);
   });
 
+  it('lands the hit rather than expiring as a miss when fired exactly at maxRange', () => {
+    // This is the realistic case: `CombatSystem` only fires once a target is
+    // within `attackRange`, and `fireProjectile` sets `maxRange` from that
+    // same value, so a shot's `maxRange` almost always equals the distance
+    // to its target at fire time. `distance` (recomputed fresh each tick)
+    // and `maxRange - traveled` (accumulated by repeated `+= step`) must
+    // still agree on which tick the shot arrives, despite drifting apart by
+    // float noise over many ticks — see `HIT_EPSILON` in the system itself.
+    const world = new World<Entity>();
+    const queries = createQueries(world);
+    const system = createProjectileSystem(queries);
+
+    const distance = 160;
+    const target = makeTarget(world, distance);
+    makeProjectile(world, { targetId: target.id!, damage: 4, maxRange: distance });
+
+    for (let i = 0; i < 60; i++) {
+      system(world, DT);
+    }
+
+    expect(target.health!.current).toBe(6);
+    expect(queries.projectiles.size).toBe(0);
+  });
+
   it('applies damage once on impact, not once per tick while closing the distance', () => {
     const world = new World<Entity>();
     const queries = createQueries(world);

@@ -6,6 +6,16 @@ import { findEntityById } from '~/game/ecs/world';
 import type { System } from '~/game/ecs/system';
 
 /**
+ * Slack, in world units, added to the hit test below to absorb float drift
+ * between `distance` (recomputed fresh each tick) and `Projectile.traveled`
+ * (accumulated by repeated addition) — see the comment at its use site.
+ * Same order of magnitude as `CombatSystem`'s `ATTACK_RANGE_EPSILON`, for
+ * the same reason: far below anything perceptible, far above the rounding
+ * error it needs to absorb.
+ */
+const HIT_EPSILON = 0.01;
+
+/**
  * Advances every fired `Projectile` (`queries.projectiles`) one fixed step:
  * moves it toward wherever it was aimed, and removes it the instant one of
  * three things happens —
@@ -61,7 +71,18 @@ export function createProjectileSystem(queries: Queries): System {
 
       // Would reach or pass its target this tick: land the hit now rather
       // than moving it past the target first and catching it a tick late.
-      if (distance <= step) {
+      //
+      // `HIT_EPSILON` slack: a projectile is almost always fired at exactly
+      // `maxRange` (`CombatSystem` only fires once a target is within
+      // `attackRange`, and `fireProjectile` sets `maxRange` from that same
+      // value), so `distance` and `maxRange - traveled` start out equal and
+      // should reach zero on the same tick. But `distance` is recomputed
+      // fresh each tick while `traveled` accumulates by repeated `+= step`,
+      // so the two drift apart by float noise (~1e-13) over enough ticks —
+      // without slack, that noise can put `distance` a hair *above* `step`
+      // on the very tick the shot should land, so it falls through to the
+      // expiry check below and is wrongly scored a miss instead of a hit.
+      if (distance <= step + HIT_EPSILON) {
         target.health.current = Math.max(0, target.health.current - entity.damage.value);
         world.remove(entity);
         continue;
