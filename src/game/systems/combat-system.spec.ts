@@ -25,6 +25,8 @@ interface UnitOptions {
   damage?: number;
   /** Seconds between attacks. */
   attackCooldown?: number;
+  /** World units/sec a fired projectile travels, if this unit is ranged. */
+  projectileSpeed?: number;
 }
 
 /**
@@ -36,7 +38,16 @@ let nextId = 1;
 
 function makeUnit(
   world: World<Entity>,
-  { team, x, y = 0, health = 100, attackRangeCells, damage, attackCooldown }: UnitOptions
+  {
+    team,
+    x,
+    y = 0,
+    health = 100,
+    attackRangeCells,
+    damage,
+    attackCooldown,
+    projectileSpeed,
+  }: UnitOptions
 ): Entity {
   // Snapped to the cell centre, exactly as `spawnUnit` places a real unit —
   // and as `isSettled` now requires before a unit may fight at all (#201).
@@ -55,6 +66,9 @@ function makeUnit(
   }
   if (attackCooldown !== undefined) {
     entity.attackCooldown = { duration: attackCooldown };
+  }
+  if (projectileSpeed !== undefined) {
+    entity.ranged = { projectileSpeed };
   }
   return world.add(entity);
 }
@@ -557,6 +571,59 @@ describe('CombatSystem', () => {
     }
 
     expect(dirtyTicks).toEqual([60, 120, 180]);
+  });
+});
+
+describe('CombatSystem ranged attacks', () => {
+  it('fires a travelling projectile instead of dealing instant damage on a landed swing', () => {
+    const world = new World<Entity>();
+    const queries = createQueries(world);
+    const system = createCombatSystem(queries);
+
+    const target = makeUnit(world, { team: 'red', x: 3 * CELL_SIZE });
+    const crossbowman = makeUnit(world, {
+      team: 'blue',
+      x: 0,
+      attackRangeCells: 5,
+      damage: 2,
+      attackCooldown: 1,
+      projectileSpeed: 10 * CELL_SIZE,
+    });
+    crossbowman.target = { entityId: target.id! };
+
+    // One cooldown elapses: the swing lands (well within the 5-cell range),
+    // but no damage is applied directly.
+    run(system, world, 60);
+
+    expect(target.health!.current).toBe(100);
+    expect(queries.projectiles.size).toBe(1);
+
+    const [projectile] = [...queries.projectiles];
+    expect(projectile.projectile.targetId).toBe(target.id);
+    expect(projectile.projectile.sourceTeam).toBe('blue');
+    expect(projectile.damage.value).toBe(2);
+  });
+
+  it('does not fire at a target beyond its 5-cell attack range', () => {
+    const world = new World<Entity>();
+    const queries = createQueries(world);
+    const system = createCombatSystem(queries);
+
+    const target = makeUnit(world, { team: 'red', x: 6 * CELL_SIZE });
+    const crossbowman = makeUnit(world, {
+      team: 'blue',
+      x: 0,
+      attackRangeCells: 5,
+      damage: 2,
+      attackCooldown: 0.5,
+      projectileSpeed: 10 * CELL_SIZE,
+    });
+    crossbowman.target = { entityId: target.id! };
+
+    run(system, world, 600);
+
+    expect(queries.projectiles.size).toBe(0);
+    expect(target.health!.current).toBe(100);
   });
 });
 
