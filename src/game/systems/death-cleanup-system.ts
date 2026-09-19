@@ -36,12 +36,7 @@ export class DeathCleanupSystem {
     if (removedId === undefined) {
       return;
     }
-    // Snapshotted defensively even though `delete entity.target` doesn't
-    // itself remove `entity` from `world.entities` (only from any query
-    // keyed on `target`): consistent with every other removal-during-
-    // iteration guard in this codebase (e.g. `DeathSystem`'s own `dead`
-    // sweep).
-    for (const entity of [...this.world.entities]) {
+    for (const entity of this.world.entities) {
       if (entity.target?.entityId === removedId) {
         delete entity.target;
       }

@@ -35,7 +35,8 @@ describe('claimSpawn', () => {
       units: ['swordsmen', 'knight', 'crossbowsoldier'],
     });
 
-    expect(world.size).toBe(3);
+    // 3 units + 1 dropped projectile entity for the crossbowsoldier (#161).
+    expect(world.size).toBe(4);
     expect(claimed.map((e) => e.unitType)).toEqual([
       'swordsmen',
       'knight',
@@ -56,7 +57,8 @@ describe('claimSpawn', () => {
     claimSpawn(world, spawns, 'spawn-1', { team: 'blue', units: ['swordsmen'] });
     claimSpawn(world, spawns, 'spawn-2', { team: 'red', units: ['crossbowsoldier'] });
 
-    expect(world.size).toBe(2);
+    // 2 units + 1 dropped projectile entity for the crossbowsoldier (#161).
+    expect(world.size).toBe(3);
     const entities = [...world];
     expect(entities.some((e) => e.team === 'blue' && e.unitType === 'swordsmen')).toBe(
       true

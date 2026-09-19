@@ -11,5 +11,6 @@
   "attackCooldown": 1.5,
   "range": 5,
   "aggroRange": 5,
+  "projectile": true,
   "assets": null
 }

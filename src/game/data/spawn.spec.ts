@@ -114,6 +114,35 @@ describe('spawnUnit', () => {
     expect(queries.combatants.size).toBe(2);
   });
 
+  it("spawns a standalone projectile entity dropped at a crossbowsoldier's spawn location", () => {
+    const world = new World<Entity>();
+
+    const unit = spawnUnit(world, {
+      type: 'crossbowsoldier',
+      team: 'blue',
+      position: { x: 0, y: 0 },
+    });
+
+    const projectile = [...world.entities].find(
+      (entity) => entity.renderable?.shape === 'stripe'
+    );
+    expect(projectile).toBeDefined();
+    expect(projectile?.transform?.position).toEqual(unit.transform?.position);
+    expect(projectile?.aimSource).toEqual({ unitId: unit.id });
+    // No firing, travel, targeting or damage — that's #97's job.
+    expect(projectile?.velocity).toBeUndefined();
+    expect(projectile?.damage).toBeUndefined();
+    expect(projectile?.target).toBeUndefined();
+  });
+
+  it('spawns no projectile for a unit type without one', () => {
+    const world = new World<Entity>();
+
+    spawnUnit(world, { type: 'knight', team: 'blue', position: { x: 0, y: 0 } });
+
+    expect([...world.entities].filter((entity) => entity.renderable?.shape === 'stripe')).toHaveLength(0);
+  });
+
   it('is unaffected by later mutation of the caller-supplied position', () => {
     const world = new World<Entity>();
     const position = { x: 1, y: 2 };

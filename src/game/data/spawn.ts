@@ -27,6 +27,19 @@ const TEAM_COLOR: Record<Team, number> = {
  */
 const UNIT_SIZE = 13;
 
+/**
+ * Colour of a crossbow unit's dropped projectile visual (#161) — purple,
+ * independent of team, since it's a piece of equipment, not a combatant.
+ */
+const PROJECTILE_COLOR = 0x9b59b6;
+
+/**
+ * Half-length, in world units, of a dropped projectile stripe — smaller
+ * than {@link UNIT_SIZE} so it reads as a shaft lying on the ground rather
+ * than another unit-sized shape.
+ */
+const PROJECTILE_SIZE = 8;
+
 /** Auto-incrementing counter for entity IDs (for debugging/identification). */
 let nextEntityId = 1;
 
@@ -104,7 +117,29 @@ export function spawnUnit(
     entity.selectable = true;
   }
 
-  return world.add(entity);
+  const spawned = world.add(entity);
+
+  // Static visual prep for #97's real projectile entity (#161): a purple
+  // stripe dropped on the map at the unit's own spawn location — a standalone
+  // entity, not attached to or following the unit, so moving the unit
+  // afterwards leaves the projectile behind. Its rotation tracks the unit's
+  // current combat target (via `aimSource`, see `ProjectileAimSystem`), but
+  // it never gains a position, velocity or damage of its own — it never
+  // fires or travels on its own.
+  if (definition.projectile) {
+    world.add({
+      id: nextEntityId++,
+      transform: { position: { x: cellCenter.x, y: cellCenter.y }, rotation: 0 },
+      renderable: {
+        shape: 'stripe',
+        color: PROJECTILE_COLOR,
+        size: PROJECTILE_SIZE,
+      },
+      aimSource: { unitId: spawned.id as number },
+    });
+  }
+
+  return spawned;
 }
 
 /** World-space position of the center of grid cell (`col`, `row`). */

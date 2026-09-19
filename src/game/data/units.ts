@@ -40,6 +40,14 @@ export interface UnitDefinition {
   range?: number;
   /** Detection/aggro range in grid cells — see {@link file://../ecs/types.ts#AggroRange}. */
   aggroRange?: number;
+  /**
+   * Whether spawning this unit also drops a visible projectile at its
+   * location (#161) — currently just a static purple stripe primitive, a
+   * standalone entity independent of the unit (it doesn't move if the unit
+   * does), with no firing, travel or damage of its own yet.
+   * `crossbowsoldier` is the only unit that sets this so far.
+   */
+  projectile?: boolean;
   assets?: unknown;
 }
 
