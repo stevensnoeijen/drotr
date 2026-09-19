@@ -4,9 +4,12 @@ import type { Entity } from '~/game/ecs/entity';
 import type { Queries } from '~/game/ecs/world';
 import { findEntityById } from '~/game/ecs/world';
 import type { System } from '~/game/ecs/system';
+import { cellSteps, findAttackCell, type Cell } from '~/game/combat/attack-cell';
 import { planMoveOrder } from '~/game/navigation/move-order';
-import { CELL_SIZE } from '~/lib/grid';
+import { NO_OCCUPANT, type OccupancyGrid } from '~/game/navigation/occupancy-grid';
+import { CELL_SIZE, cellCentreCoordinate, isAtCellCentre } from '~/lib/grid';
 import { quantizeAngle } from '~/lib/math/angle';
+import type { Point } from '~/lib/math/types';
 import {
   hasLineOfSight,
   toCollisionGrid,
@@ -26,6 +29,11 @@ import {
  * route toward an enemy the unit is no longer fighting is wrong, not merely
  * stale, so it is replanned on the spot (see #195's "a target switch should
  * replan/cancel any in-flight route").
+ *
+ * Only *routed* pursuits are throttled. Picking the cell to attack from is a
+ * bounded scan of the cells around the target, not a search, so a unit with a
+ * clear line to its target re-picks — and re-aims — every tick, exactly as it
+ * used to re-aim at the target's live position.
  */
 export const PURSUIT_REPATH_INTERVAL = 0.5;
 
@@ -38,7 +46,7 @@ export const PURSUIT_REPATH_INTERVAL = 0.5;
 export const PURSUIT_REPATH_DISTANCE = CELL_SIZE;
 
 /**
- * Drops a routed pursuit and the route it was walking, leaving the caller to
+ * Drops a pursuit and whatever movement it owned, leaving the caller to
  * decide the unit's velocity. `MoveTarget` goes too: `MovePathSystem` only
  * hands over a waypoint when there is no current one, so a leg left behind
  * here would keep steering the unit along the abandoned route.
@@ -69,49 +77,153 @@ function hasPlayerMoveOrder(entity: Entity): boolean {
 }
 
 /**
- * Moves every entity with a `Target` toward it until it is within
- * `attackRange` (converted from grid cells to world units), by whichever of
- * two means can actually get it there:
+ * Points a unit's current leg at one world-space point, reusing the
+ * `MoveTarget` it already has rather than replacing it — this runs per
+ * approaching unit per tick, and the component is plain mutable data.
+ */
+function aimAt(entity: Entity, x: number, y: number): void {
+  const current = entity.moveTarget;
+  if (!current) {
+    entity.moveTarget = { position: { x, y } };
+    return;
+  }
+  current.position.x = x;
+  current.position.y = y;
+}
+
+/**
+ * Brings a unit seeking has just stopped owning — its target died, or was
+ * cleared out from under it — to a *proper* stop: not frozen wherever the
+ * step it was half-way through left it, but walked the last fraction of a
+ * cell onto the centre of the cell it is standing in.
  *
- * - **Straight line**, when the target is in sight: `Velocity` points right
- *   at the target's live position, scaled to `MoveSpeed`, and is zeroed once
- *   inside `attackRange` so the entity comes to rest at that range rather
- *   than sliding past it. The magnitude is clamped, on the final approaching
- *   step, to exactly close the remaining gap over `dt` — i.e. capped at
- *   `(distance - rangeWorld) / dt` instead of always `moveSpeed`. Without
- *   this, `MoveVelocitySystem` would integrate a full-speed step that could
- *   carry the entity past the range boundary before the next tick's seek call
- *   ever notices — the "no jitter or overshoot" requirement of #131 means the
- *   stop has to be exact, not just eventually corrected.
- * - **A routed pursuit**, when a wall stands between the two (#195): the
- *   entity gets a `MovePath` to the target's cell, planned with the very same
- *   {@link planMoveOrder} A* the player's own click-to-move orders use, and
- *   walks it leg by leg through `MovePathSystem`/`MoveTargetSystem`. It is
- *   not a route *to* attack range — the last legs are never reached: the
- *   moment the wall stops blocking the view, the two branches above take back
- *   over, the route is dropped, and the entity closes the final stretch in a
- *   straight line as before. Routing only has to solve getting *around* the
- *   obstruction; stopping at range is still decided by live distance.
+ * Freezing in place is what the old system did, and it leaves units dotted
+ * around a finished battlefield part-way across their cells — visibly
+ * off-grid, and (since `isSettled` gates being attacked as well as attacking)
+ * unhittable where they stand until something moves them again (#201).
  *
- * "In sight" is {@link hasLineOfSight} between the two units' cells — the
- * same strict, corner-respecting test A* path smoothing uses, so seeking
- * never commits to a straight line the pathfinder itself wouldn't walk. With
- * no `grid` (a map with no terrain at all) everything is in sight and this
- * behaves exactly as it did before routing existed.
+ * The move order it issues carries no `Pursuit`, so seeking treats it as a
+ * player order and keeps out of the way while `MoveTargetSystem` finishes it.
+ * That is the right reading: there is no target left for this unit, nothing
+ * to own, and the order cancels itself the moment it completes.
+ */
+function comeToRest(entity: Entity): void {
+  delete entity.pursuit;
+  delete entity.movePath;
+
+  const position = entity.transform!.position;
+  if (isAtCellCentre(position)) {
+    delete entity.moveTarget;
+    if (entity.velocity) {
+      entity.velocity.x = 0;
+      entity.velocity.y = 0;
+    }
+    return;
+  }
+
+  aimAt(
+    entity,
+    cellCentreCoordinate(Math.floor(position.x / CELL_SIZE)),
+    cellCentreCoordinate(Math.floor(position.y / CELL_SIZE))
+  );
+}
+
+/**
+ * Records that seeking — not the player — owns this unit's current movement,
+ * so `hasPlayerMoveOrder` keeps hands off it and a later tick knows which
+ * target the movement was for.
  *
- * Range is checked *before* sight, so a target already within reach is fought
- * rather than routed to. For a melee unit that means it can trade blows
- * around a wall corner it has no line to; ranged line-of-sight rules are
- * #97/#161's job, not this system's.
+ * `sinceReplan` is set by the caller because it means "how stale is the
+ * *route*": a straight-line approach has no route to speak of, so it parks
+ * the counter at {@link PURSUIT_REPATH_INTERVAL} — the moment such a unit
+ * does need a route (the target steps behind a wall), it gets one on that
+ * very tick instead of waiting out a throttle it never used.
+ */
+function markPursuit(
+  entity: Entity,
+  entityId: number,
+  targetPosition: Point,
+  sinceReplan: number
+): void {
+  const pursuit = entity.pursuit;
+  if (pursuit && pursuit.entityId === entityId) {
+    pursuit.sinceReplan = sinceReplan;
+    return;
+  }
+  entity.pursuit = {
+    entityId,
+    plannedPosition: { x: targetPosition.x, y: targetPosition.y },
+    sinceReplan,
+  };
+}
+
+/**
+ * Walks every entity with a `Target` into a cell it can attack that target
+ * from, and stops it there.
+ *
+ * The destination is always a **cell**, never a distance. Each pass picks the
+ * nearest cell from which the target is within `attackRange` 8-way steps
+ * ({@link findAttackCell}) and hands the unit an ordinary move order to that
+ * cell's centre — the same `MoveTarget`/`MovePath` pipeline, with the same
+ * `ARRIVAL_TOLERANCE` arrival, that a player's click-to-move order uses. That
+ * is what #201 turns on: a unit's resting place has to be a cell centre, and
+ * the only way to guarantee one is to name the cell up front and let the
+ * movement system land on it. The system this replaced steered at the
+ * target's live position and froze the unit the instant a Euclidean distance
+ * check ran out, which is a point in open space — units visibly stopped and
+ * fought part-way across a cell.
+ *
+ * Per unit, per tick, in order:
+ *
+ * - **Already in reach** (the cell it stands in is within `attackRange` of
+ *   the target's cell): come to rest *on that cell's centre*. If it is
+ *   already there, velocity is zeroed and the unit turns to face its target
+ *   ({@link quantizeAngle}, the same 8 compass directions
+ *   `MoveVelocitySystem` uses, since that system only turns a unit that is
+ *   moving). If it is not — it was mid-approach when the target came into
+ *   reach — it gets a one-cell move order to that centre and settles on the
+ *   next tick or two. Either way the fight starts from a cell centre; see
+ *   `isSettled` in {@link file://./combat-system.ts}, which is what actually
+ *   gates the swing.
+ * - **Out of reach, with a clear line** to the cell it wants: a straight-line
+ *   `MoveTarget` at that cell's centre. Re-picked every tick, so the unit
+ *   tracks a moving target as closely as it did when it steered at the target
+ *   itself.
+ * - **Out of reach, with something in the way**: a `MovePath` planned by the
+ *   very same {@link planMoveOrder} A* the player's own move orders use,
+ *   walked leg by leg by `MovePathSystem`/`MoveTargetSystem`, and replanned
+ *   on the {@link PURSUIT_REPATH_INTERVAL}/{@link PURSUIT_REPATH_DISTANCE}
+ *   throttle (#195). Unlike before, the route now ends at the cell the unit
+ *   will fight from rather than on top of the target, so a target that stays
+ *   out of sight all the way in is still approached correctly.
+ *
+ * "Clear line" is {@link hasLineOfSight} between the two cells — the same
+ * strict, corner-respecting test A* path smoothing uses, so seeking never
+ * commits to a straight line the pathfinder itself wouldn't walk. With no
+ * `grid` (a map with no terrain at all) everything is in sight.
+ *
+ * Which cells count as available to stand in comes from the shared
+ * {@link OccupancyGrid} when there is one: the destination is a cell no other
+ * unit holds, decided by the same claims that already stop two click-to-move
+ * orders from putting two units in one cell. Two units converging head-on
+ * therefore pick cells that cannot collide, and if they do race for the same
+ * one, the loser simply finds the cell taken on its next pass and picks
+ * another — no separate avoidance rule to get wrong. Without an occupancy
+ * grid only terrain is consulted.
+ *
+ * A unit with nowhere to stand — every cell in reach of its target taken —
+ * settles on its own cell's centre and tries again next tick, rather than
+ * shoving at the scrum from part-way across a cell.
  *
  * Which entities this system touches at all:
  *
  * - An entity with no `target`, or whose target no longer resolves to a live
  *   entity, is left alone — `SeekSystem` never touches its velocity, so
  *   anything another system set survives this pass untouched. The exception
- *   is an entity that was *pursuing* that target: seeking owns the velocity
- *   of a unit walking its own route, so abandoning the route stops the unit
- *   rather than leaving it coasting toward a corpse.
+ *   is an entity that was *pursuing* that target: seeking owns the movement
+ *   of a unit it is steering, so abandoning the pursuit stops the unit —
+ *   {@link comeToRest}, on a cell centre — rather than leaving it coasting
+ *   toward a corpse or frozen half-way across a cell.
  * - An entity under a player move order is skipped outright; see
  *   {@link hasPlayerMoveOrder}.
  * - `moveSpeed` and `attackRange` are both required: an entity missing either
@@ -126,25 +238,45 @@ function hasPlayerMoveOrder(entity: Entity): boolean {
  * unreachable one is a perception change, not a movement one, and is left to
  * a later ticket.
  */
-export function createSeekSystem(queries: Queries, grid?: GridLike): System {
+export function createSeekSystem(
+  queries: Queries,
+  grid?: GridLike,
+  occupancy?: OccupancyGrid
+): System {
   // Normalised once: terrain is static for a map's lifetime, and the nested
   // array form test fixtures use would otherwise be rebuilt every tick.
   const collisionGrid: CollisionGrid | undefined = grid ? toCollisionGrid(grid) : undefined;
-  // Reused across entities and ticks rather than allocated per sight test:
-  // this runs for every targeting unit, every tick.
-  const selfCell = { x: 0, y: 0 };
-  const targetCell = { x: 0, y: 0 };
+  // Reused across entities and ticks rather than allocated per unit: this
+  // runs for every targeting unit, every tick.
+  const selfCell: Cell = { x: 0, y: 0 };
+  const targetCell: Cell = { x: 0, y: 0 };
 
-  const isInSight = (from: Entity['transform'], to: Entity['transform']): boolean => {
-    if (!collisionGrid || !from || !to) {
-      return true;
+  // Which unit `isAvailable` is answering for. Hoisted out of the loop so the
+  // predicate handed to `findAttackCell` can be a single closure allocated
+  // once, instead of one per unit per tick.
+  let occupantId = NO_OCCUPANT;
+
+  /**
+   * Whether a unit could stand in a cell: unoccupied (by anyone but itself)
+   * and walkable. Unit claims come from the occupancy grid when there is one;
+   * failing that, terrain alone; failing that (no map data at all), anywhere.
+   */
+  const isAvailable = (col: number, row: number): boolean => {
+    if (occupancy) {
+      return occupancy.isAvailableFor(occupancy.indexOf(col, row), occupantId);
     }
-    selfCell.x = Math.floor(from.position.x / CELL_SIZE);
-    selfCell.y = Math.floor(from.position.y / CELL_SIZE);
-    targetCell.x = Math.floor(to.position.x / CELL_SIZE);
-    targetCell.y = Math.floor(to.position.y / CELL_SIZE);
+    if (collisionGrid) {
+      const { width, height, collision } = collisionGrid;
+      if (col < 0 || row < 0 || col >= width || row >= height) {
+        return false;
+      }
+      return collision[row * width + col] === 0;
+    }
+    return true;
+  };
 
-    return hasLineOfSight(collisionGrid, selfCell, targetCell);
+  const isInSight = (from: Cell, to: Cell): boolean => {
+    return !collisionGrid || hasLineOfSight(collisionGrid, from, to);
   };
 
   return (world: World<Entity>, dt: number) => {
@@ -157,9 +289,7 @@ export function createSeekSystem(queries: Queries, grid?: GridLike): System {
 
       if (!target || !attackRange) {
         if (pursuit) {
-          clearPursuitRoute(self);
-          self.velocity.x = 0;
-          self.velocity.y = 0;
+          comeToRest(self);
         }
         continue;
       }
@@ -171,9 +301,7 @@ export function createSeekSystem(queries: Queries, grid?: GridLike): System {
       // the meantime is worse than simply stopping.
       if (!other?.transform || (other.health && other.health.current <= 0)) {
         if (pursuit) {
-          clearPursuitRoute(self);
-          self.velocity.x = 0;
-          self.velocity.y = 0;
+          comeToRest(self);
         }
         continue;
       }
@@ -182,72 +310,97 @@ export function createSeekSystem(queries: Queries, grid?: GridLike): System {
         continue;
       }
 
-      const dx = other.transform.position.x - self.transform.position.x;
-      const dy = other.transform.position.y - self.transform.position.y;
-      const distance = Math.hypot(dx, dy);
-      const rangeWorld = attackRange.value * CELL_SIZE;
-      const remaining = distance - rangeWorld;
+      const position = self.transform.position;
+      const targetPosition = other.transform.position;
 
-      if (remaining <= 0) {
-        if (pursuit) {
+      selfCell.x = Math.floor(position.x / CELL_SIZE);
+      selfCell.y = Math.floor(position.y / CELL_SIZE);
+      targetCell.x = Math.floor(targetPosition.x / CELL_SIZE);
+      targetCell.y = Math.floor(targetPosition.y / CELL_SIZE);
+
+      const inReach = cellSteps(selfCell, targetCell) <= attackRange.value;
+
+      // Where this unit should be standing. Its own cell when the target is
+      // already in reach from it (nothing to close), and otherwise the
+      // nearest cell that does reach — falling back to standing still when
+      // every such cell is taken.
+      occupantId = self.cellOccupancy?.occupantId ?? NO_OCCUPANT;
+      const destination = inReach
+        ? selfCell
+        : (findAttackCell(selfCell, targetCell, attackRange.value, isAvailable) ?? selfCell);
+
+      if (destination.x === selfCell.x && destination.y === selfCell.y) {
+        // Nowhere left to walk. Come to rest on this cell's *centre* — never
+        // wherever the unit happens to stand — so a fight only ever starts
+        // from a cell a unit is properly standing in (#201).
+        delete self.movePath;
+
+        // "Arrived" is the movement pipeline's own verdict — `MoveTarget`
+        // gone — not a position test of this system's own. `MoveTargetSystem`
+        // drops the leg exactly when it has put the unit on the point it was
+        // walking to; stopping the unit here the moment it came *within
+        // tolerance* of the centre instead would leave it resting a fraction
+        // of a cell off, which is the whole bug (#201). The position test
+        // stays as the other half of the condition, for a unit left standing
+        // off-centre by something else (an order it gave up on, say).
+        if (!self.moveTarget && isAtCellCentre(position)) {
           clearPursuitRoute(self);
+          self.velocity.x = 0;
+          self.velocity.y = 0;
+          if (inReach) {
+            // MoveVelocitySystem only turns a unit that is moving, so keep
+            // facing the target explicitly while engaged with it — otherwise
+            // the unit would stay frozen looking the way it approached from
+            // instead of at what it's fighting.
+            self.transform.rotation = quantizeAngle(
+              Math.atan2(targetPosition.x - position.x, -(targetPosition.y - position.y))
+            );
+          }
+        } else {
+          markPursuit(self, target.entityId, targetPosition, PURSUIT_REPATH_INTERVAL);
+          aimAt(self, cellCentreCoordinate(selfCell.x), cellCentreCoordinate(selfCell.y));
         }
-        self.velocity.x = 0;
-        self.velocity.y = 0;
-        // Stopped at range: MoveVelocitySystem only turns to face non-zero
-        // velocity, so keep facing the target explicitly while engaged with
-        // it — otherwise the unit would stay frozen looking the way it
-        // approached from instead of at what it's fighting. Quantized to
-        // the same 8 compass directions as MoveVelocitySystem — see #178.
-        self.transform.rotation = quantizeAngle(Math.atan2(dx, -dy));
         continue;
       }
 
-      if (isInSight(self.transform, other.transform)) {
-        if (pursuit) {
-          clearPursuitRoute(self);
-        }
-        // Cap the step so it can't cross the range boundary: on approach's
-        // last tick, `remaining / dt` is smaller than `moveSpeed`, and the
-        // resulting step lands the entity exactly at `rangeWorld`.
-        const speed =
-          dt > 0 ? Math.min(self.moveSpeed.value, remaining / dt) : self.moveSpeed.value;
-        self.velocity.x = (dx / distance) * speed;
-        self.velocity.y = (dy / distance) * speed;
+      const destinationX = cellCentreCoordinate(destination.x);
+      const destinationY = cellCentreCoordinate(destination.y);
+
+      if (isInSight(selfCell, destination)) {
+        // Nothing in the way: walk straight at the cell, no search needed.
+        delete self.movePath;
+        markPursuit(self, target.entityId, targetPosition, PURSUIT_REPATH_INTERVAL);
+        aimAt(self, destinationX, destinationY);
         continue;
       }
 
-      // Out of sight: walk a route around whatever is in the way.
+      // Out of sight: route around whatever is in the way, on the throttle.
       const switchedTarget = pursuit?.entityId !== target.entityId;
       const drifted =
         !pursuit ||
         Math.hypot(
-          other.transform.position.x - pursuit.plannedPosition.x,
-          other.transform.position.y - pursuit.plannedPosition.y
+          targetPosition.x - pursuit.plannedPosition.x,
+          targetPosition.y - pursuit.plannedPosition.y
         ) > PURSUIT_REPATH_DISTANCE;
       const throttled = pursuit !== undefined && pursuit.sinceReplan < PURSUIT_REPATH_INTERVAL;
 
       if (switchedTarget || ((!self.movePath || drifted) && !throttled)) {
-        // Planned straight at the target's own cell, not at some cell within
-        // attack range of it: the final approach is the straight-line branch
-        // above, which takes over as soon as the route has cleared the
-        // obstruction, so the tail of this path is only ever a fallback for a
-        // target that stays out of sight all the way in.
-        const planned = planMoveOrder(
-          collisionGrid,
-          self.transform.position,
-          other.transform.position
-        );
+        const planned = planMoveOrder(collisionGrid, position, {
+          x: destinationX,
+          y: destinationY,
+        });
 
         delete self.movePath;
         delete self.moveTarget;
         self.pursuit = {
           entityId: target.entityId,
-          plannedPosition: { ...other.transform.position },
+          plannedPosition: { x: targetPosition.x, y: targetPosition.y },
           sinceReplan: 0,
         };
         if (planned.kind === 'path') {
           self.movePath = planned.movePath;
+        } else if (planned.kind === 'target') {
+          self.moveTarget = planned.moveTarget;
         }
       }
 

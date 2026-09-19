@@ -10,6 +10,11 @@ import type { System } from '~/game/ecs/system';
  * theory, but a fixed-step integration can overshoot a zero-width point by a
  * fraction of a unit and then oscillate trying to correct for it; a small
  * tolerance lets the unit settle exactly once instead.
+ *
+ * Because a unit stops here and never closes the remaining gap, this is also
+ * the floor on how precisely a unit can ever be standing on a cell centre —
+ * see `CELL_CENTRE_TOLERANCE` in {@link file://../../lib/grid.ts}, which must
+ * stay at least this loose.
  */
 export const ARRIVAL_TOLERANCE = 1;
 
@@ -44,6 +49,21 @@ export function createMoveTargetSystem(queries: Queries): System {
       const distance = Math.hypot(dx, dy);
 
       if (distance <= ARRIVAL_TOLERANCE) {
+        // Close the last sub-tolerance sliver outright instead of stopping
+        // short of it. Without this the unit comes to rest wherever the final
+        // step left it — up to `ARRIVAL_TOLERANCE` off the spot it was
+        // ordered to — and since every destination in the game is a cell
+        // centre (`moveSelectedTo` snaps the click; `planMovePath` emits
+        // centres; `SeekSystem` picks a cell to attack from), "arrived" then
+        // means "near enough the centre" rather than "on it" (#201).
+        //
+        // Safe as a direct write: the gap being closed is at most one world
+        // unit toward a point the unit is already that close to, which is
+        // half a unit's width inside the cell it is standing in — it cannot
+        // carry the unit into a cell `CellOccupancySystem` hasn't already
+        // granted it.
+        self.transform.position.x = position.x;
+        self.transform.position.y = position.y;
         self.velocity.x = 0;
         self.velocity.y = 0;
         delete self.moveTarget;

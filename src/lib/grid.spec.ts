@@ -12,6 +12,9 @@ import {
   worldToGrid,
   screenToGrid,
   CELL_SIZE,
+  CELL_CENTRE_TOLERANCE,
+  cellCentreCoordinate,
+  isAtCellCentre,
   type ViewportTransform,
 } from './grid';
 
@@ -144,5 +147,55 @@ describe('convertPathfindingPathToPositions', () => {
         y: 400,
       },
     ]);
+  });
+});
+
+describe('cellCentreCoordinate', () => {
+  it('centres a column/row index in its cell', () => {
+    expect(cellCentreCoordinate(0)).toBe(16);
+    expect(cellCentreCoordinate(3)).toBe(112);
+  });
+
+  it('agrees with toWorldPosition on both axes', () => {
+    const world = toWorldPosition(new Vector2(5, 7));
+
+    expect(cellCentreCoordinate(5)).toBe(world.x);
+    expect(cellCentreCoordinate(7)).toBe(world.y);
+  });
+
+  it('stays correct for negative indices', () => {
+    expect(cellCentreCoordinate(-1)).toBe(-16);
+  });
+});
+
+describe('isAtCellCentre', () => {
+  it('accepts a position exactly on a cell centre', () => {
+    expect(isAtCellCentre({ x: 16, y: 16 })).toBe(true);
+    expect(isAtCellCentre({ x: 112, y: 48 })).toBe(true);
+  });
+
+  it('accepts a position within the arrival tolerance of the centre', () => {
+    expect(isAtCellCentre({ x: 16 + CELL_CENTRE_TOLERANCE, y: 16 })).toBe(true);
+    expect(isAtCellCentre({ x: 16, y: 16 - CELL_CENTRE_TOLERANCE })).toBe(true);
+  });
+
+  it('rejects a position part-way across its cell on either axis', () => {
+    expect(isAtCellCentre({ x: 16 + CELL_CENTRE_TOLERANCE + 0.5, y: 16 })).toBe(false);
+    expect(isAtCellCentre({ x: 16, y: 16 + CELL_CENTRE_TOLERANCE + 0.5 })).toBe(false);
+  });
+
+  it('rejects a position straddling a cell boundary', () => {
+    expect(isAtCellCentre({ x: CELL_SIZE, y: CELL_SIZE })).toBe(false);
+  });
+
+  it('is measured against the cell the position falls in, not the origin cell', () => {
+    // Negative coordinates floor into the [-32, 0) cell, centred on -16.
+    expect(isAtCellCentre({ x: -16, y: -16 })).toBe(true);
+    expect(isAtCellCentre({ x: -8, y: -16 })).toBe(false);
+  });
+
+  it('honours an explicit tolerance', () => {
+    expect(isAtCellCentre({ x: 20, y: 16 }, 4)).toBe(true);
+    expect(isAtCellCentre({ x: 21, y: 16 }, 4)).toBe(false);
   });
 });

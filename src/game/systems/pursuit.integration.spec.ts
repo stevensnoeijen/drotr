@@ -1,9 +1,10 @@
 import { World } from 'miniplex';
 import { describe, expect, it } from 'vitest';
 
+import { cellSteps } from '~/game/combat/attack-cell';
 import { createQueries } from '~/game/ecs/world';
 import type { Entity } from '~/game/ecs/entity';
-import { CELL_SIZE } from '~/lib/grid';
+import { CELL_SIZE, isAtCellCentre } from '~/lib/grid';
 import type { CollisionGrid } from '~/lib/navigation/astar';
 import { createMovePathSystem } from './move-path-system';
 import { createMoveTargetSystem } from './move-target-system';
@@ -91,24 +92,33 @@ describe('pursuit + movement integration', () => {
       moveVelocity(world, dt);
     };
 
-    const distanceToEnemy = () =>
-      Math.hypot(
-        enemy.transform.position.x - self.transform.position.x,
-        enemy.transform.position.y - self.transform.position.y
-      );
+    const cellOf = (position: { x: number; y: number }) => ({
+      x: Math.floor(position.x / CELL_SIZE),
+      y: Math.floor(position.y / CELL_SIZE),
+    });
 
-    return { world, self, enemy, tick, distanceToEnemy, dt };
+    /**
+     * How many 8-way cell steps separate the two — the unit `attackRange` is
+     * measured in, a diagonal neighbour counting the same as an orthogonal
+     * one (#201). Deliberately not Euclidean distance: a unit resting on the
+     * cell centre diagonally next to its target is one step away and in
+     * range, but `CELL_SIZE * sqrt(2)` apart.
+     */
+    const stepsToEnemy = () => cellSteps(cellOf(self.transform.position), cellOf(enemy.transform.position));
+
+    return { world, self, enemy, tick, stepsToEnemy, dt };
   }
 
-  it('walks around the wall and comes to rest in attack range of the target', () => {
-    const { self, tick, distanceToEnemy } = setup(wallWithGap);
+  it('walks around the wall and comes to rest on a cell centre in attack range of the target', () => {
+    const { self, tick, stepsToEnemy } = setup(wallWithGap);
 
     // ~10 simulated seconds: ample for the route, with time to settle.
     for (let i = 0; i < 600; i++) {
       tick();
     }
 
-    expect(distanceToEnemy()).toBeLessThanOrEqual(1 * CELL_SIZE + 1e-6);
+    expect(stepsToEnemy()).toBeLessThanOrEqual(1);
+    expect(isAtCellCentre(self.transform.position)).toBe(true);
     expect(self.velocity).toEqual({ x: 0, y: 0 });
     // Arrived: nothing left to route or steer toward.
     expect(self.pursuit).toBeUndefined();
@@ -128,7 +138,7 @@ describe('pursuit + movement integration', () => {
   });
 
   it('keeps up with a target that walks along the far side of the wall', () => {
-    const { self, enemy, tick, distanceToEnemy } = setup(wallWithGap);
+    const { self, enemy, tick, stepsToEnemy } = setup(wallWithGap);
 
     for (let i = 0; i < 900; i++) {
       // The enemy shuffles down the far side for the first second, staying
@@ -139,9 +149,10 @@ describe('pursuit + movement integration', () => {
       tick();
     }
 
-    expect(distanceToEnemy()).toBeLessThanOrEqual(1 * CELL_SIZE + 1e-6);
+    expect(stepsToEnemy()).toBeLessThanOrEqual(1);
+    expect(isAtCellCentre(self.transform.position)).toBe(true);
     // At rest, to within the float slack a clamped final approach leaves
-    // behind (the same slack `ATTACK_RANGE_EPSILON` absorbs in CombatSystem).
+    // behind.
     expect(Math.hypot(self.velocity.x, self.velocity.y)).toBeLessThan(1e-6);
   });
 
@@ -153,7 +164,7 @@ describe('pursuit + movement integration', () => {
       .........
       .........
     `);
-    const { self, tick, distanceToEnemy } = setup(open);
+    const { self, tick, stepsToEnemy } = setup(open);
 
     for (let i = 0; i < 600; i++) {
       tick();
@@ -161,6 +172,7 @@ describe('pursuit + movement integration', () => {
       expect(self.movePath).toBeUndefined();
     }
 
-    expect(distanceToEnemy()).toBeLessThanOrEqual(1 * CELL_SIZE + 1e-6);
+    expect(stepsToEnemy()).toBeLessThanOrEqual(1);
+    expect(isAtCellCentre(self.transform.position)).toBe(true);
   });
 });

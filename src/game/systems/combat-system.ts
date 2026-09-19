@@ -4,9 +4,12 @@ import type { Entity } from '~/game/ecs/entity';
 import type { Queries } from '~/game/ecs/world';
 import { findEntityById } from '~/game/ecs/world';
 import type { System } from '~/game/ecs/system';
+import { cellSteps } from '~/game/combat/attack-cell';
 import { Cooldown } from '~/lib/cooldown';
 import { GameTime } from '~/lib/game-time';
-import { CELL_SIZE } from '~/lib/grid';
+import { isAtCellCentre, toGridPosition } from '~/lib/grid';
+import { Vector2 } from '~/lib/math/vector2';
+import type { Point } from '~/lib/math/types';
 import { NO_CELL } from '~/game/navigation/occupancy-grid';
 
 /** An entity that can schedule and land attacks — see `queries.attackers`. */
@@ -16,37 +19,55 @@ export type AttackerEntity = With<
 >;
 
 /**
- * Slack, in world units, added to an attacker's reach when deciding whether
- * its target is close enough to hit.
- *
- * `SeekSystem` deliberately stops a unit *exactly* at `attackRange * CELL_SIZE`
- * by clamping its final approach step to close the remaining gap precisely.
- * "Precisely" is floating-point precise, though: that last step can leave the
- * unit a few ulps beyond the boundary, where a strict `distance <= rangeWorld`
- * test fails — and, since the unit has already stopped, would keep failing
- * forever, leaving two units standing nose to nose refusing to fight. A
- * hundredth of a world unit (~0.03% of a 32px cell) is far below anything the
- * player could perceive as extra reach, and far above the rounding error it
- * absorbs.
+ * {@link cellSteps} between the cells two world-space points fall in: how
+ * many 8-way cell steps separate them, which is the unit `attackRange` is
+ * measured in (#201).
  */
-const ATTACK_RANGE_EPSILON = 0.01;
+export function cellDistance(a: Point, b: Point): number {
+  return cellSteps(
+    toGridPosition(new Vector2(a.x, a.y)),
+    toGridPosition(new Vector2(b.x, b.y))
+  );
+}
 
 /**
- * True once a unit is standing fully inside one cell rather than straddling
- * two mid-step.
+ * True once a unit has *finished* moving into a cell: standing still, on that
+ * cell's centre, rather than part-way across it or between two.
  *
- * `SeekSystem` stops an attacker at a world-space distance, not a cell
- * boundary, so two units closing on each other can both still be mid-transit
- * (each holding an origin *and* a reserved destination cell in
- * {@link CellOccupancy}) the instant they come within range — trading blows
- * while straddling a cell line instead of standing in one. A unit with no
- * `cellOccupancy` at all (never claimed a cell — stationary and never
- * visited by `CellOccupancySystem`) can't be mid-transit, so it counts as
- * settled by default.
+ * This is the gate on combat in both directions (#201) — a unit may neither
+ * swing nor be swung at until it holds, which is what stops two units
+ * trading blows while they are still visibly sliding past each other.
+ *
+ * Three things have to hold:
+ *
+ * - **Not mid-transit by cell occupancy**: `entity.cellOccupancy.reserved`
+ *   is `NO_CELL` (or the entity has no `cellOccupancy` at all — never
+ *   claimed a cell, so it can't be mid-transit; stationary test fixtures
+ *   and units `CellOccupancySystem` hasn't visited yet fall in here).
+ * - **At rest**: `entity.velocity` is exactly zero (or absent).
+ * - **On the cell's centre** ({@link isAtCellCentre}). The other two are
+ *   proxies that a unit can satisfy anywhere at all: `reserved` clears the
+ *   moment a unit stops needing to cross into a *new* cell, and a unit can
+ *   be brought to a halt part-way across one (an order it gave up on, a
+ *   step vetoed by a neighbour). Only this one is the fact the player can
+ *   see. `SeekSystem` walks a unit onto the centre before it will let it
+ *   fight, so in practice a unit reaches this state within a tick or two of
+ *   arriving; the check is what makes that a guarantee rather than a
+ *   convention.
  */
-function isSettled(entity: Entity): boolean {
+export function isSettled(entity: Entity): boolean {
   const occupancy = entity.cellOccupancy;
-  return !occupancy || occupancy.reserved === NO_CELL;
+  if (occupancy && occupancy.reserved !== NO_CELL) {
+    return false;
+  }
+
+  const velocity = entity.velocity;
+  if (velocity && (velocity.x !== 0 || velocity.y !== 0)) {
+    return false;
+  }
+
+  const transform = entity.transform;
+  return !transform || isAtCellCentre(transform.position);
 }
 
 /**
@@ -88,11 +109,12 @@ function attack(queries: Queries, self: AttackerEntity): void {
     return;
   }
 
-  const dx = other.transform.position.x - self.transform.position.x;
-  const dy = other.transform.position.y - self.transform.position.y;
-  const distSq = dx * dx + dy * dy;
-  const rangeWorld = self.attackRange.value * CELL_SIZE + ATTACK_RANGE_EPSILON;
-  if (distSq > rangeWorld * rangeWorld) {
+  // Cell-based (Chebyshev) range, not Euclidean world distance: `other` must
+  // be within `attackRange` 8-way cell steps, diagonal steps counting the
+  // same as orthogonal ones (#201). A plain Euclidean check would wrongly
+  // reject a target one cell diagonally away at `attackRange` 1, since its
+  // straight-line distance (`CELL_SIZE * sqrt(2)`) exceeds one cell width.
+  if (cellDistance(self.transform.position, other.transform.position) > self.attackRange.value) {
     return;
   }
 

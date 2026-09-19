@@ -397,7 +397,11 @@ export default function GameCanvas({
       // navigation grid is what lets it route a target around a wall instead
       // of walking into it (#195) — the same collision data the player's own
       // move orders are routed with; without one it stays straight-line only.
-      runner.add(createSeekSystem(queries, navigationGrid));
+      // The occupancy grid goes in too: seeking walks a unit to a *cell* it
+      // can attack from (#201), and which cells are free to stand in is
+      // decided by the same claims that keep two move orders from putting two
+      // units in one cell.
+      runner.add(createSeekSystem(queries, navigationGrid, occupancyGrid));
       // Runs after SeekSystem, which is also what makes a routed pursuit
       // (#195) move within the tick it was planned: SeekSystem sets the
       // MovePath, and these two pick it up immediately below. MovePathSystem

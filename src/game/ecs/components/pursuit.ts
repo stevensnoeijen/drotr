@@ -1,12 +1,16 @@
 import type { Point } from '~/lib/math/types';
 
 /**
- * Marks the `MovePath`/`MoveTarget` a unit is currently walking as a *routed
- * pursuit*: a path planned by `~/game/systems/seek-system` to get within
- * attack range of a target it has no straight line to (a wall in the way),
- * rather than a player-issued move order.
+ * Marks the `MovePath`/`MoveTarget` a unit is currently walking as a
+ * *pursuit*: movement issued by `~/game/systems/seek-system` to get the unit
+ * into a cell it can attack its target from, rather than a player-issued
+ * move order.
  *
- * It exists because both kinds of movement share one pipeline — A* plans a
+ * It covers both shapes that takes — a straight-line `MoveTarget` at the
+ * chosen cell's centre, and an A*-planned `MovePath` around an obstruction —
+ * because both are the same thing as far as ownership goes.
+ *
+ * It exists because seeking and player orders share one pipeline — A* plans a
  * `MovePath`, `MovePathSystem` feeds it to `MoveTargetSystem` a leg at a
  * time — and nothing else in that pipeline could otherwise tell whose route
  * it is walking. That distinction decides two things:
@@ -40,6 +44,11 @@ export interface Pursuit {
    * `PURSUIT_REPATH_INTERVAL`) so chasing a moving target — or waiting on a
    * target that currently has no route at all — costs a bounded number of
    * searches per second instead of one per tick.
+   *
+   * A pursuit that is *not* routed (a straight-line approach, which needs no
+   * search) parks this at `PURSUIT_REPATH_INTERVAL`, so the first tick that
+   * does need a route gets one immediately rather than waiting out a throttle
+   * it never used.
    */
   sinceReplan: number;
 }

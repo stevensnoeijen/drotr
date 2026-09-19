@@ -5,7 +5,8 @@ import type { Entity } from '~/game/ecs/entity';
 import { createQueries, type Queries } from '~/game/ecs/world';
 import { markDirtyOnHealthChange } from '~/game/render/health-bar';
 import type { Health, Renderable } from '~/game/ecs/components';
-import { CELL_SIZE } from '~/lib/grid';
+import { CELL_SIZE, cellCentreCoordinate, toWorldPositionCellCenter } from '~/lib/grid';
+import { Vector2 } from '~/lib/math/vector2';
 import { NO_CELL } from '~/game/navigation/occupancy-grid';
 import { createCombatSystem } from './combat-system';
 
@@ -17,6 +18,8 @@ interface UnitOptions {
   /** World-space x; every unit sits on y = 0, so distance is |dx|. */
   x: number;
   health?: number;
+  /** World-space y, snapped to its cell's centre like `x`. Defaults to 0. */
+  y?: number;
   /** Attack reach in grid cells. Omit for a unit that cannot attack. */
   attackRangeCells?: number;
   damage?: number;
@@ -33,11 +36,14 @@ let nextId = 1;
 
 function makeUnit(
   world: World<Entity>,
-  { team, x, health = 100, attackRangeCells, damage, attackCooldown }: UnitOptions
+  { team, x, y = 0, health = 100, attackRangeCells, damage, attackCooldown }: UnitOptions
 ): Entity {
+  // Snapped to the cell centre, exactly as `spawnUnit` places a real unit —
+  // and as `isSettled` now requires before a unit may fight at all (#201).
+  const position = toWorldPositionCellCenter(new Vector2(x, y));
   const entity: Entity = {
     id: nextId++,
-    transform: { position: { x, y: 0 }, rotation: 0 },
+    transform: { position: { x: position.x, y: position.y }, rotation: 0 },
     team,
     health: { current: health, max: health },
   };
@@ -187,21 +193,97 @@ describe('CombatSystem', () => {
     expect(target.health!.current).toBe(95);
   });
 
-  it('still hits a target a floating-point hair beyond the range boundary', () => {
-    // SeekSystem stops a unit *at* `attackRange`, but that final clamped step
-    // can land a few ulps past it; without the epsilon tolerance the two would
-    // stand nose to nose forever, neither moving nor fighting.
+  it('still hits a target resting a floating-point hair off its cell centre', () => {
+    // A unit is walked onto the exact centre of the cell it fights from, but
+    // integration arithmetic can leave it a few ulps off it; without
+    // `CELL_CENTRE_TOLERANCE`'s slack the two would stand nose to nose
+    // forever, neither moving nor fighting.
     const { world, target, system } = setupDuel({
       gapCells: 1,
       attackRangeCells: 1,
       damage: 5,
       attackCooldown: 0.5,
     });
-    target.transform!.position.x = CELL_SIZE + Number.EPSILON * CELL_SIZE * 4;
+    target.transform!.position.x = cellCentreCoordinate(1) + Number.EPSILON * CELL_SIZE * 4;
 
     run(system, world, 30);
 
     expect(target.health!.current).toBe(95);
+  });
+
+  it('does not swing while resting part-way across a cell (#201)', () => {
+    const { world, attacker, target, system } = setupDuel({
+      gapCells: 1,
+      attackRangeCells: 1,
+      damage: 5,
+      attackCooldown: 0.5,
+    });
+    // At rest, holding one cell, but stopped short of its centre — the
+    // visible state the ticket is about. A swing from here would be a unit
+    // fighting mid-cell however still it is standing.
+    attacker.velocity = { x: 0, y: 0 };
+    attacker.transform!.position.x -= 8;
+
+    run(system, world, 30);
+
+    expect(target.health!.current).toBe(100);
+  });
+
+  it('does not swing at a target resting part-way across its own cell (#201)', () => {
+    const { world, target, system } = setupDuel({
+      gapCells: 1,
+      attackRangeCells: 1,
+      damage: 5,
+      attackCooldown: 0.5,
+    });
+    target.velocity = { x: 0, y: 0 };
+    target.transform!.position.x += 8;
+
+    run(system, world, 30);
+
+    expect(target.health!.current).toBe(100);
+  });
+
+  it('hits a target one cell diagonally away at attack range 1 (#201)', () => {
+    // A Euclidean range check would reject this: a diagonal neighbour is
+    // `CELL_SIZE * sqrt(2)` away, further than one cell's width. Range is
+    // measured in 8-way cell steps instead, so a diagonal neighbour counts
+    // the same as an orthogonal one.
+    const world = new World<Entity>();
+    const queries = createQueries(world);
+    const target = makeUnit(world, { team: 'red', x: CELL_SIZE, y: CELL_SIZE });
+    const attacker = makeUnit(world, {
+      team: 'blue',
+      x: 0,
+      attackRangeCells: 1,
+      damage: 5,
+      attackCooldown: 0.5,
+    });
+    attacker.target = { entityId: target.id! };
+    const system = createCombatSystem(queries);
+
+    run(system, world, 30);
+
+    expect(target.health!.current).toBe(95);
+  });
+
+  it('does not hit a target two cells diagonally away at attack range 1', () => {
+    const world = new World<Entity>();
+    const queries = createQueries(world);
+    const target = makeUnit(world, { team: 'red', x: CELL_SIZE * 2, y: CELL_SIZE * 2 });
+    const attacker = makeUnit(world, {
+      team: 'blue',
+      x: 0,
+      attackRangeCells: 1,
+      damage: 5,
+      attackCooldown: 0.5,
+    });
+    attacker.target = { entityId: target.id! };
+    const system = createCombatSystem(queries);
+
+    run(system, world, 30);
+
+    expect(target.health!.current).toBe(100);
   });
 
   it('withholds a swing while the attacker is still mid-step between two cells', () => {
@@ -230,6 +312,57 @@ describe('CombatSystem', () => {
     run(system, world, 30);
 
     expect(target.health!.current).toBe(100);
+  });
+
+  it('withholds a swing while the attacker still has nonzero velocity, even with no active cell reservation (#201)', () => {
+    const { world, attacker, target, system } = setupDuel({
+      gapCells: 1,
+      attackRangeCells: 1,
+      damage: 5,
+      attackCooldown: 0.5,
+    });
+    // Occupancy proxy alone says "settled" (reserved cleared), but the unit
+    // is still visibly sliding across ground it already owns — SeekSystem
+    // hasn't yet decided to stop chasing and zero this.
+    attacker.cellOccupancy = { occupantId: 0, cell: 0, reserved: NO_CELL, blockedFor: 0, rerouted: false };
+    attacker.velocity = { x: 12, y: 0 };
+
+    run(system, world, 30);
+
+    expect(target.health!.current).toBe(100);
+  });
+
+  it('withholds a swing while the target still has nonzero velocity, even with no active cell reservation (#201)', () => {
+    const { world, target, system } = setupDuel({
+      gapCells: 1,
+      attackRangeCells: 1,
+      damage: 5,
+      attackCooldown: 0.5,
+    });
+    target.cellOccupancy = { occupantId: 1, cell: 1, reserved: NO_CELL, blockedFor: 0, rerouted: false };
+    target.velocity = { x: -12, y: 0 };
+
+    run(system, world, 30);
+
+    expect(target.health!.current).toBe(100);
+  });
+
+  it('resumes swinging once velocity settles back to zero', () => {
+    const { world, attacker, target, system } = setupDuel({
+      gapCells: 1,
+      attackRangeCells: 1,
+      damage: 5,
+      attackCooldown: 0.5,
+    });
+    attacker.velocity = { x: 12, y: 0 };
+
+    run(system, world, 30);
+    expect(target.health!.current).toBe(100);
+
+    attacker.velocity = { x: 0, y: 0 };
+    run(system, world, 30);
+
+    expect(target.health!.current).toBe(95);
   });
 
   it('resumes swinging once both combatants settle back into a single cell', () => {
