@@ -40,12 +40,30 @@ const PROJECTILE_COLOR = 0x9b59b6;
  */
 const PROJECTILE_SIZE = 8;
 
+/**
+ * World units per second a fired projectile (currently just the crossbow
+ * soldier's bolt, #97) travels. Fast enough to visibly cross the map as a
+ * "shot" rather than a crawl, while still taking a handful of ticks to reach
+ * `attackRange` so the travel actually reads on screen.
+ */
+const PROJECTILE_SPEED = 10 * CELL_SIZE;
+
 /** Auto-incrementing counter for entity IDs (for debugging/identification). */
 let nextEntityId = 1;
 
 /** Resets the entity ID counter (for testing). */
 export function resetEntityIdCounter(): void {
   nextEntityId = 1;
+}
+
+/**
+ * Hands out the next entity id from the same counter {@link spawnUnit} uses,
+ * for callers elsewhere in the ECS that create standalone entities of their
+ * own (currently just `fireProjectile`) and need an id that can't collide
+ * with a spawned unit's.
+ */
+export function allocateEntityId(): number {
+  return nextEntityId++;
 }
 
 export interface SpawnUnitOptions {
@@ -106,6 +124,13 @@ export function spawnUnit(
   }
   if (definition.movementSpeed !== undefined) {
     entity.moveSpeed = { value: definition.movementSpeed * CELL_SIZE };
+  }
+  // Same flag that drops the static aimed-arrow prop (#161) below also
+  // marks this unit type's attacks as fired projectiles rather than instant
+  // melee damage — one flag, "this unit fights with a projectile weapon",
+  // read by two different systems for two different visuals.
+  if (definition.projectile) {
+    entity.ranged = { projectileSpeed: PROJECTILE_SPEED };
   }
   // Only the player's own (blue) units can be click-selected; red is the
   // opposing side and has no `selectable` component at all — a query for

@@ -5,6 +5,7 @@ import type { Queries } from '~/game/ecs/world';
 import { findEntityById } from '~/game/ecs/world';
 import type { System } from '~/game/ecs/system';
 import { cellSteps } from '~/game/combat/attack-cell';
+import { fireProjectile } from '~/game/combat/fire-projectile';
 import { Cooldown } from '~/lib/cooldown';
 import { GameTime } from '~/lib/game-time';
 import { isAtCellCentre, toGridPosition } from '~/lib/grid';
@@ -87,8 +88,16 @@ export function isSettled(entity: Entity): boolean {
  * A live but out-of-range target, by contrast, keeps its `target` intact: the
  * unit is presumably still closing the distance under `SeekSystem`, and the
  * swing is simply not taken.
+ *
+ * A `Ranged` attacker (currently just the crossbow soldier, #97) does not
+ * touch the target's HP here at all: once everything above has confirmed
+ * this swing lands (in range, both settled), it fires a travelling
+ * `Projectile` instead (`fireProjectile`), and `ProjectileSystem` is what
+ * actually damages the target once that projectile arrives. The range gate
+ * above is exactly what stops a crossbow soldier from firing at a target
+ * beyond its `attackRange` (5 cells) in the first place.
  */
-function attack(queries: Queries, self: AttackerEntity): void {
+function attack(world: World<Entity>, queries: Queries, self: AttackerEntity): void {
   const { target } = self;
   if (!target) {
     return;
@@ -115,6 +124,12 @@ function attack(queries: Queries, self: AttackerEntity): void {
   // reject a target one cell diagonally away at `attackRange` 1, since its
   // straight-line distance (`CELL_SIZE * sqrt(2)`) exceeds one cell width.
   if (cellDistance(self.transform.position, other.transform.position) > self.attackRange.value) {
+    return;
+  }
+
+  if (self.ranged) {
+    // Guarded above: `self.ranged` is defined here, satisfying `RangedAttacker`.
+    fireProjectile(world, self as typeof self & Required<Pick<Entity, 'ranged'>>, other, target.entityId);
     return;
   }
 
@@ -152,7 +167,7 @@ function attack(queries: Queries, self: AttackerEntity): void {
 export function createCombatSystem(queries: Queries): System {
   const cooldowns = new WeakMap<Entity, Cooldown>();
 
-  return (_world: World<Entity>, dt: number) => {
+  return (world: World<Entity>, dt: number) => {
     // `Timer` (which `Cooldown` wraps) reads its step from this global rather
     // than taking it as an argument. Setting it from the fixed `dt` is what
     // ties every cooldown below to simulated time instead of frame time.
@@ -170,7 +185,7 @@ export function createCombatSystem(queries: Queries): System {
         // `Cooldown` fires its action on elapse and restarts itself, carrying
         // any overshoot into the next interval, so attacks land on an exact
         // schedule instead of drifting by up to `dt` per cycle.
-        cooldown = new Cooldown(self.attackCooldown.duration, () => attack(queries, self));
+        cooldown = new Cooldown(self.attackCooldown.duration, () => attack(world, queries, self));
         cooldowns.set(self, cooldown);
       }
       cooldown.update();
