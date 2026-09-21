@@ -17,13 +17,21 @@ original game's map format (see `docs/MAP_FORMAT.md`).
   256-colour palette**. This is a lossy compression step applied to keep
   the packed spritesheet small; it means the committed spritesheet is not
   a lossless copy of the source frames in `raw/sprites/units`.
-- `.cd/ART/BATTLE.png` (the converted tile atlas referenced in
-  `docs/MAP_FORMAT.md`) is **truncated at tile index 1459**, while the
-  county `.MAP` files reference tile indices up to **1471**. The last 12
-  tile indices used by real maps (1460–1471) have no corresponding art in
-  the current `BATTLE.png` conversion — the source `.cd/ART/BATTLE.ART`
-  PCX should be re-checked/re-converted to confirm whether the original
-  data actually has those tiles or the conversion step dropped them.
+- ~~`.cd/ART/BATTLE.png` is **truncated at tile index 1459**, while the
+  county `.MAP` files reference tile indices up to **1471**.~~
+  **Withdrawn — this was wrong.** Decoding `.cd/ART/BATTLE.ART` directly
+  (see [`ART_FORMAT.md`](./ART_FORMAT.md)) shows nothing was ever lost.
+  The atlas is a grid of **40x40** tiles, 16 columns wide — not 64x64/10
+  columns — and on that grid the 640x9367 sheet holds **3744** complete
+  tiles, so 1460–1471 are ordinary, fully present tiles. The apparent
+  truncation was arithmetic from the wrong tile size: at 64px the last
+  complete row lands at index 1459. `BATTLE.png` has the same dimensions
+  as the source `.ART`, so that conversion was faithful; only its
+  interpretation was wrong.
+- `.cd/ART/BATTLE.png` is still not a good source to build from: it is
+  8-bit palettised and carries the `(0, 251, 192)` teal colour key instead
+  of alpha. `src/lib/art` now decodes the `.ART` losslessly and resolves
+  that key to real alpha, so the `.png` is redundant.
 
 ## Rebuilding committed assets from `.cd`
 
@@ -51,7 +59,9 @@ new tooling should read from `.cd` directly rather than from `raw/`.
   regenerated straight from `.cd` instead.
 - `.cd/ART/BATTLE.png` — a PNG conversion of `.cd/ART/BATTLE.ART` (a PCX),
   used only as a local reference while reverse-engineering the `.MAP`
-  format; it is not committed or repacked into `public/assets`.
+  format; it is not committed or repacked into `public/assets`. Superseded
+  by `src/lib/art`, which decodes the `.ART` directly and losslessly; new
+  tooling should read the `.ART` rather than this conversion.
 
 **Current state of the tooling:** as of this audit, there is **no working
 script in this repository that regenerates sprites or the spritesheet from
