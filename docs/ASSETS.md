@@ -30,6 +30,13 @@ original game's map format (see `docs/MAP_FORMAT.md`).
 The original commercial game data lives locally, outside version control,
 under `.cd/` (see `docs/MAP_FORMAT.md` for why it isn't committed).
 
+**Policy:** any asset-build tooling written going forward (sprite
+extraction, tile-atlas conversion, spritesheet packing) must read from
+`.cd/` directly, not from `raw/`. `raw/` is a legacy, reference-only copy
+kept temporarily during the transition — see [raw/README.md](../raw/README.md)
+— and is expected to be trimmed/removed incrementally as `.cd`-based
+generation replaces the parts it covers.
+
 `raw/sprites/units/*.png` is a **temporary, reference-only** copy of
 per-unit animation frames extracted from the original game's sprite data.
 It predates the current asset plan and is kept around for now only so its
