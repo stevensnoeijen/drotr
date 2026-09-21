@@ -60,6 +60,14 @@ function buildLookup(palette: Uint8Array, colorKey: Rgb | null): Uint8Array {
 }
 
 /**
+ * Straight (non-premultiplied) RGBA pixels, four bytes per pixel.
+ *
+ * Backed by a plain `ArrayBuffer` rather than the wider `ArrayBufferLike`,
+ * which is what `ImageData` — and so any canvas consumer — requires.
+ */
+export type RgbaPixels = Uint8ClampedArray<ArrayBuffer>;
+
+/**
  * Converts a decoded `.ART` image to straight (non-premultiplied) RGBA,
  * turning the colour key into real alpha.
  *
@@ -68,7 +76,7 @@ function buildLookup(palette: Uint8Array, colorKey: Rgb | null): Uint8Array {
 export function toRgba(
   image: PcxImage,
   colorKey: Rgb | null = TEAL_COLOR_KEY
-): Uint8ClampedArray {
+): RgbaPixels {
   const { width, height, indices, palette } = image;
   const lookup = buildLookup(palette, colorKey);
   const rgba = new Uint8ClampedArray(width * height * RGBA_CHANNELS);
@@ -94,7 +102,7 @@ export function extractRgbaRect(
   image: PcxImage,
   rect: { x: number; y: number; width: number; height: number },
   colorKey: Rgb | null = TEAL_COLOR_KEY
-): Uint8ClampedArray {
+): RgbaPixels {
   const { x, y, width, height } = rect;
   if (
     x < 0 ||

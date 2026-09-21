@@ -1,5 +1,10 @@
 import type { PcxImage } from './pcx';
-import { extractRgbaRect, TEAL_COLOR_KEY, type Rgb } from './rgba';
+import {
+  extractRgbaRect,
+  TEAL_COLOR_KEY,
+  type Rgb,
+  type RgbaPixels,
+} from './rgba';
 
 /**
  * Geometry of the tile atlas held in `ART/BATTLE.ART`.
@@ -84,7 +89,7 @@ export function extractTileRgba(
   image: PcxImage,
   index: number,
   colorKey: Rgb | null = TEAL_COLOR_KEY
-): Uint8ClampedArray {
+): RgbaPixels {
   const total = tileCount(image.width, image.height);
   if (index >= total) {
     throw new RangeError(
