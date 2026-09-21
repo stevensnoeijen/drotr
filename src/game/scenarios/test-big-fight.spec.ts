@@ -40,28 +40,62 @@ describe('testBigFightScenario', () => {
     expect(queries.renderable.size).toBe(world.size);
   });
 
-  it('spawns every unit as a combat-capable swordsman with no overlapping positions', () => {
+  it('spawns a mix of combat-capable unit types with no overlapping positions', () => {
     const world = new World<Entity>();
 
     testBigFightScenario.setup(world);
 
+    const unitTypesSeen = new Set<string>();
     const positions = new Set<string>();
     for (const entity of world) {
-      expect(entity.unitType).toBe('swordsmen');
+      expect(['swordsmen', 'knight', 'crossbowsoldier']).toContain(entity.unitType);
       expect(entity.attackRange).toBeDefined();
       expect(entity.damage).toBeDefined();
       expect(entity.attackCooldown).toBeDefined();
+
+      unitTypesSeen.add(entity.unitType as string);
 
       const key = `${entity.transform?.position.x},${entity.transform?.position.y}`;
       expect(positions.has(key)).toBe(false);
       positions.add(key);
     }
+
+    // Confirms this is actually a mixed roster, not accidentally all one type.
+    expect(unitTypesSeen).toEqual(new Set(['swordsmen', 'knight', 'crossbowsoldier']));
+  });
+
+  it('spawns each team with the same unit-type composition', () => {
+    const world = new World<Entity>();
+
+    testBigFightScenario.setup(world);
+
+    const countByTeamAndType = new Map<string, number>();
+    for (const entity of world) {
+      const key = `${entity.team}:${entity.unitType}`;
+      countByTeamAndType.set(key, (countByTeamAndType.get(key) ?? 0) + 1);
+    }
+
+    for (const unitType of ['swordsmen', 'knight', 'crossbowsoldier']) {
+      const blueCount = countByTeamAndType.get(`blue:${unitType}`);
+      const redCount = countByTeamAndType.get(`red:${unitType}`);
+      expect(blueCount).toBeGreaterThan(0);
+      expect(blueCount).toBe(redCount);
+    }
+  });
+
+  it('throws when the map has fewer walkable cells than units to place', () => {
+    const world = new World<Entity>();
+    // Only 4 walkable cells (2x2), nowhere near enough for both teams.
+    const map = mapWithWallColumn(2, 2, -1);
+
+    expect(() => testBigFightScenario.setup(world, map)).toThrow(/walkable cells/);
   });
 
   it('never places a unit on a blocked (wall) cell', () => {
     const world = new World<Entity>();
     // Wide enough (600 walkable cols x 2 rows minus the wall column) to fit
-    // 500 units while still leaving a wall for every unit to avoid.
+    // all of this scenario's units while still leaving a wall for every unit
+    // to avoid.
     const map = mapWithWallColumn(300, 2, 150);
 
     testBigFightScenario.setup(world, map);
