@@ -17,7 +17,6 @@ function mapWithWallColumn(width: number, height: number, wallCol: number): Pars
     width,
     height,
     tileSize: 32,
-    terrain: [],
     collision,
     spawns: [],
     tilesets: [],

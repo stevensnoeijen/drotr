@@ -5,10 +5,10 @@ import { buildPcx, greyscalePalette } from '~/test/pcx-fixture';
 import { decodePcx, type PcxImage } from '~/lib/art/pcx';
 import { extractTileRgba, tileRect, ATLAS_TILE_SIZE } from '~/lib/art/atlas';
 import { TEAL_COLOR_KEY } from '~/lib/art/rgba';
+import { BLOCKED_TILE_PROPERTY } from '~/game/map/tile-properties';
 import { isWalkableTile } from './tile-categories';
 import {
   atlasIndexToTileId,
-  BLOCKED_PROPERTY,
   buildTerrainTilesetImage,
   buildTerrainTilesetXml,
   EXTRA_TILE_ID_OFFSET,
@@ -277,7 +277,7 @@ describe('buildTerrainTilesetXml', () => {
 
     const blockedIds = [...doc.querySelectorAll('tileset > tile')].map((tile) => {
       const property = tile.querySelector('properties > property');
-      expect(property?.getAttribute('name')).toBe(BLOCKED_PROPERTY);
+      expect(property?.getAttribute('name')).toBe(BLOCKED_TILE_PROPERTY);
       expect(property?.getAttribute('type')).toBe('bool');
       expect(property?.getAttribute('value')).toBe('true');
       return Number(tile.getAttribute('id'));

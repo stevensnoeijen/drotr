@@ -7,96 +7,72 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   loadTiledMap,
   parseTiledMap,
-  parseTiledTileset,
   parseTilesetDescription,
   TiledMapError,
-  type TerrainType,
+  type MapTileset,
 } from './load-tiled-map';
-import { decodeGid, resolveGid } from './tile-gid';
+import { FLIPPED_HORIZONTALLY_FLAG } from './tile-gid';
 
 const FIXTURE_DIR = path.resolve(import.meta.dirname, '../../../public/maps');
 const mapJson = fs.readFileSync(path.join(FIXTURE_DIR, 'test.tmj'), 'utf-8');
-const tilesetXml = fs.readFileSync(
-  path.join(FIXTURE_DIR, 'test.tsx'),
-  'utf-8'
-);
+const terrainXml = fs.readFileSync(path.join(FIXTURE_DIR, 'terrain.tsx'), 'utf-8');
 const fixtureMap = JSON.parse(mapJson) as TiledMap;
-const fixtureTerrainByGid = new Map<number, TerrainType>(
-  [...parseTiledTileset(tilesetXml)].map(([localId, type]) => [
-    localId + 1,
-    type,
-  ])
-);
+const terrainTileset = parseTilesetDescription(terrainXml, 1, 'http://host/maps/terrain.tsx');
 
-describe('parseTiledMap', () => {
-  it('parses the committed fixture to the expected dimensions, terrain counts and spawn list', () => {
-    const result = parseTiledMap(fixtureMap, fixtureTerrainByGid);
+/**
+ * The test map's collision grid as it was when its walls were still
+ * decided by a separate, hidden layer of placeholder grass/wall/water
+ * tiles, one row per line (`#` blocked). Walkability moving to the
+ * terrain tileset's `blocked` property must not move a single wall.
+ */
+const PREVIOUS_TEST_MAP_COLLISION = fs
+  .readFileSync(path.resolve(import.meta.dirname, 'fixtures/test-map-collision.txt'), 'utf-8')
+  .trimEnd()
+  .split('\n');
 
-    expect(result.width).toBe(64);
-    expect(result.height).toBe(64);
-    expect(result.tileSize).toBe(32);
-    expect(result.terrain).toHaveLength(64);
-    expect(result.terrain[0]).toHaveLength(64);
-
-    const counts = { grass: 0, wall: 0, water: 0 };
-    for (const row of result.terrain) {
-      for (const type of row) {
-        counts[type]++;
-      }
+function collisionRows({ collision, width, height }: { collision: Uint8Array; width: number; height: number }): string[] {
+  const rows: string[] = [];
+  for (let y = 0; y < height; y++) {
+    let row = '';
+    for (let x = 0; x < width; x++) {
+      row += collision[y * width + x] ? '#' : '.';
     }
-    expect(counts).toEqual({ grass: 3502, wall: 594, water: 0 });
-    expect(result.collision.length).toBe(64 * 64);
-    // Every non-grass tile blocks movement.
-    expect([...result.collision].filter((v) => v === 1).length).toBe(
-      counts.wall + counts.water
-    );
+    rows.push(row);
+  }
+  return rows;
+}
 
-    expect(result.spawns).toEqual([
-      { id: 'spawn-1', position: { x: 176, y: 176 } },
-      { id: 'spawn-2', position: { x: 1872, y: 1872 } },
-    ]);
-  });
+/** A tiny synthetic tileset: local ids 0-3, of which 1 is blocked. */
+function smallTileset(firstgid = 1, blocked: number[] = [1]): MapTileset {
+  return {
+    name: 'small',
+    firstgid,
+    tileWidth: 32,
+    tileHeight: 32,
+    tileCount: 4,
+    columns: 2,
+    margin: 0,
+    spacing: 0,
+    imageUrl: 'http://host/small.png',
+    imageWidth: 64,
+    imageHeight: 64,
+    blockedTileIds: new Set(blocked),
+  };
+}
 
-  it('rejects a map missing the terrain layer', () => {
-    const map: TiledMap = {
-      ...fixtureMap,
-      layers: fixtureMap.layers.filter((layer) => layer.name !== 'terrain'),
-    };
-
-    expect(() => parseTiledMap(map, fixtureTerrainByGid)).toThrow(
-      TiledMapError
-    );
-    expect(() => parseTiledMap(map, fixtureTerrainByGid)).toThrow(/terrain/i);
-  });
-
-  it('rejects an unknown tile gid', () => {
-    const badTerrainByGid = new Map(fixtureTerrainByGid);
-    badTerrainByGid.delete(1);
-
-    expect(() => parseTiledMap(fixtureMap, badTerrainByGid)).toThrow(
-      /unknown tile gid/i
-    );
-  });
-
-  it('rejects a non-orthogonal orientation', () => {
-    const map = { ...fixtureMap, orientation: 'isometric' } as TiledMap;
-
-    expect(() => parseTiledMap(map, fixtureTerrainByGid)).toThrow(
-      /orientation/i
-    );
-  });
-
-  it('rejects a terrain layer whose size does not match the map', () => {
-    const map: TiledMap = {
-      ...fixtureMap,
-      layers: fixtureMap.layers.map((layer) =>
-        layer.name === 'terrain' ? { ...layer, width: 32 } : layer
-      ),
-    };
-
-    expect(() => parseTiledMap(map, fixtureTerrainByGid)).toThrow(/size/i);
-  });
-});
+/** A 2x2 orthogonal map with the given `terrain` layer data. */
+function tinyMap(data: number[], extraLayers: TiledLayer[] = []): TiledMap {
+  return {
+    ...fixtureMap,
+    width: 2,
+    height: 2,
+    layers: [
+      { ...fixtureMap.layers[0], name: 'terrain', width: 2, height: 2, data } as TiledLayerTilelayer,
+      ...extraLayers,
+      fixtureMap.layers.find((layer) => layer.name === 'spawns')!,
+    ],
+  };
+}
 
 /** A map-sized tile layer filled with one gid, for layer-collection tests. */
 function tileLayer(name: string, gid: number, extra: Partial<TiledLayerTilelayer> = {}): TiledLayerTilelayer {
@@ -113,29 +89,108 @@ function tileLayer(name: string, gid: number, extra: Partial<TiledLayerTilelayer
 function withLayers(...extra: TiledLayer[]): TiledMap {
   const terrain = fixtureMap.layers.find((layer) => layer.name === 'terrain')!;
   const spawns = fixtureMap.layers.find((layer) => layer.name === 'spawns')!;
-  return { ...fixtureMap, layers: [{ ...terrain, visible: false }, ...extra, spawns] };
+  return { ...fixtureMap, layers: [terrain, ...extra, spawns] };
 }
 
-describe('parseTiledMap tile layers', () => {
-  it('exposes visible tile layers back to front and passes the tilesets through', () => {
-    const tilesets = [parseTilesetDescription(tilesetXml, 1, 'http://x/maps/test.tsx')];
-    const map = withLayers(tileLayer('ground', 5), tileLayer('decoration', 0));
+describe('parseTiledMap', () => {
+  it('parses the committed test map to the expected dimensions and spawn list', () => {
+    const result = parseTiledMap(fixtureMap, [terrainTileset]);
 
-    const result = parseTiledMap(map, fixtureTerrainByGid, tilesets);
-
-    expect(result.tileLayers.map((layer) => layer.name)).toEqual(['ground', 'decoration']);
-    expect(result.tileLayers[0].data).toHaveLength(64 * 64);
-    expect(result.tileLayers[0].data[0]).toBe(5);
-    expect(result.tilesets).toBe(tilesets);
+    expect(result.width).toBe(64);
+    expect(result.height).toBe(64);
+    expect(result.tileSize).toBe(32);
+    expect(result.collision.length).toBe(64 * 64);
+    expect(result.spawns).toEqual([
+      { id: 'spawn-1', position: { x: 176, y: 176 } },
+      { id: 'spawn-2', position: { x: 1872, y: 1872 } },
+    ]);
   });
 
-  it('leaves out hidden layers, even when they are the gameplay terrain layer', () => {
-    const map = withLayers(tileLayer('ground', 5), tileLayer('hidden', 5, { visible: false }));
-    const result = parseTiledMap(map, fixtureTerrainByGid);
+  it('derives exactly the same test-map collision grid as before walkability moved to the tileset', () => {
+    const result = parseTiledMap(fixtureMap, [terrainTileset]);
 
-    expect(result.tileLayers.map((layer) => layer.name)).toEqual(['ground']);
-    // The hidden terrain layer still drives gameplay.
-    expect(result.terrain[0][0]).toBe('wall');
+    expect(collisionRows(result)).toEqual(PREVIOUS_TEST_MAP_COLLISION);
+    expect([...result.collision].filter((cell) => cell === 1)).toHaveLength(594);
+  });
+
+  it('blocks a cell whose tile is marked blocked, and only that', () => {
+    // Local ids 0 and 1 at firstgid 1: gid 1 walkable, gid 2 blocked.
+    const result = parseTiledMap(tinyMap([1, 2, 1, 1]), [smallTileset()]);
+    expect([...result.collision]).toEqual([0, 1, 0, 0]);
+  });
+
+  it('applies the firstgid offset when looking a tile’s blocked flag up', () => {
+    // At firstgid 10 the blocked local id 1 is gid 11.
+    const result = parseTiledMap(tinyMap([10, 11, 12, 13]), [smallTileset(10)]);
+    expect([...result.collision]).toEqual([0, 1, 0, 0]);
+  });
+
+  it('blocks an empty cell (gid 0)', () => {
+    const result = parseTiledMap(tinyMap([0, 1, 1, 1]), [smallTileset()]);
+    expect([...result.collision]).toEqual([1, 0, 0, 0]);
+  });
+
+  it('ignores flip flags when deciding walkability', () => {
+    const flipped = (gid: number) => (gid | FLIPPED_HORIZONTALLY_FLAG) >>> 0;
+    const result = parseTiledMap(tinyMap([flipped(1), flipped(2), 1, 1]), [smallTileset()]);
+    expect([...result.collision]).toEqual([0, 1, 0, 0]);
+  });
+
+  it('rejects a gid no tileset covers', () => {
+    expect(() => parseTiledMap(tinyMap([1, 99, 1, 1]), [smallTileset()])).toThrow(/unknown tile gid 99/i);
+  });
+
+  it('rejects a map missing the terrain layer', () => {
+    const map: TiledMap = {
+      ...fixtureMap,
+      layers: fixtureMap.layers.filter((layer) => layer.name !== 'terrain'),
+    };
+
+    expect(() => parseTiledMap(map, [terrainTileset])).toThrow(TiledMapError);
+    expect(() => parseTiledMap(map, [terrainTileset])).toThrow(/terrain/i);
+  });
+
+  it('rejects a non-orthogonal orientation', () => {
+    const map = { ...fixtureMap, orientation: 'isometric' } as TiledMap;
+
+    expect(() => parseTiledMap(map, [terrainTileset])).toThrow(/orientation/i);
+  });
+
+  it('rejects a terrain layer whose size does not match the map', () => {
+    const map: TiledMap = {
+      ...fixtureMap,
+      layers: fixtureMap.layers.map((layer) =>
+        layer.name === 'terrain' ? { ...layer, width: 32 } : layer
+      ),
+    };
+
+    expect(() => parseTiledMap(map, [terrainTileset])).toThrow(/size/i);
+  });
+});
+
+describe('parseTiledMap tile layers', () => {
+  it('draws the test map from its terrain layer, every cell a real terrain tile', () => {
+    const result = parseTiledMap(fixtureMap, [terrainTileset]);
+
+    expect(result.tileLayers.map((layer) => layer.name)).toEqual(['terrain']);
+    expect(result.tilesets).toEqual([terrainTileset]);
+    // Grass (tile 1072) and a wall (tile 210) at firstgid 1, nothing else.
+    expect(new Set(result.tileLayers[0].data)).toEqual(new Set([1073, 211]));
+  });
+
+  it('exposes visible tile layers back to front', () => {
+    const map = withLayers(tileLayer('decoration', 0), tileLayer('overlay', 5));
+    const result = parseTiledMap(map, [terrainTileset]);
+
+    expect(result.tileLayers.map((layer) => layer.name)).toEqual(['terrain', 'decoration', 'overlay']);
+    expect(result.tileLayers[2].data[0]).toBe(5);
+  });
+
+  it('leaves out hidden layers', () => {
+    const map = withLayers(tileLayer('hidden', 5, { visible: false }));
+    const result = parseTiledMap(map, [terrainTileset]);
+
+    expect(result.tileLayers.map((layer) => layer.name)).toEqual(['terrain']);
   });
 
   it('flattens groups, skipping hidden ones and multiplying opacity', () => {
@@ -148,84 +203,60 @@ describe('parseTiledMap tile layers', () => {
       group('hidden-group', [tileLayer('c', 1)], { visible: false })
     );
 
-    const result = parseTiledMap(map, fixtureTerrainByGid);
+    const result = parseTiledMap(map, [terrainTileset]);
 
     expect(result.tileLayers.map(({ name, opacity }) => ({ name, opacity }))).toEqual([
+      { name: 'terrain', opacity: 1 },
       { name: 'a', opacity: 0.25 },
       { name: 'b', opacity: 0.5 },
     ]);
   });
 
-  it('draws the fixture map from its ground layer, keeping the terrain layer for gameplay only', () => {
-    const terrainXml = fs.readFileSync(path.join(FIXTURE_DIR, 'terrain.tsx'), 'utf-8');
-    const reference = fixtureMap.tilesets.find((tileset) => tileset.source === 'terrain.tsx')!;
-    const terrainTileset = parseTilesetDescription(terrainXml, reference.firstgid, 'http://h/maps/terrain.tsx');
-
-    const result = parseTiledMap(fixtureMap, fixtureTerrainByGid, [terrainTileset]);
-
-    expect(result.tileLayers.map((layer) => layer.name)).toEqual(['ground']);
-    // Every ground cell names a real tile in the decoded terrain tileset.
-    const unresolved = result.tileLayers[0].data.filter(
-      (gid) => resolveGid(decodeGid(gid).gid, [terrainTileset]) === undefined
-    );
-    expect(unresolved).toEqual([]);
-  });
-
-  it('draws the fixture’s ground art to match its terrain types, cell for cell', () => {
-    const result = parseTiledMap(fixtureMap, fixtureTerrainByGid);
-    const [ground] = result.tileLayers;
-    // Grass, wall and water art picked from the terrain tileset (tile ids
-    // 1072, 210 and 398), at the map's firstgid of 4.
-    const artByType: Record<TerrainType, number> = { grass: 1076, wall: 214, water: 402 };
-    const mismatches = result.terrain
-      .flatMap((row, y) => row.map((type, x) => ({ x, y, type })))
-      .filter(({ x, y, type }) => ground.data[y * result.width + x] !== artByType[type]);
-    expect(mismatches).toEqual([]);
-  });
-
   it('rejects a visible tile layer whose size does not match the map', () => {
-    const map = withLayers(tileLayer('ground', 1, { width: 10 }));
-    expect(() => parseTiledMap(map, fixtureTerrainByGid)).toThrow(/"ground" size/);
+    const map = withLayers(tileLayer('overlay', 1, { width: 10 }));
+    expect(() => parseTiledMap(map, [terrainTileset])).toThrow(/"overlay" size/);
   });
 
   it('rejects a visible tile layer with encoded data', () => {
     const map = withLayers(
-      tileLayer('ground', 1, { data: 'AAAA', encoding: 'base64' } as Partial<TiledLayerTilelayer>)
+      tileLayer('overlay', 1, { data: 'AAAA', encoding: 'base64' } as Partial<TiledLayerTilelayer>)
     );
-    expect(() => parseTiledMap(map, fixtureTerrainByGid)).toThrow(/encoding/);
+    expect(() => parseTiledMap(map, [terrainTileset])).toThrow(/encoding/);
   });
 });
 
 describe('parseTilesetDescription', () => {
-  it('reads the placeholder test tileset and resolves its image against the tileset URL', () => {
-    expect(parseTilesetDescription(tilesetXml, 1, 'http://host/drotr/maps/test.tsx')).toEqual({
-      name: 'test',
-      firstgid: 1,
-      tileWidth: 32,
-      tileHeight: 32,
-      tileCount: 3,
-      columns: 3,
-      margin: 0,
-      spacing: 0,
-      imageUrl: 'http://host/drotr/maps/terrain-atlas.png',
-      imageWidth: 96,
-      imageHeight: 32,
-    });
-  });
-
-  it('reads the committed terrain tileset exported from the decoded atlas', () => {
-    const xml = fs.readFileSync(path.join(FIXTURE_DIR, 'terrain.tsx'), 'utf-8');
-    expect(parseTilesetDescription(xml, 4, 'http://host/maps/terrain.tsx')).toMatchObject({
+  it('reads the committed terrain tileset, resolving its image against the tileset URL', () => {
+    expect(parseTilesetDescription(terrainXml, 4, 'http://host/drotr/maps/terrain.tsx')).toMatchObject({
       name: 'terrain',
       firstgid: 4,
       tileWidth: 40,
       tileHeight: 40,
       tileCount: 1552,
       columns: 16,
-      imageUrl: 'http://host/maps/terrain.png',
+      margin: 0,
+      spacing: 0,
+      imageUrl: 'http://host/drotr/maps/terrain.png',
       imageWidth: 640,
       imageHeight: 3880,
     });
+  });
+
+  it('reads the terrain tileset’s blocked tiles', () => {
+    const { blockedTileIds } = terrainTileset;
+    expect(blockedTileIds.size).toBe(1085);
+    // A wall, water and an unused slot block; grass and the drawbridge don't.
+    expect([210, 398, 1472].every((id) => blockedTileIds.has(id))).toBe(true);
+    expect([1072, 1482].some((id) => blockedTileIds.has(id))).toBe(false);
+  });
+
+  it('only counts a blocked property whose value is true', () => {
+    const xml = `<tileset name="p" tilewidth="16" tileheight="16" tilecount="3" columns="3"><image source="p.png" width="48" height="16"/>
+      <tile id="0"><properties><property name="blocked" type="bool" value="true"/></properties></tile>
+      <tile id="1"><properties><property name="blocked" type="bool" value="false"/></properties></tile>
+      <tile id="2"><properties><property name="other" type="bool" value="true"/></properties></tile>
+    </tileset>`;
+    expect([...parseTilesetDescription(xml, 1, 'http://h/p.tsx').blockedTileIds]).toEqual([0]);
   });
 
   it('reads margin and spacing when present', () => {
@@ -266,37 +297,32 @@ describe('loadTiledMap', () => {
 
     expect(result.width).toBe(64);
     expect(result.spawns).toHaveLength(2);
-    expect(result.tilesets.map((tileset) => tileset.name)).toEqual(
-      fixtureMap.tilesets.map((reference) =>
-        reference.source?.replace(/\.tsx$/, '')
-      )
-    );
+    expect(result.tilesets.map((tileset) => tileset.name)).toEqual(['terrain']);
+    expect(collisionRows(result)).toEqual(PREVIOUS_TEST_MAP_COLLISION);
   });
 
-  it('loads every referenced tileset, offsetting each one’s terrain by its own firstgid', async () => {
-    // A second tileset whose only tile-with-terrain is local id 0: at
-    // firstgid 10 it must answer to gid 10, not gid 1.
-    const extraXml = `<tileset name="extra" tilewidth="32" tileheight="32" tilecount="2" columns="2"><image source="img/extra.png" width="64" height="32"/><tile id="0"><properties><property name="terrain" value="water"/></properties></tile></tileset>`;
-    const terrain = tileLayer('terrain', 10);
-    const map: TiledMap = {
-      ...fixtureMap,
-      tilesets: [
-        { firstgid: 1, source: 'test.tsx' },
-        { firstgid: 10, source: 'sets/extra.tsx' },
-      ] as TiledMap['tilesets'],
-      layers: [terrain, ...fixtureMap.layers.filter((layer) => layer.name === 'spawns')],
-    };
-    const fetchMock = vi.fn(async (url: string) => {
-      const body = url.endsWith('extra.tsx') ? extraXml : url.endsWith('.tsx') ? tilesetXml : JSON.stringify(map);
-      return { ok: true, text: async () => body } as Response;
-    });
-    vi.stubGlobal('fetch', fetchMock);
+  it('loads every referenced tileset, offsetting each one’s blocked tiles by its own firstgid', async () => {
+    const firstXml = `<tileset name="first" tilewidth="32" tileheight="32" tilecount="4" columns="2"><image source="first.png" width="64" height="64"/></tileset>`;
+    // Only local id 0 blocks: at firstgid 10 it must answer to gid 10.
+    const extraXml = `<tileset name="extra" tilewidth="32" tileheight="32" tilecount="2" columns="2"><image source="img/extra.png" width="64" height="32"/><tile id="0"><properties><property name="blocked" type="bool" value="true"/></properties></tile></tileset>`;
+    const map = tinyMap([1, 10, 11, 4]);
+    map.tilesets = [
+      { firstgid: 1, source: 'first.tsx' },
+      { firstgid: 10, source: 'sets/extra.tsx' },
+    ] as TiledMap['tilesets'];
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async (url: string) => {
+        const body = url.endsWith('extra.tsx') ? extraXml : url.endsWith('.tsx') ? firstXml : JSON.stringify(map);
+        return { ok: true, text: async () => body } as Response;
+      })
+    );
 
     const result = await loadTiledMap('/maps/test.tmj');
 
-    expect(result.terrain[0][0]).toBe('water');
+    expect([...result.collision]).toEqual([0, 1, 0, 0]);
     expect(result.tilesets.map(({ name, firstgid }) => ({ name, firstgid }))).toEqual([
-      { name: 'test', firstgid: 1 },
+      { name: 'first', firstgid: 1 },
       { name: 'extra', firstgid: 10 },
     ]);
     expect(result.tilesets[1].imageUrl).toMatch(/\/maps\/sets\/img\/extra\.png$/);

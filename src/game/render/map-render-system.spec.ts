@@ -1,7 +1,7 @@
 import { Container, Sprite, TextureSource } from 'pixi.js';
 import { describe, expect, it } from 'vitest';
 
-import type { MapTileset, ParsedMap, TerrainType } from '~/game/map/load-tiled-map';
+import type { MapTileset, ParsedMap } from '~/game/map/load-tiled-map';
 import { FLIPPED_DIAGONALLY_FLAG, FLIPPED_HORIZONTALLY_FLAG } from '~/game/map/tile-gid';
 import { MapRenderSystem, TileTextureCache } from './map-render-system';
 
@@ -21,6 +21,7 @@ function terrainTileset(firstgid = 1): MapTileset {
     imageUrl: TERRAIN_URL,
     imageWidth: 640,
     imageHeight: 3880,
+    blockedTileIds: new Set(),
   };
 }
 
@@ -32,7 +33,6 @@ function makeMap(overrides: Partial<ParsedMap> & { width: number; height: number
   const { width, height } = overrides;
   return {
     tileSize: 32,
-    terrain: Array.from({ length: height }, () => new Array<TerrainType>(width).fill('grass')),
     collision: new Uint8Array(width * height),
     spawns: [],
     tilesets: [terrainTileset()],

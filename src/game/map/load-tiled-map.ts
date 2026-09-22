@@ -6,23 +6,8 @@ import type {
 } from 'tiled-types';
 
 import type { Point } from '~/lib/math/types';
-import type { TilesetGeometry } from './tile-gid';
-
-/** The only terrain kinds a `terrain` layer's tiles may resolve to. */
-export type TerrainType = 'grass' | 'wall' | 'water';
-
-/** Terrain that blocks movement — no naval/flying units exist yet. */
-const BLOCKING_TERRAIN: ReadonlySet<TerrainType> = new Set(['wall', 'water']);
-
-const TERRAIN_TYPES: ReadonlySet<string> = new Set<TerrainType>([
-  'grass',
-  'wall',
-  'water',
-]);
-
-function isTerrainType(value: string): value is TerrainType {
-  return TERRAIN_TYPES.has(value);
-}
+import { decodeGid, resolveGid, type TilesetGeometry } from './tile-gid';
+import { BLOCKED_TILE_PROPERTY } from './tile-properties';
 
 /**
  * A named location a scenario can spawn a unit at. Spawns carry no team or
@@ -45,6 +30,8 @@ export interface MapTileset extends TilesetGeometry {
   imageUrl: string;
   imageWidth: number;
   imageHeight: number;
+  /** Local ids of the tiles marked {@link BLOCKED_TILE_PROPERTY}. */
+  blockedTileIds: ReadonlySet<number>;
 }
 
 /**
@@ -62,15 +49,17 @@ export interface ParsedMap {
   width: number;
   height: number;
   tileSize: number;
-  terrain: TerrainType[][];
+  /**
+   * Row-major, one byte per cell: `1` where the `terrain` layer's tile is
+   * blocked (or the cell is empty), `0` where a unit may stand.
+   */
   collision: Uint8Array;
   spawns: SpawnPoint[];
   /** Every tileset the map references, for resolving {@link tileLayers}' gids. */
   tilesets: MapTileset[];
   /**
    * Every visible tile layer, flattened out of any groups, back to front —
-   * what the art renderer draws. Hidden layers (e.g. a `terrain` layer kept
-   * only for its gameplay semantics) are left out.
+   * what the art renderer draws. Hidden layers are left out.
    */
   tileLayers: MapTileLayer[];
 }
@@ -109,11 +98,17 @@ function parseSpawns(layer: TiledLayerObjectgroup): SpawnPoint[] {
   });
 }
 
-function parseTerrain(
+/**
+ * Derives the collision grid from the `terrain` layer: a cell blocks when
+ * its tile carries the {@link BLOCKED_TILE_PROPERTY} or the cell is empty
+ * (gid 0); flip flags don't change a tile's walkability. A gid no tileset
+ * covers is malformed data and rejected.
+ */
+function parseCollision(
   layer: TiledLayerTilelayer,
   map: TiledMap,
-  terrainByGid: ReadonlyMap<number, TerrainType>
-): { terrain: TerrainType[][]; collision: Uint8Array } {
+  tilesets: readonly MapTileset[]
+): Uint8Array {
   if (layer.width !== map.width || layer.height !== map.height) {
     throw new TiledMapError(
       `Terrain layer size (${layer.width}x${layer.height}) does not match map size (${map.width}x${map.height})`
@@ -125,27 +120,23 @@ function parseTerrain(
     );
   }
 
-  const terrain: TerrainType[][] = [];
   const collision = new Uint8Array(map.width * map.height);
-
   for (let y = 0; y < map.height; y++) {
-    const row: TerrainType[] = [];
     for (let x = 0; x < map.width; x++) {
       const index = y * map.width + x;
-      const gid = layer.data[index];
-      const type = terrainByGid.get(gid);
-      if (!type) {
-        throw new TiledMapError(
-          `Unknown tile gid ${gid} in terrain layer at (${x}, ${y})`
-        );
+      const { gid } = decodeGid(layer.data[index]);
+      if (gid === 0) {
+        collision[index] = 1;
+        continue;
       }
-      row.push(type);
-      collision[index] = BLOCKING_TERRAIN.has(type) ? 1 : 0;
+      const tile = resolveGid(gid, tilesets);
+      if (!tile) {
+        throw new TiledMapError(`Unknown tile gid ${gid} in terrain layer at (${x}, ${y})`);
+      }
+      collision[index] = tile.tileset.blockedTileIds.has(tile.localId) ? 1 : 0;
     }
-    terrain.push(row);
   }
-
-  return { terrain, collision };
+  return collision;
 }
 
 /**
@@ -187,11 +178,7 @@ function collectVisibleTileLayers(
  * agnostic contract. Pure and synchronous so it's testable without mocking
  * `fetch` — {@link loadTiledMap} handles the actual I/O.
  */
-export function parseTiledMap(
-  map: TiledMap,
-  terrainByGid: ReadonlyMap<number, TerrainType>,
-  tilesets: MapTileset[] = []
-): ParsedMap {
+export function parseTiledMap(map: TiledMap, tilesets: MapTileset[]): ParsedMap {
   if (map.orientation !== 'orthogonal') {
     throw new TiledMapError(
       `Unsupported map orientation "${map.orientation}"; only orthogonal maps are supported`
@@ -208,7 +195,7 @@ export function parseTiledMap(
     throw new TiledMapError('Map is missing a "spawns" object layer');
   }
 
-  const { terrain, collision } = parseTerrain(terrainLayer, map, terrainByGid);
+  const collision = parseCollision(terrainLayer, map, tilesets);
   const spawns = parseSpawns(spawnsLayer);
   const tileLayers = collectVisibleTileLayers(map.layers, map);
 
@@ -216,7 +203,6 @@ export function parseTiledMap(
     width: map.width,
     height: map.height,
     tileSize: map.tilewidth,
-    terrain,
     collision,
     spawns,
     tilesets,
@@ -224,32 +210,19 @@ export function parseTiledMap(
   };
 }
 
-/**
- * Reads the `terrain` custom property off each `<tile>` in an external
- * `.tsx` tileset, keyed by the tileset-local tile id (not gid — the caller
- * offsets by the tileset's `firstgid`).
- */
-export function parseTiledTileset(xml: string): Map<number, TerrainType> {
-  const doc = new DOMParser().parseFromString(xml, 'application/xml');
-  if (doc.querySelector('parsererror')) {
-    throw new TiledMapError('Tileset XML failed to parse');
-  }
-
-  const terrainByLocalId = new Map<number, TerrainType>();
+/** Local ids of the `<tile>`s whose {@link BLOCKED_TILE_PROPERTY} is `true`. */
+function parseBlockedTileIds(doc: Document): Set<number> {
+  const blocked = new Set<number>();
   for (const tileEl of doc.querySelectorAll('tileset > tile')) {
-    const idAttr = tileEl.getAttribute('id');
-    const id = idAttr === null ? NaN : Number(idAttr);
-    const terrainValue = tileEl.querySelector(
-      'properties > property[name="terrain"]'
-    )?.getAttribute('value');
-
-    if (Number.isNaN(id) || !terrainValue || !isTerrainType(terrainValue)) {
-      continue;
+    const id = Number(tileEl.getAttribute('id') ?? NaN);
+    const property = [...tileEl.querySelectorAll('properties > property')].find(
+      (el) => el.getAttribute('name') === BLOCKED_TILE_PROPERTY
+    );
+    if (Number.isInteger(id) && property?.getAttribute('value') === 'true') {
+      blocked.add(id);
     }
-    terrainByLocalId.set(id, terrainValue);
   }
-
-  return terrainByLocalId;
+  return blocked;
 }
 
 function requiredNumberAttribute(element: Element, name: string, context: string): number {
@@ -261,10 +234,10 @@ function requiredNumberAttribute(element: Element, name: string, context: string
 }
 
 /**
- * Reads the image and grid layout out of an external `.tsx` tileset: the
- * part of a tileset {@link parseTiledTileset} ignores. `firstgid` isn't part
- * of the tileset file (it's the map's to assign), so it's passed in, and the
- * image path is resolved against `tilesetUrl`.
+ * Reads an external `.tsx` tileset: its image, grid layout and which tiles
+ * are {@link BLOCKED_TILE_PROPERTY}. `firstgid` isn't part of the tileset
+ * file (it's the map's to assign), so it's passed in, and the image path is
+ * resolved against `tilesetUrl`.
  *
  * Only single-image tilesets are supported; an image-collection tileset
  * (one `<image>` per `<tile>`) is rejected.
@@ -302,6 +275,7 @@ export function parseTilesetDescription(
     imageUrl: new URL(imageSource, tilesetUrl).toString(),
     imageWidth: requiredNumberAttribute(imageEl, 'width', `${context} image`),
     imageHeight: requiredNumberAttribute(imageEl, 'height', `${context} image`),
+    blockedTileIds: parseBlockedTileIds(doc),
   };
 }
 
@@ -316,8 +290,7 @@ async function fetchText(url: string): Promise<string> {
 /**
  * Fetches a `.tmj` map and every external `.tsx` tileset it references,
  * then parses and validates them into the engine's {@link ParsedMap}
- * contract. Terrain-type properties are merged across all tilesets, each
- * offset by its own `firstgid`.
+ * contract.
  */
 export async function loadTiledMap(mapUrl: string): Promise<ParsedMap> {
   const map = JSON.parse(await fetchText(mapUrl)) as TiledMap;
@@ -327,7 +300,6 @@ export async function loadTiledMap(mapUrl: string): Promise<ParsedMap> {
   }
   const absoluteMapUrl = new URL(mapUrl, window.location.href);
 
-  const terrainByGid = new Map<number, TerrainType>();
   const tilesets = await Promise.all(
     map.tilesets.map(async (reference) => {
       if (!reference.source) {
@@ -336,14 +308,9 @@ export async function loadTiledMap(mapUrl: string): Promise<ParsedMap> {
         );
       }
       const tilesetUrl = new URL(reference.source, absoluteMapUrl).toString();
-      const xml = await fetchText(tilesetUrl);
-
-      for (const [localId, type] of parseTiledTileset(xml)) {
-        terrainByGid.set(reference.firstgid + localId, type);
-      }
-      return parseTilesetDescription(xml, reference.firstgid, tilesetUrl);
+      return parseTilesetDescription(await fetchText(tilesetUrl), reference.firstgid, tilesetUrl);
     })
   );
 
-  return parseTiledMap(map, terrainByGid, tilesets);
+  return parseTiledMap(map, tilesets);
 }
