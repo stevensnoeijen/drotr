@@ -197,7 +197,6 @@ image, Tiled's flip flags are honoured, and gid 0 or a gid no tileset
 covers draws nothing. Tiles are fitted to the map's own cell size, so this
 tileset's 40 px tiles fill the test map's 32 px cells. Tiles are drawn in
 16×16-tile chunks, and only chunks inside the camera's view are rendered.
-`?debug=primitives` swaps the art for flat-colour terrain-type rectangles.
 
 ### Tile walkability: the `blocked` property
 

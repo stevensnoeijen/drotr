@@ -44,8 +44,6 @@ Current debug options are:
 - `unit-info`, shows a tooltip with the stats of the hovered unit
 - `targets`, draws a line from each unit to its attack target
 - `paths`, draws each unit's planned move path
-- `primitives`, draws the terrain as flat-coloured terrain-type rectangles
-  instead of the original tile art
 
 # Scenarios
 

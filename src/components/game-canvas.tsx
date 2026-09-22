@@ -110,7 +110,6 @@ export default function GameCanvas({
   // tearing down and remounting the whole canvas.
   const syncGridRef = useRef<() => void>(() => {});
   const syncHealthBarsRef = useRef<() => void>(() => {});
-  const syncPrimitivesRef = useRef<() => void>(() => {});
 
   // Keep the refs pointing at the latest props without re-running the
   // Pixi-setup effect below (which must run exactly once).
@@ -128,7 +127,6 @@ export default function GameCanvas({
   useEffect(() => {
     syncGridRef.current();
     syncHealthBarsRef.current();
-    syncPrimitivesRef.current();
   }, [debugFlagsKey]);
 
   useEffect(() => {
@@ -239,9 +237,7 @@ export default function GameCanvas({
       if (mapSource) {
         try {
           map = await loadTiledMap(mapSource);
-          const terrain = await createMapRenderSystem(map, {
-            primitives: debugFlagsRef.current?.has('primitives') ?? false,
-          });
+          const terrain = await createMapRenderSystem(map);
           if (cancelled) {
             terrain.dispose();
             return;
@@ -249,9 +245,6 @@ export default function GameCanvas({
           mapRenderSystem = terrain;
           // Beneath everything else in the world: units and overlays draw over it.
           gameViewport.addChildAt(terrain.container, 0);
-          syncPrimitivesRef.current = () => {
-            terrain.setPrimitives(debugFlagsRef.current?.has('primitives') ?? false);
-          };
           applyViewportBounds(
             gameViewport,
             map.width * map.tileSize,
@@ -534,7 +527,6 @@ export default function GameCanvas({
       resizeObserver?.disconnect();
       syncGridRef.current = () => {};
       syncHealthBarsRef.current = () => {};
-      syncPrimitivesRef.current = () => {};
       // Unsubscribe and destroy views before the viewport/app teardown below
       // destroys the same Pixi objects out from under it.
       inputSystem?.dispose();

@@ -3,11 +3,7 @@ import { describe, expect, it } from 'vitest';
 
 import type { MapTileset, ParsedMap, TerrainType } from '~/game/map/load-tiled-map';
 import { FLIPPED_DIAGONALLY_FLAG, FLIPPED_HORIZONTALLY_FLAG } from '~/game/map/tile-gid';
-import {
-  createPrimitiveTerrainTextures,
-  MapRenderSystem,
-  TileTextureCache,
-} from './map-render-system';
+import { MapRenderSystem, TileTextureCache } from './map-render-system';
 
 const TERRAIN_URL = 'http://host/maps/terrain.png';
 
@@ -188,50 +184,6 @@ describe('MapRenderSystem', () => {
     // Entirely off the map.
     system.cull({ x: 10000, y: 10000, width: 100, height: 100 });
     expect(system.visibleChunkCount).toBe(0);
-  });
-
-  it('switches to primitive terrain-type rectangles and back, keeping the culled view', () => {
-    const terrain: TerrainType[][] = [
-      ['grass', 'wall'],
-      ['water', 'grass'],
-    ];
-    const map = makeMap({ width: 2, height: 2, terrain, tileLayers: [{ name: 'g', data: [1, 0, 0, 0], opacity: 1 }] });
-    const primitiveTextures = createPrimitiveTerrainTextures(new TextureSource({ width: 96, height: 32 }));
-    const system = new MapRenderSystem({
-      map,
-      tileTextures: new TileTextureCache(map.tilesets, terrainSources()),
-      primitiveTextures,
-    });
-    system.cull({ x: 1000, y: 1000, width: 10, height: 10 });
-
-    expect(sprites(system)).toHaveLength(1);
-
-    system.setPrimitives(true);
-    expect(system.primitivesEnabled).toBe(true);
-    const primitives = sprites(system);
-    expect(primitives.map((sprite) => sprite.texture)).toEqual([
-      primitiveTextures.grass,
-      primitiveTextures.wall,
-      primitiveTextures.water,
-      primitiveTextures.grass,
-    ]);
-    expect(primitives[1].texture.frame).toMatchObject({ x: 32, y: 0, width: 32, height: 32 });
-    // The rebuilt chunks inherit the last cull rather than all showing.
-    expect(system.visibleChunkCount).toBe(0);
-
-    system.setPrimitives(false);
-    expect(sprites(system)).toHaveLength(1);
-  });
-
-  it('can start in primitive mode', () => {
-    const map = makeMap({ width: 1, height: 1 });
-    const system = new MapRenderSystem({
-      map,
-      tileTextures: new TileTextureCache(map.tilesets, terrainSources()),
-      primitiveTextures: createPrimitiveTerrainTextures(new TextureSource({ width: 96, height: 32 })),
-      primitives: true,
-    });
-    expect(sprites(system)).toHaveLength(1);
   });
 
   it('destroys every chunk on dispose, leaving no orphaned Pixi objects', () => {

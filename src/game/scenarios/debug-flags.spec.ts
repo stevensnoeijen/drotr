@@ -29,10 +29,6 @@ describe('parseDebugFlags', () => {
     expect(parseDebugFlags('')).toEqual(new Set());
   });
 
-  it('parses the primitives flag', () => {
-    expect(parseDebugFlags('primitives')).toEqual(new Set(['primitives']));
-  });
-
   it('parses the paths flag', () => {
     expect(parseDebugFlags('paths')).toEqual(new Set(['paths']));
   });
