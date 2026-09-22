@@ -16,11 +16,13 @@ import {
 /**
  * Tests against the **committed** `public/maps/terrain.tsx`/`terrain.png`
  * themselves, rather than a fresh build. These need no `.cd/` data, so they
- * always run (CI included) and catch a stale committed file — one that no
- * longer matches what `buildTerrainTilesetXml`/`buildTerrainTilesetImage`
- * would produce today. The stronger check that the committed `terrain.png`
- * still matches a fresh build off the real `BATTLE.ART` lives in the golden
- * suite (`terrain-tileset-golden.spec.ts`), which skips without `.cd/`.
+ * always run (CI included). The `.tsx` is compared in full against
+ * `buildTerrainTilesetXml`. The `.png` only gets spot checks: its size, a
+ * handful of tiles against recorded hashes, and which slots are filled or
+ * transparent. So a `.png` that has drifted elsewhere can still pass here.
+ * The full pixel comparison against a fresh build off the real `BATTLE.ART`
+ * lives in the golden suite (`terrain-tileset-golden.spec.ts`), which skips
+ * without `.cd/`.
  */
 
 const MAPS_DIR = path.join(process.cwd(), 'public', 'maps');
