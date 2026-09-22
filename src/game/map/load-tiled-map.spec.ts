@@ -12,6 +12,7 @@ import {
   TiledMapError,
   type TerrainType,
 } from './load-tiled-map';
+import { decodeGid, resolveGid } from './tile-gid';
 
 const FIXTURE_DIR = path.resolve(import.meta.dirname, '../../../public/maps');
 const mapJson = fs.readFileSync(path.join(FIXTURE_DIR, 'test.tmj'), 'utf-8');
@@ -155,9 +156,31 @@ describe('parseTiledMap tile layers', () => {
     ]);
   });
 
-  it('includes the fixture map’s own visible terrain layer', () => {
+  it('draws the fixture map from its ground layer, keeping the terrain layer for gameplay only', () => {
+    const terrainXml = fs.readFileSync(path.join(FIXTURE_DIR, 'terrain.tsx'), 'utf-8');
+    const reference = fixtureMap.tilesets.find((tileset) => tileset.source === 'terrain.tsx')!;
+    const terrainTileset = parseTilesetDescription(terrainXml, reference.firstgid, 'http://h/maps/terrain.tsx');
+
+    const result = parseTiledMap(fixtureMap, fixtureTerrainByGid, [terrainTileset]);
+
+    expect(result.tileLayers.map((layer) => layer.name)).toEqual(['ground']);
+    // Every ground cell names a real tile in the decoded terrain tileset.
+    const unresolved = result.tileLayers[0].data.filter(
+      (gid) => resolveGid(decodeGid(gid).gid, [terrainTileset]) === undefined
+    );
+    expect(unresolved).toEqual([]);
+  });
+
+  it('draws the fixture’s ground art to match its terrain types, cell for cell', () => {
     const result = parseTiledMap(fixtureMap, fixtureTerrainByGid);
-    expect(result.tileLayers.map((layer) => layer.name)).toContain('terrain');
+    const [ground] = result.tileLayers;
+    // Grass, wall and water art picked from the terrain tileset (tile ids
+    // 1072, 210 and 398), at the map's firstgid of 4.
+    const artByType: Record<TerrainType, number> = { grass: 1076, wall: 214, water: 402 };
+    const mismatches = result.terrain
+      .flatMap((row, y) => row.map((type, x) => ({ x, y, type })))
+      .filter(({ x, y, type }) => ground.data[y * result.width + x] !== artByType[type]);
+    expect(mismatches).toEqual([]);
   });
 
   it('rejects a visible tile layer whose size does not match the map', () => {
