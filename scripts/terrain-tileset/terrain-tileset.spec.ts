@@ -2,9 +2,9 @@ import { describe, expect, it } from 'vitest';
 
 import { buildPcx, greyscalePalette } from '~/test/pcx-fixture';
 
-import { decodePcx, type PcxImage } from './pcx';
-import { extractTileRgba, tileRect, ATLAS_TILE_SIZE } from './atlas';
-import { TEAL_COLOR_KEY } from './rgba';
+import { decodePcx, type PcxImage } from '~/lib/art/pcx';
+import { extractTileRgba, tileRect, ATLAS_TILE_SIZE } from '~/lib/art/atlas';
+import { TEAL_COLOR_KEY } from '~/lib/art/rgba';
 import {
   atlasIndexToTileId,
   buildTerrainTilesetImage,

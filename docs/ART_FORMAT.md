@@ -160,8 +160,8 @@ nothing.
 
 ## Terrain tileset export
 
-`src/lib/art/terrain-tileset.ts` builds a Tiled tileset named `terrain`
-out of the decoded atlas: only the map-art tiles (terrain, walls,
+`scripts/terrain-tileset/terrain-tileset.ts` builds a Tiled tileset named
+`terrain` out of the decoded atlas: only the map-art tiles (terrain, walls,
 buildings, the drawbridge and rubble) — no unit sprites, no UI. It's meant
 to be referenced by a `.MAP` converter with tile indices unchanged, and to
 open cleanly in the Tiled editor.

@@ -6,8 +6,8 @@ import { describe, expect, it } from 'vitest';
 
 import { hasCdFile, readCdFile, cdPath } from '~/test/cd-assets';
 
-import { decodePcx } from './pcx';
-import { extractTileRgba } from './atlas';
+import { decodePcx } from '~/lib/art/pcx';
+import { extractTileRgba } from '~/lib/art/atlas';
 import {
   atlasIndexToTileId,
   buildTerrainTilesetImage,

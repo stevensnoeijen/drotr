@@ -1,6 +1,10 @@
-import type { PcxImage } from './pcx';
-import { extractTileRgba, tileRect, ATLAS_TILE_SIZE } from './atlas';
-import type { RgbaPixels } from './rgba';
+import type { PcxImage } from '../../src/lib/art/pcx';
+import {
+  extractTileRgba,
+  tileRect,
+  ATLAS_TILE_SIZE,
+} from '../../src/lib/art/atlas';
+import type { RgbaPixels } from '../../src/lib/art/rgba';
 
 /**
  * Builds the `terrain` Tiled tileset out of `ART/BATTLE.ART`'s decoded

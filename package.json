@@ -8,11 +8,11 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "lint": "eslint src",
+    "lint": "eslint src scripts/terrain-tileset",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test-coverage": "vitest run --coverage",
-    "export:terrain-tileset": "jiti scripts/export-terrain-tileset.ts"
+    "export:terrain-tileset": "jiti scripts/terrain-tileset/export-terrain-tileset.ts"
   },
   "dependencies": {
     "lodash": "^4.17.21",

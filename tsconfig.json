@@ -17,5 +17,11 @@
       "~/*": ["./src/*"]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.d.ts", "vite.config.ts"]
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.d.ts",
+    "scripts/terrain-tileset/**/*.ts",
+    "vite.config.ts"
+  ]
 }
