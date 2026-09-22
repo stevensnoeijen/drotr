@@ -1,5 +1,5 @@
 ---
-name: ticket-refinement
+name: refine-ticket
 description: "Refine a GitHub issue (ticket) in stevensnoeijen/drotr before implementation: fetch it, research the codebase for what it actually requires, then question the user to build an approved, adjustable implementation plan instead of guessing — and write that plan into the issue description. Triggers on: refine issue, refine ticket, flesh out issue #N, scope issue #N, plan issue #N, ticket refinement."
 license: MIT
 ---
