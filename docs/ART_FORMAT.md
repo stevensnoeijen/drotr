@@ -199,6 +199,71 @@ tileset's 40 px tiles fill the test map's 32 px cells. Tiles are drawn in
 16×16-tile chunks, and only chunks inside the camera's view are rendered.
 `?debug=primitives` swaps the art for flat-colour terrain-type rectangles.
 
+### Tile walkability: the `blocked` property
+
+Every tile a unit can't stand on carries one custom property,
+`blocked` (bool, `true`); walkable tiles carry no property at all, since
+Tiled reads a missing bool as `false`. It's written by the exporter from
+`scripts/terrain-tileset/tile-categories.ts`, never by hand.
+
+**Name.** `blocked` marks the exception rather than the rule, the way
+Tiled maps are conventionally annotated for collision — Phaser's
+`setCollisionByProperty({ collides: true })` is the best-known instance,
+and `collides` is the most common name for the same meaning. `blocked`
+says what it means for a unit without implying physics.
+
+**Classification.** `tile-categories.ts` holds a grid laid out exactly
+like the tileset image — one string per tileset row, one character per
+tile — mapping each tile to what it depicts:
+
+| code | category | walkable | what |
+|---|---|---|---|
+| `g` | ground | yes | grass, gravel, stone, dirt, paths, cobbled paving |
+| `G` | gate | yes | a wooden gate in a wall, open or closed |
+| `b` | bridge | yes | an intact bridge deck; the whole drawbridge |
+| `k` | rock | yes | boulders, rock piles, cliffs, cave mouths, rocky props |
+| `w` | wall | no | stone walls and wall faces, intact |
+| `~` | water | no | rivers, lakes, ponds, moats, rocks standing in water |
+| `r` | rubble | no | damaged or destroyed walls, towers, gates and paving |
+| `x` | broken-bridge | no | a bridge deck with holes smashed through it |
+| `R` | roof | no | tiled and wooden roofs, including tower tops |
+| `t` | tree | no | trees and forest |
+| `.` | filler | no | unused tileset slots, and four solid-black void tiles |
+
+A tile showing several things (a wall strip over grass, a shoreline) gets
+the category of whatever isn't ground. The grid was built by rendering
+contact sheets of the tileset and classifying each tile by eye, then
+checking every tile the counties use against their own impassable mask
+(below). Where the two disagreed on a non-rock tile the art was
+re-examined; the only remaining disagreement is tile 735, plain gravel
+that the counties block on half its subcells.
+
+**Against the original per-cell mask.** The original game doesn't decide
+passability per tile: each county `.MAP` carries its own impassable mask
+at 2×2 subcells per tile (Section B `hi` bit 2, see
+[`MAP_FORMAT.md`](./MAP_FORMAT.md)). A per-tile flag can't reproduce a
+tile that's blocked on only some of its subcells, or the same tile
+blocked in one place and open in another. Measured over all 12 counties
+(786,432 subcells; `walkability-golden.spec.ts` pins these numbers):
+
+| tile category | subcells | mask blocked, tile walkable | mask open, tile blocked |
+|---|---|---|---|
+| ground | 601,044 | 3,673 (0.6%) | — |
+| rock | 40,196 | 30,420 (75.7%) | — |
+| tree | 77,492 | — | 6,203 (8.0%) |
+| water | 67,700 | — | 1,975 (2.9%) |
+| **total** | **786,432** | **34,093** | **8,178** (5.4% overall) |
+
+Rock accounts for 72% of the disagreement: the category rule makes rocks
+and cliffs walkable, but the original maps block about three quarters of
+their subcells. Excluding rock, the per-tile flag disagrees with the mask
+on 0.9–2.4% of each county's subcells — the edges of trees, shorelines
+and ridges, where a tile is blocked on only part of its area. Wall, roof
+and rubble tiles don't occur in the county ground layers at all (the
+counties' buildings aren't stamped in yet), so this doesn't test them;
+`BUILDING.MAP`'s block 0 does use them, but its Section B isn't a
+reliable unit mask (it marks even water open).
+
 To (re)generate the committed `public/maps/terrain.tsx` and `terrain.png`,
 run `npm run export:terrain-tileset` with `.cd/` present. Generation is
 deterministic: pngjs encodes with defaults that emit no timestamp chunk, so

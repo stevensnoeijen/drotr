@@ -5,6 +5,7 @@ import {
   ATLAS_TILE_SIZE,
 } from '../../src/lib/art/atlas';
 import type { RgbaPixels } from '../../src/lib/art/rgba';
+import { isWalkableTile } from './tile-categories';
 
 /**
  * Builds the `terrain` Tiled tileset out of `ART/BATTLE.ART`'s decoded
@@ -181,11 +182,33 @@ export function buildTerrainTilesetImage(image: PcxImage): TerrainTilesetImage {
   return { width: TERRAIN_TILESET_WIDTH, height: TERRAIN_TILESET_HEIGHT, rgba };
 }
 
-/** Builds the `terrain.tsx` Tiled tileset XML, referencing `terrain.png`. */
+/**
+ * Name of the boolean custom property set to `true` on every tile that
+ * blocks movement. It's left off walkable tiles entirely rather than set to
+ * `false`: Tiled reads a missing bool property as `false` anyway, so the
+ * tileset only has to mark the exceptions.
+ */
+export const BLOCKED_PROPERTY = 'blocked';
+
+/**
+ * Builds the `terrain.tsx` Tiled tileset XML, referencing `terrain.png`,
+ * with {@link BLOCKED_PROPERTY} set on every tile a unit can't stand on
+ * (see `tile-categories.ts`). Formatted the way the Tiled editor writes it,
+ * so re-saving the tileset in Tiled leaves it unchanged.
+ */
 export function buildTerrainTilesetXml(): string {
+  const tiles: string[] = [];
+  for (let id = 0; id < TERRAIN_TILE_COUNT; id++) {
+    if (!isWalkableTile(id)) {
+      tiles.push(
+        ` <tile id="${id}">\n  <properties>\n   <property name="${BLOCKED_PROPERTY}" type="bool" value="true"/>\n  </properties>\n </tile>\n`
+      );
+    }
+  }
+
   return `<?xml version="1.0" encoding="UTF-8"?>
 <tileset version="1.10" tiledversion="1.11.0" name="terrain" tilewidth="${ATLAS_TILE_SIZE}" tileheight="${ATLAS_TILE_SIZE}" tilecount="${TERRAIN_TILE_COUNT}" columns="${TERRAIN_TILESET_COLUMNS}">
  <image source="terrain.png" width="${TERRAIN_TILESET_WIDTH}" height="${TERRAIN_TILESET_HEIGHT}"/>
-</tileset>
+${tiles.join('')}</tileset>
 `;
 }
