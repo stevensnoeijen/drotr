@@ -1,13 +1,9 @@
 # Raw
 
-Files in the raw directory are being packed in combined files to (the `public/assets/` folder) improve loading times in the client.
-
-The directories are setup per category.
-
-## Sounds
-
-Sounds are packed with gulp's `pack-sounds` task, triggered by `npm run pack` or run seperately `npx gulp pack-sounds`.
-
-## Sprites
-
-Sprites are packed with gulp's `pack-sprites` task, triggered by `npm run pack` or run seperately `npx gulp pack-sprites`.
+**Status: temporary, being phased out.** This directory used to be packed
+into `public/assets` by a `gulp` pipeline (`pack-sounds`/`pack-sprites`
+tasks); that pipeline was removed and is not being restored. The plan is to
+generate assets/tiles/sprites directly from the original game data in
+`.cd/` instead — see [docs/ASSETS.md](../docs/ASSETS.md). Files here are
+kept only as a reference during that transition and will be removed
+incrementally as the `.cd`-based generation replaces each part of it.

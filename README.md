@@ -55,13 +55,16 @@ Current scenario are:
 
 # Pack
 
-Assets (sprites and sounds) are packaged together to be more efficient.
+This section describes a `gulp`-based pipeline that packed `raw/` into
+`public/assets` (`npm run pack`, `gulpfile.js`, `TINIFY_KEY`/TinyPNG). That
+pipeline no longer exists in this repo — it was removed by the Vite
+toolchain migration and never replaced, and there is no `pack` script or
+`gulpfile.js` today.
 
-Packing happens with all files in `raw/` to `/public/assets` by calling `npm run pack`.
-Requirement to run this script is to copy `template.gulp.env` to `.gulp.env` and fill in the var `TINIFY_KEY`, get a key thought https://tinypng.com/developers .
-
-Packing is done though gulp's `pack` task, see [gulpfile.js](./gulpfile.js).
-
-You can also call other gulp tasks seperately if you want with `npx gulp <task>`.
-
-Fully manually packing see [raw/README.md](raw/README.md)
+Going forward, assets/tiles/sprites are meant to be generated directly from
+the original game data in `.cd/` rather than from `raw/`. `raw/sprites/units`
+is kept for now only as a reference while that `.cd`-based pipeline is
+built, and is expected to shrink/disappear once it does. See
+[docs/ASSETS.md](docs/ASSETS.md) for the current audit and plan, and
+[raw/README.md](raw/README.md) for the status of the old `raw/`-based
+pipeline.
