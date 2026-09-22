@@ -86,6 +86,31 @@ The subagent starts with no context, so the prompt must be self-contained:
   the user's explicit go-ahead first, even though the rest of the ticket is
   delegated. It should report back with the finished, locally-committed
   work and wait.
+- Tell it that its last step, after the implementation is otherwise
+  finished and the check suite is green but **before it reports back as
+  done** (i.e. before any PR gets created from this work — that's the
+  whole point of doing it last), is the ticket-id-reference check below.
+
+### Last step before the PR: check for references to this ticket
+
+Per CLAUDE.md, code may reference a *future* ticket id (`#<this ticket's
+number>`) as a marker for work this ticket now completes. Bake this into
+the subagent's instructions as its final action:
+
+- Grep the codebase for `#<issue-number>` (e.g. `grep -rn '#<number>\b'
+  src/`).
+- For each hit, decide:
+  - The ticket is now fully implemented at that spot — remove the
+    reference (and, per CLAUDE.md, don't replace it with a new ticket-id
+    citation — rewrite the rationale in prose if it's still needed).
+  - The hit reveals scope the ticket didn't cover — do **not** silently
+    implement or silently leave it. Ask the person in charge: surface it in
+    its final report, quoting the comment and pointing out where the
+    ticket's description doesn't cover it, rather than guessing which way
+    to resolve it.
+- Only once this check is done (references resolved or flagged) does the
+  subagent report back as finished — this is what "done" means before a PR
+  is created from this work.
 
 ## 6. Report back
 
@@ -96,7 +121,10 @@ resumed via `SendMessage` if the user wants to check progress later).
 ## 7. Push and open the PR only after approval
 
 When the subagent reports back with the implementation done and checks
-green, do not push or open the PR yourself either. Show the user a summary
+green, confirm its report covered the ticket-id-reference check from step 5
+(references removed, or flagged questions surfaced) — if it didn't, send it
+back to do that before proceeding. Do not push or open the PR yourself
+either. Show the user a summary
 of what it did and explicitly ask for approval to push the branch and open
 the PR. Only run `git push`/`gh pr create` (or resume the subagent to do so)
 after they confirm.

@@ -30,6 +30,15 @@ Guidance for Claude Code (and contributors) working in this repository.
   has the drotr GitHub Project's `Model` and `Effort` custom fields set to
   reflect the ticket's current scope. This is the model/effort a subagent
   picking up the ticket should use.
+- Don't cite ticket ids (`#NNN`) in code comments, JSDoc, or test/describe/it
+  names as a way to explain rationale — they rot once the issue closes,
+  and `git blame`/`git log` already point back to the ticket that introduced
+  a change. Write the rationale in prose instead.
+  - Exception: a reference to a **future, not-yet-implemented** ticket is
+    fine when it marks a spot that a later piece of work will revisit or
+    extend (e.g. "this handles case A only; case B lands in #88"). Remove
+    that reference once the referenced ticket is implemented — see the
+    "Picking up a ticket" cleanup step below.
 
 ## File naming
 
