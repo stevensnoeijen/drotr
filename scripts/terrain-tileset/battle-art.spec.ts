@@ -4,9 +4,10 @@ import { describe, expect, it } from 'vitest';
 
 import { hasCdFile, readCdFile, cdPath } from '~/test/cd-assets';
 
-import { decodePcx } from './pcx';
-import { toRgba, TEAL_COLOR_KEY } from './rgba';
-import { extractTileRgba, tileCount, tileRect } from './atlas';
+import { decodePcx } from '~/lib/art/pcx';
+import { toRgba, TEAL_COLOR_KEY } from '~/lib/art/rgba';
+import { extractTileRgba, tileCount, tileRect } from '~/lib/art/atlas';
+import { GOLDEN_TILE_HASHES } from './battle-art-golden-hashes';
 
 /**
  * Golden tests against the real `ART/BATTLE.ART`.
@@ -14,20 +15,12 @@ import { extractTileRgba, tileCount, tileRect } from './atlas';
  * The file is original game data and is not committed, so these skip
  * wherever it isn't present (CI included) — the format-level behaviour they
  * back up is covered unconditionally by the synthetic-fixture specs
- * alongside them. The expected hashes are recorded here rather than any
- * pixels, so nothing in this file reproduces the original artwork.
+ * alongside them. The expected hashes are recorded in
+ * `battle-art-golden-hashes.ts` rather than any pixels, so nothing here
+ * reproduces the original artwork.
  */
 const BATTLE_ART = 'ART/BATTLE.ART';
 const available = hasCdFile(BATTLE_ART);
-
-/** SHA-256 of each tile's decoded RGBA bytes, colour key resolved to alpha. */
-const GOLDEN_TILE_HASHES: Record<number, string> = {
-  0: 'c0c3eec3711770ced9bdb0bc3353c1145727831bfecbdc19f85df37b4b43fdee',
-  1382: 'c7545eb0809edc9390b0d9fa372676df12eacc2ee3ede38c18ddd852a753045e',
-  1459: '1481756c76a07bcc5d208ac184fd9f8d83a7cf1234f5211e3983c5a09853839e',
-  1460: '4030077ea993049825434b93c1d4f2e180ba75b067e75e5a958b84620703eb04',
-  1471: 'dbc678f21b70d7fee5474638a2700740e586b8e1f8b8239e1928d5a2b07be804',
-};
 
 function sha256(bytes: ArrayLike<number>): string {
   return createHash('sha256').update(Uint8Array.from(bytes)).digest('hex');

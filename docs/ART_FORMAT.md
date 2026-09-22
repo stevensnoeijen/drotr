@@ -148,8 +148,8 @@ Accordingly the decoder's tests come in two layers:
   PCX buffers in memory and cover the format-level behaviour — header
   parsing, RLE expansion, scanline padding, palette handling, colour
   keying, tile geometry and every rejection path. These always run.
-- **Golden tests** (`src/lib/art/battle-art.spec.ts`) pin the real
-  `BATTLE.ART` decode to recorded SHA-256 hashes of its pixels. They record
+- **Golden tests** (`scripts/terrain-tileset/battle-art.spec.ts`) pin the
+  real `BATTLE.ART` decode to recorded SHA-256 hashes of its pixels. They record
   only hashes, never pixel data, so nothing reproduces the original
   artwork; they skip themselves wherever `.cd/` is absent, CI included.
 
@@ -157,3 +157,38 @@ Accordingly the decoder's tests come in two layers:
 Vite config serves it under `/cd/`, so the `?case=atlas` viewer can fetch
 and decode the real files in the browser; a production build serves
 nothing.
+
+## Terrain tileset export
+
+`scripts/terrain-tileset/terrain-tileset.ts` builds a Tiled tileset named
+`terrain` out of the decoded atlas: only the map-art tiles (terrain, walls,
+buildings, the drawbridge and rubble) — no unit sprites, no UI. It's meant
+to be referenced by a `.MAP` converter with tile indices unchanged, and to
+open cleanly in the Tiled editor.
+
+- **Included range.** Atlas tiles **0–1471** (rows 0–91) verbatim, `id =
+  index` — these are all map art (see "Composition" above).
+- **Extras.** Two small exceptions live further down the sheet, among the
+  UI rows, and are appended after row 91 at their original columns so
+  multi-tile pieces stay stampable as a block:
+  - **Drawbridge** (24 tiles): atlas rows 98–101, columns 10–15 → indices
+    1578–1583, 1594–1599, 1610–1615, 1626–1631.
+  - **Rubble** (5 tiles, for damaged/destroyed walls later): atlas row
+    102, columns 10–14 → indices 1642–1646.
+  - Both map to a tileset id via one constant offset,
+    `EXTRA_TILE_ID_OFFSET = 96` (e.g. atlas 1578 → id 1482).
+- **Filler ids.** The tileset is 640×3880 px, 97 rows × 16 columns, 1552
+  tile slots. Rows 92–96 hold the extras at their original columns and are
+  otherwise unused padding — ids 1472–1481, 1488–1497, 1504–1513,
+  1520–1529, 1536–1545 and 1551 are never referenced and stay fully
+  transparent.
+- **gid.** The `.tsx` is always referenced with `firstgid = 1`, so
+  `gid = id + 1`. Index 0 is a real ground tile (see above), not a "no
+  tile" sentinel, so it becomes gid 1 like every other tile — gid 0 is
+  never emitted for a real cell.
+
+To (re)generate the committed `public/maps/terrain.tsx` and `terrain.png`,
+run `npm run export:terrain-tileset` with `.cd/` present. Generation is
+deterministic: pngjs encodes with defaults that emit no timestamp chunk, so
+re-running the script against the same `BATTLE.ART` on the pinned Node
+version (`.nvmrc`) reproduces both files byte-for-byte.

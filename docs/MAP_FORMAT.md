@@ -339,6 +339,16 @@ interpretation** — block 0's `lo` fields are prefab tile data (usable once
 cluster boundaries are extracted), blocks 1/2 are flags whose association
 to individual buildings still needs work.
 
+**Block 0's Section B `lo` also holds tile data**, on top of Section A's —
+another way `BUILDING.MAP` breaks the county-file invariants. Measured
+directly: 7,707 of its 65,536 cells are non-zero, referencing **554**
+distinct tile indices (max **1451**), every one within the 0–1471 map-art
+range the terrain tileset covers. What it renders as — a second, finer
+layer over the same building compounds, alternate prefab variants, or
+something else — is not yet resolved; that's follow-up work for whoever
+extracts the block 0 prefab boundaries, not this document's terrain
+tileset export.
+
 ## Open questions for later
 
 - The individual building clusters in `BUILDING.MAP` block 0 need their

@@ -8,10 +8,11 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "lint": "eslint src",
+    "lint": "eslint src scripts",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "test-coverage": "vitest run --coverage"
+    "test-coverage": "vitest run --coverage",
+    "export:terrain-tileset": "jiti scripts/terrain-tileset/main.ts"
   },
   "dependencies": {
     "lodash": "^4.17.21",
@@ -28,6 +29,7 @@
     "@tailwindcss/vite": "^4.3.3",
     "@types/lodash": "^4.14.184",
     "@types/node": "^24.13.4",
+    "@types/pngjs": "^6.0.5",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react-swc": "^4.3.3",
@@ -37,6 +39,7 @@
     "eslint-plugin-react-hooks": "^7.1.1",
     "jiti": "^2.7.0",
     "jsdom": "^30.0.1",
+    "pngjs": "^7.0.0",
     "prettier": "^3.9.6",
     "tailwindcss": "^4.3.3",
     "tiled-types": "^1.3.0",

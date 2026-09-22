@@ -78,16 +78,18 @@ repo today. `README.md`'s "Pack" section is stale, and in any case
 described a `raw/`-based pipeline that the new `.cd`-based approach is
 meant to supersede rather than restore.
 
-Two remaining scripts operate only on the already-packed spritesheet, not
+One remaining script operates only on the already-packed spritesheet, not
 on `.cd` or `raw/`:
 
-- `scripts/generate-animation-models.ts` — generates
-  `public/assets/animation-models.json` from the game's unit/state/direction
-  type lists (`src/game/types`); it doesn't read image data at all.
 - `scripts/add-animations-to-unit-spritesheet.ts` — post-processes an
   already-generated `public/assets/unit-spritesheet.json` to group numbered
   frame keys into named animations; it assumes the spritesheet JSON already
   exists and doesn't touch `raw/` or `.cd/`.
+
+(`scripts/generate-animation-models.ts`, which generated
+`public/assets/animation-models.json` from the old stack's
+`src/game/types`, was removed once those types no longer existed; nothing
+in `src` reads that JSON.)
 
 So a future contributor with access to the original `.cd` data who needs to
 regenerate `public/assets/unit-spritesheet.png` should build a new
