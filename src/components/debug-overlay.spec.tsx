@@ -61,7 +61,7 @@ describe('DebugOverlay', () => {
       container.querySelectorAll<HTMLInputElement>('input[type="checkbox"]')
     );
     expect(checkboxes.map((c) => c.parentElement?.textContent?.trim())).toEqual(
-      ['grid', 'health', 'unit-info', 'targets', 'paths']
+      ['grid', 'health', 'unit-info', 'targets', 'paths', 'primitives']
     );
     const gridCheckbox = checkboxes.find(
       (c) => c.parentElement?.textContent?.trim() === 'grid'

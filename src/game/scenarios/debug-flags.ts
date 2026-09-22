@@ -1,5 +1,9 @@
-/** Debug overlays a scenario can be loaded with, via `?debug=grid,health,unit-info`. */
-export type DebugFlag = 'grid' | 'health' | 'unit-info' | 'targets' | 'paths';
+/**
+ * Debug overlays a scenario can be loaded with, via `?debug=grid,health,unit-info`.
+ * `primitives` swaps the map's tile art for flat-colour terrain-type
+ * rectangles, to see the terrain the simulation actually uses.
+ */
+export type DebugFlag = 'grid' | 'health' | 'unit-info' | 'targets' | 'paths' | 'primitives';
 
 /** Every known debug flag, in the order they're offered in the UI. */
 export const ALL_DEBUG_FLAGS: readonly DebugFlag[] = [
@@ -8,6 +12,7 @@ export const ALL_DEBUG_FLAGS: readonly DebugFlag[] = [
   'unit-info',
   'targets',
   'paths',
+  'primitives',
 ];
 
 const VALID_DEBUG_FLAGS: ReadonlySet<string> = new Set(ALL_DEBUG_FLAGS);
