@@ -223,12 +223,12 @@ tile — mapping each tile to what it depicts:
 | `g` | ground | yes | grass, gravel, stone, dirt, paths, cobbled paving |
 | `o` | open-gate | yes | a gateway with its wooden doors swung open |
 | `G` | closed-gate | no | a gateway with its wooden doors shut |
-| `b` | bridge | yes | an intact bridge deck; the whole drawbridge |
+| `b` | bridge | yes | an intact bridge deck; the intact drawbridge (ids 1482–1487, 1498–1503) |
 | `k` | rock | no | boulders, rock piles, cliffs, cave mouths, rocky props |
 | `w` | wall | no | stone walls and wall faces, intact |
 | `~` | water | no | rivers, lakes, ponds, moats, rocks standing in water |
 | `r` | rubble | no | damaged or destroyed walls, towers, gates and paving |
-| `x` | broken-bridge | no | a bridge deck with holes smashed through it |
+| `x` | broken-bridge | no | a bridge deck with holes smashed through it; the broken drawbridge (ids 1514–1519, 1530–1535) |
 | `R` | roof | no | tiled and wooden roofs, including tower tops |
 | `t` | tree | no | trees and forest |
 | `.` | filler | no | unused tileset slots, and four solid-black void tiles |

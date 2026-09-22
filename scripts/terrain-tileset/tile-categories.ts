@@ -167,11 +167,12 @@ export const TILE_CATEGORY_ROWS: readonly string[] = [
   'ggggggRRrrrrg~~~',
   'ooooooggggggg~~~',
   'ggggggggggggg~~~',
-  // 92-95: unused filler; the drawbridge at columns 10-15
+  // 92-95: unused filler; the drawbridge at columns 10-15, intact in rows
+  // 92-93 and broken (darker, splintered planks) in rows 94-95
   '..........bbbbbb',
   '..........bbbbbb',
-  '..........bbbbbb',
-  '..........bbbbbb',
+  '..........xxxxxx',
+  '..........xxxxxx',
   // 96: unused filler; rubble at columns 10-14
   '..........rrrrr.',
 ];

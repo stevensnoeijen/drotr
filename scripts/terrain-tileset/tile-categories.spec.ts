@@ -65,7 +65,9 @@ describe('tileCategory', () => {
     [1445, 'open-gate', 'an open gate'],
     [1360, 'rubble', 'a smashed gate'],
     [1408, 'rubble', 'a smashed gate'],
-    [1482, 'bridge', 'the drawbridge'],
+    [1482, 'bridge', 'the intact drawbridge'],
+    [1514, 'broken-bridge', 'the broken drawbridge'],
+    [1535, 'broken-bridge', 'the broken drawbridge'],
     [1546, 'rubble', 'the rubble extras'],
     [1472, 'filler', 'an unused slot'],
   ];
@@ -95,10 +97,12 @@ describe('isWalkableTile', () => {
     }
   });
 
-  it('marks every drawbridge tile walkable', () => {
+  it('keeps the intact drawbridge walkable and blocks its broken rows', () => {
     for (let row = 92; row <= 95; row++) {
       for (let column = 10; column <= 15; column++) {
-        expect(isWalkableTile(row * TERRAIN_TILESET_COLUMNS + column)).toBe(true);
+        const id = row * TERRAIN_TILESET_COLUMNS + column;
+        expect(tileCategory(id)).toBe(row <= 93 ? 'bridge' : 'broken-bridge');
+        expect(isWalkableTile(id)).toBe(row <= 93);
       }
     }
   });
