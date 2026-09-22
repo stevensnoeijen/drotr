@@ -20,6 +20,8 @@ function mapWithWallColumn(width: number, height: number, wallCol: number): Pars
     terrain: [],
     collision,
     spawns: [],
+    tilesets: [],
+    tileLayers: [],
   };
 }
 
