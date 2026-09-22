@@ -9,14 +9,16 @@ import type { Scenario } from './types';
  * and start trading blows on the spot, the other placed five tiles apart so
  * they have to close the distance under `SeekSystem` first, then stop at
  * range and fight. Either way the health bars drain a swing at a time, one
- * `attackCooldown` apart. Prefixed `test`: it exists to test the engine, not
- * to demonstrate a real gameplay setup.
+ * `attackCooldown` apart. Also a blue-knight-vs-red-swordsman duel, one cell
+ * apart so they fight immediately, showing off the knight's damage and
+ * health lopsidedness against infantry. Prefixed `test`: it exists to test
+ * the engine, not to demonstrate a real gameplay setup.
  */
 export const testScenario: Scenario = {
   id: 'test',
   title: 'Test',
   description:
-    'Two swordsmen pairs: one within attack range fighting, one five tiles apart not fighting.',
+    'Two swordsmen pairs: one within attack range fighting, one five tiles apart not fighting. Plus a knight-vs-swordsman duel.',
   setup: (world) => {
     const adjacentRow = 2;
     const separatedRow = 9;
@@ -60,6 +62,23 @@ export const testScenario: Scenario = {
       type: 'swordsmen',
       team: 'blue',
       position: cellPosition(45, 50),
+    });
+
+    // Knight-vs-swordsman duel: one cell apart so they're immediately
+    // within attack range and start trading blows on load. Row 12 sits
+    // clear above the maze block (which starts at row 16) and away from
+    // every other spawn above. The knight's damage and health advantage
+    // should read clearly here: it wins with HP to spare while both health
+    // bars drain.
+    spawnUnit(world, {
+      type: 'knight',
+      team: 'blue',
+      position: cellPosition(2, 12),
+    });
+    spawnUnit(world, {
+      type: 'swordsmen',
+      team: 'red',
+      position: cellPosition(3, 12),
     });
 
     // Knight, swordsman and crossbowsoldier, each on its own row, ordered
