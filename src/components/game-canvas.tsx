@@ -217,7 +217,7 @@ export default function GameCanvas({
     let deathCleanupSystem: DeathCleanupSystem | undefined;
     let removePointerMoveListener: (() => void) | undefined;
 
-    // No systems yet (#78 is the contract only); the runner is empty but the
+    // No systems yet; the runner is empty but the
     // loop still advances the tick count so the debug overlay can show it.
     const runner = new SystemRunner();
     const loop = new GameLoop({ update: (dt) => runner.run(world, dt) });
@@ -395,15 +395,15 @@ export default function GameCanvas({
       // integrates the velocity seek just set, both within the same fixed
       // step so a freshly (re)targeted unit starts moving immediately. The
       // navigation grid is what lets it route a target around a wall instead
-      // of walking into it (#195) — the same collision data the player's own
+      // of walking into it — the same collision data the player's own
       // move orders are routed with; without one it stays straight-line only.
       // The occupancy grid goes in too: seeking walks a unit to a *cell* it
-      // can attack from (#201), and which cells are free to stand in is
+      // can attack from, and which cells are free to stand in is
       // decided by the same claims that keep two move orders from putting two
       // units in one cell.
       runner.add(createSeekSystem(queries, navigationGrid, occupancyGrid));
       // Runs after SeekSystem, which is also what makes a routed pursuit
-      // (#195) move within the tick it was planned: SeekSystem sets the
+      // move within the tick it was planned: SeekSystem sets the
       // MovePath, and these two pick it up immediately below. MovePathSystem
       // goes first of the two so a route's next waypoint is steered toward in
       // the same tick it's handed over, rather than costing an idle frame per
@@ -412,7 +412,7 @@ export default function GameCanvas({
       // than fighting it for the velocity (see `hasPlayerMoveOrder`).
       //
       // PendingMoveOrderSystem runs first of all of these: a move order
-      // issued while a unit was mid-transition between two cells (#178) was
+      // issued while a unit was mid-transition between two cells was
       // staged rather than applied immediately, and this is where it's
       // finally handed to the unit, once MoveTarget confirms the unit is no
       // longer mid-step — early enough that, for a routed order, MovePathSystem

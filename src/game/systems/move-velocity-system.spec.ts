@@ -38,7 +38,7 @@ describe('createMoveVelocitySystem', () => {
     expect(entity.transform.rotation).toBeCloseTo(Math.PI / 2);
   });
 
-  it('quantizes facing to the nearest of the 8 compass directions (#178)', () => {
+  it('quantizes facing to the nearest of the 8 compass directions', () => {
     const world = new World<Entity>();
     const queries = createQueries(world);
     const system = createMoveVelocitySystem(queries);

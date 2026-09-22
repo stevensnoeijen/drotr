@@ -1,7 +1,7 @@
 import type { Team } from '~/game/ecs/components/team';
 
 /**
- * Marks an entity as a fired, travelling projectile (#97) — a crossbow bolt
+ * Marks an entity as a fired, travelling projectile — a crossbow bolt
  * in flight. Always paired with `Transform` (current position), `Velocity`
  * (fixed at fire time — see `fireProjectile`) and `Damage` (how hard it hits
  * on impact), which is what

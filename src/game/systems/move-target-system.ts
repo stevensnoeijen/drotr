@@ -32,8 +32,8 @@ export const ARRIVAL_TOLERANCE = 1;
  * overshoot guard — so arrival is exact rather than eventually corrected.
  *
  * Deliberately straight-line only: no obstacle avoidance, no waypoints.
- * That's #88's job once A* lands; this system's shape (a queue of one
- * point) is intentionally the shape #88 will extend to a path.
+ * That's a job for once A* lands; this system's shape (a queue of one
+ * point) is intentionally the shape that will extend to a path.
  */
 export function createMoveTargetSystem(queries: Queries): System {
   return (_world: World<Entity>, dt: number) => {
@@ -55,7 +55,7 @@ export function createMoveTargetSystem(queries: Queries): System {
         // ordered to — and since every destination in the game is a cell
         // centre (`moveSelectedTo` snaps the click; `planMovePath` emits
         // centres; `SeekSystem` picks a cell to attack from), "arrived" then
-        // means "near enough the centre" rather than "on it" (#201).
+        // means "near enough the centre" rather than "on it".
         //
         // Safe as a direct write: the gap being closed is at most one world
         // unit toward a point the unit is already that close to, which is

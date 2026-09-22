@@ -35,7 +35,7 @@ const centre = (col: number, row: number) => ({
 });
 
 /**
- * Integration coverage for #158: unit-to-unit collision as cell occupancy,
+ * Integration coverage for unit-to-unit collision as cell occupancy,
  * driven through the same systems `game-canvas.tsx` wires, in the same order
  * — path, target, **occupancy**, velocity — with move orders issued exactly
  * as a right-click issues them.

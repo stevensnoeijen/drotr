@@ -66,7 +66,7 @@ export function createQueries(world: World<Entity>) {
      */
     dead: world.with('health', 'dead'),
     /**
-     * Fired, travelling projectiles (#97) — a `Transform` position moving
+     * Fired, travelling projectiles — a `Transform` position moving
      * under a fixed `Velocity`, dealing `Damage` on impact, tracked by
      * `Projectile`. {@link file://../systems/projectile-system.ts#createProjectileSystem}
      * iterates this to move, hit-test and expire each one.

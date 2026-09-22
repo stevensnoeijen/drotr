@@ -9,13 +9,13 @@ import type { Point } from '~/lib/math/types';
  *
  * Two things route a unit through this one pipeline: a player right-click
  * (see `~/game/systems/input-system`) and `~/game/systems/seek-system`
- * getting an attacker around a wall to its target (#195). Which of the two a
+ * getting an attacker around a wall to its target. Which of the two a
  * given path belongs to is recorded *beside* it, by the presence of a
  * `Pursuit` — see that component for why the distinction matters and why it
  * isn't a flag in here.
  *
  * `waypoints` holds every cell along the route, not just corners: each leg is
- * an atomic single-cell step in one of the 8 allowed directions (#178), which
+ * an atomic single-cell step in one of the 8 allowed directions, which
  * is what lets a reroute issued mid-transition (see `PendingMoveOrder`) take
  * effect after just the current cell rather than after a longer smoothed run.
  * The unit's visible trajectory is unaffected — every cell in an unsmoothed

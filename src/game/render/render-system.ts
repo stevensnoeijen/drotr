@@ -160,7 +160,7 @@ export class RenderSystem {
 
     const shape = new Container();
     shape.addChild(drawRenderable(entity.renderable));
-    // A fired projectile (currently just the crossbow's bolt, #97) is
+    // A fired projectile (currently just the crossbow's bolt) is
     // already drawn as a thin stripe pointing the way it's travelling — a
     // separate facing mark would only clutter the tiny shape.
     if (entity.renderable.shape !== 'stripe') {

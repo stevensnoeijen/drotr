@@ -8,22 +8,22 @@ export interface SelectedUnitStats {
   type?: string;
   team?: string;
   color?: number;
-  /** Whether the hovered unit has died (#197's `dead` component), vs. still alive. */
+  /** Whether the hovered unit has died (the `dead` component), vs. still alive. */
   status?: 'alive' | 'dead';
   damage?: number;
-  /** Seconds between attacks (#95), gating how often `damage` is applied. */
+  /** Seconds between attacks, gating how often `damage` is applied. */
   attackCooldown?: number;
   accuracy?: number;
   defence?: number;
   stamina?: number;
   speed?: number;
   range?: number;
-  /** The unit's current perception target (#94), if any. */
+  /** The unit's current perception target, if any. */
   target?: { id?: number; type?: string };
-  /** Grid cell the unit currently stands in (#158), if it has claimed one. */
+  /** Grid cell the unit currently stands in, if it has claimed one. */
   cell?: { x: number; y: number };
   /**
-   * Grid cell the unit is walking into (#158), if it's currently straddling
+   * Grid cell the unit is walking into, if it's currently straddling
    * two cells. Absent when the unit is at rest in {@link cell}.
    */
   movingTo?: { x: number; y: number };

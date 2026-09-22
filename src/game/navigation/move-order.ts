@@ -31,8 +31,8 @@ export type MoveOrderResult =
  * otherwise a routed `'path'` (or `'stop'`, if `destination` is the cell
  * `from` is already in). Shared by `moveSelectedTo` (planning immediately,
  * from the unit's current position) and `PendingMoveOrderSystem` (planning
- * once a staged order's unit is free to receive it, from *that* position) —
- * see #178. Deliberately takes `from` as a parameter rather than reading it
+ * once a staged order's unit is free to receive it, from *that* position).
+ * Deliberately takes `from` as a parameter rather than reading it
  * off an entity itself: planning always has to happen against whatever
  * position is current at plan time, and a caller that plans from a stale
  * position is exactly the bug (see `PendingMoveOrder`) this split guards
@@ -66,7 +66,7 @@ export function planMoveOrder(
  * `moveSelectedTo` (applying an order immediately) and
  * `PendingMoveOrderSystem` (applying a staged order once its unit's
  * in-flight cell-to-cell transition finishes) so the two can never diverge
- * in how a `MoveOrderResult` is actually carried out — see #178.
+ * in how a `MoveOrderResult` is actually carried out.
  *
  * An order that can't be carried out (`'none'`) leaves the entity exactly as
  * it was, standing attack order included: nothing about a refused order
@@ -74,7 +74,7 @@ export function planMoveOrder(
  *
  * Taking effect also gives up any standing *attack* order (see
  * {@link cancelAttackOrder}), which is what "the order only clears when the
- * targeted unit dies or the player issues a new order" (#195) means on this
+ * targeted unit dies or the player issues a new order" means on this
  * side: going somewhere is a new order, so a sticky manual target stops
  * being sticky and any combat route toward it is dropped rather than left to
  * be resumed behind the player's back.

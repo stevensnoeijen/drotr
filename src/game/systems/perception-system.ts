@@ -7,9 +7,9 @@ import { CELL_SIZE } from '~/lib/grid';
 
 /**
  * Seconds between periodic perception scans. An O(n²) linear nearest-enemy
- * scan doesn't need per-frame precision at this unit-count scale — see
- * ticket #94 — so it runs on a timer rather than every fixed step. Swap in a
- * `SpatialHash`-backed scan (#91) once unit counts grow enough for the O(n²)
+ * scan doesn't need per-frame precision at this unit-count scale, so it runs
+ * on a timer rather than every fixed step. Swap in a
+ * `SpatialHash`-backed scan once unit counts grow enough for the O(n²)
  * cost to matter; this system's public shape shouldn't need to change when
  * that happens.
  */

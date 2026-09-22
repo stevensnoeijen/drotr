@@ -9,7 +9,7 @@ import { drawTargetLines } from './target-lines';
 /**
  * A unit's resting position: the centre of cell (`col`, `row`). A line is
  * only drawn for a pair that is *settled*, and standing on the cell centre is
- * part of what that means (#201), so every fixture here has to be placed the
+ * part of what that means, so every fixture here has to be placed the
  * way a real unit comes to rest.
  */
 const centre = (col: number, row = 0) => ({
@@ -102,7 +102,7 @@ describe('drawTargetLines', () => {
     expect(callsA).not.toEqual(callsB);
   });
 
-  it('skips a pair where the origin is still mid-step between two cells (#201)', () => {
+  it('skips a pair where the origin is still mid-step between two cells', () => {
     const graphics = new Graphics();
     const target: Entity = {
       id: 2,
@@ -129,7 +129,7 @@ describe('drawTargetLines', () => {
     expect(drawn).toHaveLength(0);
   });
 
-  it('skips a pair where the origin is at rest but part-way across its cell (#201)', () => {
+  it('skips a pair where the origin is at rest but part-way across its cell', () => {
     const graphics = new Graphics();
     const target: Entity = {
       id: 2,

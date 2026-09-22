@@ -105,7 +105,7 @@ function drawArrowHead(
  * both sides `CombatSystem.isSettled` (see there — at rest, on the centre of
  * the cell they stand in) and, when the origin carries an `attackRange`,
  * within that range in 8-way cell steps. Sharing the predicate rather than
- * approximating it is the point: the overlay is how #201 is checked by eye,
+ * approximating it is the point: the overlay is how this is checked by eye,
  * so a line on screen has to mean "these two can fight right now", not
  * "these two are near each other". Without it the arrow would appear the
  * instant a unit picked a target from clear across the map and keep pointing

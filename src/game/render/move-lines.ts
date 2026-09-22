@@ -26,7 +26,7 @@ const WAYPOINT_RADIUS = 2;
  * the two never overlap — the current leg is already `index - 1`.
  *
  * When the entity also has a `pendingMoveOrder` (a reroute issued
- * mid-transition and staged rather than applied immediately — see #178),
+ * mid-transition and staged rather than applied immediately),
  * `entity.movePath`'s remaining waypoints are stale: they get discarded the
  * instant the pending order actually applies, once the in-flight leg
  * finishes. So instead of appending those, this previews the route the
@@ -88,14 +88,14 @@ function remainingWaypoints(entity: Entity, grid: GridLike | undefined): Point[]
  * terrain to route around) draws exactly what it did before pathfinding: a
  * single segment to its destination.
  *
- * An attacker routing around a wall to reach its target (#195) walks the
+ * An attacker routing around a wall to reach its target walks the
  * same `MovePath`/`MoveTarget` components, so its route is drawn here too,
  * with no special handling — which is exactly how a pursuit that bends the
  * wrong way is meant to be spotted. Pair it with `?debug=targets` to see
  * which enemy the route is aimed at.
  *
  * An entity with a `pendingMoveOrder` (a reroute issued mid-transition and
- * staged rather than applied — see #178) still gets exactly one line, not a
+ * staged rather than applied) still gets exactly one line, not a
  * separate "committed" vs "pending" one: `remainingWaypoints` splices the
  * in-flight leg's exact destination together with a preview of the route
  * the pending order will actually produce, so the in-flight step reads as

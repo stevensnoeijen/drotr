@@ -104,7 +104,7 @@ export function createCellOccupancySystem(queries: Queries, grid: OccupancyGrid)
     // `queries.movable`, not the broader `queries.moving`: this system's
     // whole job is grid-cell collision between navigable units, and
     // `moving` also matches anything else with a `transform` and
-    // `velocity` — a fired `Projectile` (#97), most notably, which has
+    // `velocity` — a fired `Projectile`, most notably, which has
     // neither a `moveSpeed` nor any business being claimed into a unit's
     // occupancy grid. A projectile crossing a cell boundary at its own
     // (much higher) speed would otherwise have its step "refused" here

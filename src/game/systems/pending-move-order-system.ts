@@ -17,7 +17,7 @@ import type { GridLike } from '~/lib/navigation/astar';
  * the route start from the cell the unit really ends up in.
  *
  * Movement is only ever an atomic cell-to-cell step in one of the 8 allowed
- * directions (#178): a new order arriving while `MoveTarget` is still set
+ * directions: a new order arriving while `MoveTarget` is still set
  * must never redirect the unit mid-step, so `moveSelectedTo` stages it here
  * instead of applying it directly. Must run before `MovePathSystem` so a
  * staged multi-leg order's first waypoint is fed into `MoveTarget` within

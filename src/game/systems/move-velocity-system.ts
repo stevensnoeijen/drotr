@@ -29,7 +29,7 @@ import { quantizeAngle } from '~/lib/math/angle';
  * facing it last had rather than snapping back to a default. The facing
  * angle is quantized ({@link quantizeAngle}) to the nearest of the 8
  * compass directions (45° apart) rather than following the raw velocity
- * angle continuously — see #178.
+ * angle continuously.
  */
 export function createMoveVelocitySystem(queries: Queries): System {
   return (_world: World<Entity>, dt: number) => {

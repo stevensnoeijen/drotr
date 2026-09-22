@@ -27,8 +27,8 @@ import {
  *
  * A *target switch* deliberately ignores this throttle: continuing to walk a
  * route toward an enemy the unit is no longer fighting is wrong, not merely
- * stale, so it is replanned on the spot (see #195's "a target switch should
- * replan/cancel any in-flight route").
+ * stale, so it is replanned on the spot: a target switch should
+ * replan/cancel any in-flight route.
  *
  * Only *routed* pursuits are throttled. Picking the cell to attack from is a
  * bounded scan of the cells around the target, not a search, so a unit with a
@@ -100,7 +100,7 @@ function aimAt(entity: Entity, x: number, y: number): void {
  * Freezing in place is what the old system did, and it leaves units dotted
  * around a finished battlefield part-way across their cells — visibly
  * off-grid, and (since `isSettled` gates being attacked as well as attacking)
- * unhittable where they stand until something moves them again (#201).
+ * unhittable where they stand until something moves them again.
  *
  * The move order it issues carries no `Pursuit`, so seeking treats it as a
  * player order and keeps out of the way while `MoveTargetSystem` finishes it.
@@ -166,7 +166,7 @@ function markPursuit(
  * ({@link findAttackCell}) and hands the unit an ordinary move order to that
  * cell's centre — the same `MoveTarget`/`MovePath` pipeline, with the same
  * `ARRIVAL_TOLERANCE` arrival, that a player's click-to-move order uses. That
- * is what #201 turns on: a unit's resting place has to be a cell centre, and
+ * is the point: a unit's resting place has to be a cell centre, and
  * the only way to guarantee one is to name the cell up front and let the
  * movement system land on it. The system this replaced steered at the
  * target's live position and froze the unit the instant a Euclidean distance
@@ -193,7 +193,7 @@ function markPursuit(
  *   very same {@link planMoveOrder} A* the player's own move orders use,
  *   walked leg by leg by `MovePathSystem`/`MoveTargetSystem`, and replanned
  *   on the {@link PURSUIT_REPATH_INTERVAL}/{@link PURSUIT_REPATH_DISTANCE}
- *   throttle (#195). Unlike before, the route now ends at the cell the unit
+ *   throttle. Unlike before, the route now ends at the cell the unit
  *   will fight from rather than on top of the target, so a target that stays
  *   out of sight all the way in is still approached correctly.
  *
@@ -332,7 +332,7 @@ export function createSeekSystem(
       if (destination.x === selfCell.x && destination.y === selfCell.y) {
         // Nowhere left to walk. Come to rest on this cell's *centre* — never
         // wherever the unit happens to stand — so a fight only ever starts
-        // from a cell a unit is properly standing in (#201).
+        // from a cell a unit is properly standing in.
         delete self.movePath;
 
         // "Arrived" is the movement pipeline's own verdict — `MoveTarget`
@@ -340,7 +340,7 @@ export function createSeekSystem(
         // drops the leg exactly when it has put the unit on the point it was
         // walking to; stopping the unit here the moment it came *within
         // tolerance* of the centre instead would leave it resting a fraction
-        // of a cell off, which is the whole bug (#201). The position test
+        // of a cell off, which is the whole bug. The position test
         // stays as the other half of the condition, for a unit left standing
         // off-centre by something else (an order it gave up on, say).
         if (!self.moveTarget && isAtCellCentre(position)) {

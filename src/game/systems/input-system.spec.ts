@@ -129,7 +129,7 @@ describe('selectAt', () => {
     expect([...queries.selected]).toEqual([a]);
   });
 
-  it('does not select a dead unit under the click point (#197)', () => {
+  it('does not select a dead unit under the click point', () => {
     const world = new World<Entity>();
     const queries = createQueries(world);
     const unit = addUnit(world, 100, 100);
@@ -141,7 +141,7 @@ describe('selectAt', () => {
     expect([...queries.selected]).toHaveLength(0);
   });
 
-  it('a plain click that only hits a dead unit is treated as a miss, clearing the selection like any other miss (#197)', () => {
+  it('a plain click that only hits a dead unit is treated as a miss, clearing the selection like any other miss', () => {
     const world = new World<Entity>();
     const queries = createQueries(world);
     const live = addUnit(world, 0, 0);
@@ -158,7 +158,7 @@ describe('selectAt', () => {
     expect([...queries.selected]).toHaveLength(0);
   });
 
-  it('does not shift-click-add a dead unit to the selection (#197)', () => {
+  it('does not shift-click-add a dead unit to the selection', () => {
     const world = new World<Entity>();
     const queries = createQueries(world);
     const live = addUnit(world, 0, 0);
@@ -254,7 +254,7 @@ describe('moveSelectedTo', () => {
     expect(redUnit.moveTarget).toBeUndefined();
   });
 
-  it('stages a second right-click instead of redirecting a unit still mid-transition (#178)', () => {
+  it('stages a second right-click instead of redirecting a unit still mid-transition', () => {
     const world = new World<Entity>();
     const queries = createQueries(world);
     const unit = addTeamUnit(world, 'blue', true);
@@ -264,7 +264,7 @@ describe('moveSelectedTo', () => {
 
     // The unit hasn't arrived (MoveTargetSystem never ran), so it's still
     // mid-transition: a new order here must not redirect it immediately —
-    // that would change its direction mid-cell, which #178 disallows.
+    // that would change its direction mid-cell, which is disallowed.
     moveSelectedTo(queries, new Vector2(10, 20));
 
     expect(unit.moveTarget).toEqual({ position: { x: 304, y: 400 } });
@@ -391,7 +391,7 @@ describe('moveSelectedTo', () => {
       expect(unit.moveTarget).toBeUndefined();
     });
 
-    it('stages just the destination rather than a route planned now, so the in-progress leg is left alone (#178)', () => {
+    it('stages just the destination rather than a route planned now, so the in-progress leg is left alone', () => {
       const world = new World<Entity>();
       const queries = createQueries(world);
       const unit = addTeamUnit(world, 'blue', true);
@@ -404,7 +404,7 @@ describe('moveSelectedTo', () => {
       // order must not take over yet, and must not be planned from the
       // unit's current (still mid-transition) position either — that's
       // deferred to PendingMoveOrderSystem, once the unit is actually
-      // standing wherever this leg ends up (#178).
+      // standing wherever this leg ends up.
       expect(unit.moveTarget).toEqual({ position: { x: 999, y: 999 } });
       expect(unit.movePath).toBeUndefined();
       expect(unit.pendingMoveOrder).toEqual({ destination: centre(8, 0) });
@@ -677,7 +677,7 @@ describe('attackSelectedTarget', () => {
   });
 });
 
-describe('createInputSystem right-click handling (#195)', () => {
+describe('createInputSystem right-click handling', () => {
   const viewport = { x: 0, y: 0, scale: 1 };
 
   function makeCanvas(): HTMLCanvasElement {

@@ -22,7 +22,7 @@ export type AttackerEntity = With<
 /**
  * {@link cellSteps} between the cells two world-space points fall in: how
  * many 8-way cell steps separate them, which is the unit `attackRange` is
- * measured in (#201).
+ * measured in.
  */
 export function cellDistance(a: Point, b: Point): number {
   return cellSteps(
@@ -35,7 +35,7 @@ export function cellDistance(a: Point, b: Point): number {
  * True once a unit has *finished* moving into a cell: standing still, on that
  * cell's centre, rather than part-way across it or between two.
  *
- * This is the gate on combat in both directions (#201) — a unit may neither
+ * This is the gate on combat in both directions — a unit may neither
  * swing nor be swung at until it holds, which is what stops two units
  * trading blows while they are still visibly sliding past each other.
  *
@@ -89,7 +89,7 @@ export function isSettled(entity: Entity): boolean {
  * unit is presumably still closing the distance under `SeekSystem`, and the
  * swing is simply not taken.
  *
- * A `Ranged` attacker (currently just the crossbow soldier, #97) does not
+ * A `Ranged` attacker (currently just the crossbow soldier) does not
  * touch the target's HP here at all: once everything above has confirmed
  * this swing lands (in range, both settled), it fires a travelling
  * `Projectile` instead (`fireProjectile`), and `ProjectileSystem` is what
@@ -120,7 +120,7 @@ function attack(world: World<Entity>, queries: Queries, self: AttackerEntity): v
 
   // Cell-based (Chebyshev) range, not Euclidean world distance: `other` must
   // be within `attackRange` 8-way cell steps, diagonal steps counting the
-  // same as orthogonal ones (#201). A plain Euclidean check would wrongly
+  // same as orthogonal ones. A plain Euclidean check would wrongly
   // reject a target one cell diagonally away at `attackRange` 1, since its
   // straight-line distance (`CELL_SIZE * sqrt(2)`) exceeds one cell width.
   if (cellDistance(self.transform.position, other.transform.position) > self.attackRange.value) {

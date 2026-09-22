@@ -139,7 +139,7 @@ export class SelectionBoxDrag {
  * an AABB-vs-AABB overlap test, so units only partially inside the box are
  * still included. Red-team units are never selectable, even fully inside
  * the box, nor are dead units (their corpse lingers in `queries.selectable`
- * for the removal delay — see #197).
+ * for the removal delay).
  *
  * Shift held: unions the hits into the existing selection. Otherwise:
  * replaces the selection with exactly the hits (a box with no hits clears

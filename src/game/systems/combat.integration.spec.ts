@@ -44,7 +44,7 @@ describe('perception + seek + move + combat integration', () => {
     // Open ground, with the unit-to-unit collision layer the real game always
     // has over it. Two units walking head-on at each other both want the cell
     // between them; the occupancy grid is what decides which one gets it (and
-    // so stops them walking through one another) — see #201.
+    // so stops them walking through one another).
     const grid = { width: 16, height: 4, collision: new Uint8Array(16 * 4) };
     const occupancy = new OccupancyGrid(grid);
 

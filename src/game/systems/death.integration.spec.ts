@@ -19,7 +19,7 @@ import { createPerceptionSystem, runPerceptionScan } from './perception-system';
 import { createSeekSystem } from './seek-system';
 
 /**
- * End-to-end coverage for #96's visual milestone: a scripted battle run to
+ * End-to-end coverage for the visual milestone: a scripted battle run to
  * completion leaves no orphaned Pixi objects behind — `stage.children.length`
  * (here, the render layer standing in for `app.stage`) returns to its
  * pre-battle baseline once every corpse's removal delay has elapsed, and no

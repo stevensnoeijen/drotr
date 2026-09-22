@@ -29,7 +29,7 @@ const UNIT_SIZE = 13;
 
 /**
  * World units per second a fired projectile (currently just the crossbow
- * soldier's bolt, #97) travels. Fast enough to visibly cross the map as a
+ * soldier's bolt) travels. Fast enough to visibly cross the map as a
  * "shot" rather than a crawl, while still taking a handful of ticks to reach
  * `attackRange` so the travel actually reads on screen.
  */

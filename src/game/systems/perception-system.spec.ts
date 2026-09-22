@@ -92,7 +92,7 @@ describe('runPerceptionScan', () => {
     expect(self.target).toBeUndefined();
   });
 
-  describe('a manually ordered target (#195)', () => {
+  describe('a manually ordered target', () => {
     it('is never retargeted to a closer enemy', () => {
       const world = new World<Entity>();
       const queries = createQueries(world);
