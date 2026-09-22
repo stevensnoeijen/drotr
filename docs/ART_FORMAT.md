@@ -221,7 +221,8 @@ tile — mapping each tile to what it depicts:
 | code | category | walkable | what |
 |---|---|---|---|
 | `g` | ground | yes | grass, gravel, stone, dirt, paths, cobbled paving |
-| `G` | gate | yes | a wooden gate in a wall, open or closed |
+| `o` | open-gate | yes | a gateway with its wooden doors swung open |
+| `G` | closed-gate | no | a gateway with its wooden doors shut |
 | `b` | bridge | yes | an intact bridge deck; the whole drawbridge |
 | `k` | rock | no | boulders, rock piles, cliffs, cave mouths, rocky props |
 | `w` | wall | no | stone walls and wall faces, intact |

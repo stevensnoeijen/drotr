@@ -59,9 +59,12 @@ describe('tileCategory', () => {
     [919, 'broken-bridge', 'a bridge deck with holes'],
     [1200, 'bridge', 'an intact bridge deck'],
     [1206, 'broken-bridge', 'a bridge deck with holes'],
-    [1312, 'gate', 'a closed gate'],
-    [1440, 'gate', 'an open gate'],
-    [1360, 'rubble', 'a broken gate'],
+    [1312, 'closed-gate', 'a closed gate'],
+    [1317, 'closed-gate', 'a closed gate'],
+    [1440, 'open-gate', 'an open gate'],
+    [1445, 'open-gate', 'an open gate'],
+    [1360, 'rubble', 'a smashed gate'],
+    [1408, 'rubble', 'a smashed gate'],
     [1482, 'bridge', 'the drawbridge'],
     [1546, 'rubble', 'the rubble extras'],
     [1472, 'filler', 'an unused slot'],
@@ -79,15 +82,15 @@ describe('tileCategory', () => {
 });
 
 describe('isWalkableTile', () => {
-  it('lets units stand on ground, gates and intact bridges only', () => {
-    expect([...WALKABLE_CATEGORIES].sort()).toEqual(['bridge', 'gate', 'ground']);
+  it('lets units stand on ground, open gates and intact bridges only', () => {
+    expect([...WALKABLE_CATEGORIES].sort()).toEqual(['bridge', 'ground', 'open-gate']);
   });
 
-  it('blocks walls, water, rock, rubble, broken bridges, roofs, trees and filler', () => {
-    for (const id of [210, 398, 9, 800, 100, 919, 108, 1146, 1472]) {
+  it('blocks walls, closed gates, water, rock, rubble, broken bridges, roofs, trees and filler', () => {
+    for (const id of [210, 1312, 398, 9, 800, 100, 919, 108, 1146, 1472]) {
       expect(isWalkableTile(id)).toBe(false);
     }
-    for (const id of [0, 1072, 915, 1312, 1482]) {
+    for (const id of [0, 1072, 915, 1440, 1482]) {
       expect(isWalkableTile(id)).toBe(true);
     }
   });

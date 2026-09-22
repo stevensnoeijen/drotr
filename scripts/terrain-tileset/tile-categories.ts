@@ -6,9 +6,9 @@
  * Classified by hand from the decoded atlas art, cross-checked against the
  * original county maps' per-cell impassable mask (see
  * `docs/ART_FORMAT.md`, "Tile walkability"). The rule is category-based:
- * a tile is walkable unless it shows a wall, water, rock or cliff, rubble
- * or other destruction, a broken bridge, a roof or a tree. Intact bridges,
- * drawbridges and gates are walkable. See the docs for how often the
+ * a tile is walkable unless it shows a wall, a closed gate, water, rock or
+ * cliff, rubble or other destruction, a broken bridge, a roof or a tree.
+ * Open gates and intact bridges are walkable. See the docs for how often the
  * per-tile property and the original per-cell mask disagree.
  *
  * A tile often shows more than one thing (a wall strip over grass, a
@@ -20,7 +20,8 @@ import { TERRAIN_TILE_COUNT, TERRAIN_TILESET_COLUMNS } from './terrain-tileset';
 
 export type TileCategory =
   | 'ground'
-  | 'gate'
+  | 'open-gate'
+  | 'closed-gate'
   | 'bridge'
   | 'rock'
   | 'wall'
@@ -34,7 +35,8 @@ export type TileCategory =
 /** One-character code per category, as used in {@link TILE_CATEGORY_ROWS}. */
 export const CATEGORY_BY_CODE: Readonly<Record<string, TileCategory>> = {
   g: 'ground', // grass, gravel, stone, dirt, paths, cobbled paving
-  G: 'gate', // a wooden gate in a wall, open or closed
+  o: 'open-gate', // a gateway in a wall with its wooden doors swung open
+  G: 'closed-gate', // a gateway in a wall with its wooden doors shut
   b: 'bridge', // an intact wooden bridge deck or drawbridge
   k: 'rock', // boulders, rock piles, cliffs, cave mouths, small rocky props
   w: 'wall', // stone walls and wall faces, intact
@@ -49,7 +51,7 @@ export const CATEGORY_BY_CODE: Readonly<Record<string, TileCategory>> = {
 /** Categories a unit may stand on. Everything else blocks. */
 export const WALKABLE_CATEGORIES: ReadonlySet<TileCategory> = new Set<TileCategory>([
   'ground',
-  'gate',
+  'open-gate',
   'bridge',
 ]);
 
@@ -152,7 +154,7 @@ export const TILE_CATEGORY_ROWS: readonly string[] = [
   'wwwrrrrrrrRRRRRR',
   'ggggggggggRRRRRR',
   '~~~~~~~gggRRRRRR',
-  // 81-91: gatehouses (wall top, closed gate, road, broken gate, open gate);
+  // 81-91: gatehouses (wall top, closed gate, road, smashed gate, open gate);
   // towers; rocks, caves, paths and rocks in water
   'wwwwww~~RRrrrrrr',
   'GGGGGG~~RRrrrrrr',
@@ -163,7 +165,7 @@ export const TILE_CATEGORY_ROWS: readonly string[] = [
   'wgwwgwRRrrrrkgkk',
   'rrrrrrRRrrrrgggg',
   'ggggggRRrrrrg~~~',
-  'GGGGGGggggggg~~~',
+  'ooooooggggggg~~~',
   'ggggggggggggg~~~',
   // 92-95: unused filler; the drawbridge at columns 10-15
   '..........bbbbbb',
