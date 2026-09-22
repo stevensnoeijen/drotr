@@ -6,12 +6,10 @@
  * Classified by hand from the decoded atlas art, cross-checked against the
  * original county maps' per-cell impassable mask (see
  * `docs/ART_FORMAT.md`, "Tile walkability"). The rule is category-based:
- * a tile is walkable unless it shows a wall, water, rubble or other
- * destruction, a broken bridge, a roof or a tree. Intact bridges,
- * drawbridges and gates are walkable; so, by that rule, are rocks and
- * cliffs, even though the original maps mostly block them — see the docs
- * for how often the per-tile property and the original per-cell mask
- * disagree.
+ * a tile is walkable unless it shows a wall, water, rock or cliff, rubble
+ * or other destruction, a broken bridge, a roof or a tree. Intact bridges,
+ * drawbridges and gates are walkable. See the docs for how often the
+ * per-tile property and the original per-cell mask disagree.
  *
  * A tile often shows more than one thing (a wall strip over grass, a
  * shoreline); it gets the category of the feature that isn't ground, since
@@ -53,7 +51,6 @@ export const WALKABLE_CATEGORIES: ReadonlySet<TileCategory> = new Set<TileCatego
   'ground',
   'gate',
   'bridge',
-  'rock',
 ]);
 
 /**

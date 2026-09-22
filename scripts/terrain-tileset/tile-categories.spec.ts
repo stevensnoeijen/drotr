@@ -79,15 +79,15 @@ describe('tileCategory', () => {
 });
 
 describe('isWalkableTile', () => {
-  it('lets units stand on ground, gates, intact bridges and rock only', () => {
-    expect([...WALKABLE_CATEGORIES].sort()).toEqual(['bridge', 'gate', 'ground', 'rock']);
+  it('lets units stand on ground, gates and intact bridges only', () => {
+    expect([...WALKABLE_CATEGORIES].sort()).toEqual(['bridge', 'gate', 'ground']);
   });
 
-  it('blocks walls, water, rubble, broken bridges, roofs, trees and filler', () => {
-    for (const id of [210, 398, 100, 919, 108, 1146, 1472]) {
+  it('blocks walls, water, rock, rubble, broken bridges, roofs, trees and filler', () => {
+    for (const id of [210, 398, 9, 800, 100, 919, 108, 1146, 1472]) {
       expect(isWalkableTile(id)).toBe(false);
     }
-    for (const id of [0, 1072, 9, 915, 1312, 1482]) {
+    for (const id of [0, 1072, 915, 1312, 1482]) {
       expect(isWalkableTile(id)).toBe(true);
     }
   });

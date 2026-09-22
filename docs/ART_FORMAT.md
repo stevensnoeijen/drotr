@@ -223,7 +223,7 @@ tile — mapping each tile to what it depicts:
 | `g` | ground | yes | grass, gravel, stone, dirt, paths, cobbled paving |
 | `G` | gate | yes | a wooden gate in a wall, open or closed |
 | `b` | bridge | yes | an intact bridge deck; the whole drawbridge |
-| `k` | rock | yes | boulders, rock piles, cliffs, cave mouths, rocky props |
+| `k` | rock | no | boulders, rock piles, cliffs, cave mouths, rocky props |
 | `w` | wall | no | stone walls and wall faces, intact |
 | `~` | water | no | rivers, lakes, ponds, moats, rocks standing in water |
 | `r` | rubble | no | damaged or destroyed walls, towers, gates and paving |
@@ -236,9 +236,12 @@ A tile showing several things (a wall strip over grass, a shoreline) gets
 the category of whatever isn't ground. The grid was built by rendering
 contact sheets of the tileset and classifying each tile by eye, then
 checking every tile the counties use against their own impassable mask
-(below). Where the two disagreed on a non-rock tile the art was
-re-examined; the only remaining disagreement is tile 735, plain gravel
-that the counties block on half its subcells.
+(below). Where the two disagreed the art was re-examined. Five tiles
+still disagree with the majority of their subcells: 735, plain gravel
+that the counties block on half its subcells, and four rock tiles the
+counties mostly leave open — 1053 and 1054 (the edges of a cave hollow,
+25% and 38% blocked), 1388 (a boulder, 41%) and 1389 (gravel with a rock
+at one corner, 26%).
 
 **Against the original per-cell mask.** The original game doesn't decide
 passability per tile: each county `.MAP` carries its own impassable mask
@@ -251,16 +254,16 @@ blocked in one place and open in another. Measured over all 12 counties
 | tile category | subcells | mask blocked, tile walkable | mask open, tile blocked |
 |---|---|---|---|
 | ground | 601,044 | 3,673 (0.6%) | — |
-| rock | 40,196 | 30,420 (75.7%) | — |
+| rock | 40,196 | — | 9,776 (24.3%) |
 | tree | 77,492 | — | 6,203 (8.0%) |
 | water | 67,700 | — | 1,975 (2.9%) |
-| **total** | **786,432** | **34,093** | **8,178** (5.4% overall) |
+| **total** | **786,432** | **3,673** | **17,954** (2.75% overall) |
 
-Rock accounts for 72% of the disagreement: the category rule makes rocks
-and cliffs walkable, but the original maps block about three quarters of
-their subcells. Excluding rock, the per-tile flag disagrees with the mask
-on 0.9–2.4% of each county's subcells — the edges of trees, shorelines
-and ridges, where a tile is blocked on only part of its area. Wall, roof
+Per county the disagreement runs from 1.1% (`OSTROV`) to 5.6%
+(`FAGARAS`). Nearly all of it is at the edges of rocks and cliffs, trees
+and shorelines, where the original mask blocks only part of a tile: a
+blocked rock, tree or water tile has some open subcells (rock is the worst
+at a quarter of its subcells), and open ground has some blocked ones. Wall, roof
 and rubble tiles don't occur in the county ground layers at all (the
 counties' buildings aren't stamped in yet), so this doesn't test them;
 `BUILDING.MAP`'s block 0 does use them, but its Section B isn't a

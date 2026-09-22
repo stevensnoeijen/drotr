@@ -49,13 +49,13 @@ describe.skipIf(!available)('tile walkability against the county impassable mask
   }
 
   it('disagrees on the recorded number of subcells across all twelve counties', () => {
-    expect(total).toEqual({ subcells: 786_432, blockedButWalkable: 34_093, openButNotWalkable: 8_178 });
+    expect(total).toEqual({ subcells: 786_432, blockedButWalkable: 3_673, openButNotWalkable: 17_954 });
   });
 
   it('disagrees on the recorded number of subcells per tile category', () => {
     expect(byCategory).toEqual({
       ground: { subcells: 601_044, blockedButWalkable: 3_673, openButNotWalkable: 0 },
-      rock: { subcells: 40_196, blockedButWalkable: 30_420, openButNotWalkable: 0 },
+      rock: { subcells: 40_196, blockedButWalkable: 0, openButNotWalkable: 9_776 },
       tree: { subcells: 77_492, blockedButWalkable: 0, openButNotWalkable: 6_203 },
       water: { subcells: 67_700, blockedButWalkable: 0, openButNotWalkable: 1_975 },
     });
