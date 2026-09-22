@@ -23,8 +23,8 @@ type BaseAnimation = {
 
 type ModelState = {
   [direction in MoveDirection]:
-    | (BaseAnimation & ({ animation: string } | { texture: string }))
-    | {};
+    | (BaseAnimation & { animation: string })
+    | { texture: string };
 };
 
 type Model = {
