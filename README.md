@@ -34,14 +34,18 @@ All tests are automaticly ran at pr!
 To use debug options add `#/game?debug=<options>` and replace `<options>` to the url and refresh the page.
 Example: `#/game?debug=grid`.
 
+Several options can be combined with commas, e.g. `#/game?debug=grid,health`.
+They can also be toggled live from the in-game "Debug" menu.
+
 Current debug options are:
 
-- `grid`, shows map grid of positions
-- `aggro`, shows aggro radius of the units
-
-Other options to use are:
-
-- `#/game?showallhealth=true` to always show health of units
+- `grid`, shows the map's tile grid
+- `health`, always shows every unit's health bar
+- `unit-info`, shows a tooltip with the stats of the hovered unit
+- `targets`, draws a line from each unit to its attack target
+- `paths`, draws each unit's planned move path
+- `primitives`, draws the terrain as flat-coloured terrain-type rectangles
+  instead of the original tile art
 
 # Scenarios
 

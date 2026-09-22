@@ -182,10 +182,22 @@ open cleanly in the Tiled editor.
   otherwise unused padding — ids 1472–1481, 1488–1497, 1504–1513,
   1520–1529, 1536–1545 and 1551 are never referenced and stay fully
   transparent.
-- **gid.** The `.tsx` is always referenced with `firstgid = 1`, so
-  `gid = id + 1`. Index 0 is a real ground tile (see above), not a "no
-  tile" sentinel, so it becomes gid 1 like every other tile — gid 0 is
-  never emitted for a real cell.
+- **gid.** A map that references only this tileset does so with
+  `firstgid = 1`, so `gid = id + 1`. Index 0 is a real ground tile (see
+  above), not a "no tile" sentinel, so it becomes gid 1 like every other
+  tile — gid 0 is never emitted for a real cell. A map referencing other
+  tilesets too gives it a later `firstgid` (the hand-made `test.tmj`
+  lists it second, at `firstgid = 4`, after its 3-tile placeholder
+  tileset); the engine resolves any `firstgid`.
+
+In the engine, `MapRenderSystem` (`src/game/render/map-render-system.ts`)
+draws every visible tile layer of a map straight from its tilesets: each
+gid resolves through its tileset's `firstgid` to a frame of the tileset
+image, Tiled's flip flags are honoured, and gid 0 or a gid no tileset
+covers draws nothing. Tiles are fitted to the map's own cell size, so this
+tileset's 40 px tiles fill the test map's 32 px cells. Tiles are drawn in
+16×16-tile chunks, and only chunks inside the camera's view are rendered.
+`?debug=primitives` swaps the art for flat-colour terrain-type rectangles.
 
 To (re)generate the committed `public/maps/terrain.tsx` and `terrain.png`,
 run `npm run export:terrain-tileset` with `.cd/` present. Generation is
