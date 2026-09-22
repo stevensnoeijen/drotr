@@ -30,7 +30,7 @@ function gridFrom(art: string) {
 }
 
 describe('createSeekSystem', () => {
-  describe('walking to a cell it can attack from (#201)', () => {
+  describe('walking to a cell it can attack from', () => {
     /**
      * `self` standing on the centre of cell (0, 0), a target `range` cells
      * away to the east. No grid at all, so everything is in sight and every
@@ -119,7 +119,7 @@ describe('createSeekSystem', () => {
       expect(self.transform.rotation).toBeCloseTo((Math.PI * 3) / 4);
     });
 
-    it('quantizes the facing it settles into to the nearest of 8 directions (#178)', () => {
+    it('quantizes the facing it settles into to the nearest of 8 directions', () => {
       // A shallow, off-diagonal offset, well inside a generous attack range.
       const { world, system, self } = setup(centre(10, -1), 20);
 
@@ -130,7 +130,7 @@ describe('createSeekSystem', () => {
 
     it('finishes onto the cell centre before it will stand and fight', () => {
       // In reach of its target, but part-way across its own cell — the exact
-      // state #201 is about. It gets a move order onto the centre rather than
+      // state this covers. It gets a move order onto the centre rather than
       // stopping where it stands.
       const { world, system, self } = setup(centre(1, 0), 1, { x: 26, y: 16 });
 
@@ -263,7 +263,7 @@ describe('createSeekSystem', () => {
     });
   });
 
-  describe('routing around walls (#195)', () => {
+  describe('routing around walls', () => {
     /** A wall down column 2, open along the bottom row. */
     const wallWithGap = gridFrom(`
       ..#..
@@ -469,7 +469,7 @@ describe('createSeekSystem', () => {
       expect(self.velocity).toEqual({ x: 0, y: 0 });
     });
 
-    it('walks onto its cell centre rather than freezing mid-step when its target dies (#201)', () => {
+    it('walks onto its cell centre rather than freezing mid-step when its target dies', () => {
       // Part-way across cell (0, 0) when the enemy it was walking toward
       // dies. Stopping dead here would leave it standing visibly off-grid —
       // and, since `isSettled` gates being attacked as well as attacking,

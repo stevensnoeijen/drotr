@@ -21,11 +21,11 @@ const cellOf = (position: { x: number; y: number }) => ({
 });
 
 /**
- * Integration coverage for #131 and #201: `SeekSystem` driving the ordinary
+ * Integration coverage for `SeekSystem` driving the ordinary
  * move pipeline (`MovePathSystem` -> `MoveTargetSystem` -> `MoveVelocitySystem`)
  * tick by tick, the way `game-canvas.tsx` wires them.
  *
- * The headline of #201 is here: an attacker closing on a target comes to rest
+ * The headline behavior is here: an attacker closing on a target comes to rest
  * *on a cell centre*, one cell from its target, rather than at whatever point
  * in open space a distance check ran out.
  */
@@ -115,7 +115,7 @@ describe('seek + move integration', () => {
   it('stops a ranged unit on the cell centre at the edge of its range, not in melee', () => {
     const dt = 1 / 60;
     // A crossbow soldier's reach: five cells, so it has no business closing
-    // all the way to its target (#201).
+    // all the way to its target.
     const { self, target, tick } = setup(dt, 5);
 
     for (let i = 0; i < 600; i++) {

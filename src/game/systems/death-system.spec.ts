@@ -89,7 +89,7 @@ describe('createDeathSystem', () => {
     expect(entity.dead!.elapsed).toBeCloseTo(firstElapsed + DT, 10);
   });
 
-  it('drops the selected component the instant a selected unit dies (#197)', () => {
+  it('drops the selected component the instant a selected unit dies', () => {
     const world = new World<Entity>();
     const queries = createQueries(world);
     const system = createDeathSystem(queries);

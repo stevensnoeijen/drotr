@@ -18,7 +18,7 @@ export interface CreateGameViewportOptions {
  *
  * Deliberately no `.drag()`: a pointer-drag that starts on empty ground is
  * drag-to-select (see `SelectionBoxDrag`), not drag-to-pan, and the two
- * can't coexist on the same gesture (#87). Panning instead goes through
+ * can't coexist on the same gesture. Panning instead goes through
  * `CameraPanSystem` (keyboard and edge-of-screen), which drives this same
  * `viewport.x`/`viewport.y`/clamp-plugin API rather than a second camera
  * mechanism.

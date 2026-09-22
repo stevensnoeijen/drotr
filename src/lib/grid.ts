@@ -77,7 +77,7 @@ export const CELL_CENTRE_TOLERANCE = 1;
  * {@link CELL_CENTRE_TOLERANCE}.
  *
  * This is the engine's definition of "fully arrived in a cell, not part-way
- * across it" (#201). Combat reads it to decide whether a unit may swing or be
+ * across it". Combat reads it to decide whether a unit may swing or be
  * swung at, and `SeekSystem` reads it to decide whether an approach is
  * finished — both of which need the *visible* fact (is the unit drawn in the
  * middle of a cell?) rather than a proxy such as "has zero velocity", which a

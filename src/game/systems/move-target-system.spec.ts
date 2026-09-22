@@ -221,7 +221,7 @@ describe('ARRIVAL_TOLERANCE', () => {
     // asks "is this unit centred in its cell" (isAtCellCentre, and through it
     // CombatSystem.isSettled and SeekSystem) has to accept at least that much
     // slack — otherwise a unit that has genuinely finished its move would
-    // never read as settled, and could never fight (#201).
+    // never read as settled, and could never fight.
     expect(ARRIVAL_TOLERANCE).toBeLessThanOrEqual(CELL_CENTRE_TOLERANCE);
   });
 });

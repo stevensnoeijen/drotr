@@ -35,7 +35,7 @@ const centre = (col: number, row: number) => ({
 });
 
 /**
- * Integration coverage for #195: a unit whose target sits behind a wall
+ * Integration coverage for a unit whose target sits behind a wall
  * actually walks around it and arrives in attack range, with
  * `PerceptionSystem`, `SeekSystem` and the whole `MovePath` ->
  * `MoveTarget` -> `MoveVelocity` movement pipeline running together in the
@@ -100,7 +100,7 @@ describe('pursuit + movement integration', () => {
     /**
      * How many 8-way cell steps separate the two — the unit `attackRange` is
      * measured in, a diagonal neighbour counting the same as an orthogonal
-     * one (#201). Deliberately not Euclidean distance: a unit resting on the
+     * one. Deliberately not Euclidean distance: a unit resting on the
      * cell centre diagonally next to its target is one step away and in
      * range, but `CELL_SIZE * sqrt(2)` apart.
      */

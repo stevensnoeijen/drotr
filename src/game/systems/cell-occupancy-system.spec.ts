@@ -454,7 +454,7 @@ describe('createCellOccupancySystem', () => {
 
   describe('entities with no moveSpeed', () => {
     it('leaves a fired projectile untouched, even crossing several cells in one tick', () => {
-      // Stands in for a `Projectile` (#97): `transform` and `velocity`, like
+      // Stands in for a `Projectile`: `transform` and `velocity`, like
       // any grid-bound unit, but deliberately no `moveSpeed` -- fired
       // projectiles travel far faster than any unit's own movement speed and
       // have no business being claimed into a unit's occupancy grid. Regression

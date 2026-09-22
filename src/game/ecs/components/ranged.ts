@@ -1,7 +1,7 @@
 /**
  * Marks a unit's attacks as fired projectiles that travel to the target
  * rather than landing instantly on swing — currently just the crossbow
- * soldier (#97). `CombatSystem` checks for this component on the attacker to
+ * soldier. `CombatSystem` checks for this component on the attacker to
  * decide whether a landed swing calls `fireProjectile` (spawning a
  * travelling `Projectile` entity, damage applied by `ProjectileSystem` on
  * impact) or applies `Damage` straight to the target's `health.current`

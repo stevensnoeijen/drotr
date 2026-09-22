@@ -678,7 +678,7 @@ describe('smoothCellPath', () => {
     expect(cells[0]).toEqual({ x: 0, y: 0 });
   });
 
-  it('never merges cells into a segment that is not horizontal, vertical, or a 45° diagonal (#178)', () => {
+  it('never merges cells into a segment that is not horizontal, vertical, or a 45° diagonal', () => {
     // A wide-open grid, big enough for the 9x4 offset path below.
     const wideOpen = gridFrom(`
       ..........

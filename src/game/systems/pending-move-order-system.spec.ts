@@ -27,7 +27,7 @@ function setup(entity: Partial<Entity> = {}, grid?: CollisionGrid) {
 const openGrid: CollisionGrid = { width: 10, height: 10, collision: new Uint8Array(100) };
 
 describe('createPendingMoveOrderSystem', () => {
-  it('leaves a staged order untouched while the unit is still mid-transition (#178)', () => {
+  it('leaves a staged order untouched while the unit is still mid-transition', () => {
     const { self, tick } = setup({
       moveTarget: { position: { x: 50, y: 50 } },
       pendingMoveOrder: { destination: { x: 16, y: 16 } },
@@ -105,7 +105,7 @@ describe('createPendingMoveOrderSystem', () => {
     expect(self.moveTarget).toEqual({ position: { x: 1, y: 1 } });
   });
 
-  it('the full lifecycle: a mid-transition order only takes effect after the unit arrives (#178)', () => {
+  it('the full lifecycle: a mid-transition order only takes effect after the unit arrives', () => {
     const { self, tick } = setup({
       moveTarget: { position: { x: 32, y: 0 } },
     });
@@ -129,7 +129,7 @@ describe('createPendingMoveOrderSystem', () => {
     expect(self.pendingMoveOrder).toBeUndefined();
   });
 
-  it("plans from the unit's position when the order is applied, not its position when it was staged (#178)", () => {
+  it("plans from the unit's position when the order is applied, not its position when it was staged", () => {
     // The unit is staged for a route while sitting at cell (0, 0) — this
     // mirrors a unit mid-transition, whose transform.position at staging
     // time is somewhere between two cells and must not be baked into the

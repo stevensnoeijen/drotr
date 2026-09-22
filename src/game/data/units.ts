@@ -41,7 +41,7 @@ export interface UnitDefinition {
   /** Detection/aggro range in grid cells — see {@link file://../ecs/types.ts#AggroRange}. */
   aggroRange?: number;
   /**
-   * Whether this unit type fights with a fired projectile (#97) rather than
+   * Whether this unit type fights with a fired projectile rather than
    * instant melee damage — read by `CombatSystem` to fire a travelling
    * `Projectile` via `fireProjectile` once a swing lands. `crossbowsoldier`
    * is the only unit that sets this so far.

@@ -50,7 +50,7 @@ function makeUnit(
   }: UnitOptions
 ): Entity {
   // Snapped to the cell centre, exactly as `spawnUnit` places a real unit —
-  // and as `isSettled` now requires before a unit may fight at all (#201).
+  // and as `isSettled` now requires before a unit may fight at all.
   const position = toWorldPositionCellCenter(new Vector2(x, y));
   const entity: Entity = {
     id: nextId++,
@@ -225,7 +225,7 @@ describe('CombatSystem', () => {
     expect(target.health!.current).toBe(95);
   });
 
-  it('does not swing while resting part-way across a cell (#201)', () => {
+  it('does not swing while resting part-way across a cell', () => {
     const { world, attacker, target, system } = setupDuel({
       gapCells: 1,
       attackRangeCells: 1,
@@ -243,7 +243,7 @@ describe('CombatSystem', () => {
     expect(target.health!.current).toBe(100);
   });
 
-  it('does not swing at a target resting part-way across its own cell (#201)', () => {
+  it('does not swing at a target resting part-way across its own cell', () => {
     const { world, target, system } = setupDuel({
       gapCells: 1,
       attackRangeCells: 1,
@@ -258,7 +258,7 @@ describe('CombatSystem', () => {
     expect(target.health!.current).toBe(100);
   });
 
-  it('hits a target one cell diagonally away at attack range 1 (#201)', () => {
+  it('hits a target one cell diagonally away at attack range 1', () => {
     // A Euclidean range check would reject this: a diagonal neighbour is
     // `CELL_SIZE * sqrt(2)` away, further than one cell's width. Range is
     // measured in 8-way cell steps instead, so a diagonal neighbour counts
@@ -328,7 +328,7 @@ describe('CombatSystem', () => {
     expect(target.health!.current).toBe(100);
   });
 
-  it('withholds a swing while the attacker still has nonzero velocity, even with no active cell reservation (#201)', () => {
+  it('withholds a swing while the attacker still has nonzero velocity, even with no active cell reservation', () => {
     const { world, attacker, target, system } = setupDuel({
       gapCells: 1,
       attackRangeCells: 1,
@@ -346,7 +346,7 @@ describe('CombatSystem', () => {
     expect(target.health!.current).toBe(100);
   });
 
-  it('withholds a swing while the target still has nonzero velocity, even with no active cell reservation (#201)', () => {
+  it('withholds a swing while the target still has nonzero velocity, even with no active cell reservation', () => {
     const { world, target, system } = setupDuel({
       gapCells: 1,
       attackRangeCells: 1,

@@ -35,7 +35,7 @@ const centre = (col: number, row: number) => ({
 });
 
 /**
- * Integration coverage for #88: a right-click move order routed by A* and
+ * Integration coverage for a right-click move order routed by A* and
  * then actually walked, tick by tick, through the same three systems
  * `game-canvas.tsx` wires in this order — path, target, velocity.
  */
@@ -135,7 +135,7 @@ describe('move order + path + movement integration', () => {
     expect(reached).toEqual(waypoints.map((_, index) => index));
   });
 
-  it('stages a second order given mid-walk, applying it once the in-progress leg finishes (#178)', () => {
+  it('stages a second order given mid-walk, applying it once the in-progress leg finishes', () => {
     const { queries, unit, tick } = setup();
 
     moveSelectedTo(queries, new Vector2(centre(8, 0).x, centre(8, 0).y), wallWithGap);
@@ -170,7 +170,7 @@ describe('move order + path + movement integration', () => {
     expect(distance).toBeLessThanOrEqual(ARRIVAL_TOLERANCE);
   });
 
-  it('stages a stop order given mid-walk, only halting once the in-progress leg finishes (#178)', () => {
+  it('stages a stop order given mid-walk, only halting once the in-progress leg finishes', () => {
     const { queries, unit, tick } = setup();
 
     moveSelectedTo(queries, new Vector2(centre(8, 0).x, centre(8, 0).y), wallWithGap);

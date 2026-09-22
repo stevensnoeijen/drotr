@@ -182,7 +182,7 @@ describe('drawMoveLines', () => {
     expect(points).toEqual([]);
   });
 
-  it('splices the in-flight leg and a preview of the pending reroute into one continuous line (no grid: straight-line preview) (#178)', () => {
+  it('splices the in-flight leg and a preview of the pending reroute into one continuous line (no grid: straight-line preview)', () => {
     const { graphics, points } = trackLineTo();
     const entity: Entity = {
       transform: { position: { x: 0, y: 0 }, rotation: 0 },

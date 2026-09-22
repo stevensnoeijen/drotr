@@ -37,7 +37,7 @@ export interface PlannedMovePath {
  * consumed one waypoint per `MoveTarget` leg, and a reroute issued while a
  * unit is mid-transition only redirects once `MoveTarget` clears (see
  * `PendingMoveOrder`) — movement is only ever an atomic step to one adjacent
- * cell (#178). A smoothed, multi-cell leg would keep `MoveTarget` set across
+ * cell. A smoothed, multi-cell leg would keep `MoveTarget` set across
  * several cells' worth of travel, delaying a staged reroute until that whole
  * run finished instead of just the next cell. Every intermediate cell in an
  * unsmoothed run is still 8-way aligned with its neighbours (the search never

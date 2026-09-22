@@ -20,7 +20,7 @@ describe('quantizeAngle', () => {
   it('rounds a shallow angle up to the nearest 45° step', () => {
     // atan2(1, 10) is a shallow ~5.7° angle — nowhere near a diagonal — and
     // must still snap onto the grid of 8 directions rather than passing
-    // through unchanged, which is exactly the #178 bug.
+    // through unchanged, which is exactly the bug this guards against.
     const shallow = Math.atan2(1, 10);
     expect(quantizeAngle(shallow)).toBeCloseTo(0);
   });

@@ -64,7 +64,7 @@ export const testScenario: Scenario = {
 
     // Knight, swordsman and crossbowsoldier, each on its own row, ordered
     // the same distance in parallel: exercises per-unit-type MoveSpeed
-    // (#90) — the knight's higher movementSpeed makes it visibly pull
+    // — the knight's higher movementSpeed makes it visibly pull
     // ahead. Each targets a point on its own row (not a shared point) so
     // the straight-line paths run side by side instead of converging onto
     // one destination, where a trailing unit would otherwise look like
@@ -107,7 +107,7 @@ export const testScenario: Scenario = {
     // Two blue-vs-red crossbowsoldier pairs, top-right of the layout and
     // away from the swordsmen groups above: within each other's attack
     // range from the moment they spawn, so they start auto-engaging (and
-    // firing real projectiles, #97) on load.
+    // firing real projectiles) on load.
     const crossbowRow = 2;
     spawnUnit(world, {
       type: 'crossbowsoldier',

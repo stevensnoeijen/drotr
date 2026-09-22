@@ -7,12 +7,12 @@ export interface Cell {
 /**
  * Chebyshev (chessboard) distance, in grid cells: the number of 8-way
  * (horizontal/vertical/diagonal) steps that separate two cells, matching the
- * 8-way movement grid from #194.
+ * 8-way movement grid.
  *
  * This — not Euclidean distance — is what `attackRange` is measured in. A
  * target one cell diagonally away is one 8-way step (`attackRange` 1 should
  * reach it), but its Euclidean distance is `CELL_SIZE * sqrt(2)`, further
- * than a range-1 Euclidean check would allow. See #201.
+ * than a range-1 Euclidean check would allow.
  */
 export function cellSteps(a: Cell, b: Cell): number {
   return Math.max(Math.abs(a.x - b.x), Math.abs(a.y - b.y));
@@ -26,7 +26,7 @@ export function cellSteps(a: Cell, b: Cell): number {
  * This is where an attacker's approach *ends*: `SeekSystem` walks the unit to
  * this cell's centre through the ordinary `MoveTarget`/`MovePath` pipeline
  * instead of stopping it wherever a live Euclidean distance check happens to
- * run out. That is the whole point of #201 — a unit's resting place has to be
+ * run out. A unit's resting place has to be
  * a cell centre, and the only way to guarantee that is to pick the cell first
  * and let the movement system land on it.
  *
@@ -52,7 +52,7 @@ export function cellSteps(a: Cell, b: Cell): number {
  * position and tries again on its next pass).
  *
  * Deliberately no line-of-sight test on the chosen cell: whether a ranged
- * unit needs to *see* what it shoots is #97/#161's question, not this one's.
+ * unit needs to *see* what it shoots is a question worth revisiting, not this one's.
  */
 export function findAttackCell(
   from: Cell,

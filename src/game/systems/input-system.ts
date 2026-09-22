@@ -88,8 +88,7 @@ export class InputSystem {
    * `contextmenu` (rather than a right-button `pointerdown`/`pointerup`
    * pair) is the right event to key a move order off: it's what the browser
    * fires for a right-click, and calling `preventDefault()` on it is also
-   * how the browser's own context menu is suppressed — see #146's "no
-   * browser context menu" requirement. Queuing here means one right-click
+   * how the browser's own context menu is suppressed. Queuing here means one right-click
    * reliably produces exactly one move order, with no drag-distance
    * gesture-detection needed the way left-click has.
    */
@@ -138,7 +137,7 @@ export class InputSystem {
 }
 
 /**
- * The team the player commands. Selection (#87), move orders and attack
+ * The team the player commands. Selection, move orders and attack
  * orders are all restricted to it; red is the opposing side, which the player
  * may click *at* (as an attack target) but never *with*.
  */
@@ -183,7 +182,7 @@ function findNearestUnitAt<T extends With<Entity, 'transform'>>(
  * Finds the nearest `selectable` unit hit by `worldPosition` — the player's
  * own units only, since that is all `selectable` ever holds (see `spawnUnit`).
  * Dead units (marked `dead` by `DeathSystem`, whose corpse lingers in the
- * world — and in `queries.selectable` — for its removal delay, see #197) are
+ * world — and in `queries.selectable` — for its removal delay) are
  * skipped: a corpse can still be seen and rendered, but it should never be
  * selectable again.
  */
@@ -208,7 +207,7 @@ export function findHoverableUnitAt(
 
 /**
  * Finds the nearest live unit hit by `worldPosition` that is *not* on `team`
- * — the hit test behind a right-click attack order (#195).
+ * — the hit test behind a right-click attack order.
  *
  * Deliberately not built on `selectable` (the player's own team only) or
  * `hoverable` (a debug-tooltip concern that happens to include every unit):
@@ -273,7 +272,7 @@ export function selectAt(
 /**
  * Issues a move order to every currently selected unit, provided at least
  * one of them is on the blue team — mirroring the blue-only restriction on
- * selection itself (#87): the player never directs red units, so a
+ * selection itself: the player never directs red units, so a
  * right-click with only red units selected (or nothing selected at all) is
  * a no-op rather than silently moving red units around.
  *
@@ -286,7 +285,7 @@ export function selectAt(
  * a group order fan out around the click instead of resolving into a shoving
  * match at the destination. This is destination *deconfliction*, not
  * formations: the shape a group settles into is whatever the ring search
- * finds, and real formation-based group orders remain a later ticket (#89).
+ * finds, and real formation-based group orders remain a later effort.
  * Without an occupancy grid every selected unit heads for the same cell, as
  * before.
  *
@@ -310,7 +309,7 @@ export function selectAt(
  * A unit already mid-transition between two cells (`MoveTarget` set, still
  * walking toward it) never has that redirected immediately — movement is
  * only ever an atomic step from one cell to an adjacent one in one of the 8
- * allowed directions (#178), and swapping the target mid-step would send it
+ * allowed directions, and swapping the target mid-step would send it
  * off at whatever arbitrary angle its current position happens to be from
  * the new destination. Instead just the `destination` is staged as a
  * `PendingMoveOrder`, which `PendingMoveOrderSystem` plans and applies once
@@ -386,8 +385,7 @@ export function moveSelectedTo(
 
 /**
  * Orders every selected unit on the player's team to attack one specific
- * enemy unit — a right-click that landed on an enemy rather than on ground
- * (#195).
+ * enemy unit — a right-click that landed on an enemy rather than on ground.
  *
  * Restricted to the player's own team on exactly the same terms as
  * {@link moveSelectedTo}: the player never directs red units, so a
@@ -400,7 +398,7 @@ export function moveSelectedTo(
  * attack range on its own. Where several units get the same order they
  * converge on the same enemy and `CellOccupancySystem` sorts out who ends up
  * standing where, which is the melee equivalent of the destination
- * deconfliction a move order does up front. Group *formation* remains #89.
+ * deconfliction a move order does up front. Group *formation* remains a later effort.
  *
  * The order is sticky — see {@link issueAttackOrder}.
  */

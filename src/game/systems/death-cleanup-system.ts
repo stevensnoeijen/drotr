@@ -26,7 +26,7 @@ import type { Entity } from '~/game/ecs/entity';
  * Selection needs no equivalent handling here: `Selected` lives as a
  * component on the removed entity itself, not a reference held by anyone
  * else. It's dropped even earlier than removal, though — `DeathSystem`
- * clears it the instant the unit dies (#197), rather than leaving a
+ * clears it the instant the unit dies, rather than leaving a
  * selected corpse sitting in `queries.selected` for its whole removal
  * delay.
  */

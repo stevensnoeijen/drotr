@@ -100,7 +100,7 @@ describe('applyMoveOrder', () => {
     expect(entity.moveTarget).toBeUndefined();
   });
 
-  it('gives up a standing manual attack order, since a move order supersedes it (#195)', () => {
+  it('gives up a standing manual attack order, since a move order supersedes it', () => {
     const entity: Entity = {
       ...baseEntity(),
       target: { entityId: 3, manual: true },

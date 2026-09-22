@@ -3,7 +3,7 @@ import type { Entity } from '~/game/ecs/entity';
 /**
  * Orders `entity` to attack one specific unit, as the player does by
  * right-clicking an enemy (see `attackSelectedTarget` in
- * `~/game/systems/input-system`) — #195.
+ * `~/game/systems/input-system`).
  *
  * The order is recorded as a `manual` {@link Entity.target}, which makes it
  * *sticky*: `runPerceptionScan` will not retarget the unit to some other,
@@ -21,7 +21,7 @@ import type { Entity } from '~/game/ecs/entity';
  * and `SeekSystem` re-aims it, later in this very fixed step, at the target
  * just assigned.
  *
- * Dropping the current leg mid-cell is deliberate here, and not the #178
+ * Dropping the current leg mid-cell is deliberate here, and not the
  * problem that `PendingMoveOrder` exists to avoid: that guards a *routed*
  * cell-to-cell walk, whereas seeking has always steered straight at a live
  * target from wherever the unit happens to stand — a retarget mid-approach

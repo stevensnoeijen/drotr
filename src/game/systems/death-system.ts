@@ -7,7 +7,7 @@ import type { System } from '~/game/ecs/system';
 /**
  * Gametime, in seconds, a dead unit's corpse stays in the world before
  * {@link createDeathSystem} removes it — the "units vanish 5 minutes after
- * they died" visual milestone from issue #96.
+ * they died" visual milestone.
  */
 export const DEATH_REMOVAL_DELAY_SECONDS = 5 * 60;
 
@@ -50,7 +50,7 @@ export function createDeathSystem(queries: Queries): System {
         // there for the whole removal delay) so nothing downstream — a
         // subsequent move order, most notably — can still act on a corpse
         // as if it were the live unit the player selected. Selection is
-        // only ever meant to land on a living unit (#197).
+        // only ever meant to land on a living unit.
         if (entity.selected) {
           world.removeComponent(entity, 'selected');
         }
