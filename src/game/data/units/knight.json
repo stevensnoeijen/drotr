@@ -2,5 +2,14 @@
   "type": "knight",
   "shape": "circle",
   "health": 12,
-  "movementSpeed": 3
+  "attackDamage": 8,
+  "accuracy": 0,
+  "defence": 6,
+  "stamina": 7,
+  "speed": 3,
+  "movementSpeed": 3,
+  "attackCooldown": 1,
+  "range": 1,
+  "aggroRange": 8,
+  "assets": null
 }

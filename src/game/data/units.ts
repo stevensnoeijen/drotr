@@ -14,10 +14,9 @@ export type UnitType = 'swordsmen' | 'knight' | 'crossbowsoldier';
 /**
  * Static, per-type unit data. Core fields (type, shape, health) are present
  * on all units. Combat stats (attackDamage, attackCooldown, accuracy, defence,
- * stamina, speed, range, aggroRange) are present on some JSON-defined units
- * (swordsmen, crossbowsoldier); knight is JSON-defined too but, being a
- * placeholder without a finished combat kit yet, only carries movementSpeed
- * alongside the core fields.
+ * stamina, speed, range, aggroRange) are present on every JSON-defined unit
+ * (swordsmen, crossbowsoldier, knight); a future unit type may still omit
+ * them the way knight once did, which is why they stay optional here.
  */
 export interface UnitDefinition {
   type: UnitType;
@@ -53,9 +52,10 @@ export interface UnitDefinition {
 /** All unit definitions, keyed by {@link UnitType}. */
 export const units: Record<UnitType, UnitDefinition> = {
   swordsmen: swordsmenData as UnitDefinition,
-  // Mounted, so faster than the infantry (swordsmen and crossbowsoldier
-  // both move at 2 cells/sec) — see the ticket's indicative ordering:
-  // knight > swordsman > crossbowman > ...
+  // Mounted, so faster than the infantry (swordsmen and crossbowsoldier both
+  // move at 2 cells/sec) and hits harder, but has less health — an elite
+  // cavalry unit that closes distance fast and trades blows decisively
+  // rather than grinding.
   knight: knightData as UnitDefinition,
   crossbowsoldier: crossbowsoldierData as UnitDefinition,
 };

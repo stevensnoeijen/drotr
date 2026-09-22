@@ -90,13 +90,11 @@ export function spawnUnit(
     hoverable: true,
     velocity: { x: 0, y: 0 },
   };
-  // Placeholder units without a finished combat kit (currently just
-  // `knight`) carry no combat stats at all, so they get none of the
-  // components below and simply can't acquire a
-  // target (PerceptionSystem), or land an attack (CombatSystem, which needs
-  // all three of `attackRange`, `damage` and `attackCooldown` to schedule
-  // one); they can still be targeted and killed by others via
-  // `queries.combatants`.
+  // A unit type whose definition carries no combat stats gets none of the
+  // components below and simply can't acquire a target (PerceptionSystem),
+  // or land an attack (CombatSystem, which needs all three of
+  // `attackRange`, `damage` and `attackCooldown` to schedule one); it can
+  // still be targeted and killed by others via `queries.combatants`.
   if (definition.range !== undefined) {
     entity.attackRange = { value: definition.range };
   }
