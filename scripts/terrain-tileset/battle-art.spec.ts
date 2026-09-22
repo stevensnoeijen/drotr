@@ -4,9 +4,9 @@ import { describe, expect, it } from 'vitest';
 
 import { hasCdFile, readCdFile, cdPath } from '~/test/cd-assets';
 
-import { decodePcx } from './pcx';
-import { toRgba, TEAL_COLOR_KEY } from './rgba';
-import { extractTileRgba, tileCount, tileRect } from './atlas';
+import { decodePcx } from '~/lib/art/pcx';
+import { toRgba, TEAL_COLOR_KEY } from '~/lib/art/rgba';
+import { extractTileRgba, tileCount, tileRect } from '~/lib/art/atlas';
 import { GOLDEN_TILE_HASHES } from './battle-art-golden-hashes';
 
 /**

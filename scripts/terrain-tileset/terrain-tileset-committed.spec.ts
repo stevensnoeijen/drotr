@@ -6,7 +6,7 @@ import { PNG } from 'pngjs';
 import { describe, expect, it } from 'vitest';
 
 import { tileRect, ATLAS_TILE_SIZE } from '~/lib/art/atlas';
-import { GOLDEN_TILE_HASHES } from '~/lib/art/battle-art-golden-hashes';
+import { GOLDEN_TILE_HASHES } from './battle-art-golden-hashes';
 import {
   buildTerrainTilesetXml,
   TERRAIN_TILESET_HEIGHT,

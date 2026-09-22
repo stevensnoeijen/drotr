@@ -148,8 +148,8 @@ Accordingly the decoder's tests come in two layers:
   PCX buffers in memory and cover the format-level behaviour — header
   parsing, RLE expansion, scanline padding, palette handling, colour
   keying, tile geometry and every rejection path. These always run.
-- **Golden tests** (`src/lib/art/battle-art.spec.ts`) pin the real
-  `BATTLE.ART` decode to recorded SHA-256 hashes of its pixels. They record
+- **Golden tests** (`scripts/terrain-tileset/battle-art.spec.ts`) pin the
+  real `BATTLE.ART` decode to recorded SHA-256 hashes of its pixels. They record
   only hashes, never pixel data, so nothing reproduces the original
   artwork; they skip themselves wherever `.cd/` is absent, CI included.
 
