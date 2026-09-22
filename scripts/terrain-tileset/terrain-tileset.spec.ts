@@ -169,12 +169,15 @@ describe('buildTerrainTilesetImage', () => {
   });
 
   it('leaves every filler id fully transparent', () => {
-    for (const id of FILLER_IDS) {
-      const tile = readTile(tilesetImage.rgba, TERRAIN_TILESET_WIDTH, id);
-      for (let i = 0; i < tile.length; i++) {
-        expect(tile[i]).toEqual(0);
-      }
-    }
+    // One assertion over the collected offenders rather than one per byte:
+    // ~326k individual `expect` calls took long enough to time the test out
+    // under a loaded full-suite run.
+    const nonTransparentIds = FILLER_IDS.filter((id) =>
+      readTile(tilesetImage.rgba, TERRAIN_TILESET_WIDTH, id).some(
+        (byte) => byte !== 0
+      )
+    );
+    expect(nonTransparentIds).toEqual([]);
   });
 
   it('never draws a pixel sourced from an excluded atlas tile', () => {
