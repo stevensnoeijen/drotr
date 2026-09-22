@@ -20,13 +20,44 @@ flow: re-research against the new reality, ask what changed, rewrite the
 issue body, and re-set Model/Effort — don't hand-edit the issue or the
 Project fields directly, so the plan and the fields never drift apart.
 
+Run step 1 (resolving the issue number) cheaply in the top-level context,
+then hand steps 4–9 to a subagent per step 2 below — don't do the research
+and questioning yourself in the top-level context.
+
 ## 1. Resolve the issue number
 
 Accept either a bare number (`214`) or a full URL
 (`https://github.com/stevensnoeijen/drotr/issues/214`). Extract the trailing
 integer.
 
-## 2. Fetch the ticket
+## 2. Dispatch a subagent to do the refinement
+
+Refinement's entire job is resolving ambiguity — grounding real tradeoffs in
+codebase research and judging what's genuinely the user's call. That's the
+same "ambiguous/architectural" case `pickup-issue`'s classification table
+maps to `opus`, so always use it here too, regardless of how the ticket
+looks before refinement (that's the point — it hasn't been scoped yet, so
+there's nothing to classify from):
+
+- `Agent` tool, `subagent_type: "claude"` (needs full tool access — `gh`,
+  grep/read over the codebase, and `AskUserQuestion` to talk to the user
+  directly), `model: "opus"`.
+- Effort instruction to bake into the prompt: "High effort — this is the
+  scoping pass a later implementation depends on, so research thoroughly
+  before asking anything, and make sure each question is grounded in real
+  files/counts/tradeoffs, not abstract. Don't rush to close it out."
+- Give it the issue number/URL from step 1 and point it at this skill's
+  steps 4–9 below to execute (it starts with no context, so include the
+  actual steps in the prompt, not just a reference to "this skill").
+- It talks to the user itself via `AskUserQuestion` (step 6, including the
+  confirm-before-writing part) — that's expected; the whole point of
+  delegating is still to get user-approved output, not to remove the user
+  from the loop.
+- After it reports back with the issue refined and fields set, relay its
+  summary to the user in your own top-level report — don't just forward its
+  raw output verbatim.
+
+## 4. Fetch the ticket
 
 ```
 gh issue view <number> --repo stevensnoeijen/drotr \
@@ -36,7 +67,7 @@ gh issue view <number> --repo stevensnoeijen/drotr \
 If the body is empty or thin (common in this repo — see #214), the title is
 the only signal; don't invent acceptance criteria to fill the gap.
 
-## 3. Research before asking
+## 5. Research before asking
 
 Before bringing anything to the user, ground the ticket in what's actually
 in the codebase: grep for what it refers to, check how big/scattered the
@@ -48,30 +79,30 @@ The goal of this step is to arrive at the questions with real numbers and
 examples (e.g. "I found ~80 matches across N files, here are three
 representative ones") instead of asking abstractly.
 
-## 4. Question the user — never guess
+## 6. Question the user — never guess
 
 Any point where the ticket is ambiguous, underspecified, or has more than
 one reasonable implementation approach, ask. Use `AskUserQuestion` with
-concrete options grounded in what step 3 found (real file examples, real
+concrete options grounded in what step 5 found (real file examples, real
 counts, real tradeoffs) — never a context-free abstract choice.
 
 Cover, as applicable to the ticket:
 - **Scope**: exactly what's in/out.
 - **Approach**: when multiple implementations are reasonable, lay out the
   real options found in the codebase, not hypothetical ones.
-- **Edge cases**: anything step 3's research surfaced that doesn't fit the
+- **Edge cases**: anything step 5's research surfaced that doesn't fit the
   main-line answer cleanly — ask about it explicitly rather than picking a
   default silently.
 - **Delivery shape**: one PR vs. split into several, if scope is large.
 
 Keep the plan adjustable: after the user answers, summarize the resulting
 plan back to them in plain terms before writing anything, and give them a
-chance to redirect. Only proceed to step 5 once the plan is confirmed.
+chance to redirect. Only proceed to step 7 once the plan is confirmed.
 
-Don't ask questions step 3's research already answers definitively — only
+Don't ask questions step 5's research already answers definitively — only
 ask what's genuinely the user's call.
 
-## 5. Write the plan into the issue
+## 7. Write the plan into the issue
 
 Once agreed, update the issue body (`gh issue edit <number> --body-file
 <tmpfile>`) so it reflects the finalized plan: problem statement, scope
@@ -82,7 +113,7 @@ other context could pick it up correctly.
 
 Keep the tone factual/spec-like, not a transcript of the Q&A.
 
-## 6. Set the Project Status, Model, and Effort fields
+## 8. Set the Project Status, Model, and Effort fields
 
 Per CLAUDE.md, once a ticket's scope is substantively set (initially or on a
 re-refinement), its Project `Model` and `Effort` custom fields should
@@ -105,7 +136,7 @@ then set with `gh project item-edit --project-id <PVT_...> --id <PVTI_...>
 --field-id <field id> --single-select-option-id <option id>`, once per
 field.
 
-## 7. Report back
+## 9. Report back
 
 Tell the user the issue is refined (or re-refined), link it, note the
 Model/Effort values set and why, and mention that `pickup-issue` can now
