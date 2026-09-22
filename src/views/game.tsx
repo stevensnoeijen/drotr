@@ -1,9 +1,10 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type ReactElement } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router';
 
 import GameCanvas, { type ViewportTransform } from '~/components/game-canvas';
 import DebugOverlay, { type GameStats } from '~/components/debug-overlay';
 import UnitInfoTooltip from '~/components/unit-info-tooltip';
+import Atlas from '~/views/atlas';
 import { resolveMap } from '~/game/maps';
 import {
   type DebugFlag,
@@ -14,6 +15,20 @@ import {
 
 const EMPTY_STATS: GameStats = { fps: 0, tick: 0, entities: 0 };
 
+/**
+ * `?case=` selects an asset-inspection page instead of the simulation.
+ * These are developer tools that reuse the `/game` URL contract but need no
+ * map, scenario or ECS world of their own.
+ */
+const ASSET_CASES: Record<
+  string,
+  (searchParams: URLSearchParams) => ReactElement
+> = {
+  atlas: (searchParams) => (
+    <Atlas file={searchParams.get('art') ?? undefined} />
+  ),
+};
+
 /** Delay after the last pan/zoom before `?camera=` is written to the URL. */
 const VIEWPORT_SAVE_DEBOUNCE_MS = 250;
 
@@ -21,7 +36,9 @@ const VIEWPORT_SAVE_DEBOUNCE_MS = 250;
 const CAMERA_PARAM = 'camera';
 
 /** Parses `?camera=x,y,z` into a camera transform, or undefined if missing/invalid. */
-function parseViewport(searchParams: URLSearchParams): ViewportTransform | undefined {
+function parseViewport(
+  searchParams: URLSearchParams
+): ViewportTransform | undefined {
   const raw = searchParams.get(CAMERA_PARAM);
   if (!raw) {
     return undefined;
@@ -41,6 +58,8 @@ function serializeViewport({ x, y, scale }: ViewportTransform): string {
 export default function Game() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const assetCase = searchParams.get('case');
+  const renderAssetCase = assetCase ? ASSET_CASES[assetCase] : undefined;
   const resolvedScenario = resolveScenario(searchParams);
   const resolvedMap = resolveMap(searchParams);
   const debugFlags = parseDebugFlags(searchParams.get('debug'));
@@ -119,6 +138,13 @@ export default function Game() {
     const id = setInterval(() => setStats({ ...statsRef.current }), 250);
     return () => clearInterval(id);
   }, []);
+
+  // Checked after the hooks above so the hook order stays stable across a
+  // `?case=` change, and before the map/scenario validation below since an
+  // asset case needs neither.
+  if (renderAssetCase) {
+    return renderAssetCase(searchParams);
+  }
 
   if (resolvedScenario.error || resolvedMap.error) {
     return (

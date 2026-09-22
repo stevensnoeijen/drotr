@@ -1,9 +1,9 @@
 # `.MAP` file format (reverse-engineered)
 
-Notes from reverse-engineering `COUNTIES/*.MAP` against the tile atlas
-`ART/BATTLE.png` (converted from the original `ART/BATTLE.ART` PCX). Written to
-guide a future converter that turns these into a more readable format (e.g.
-JSON + PNG layers).
+Notes from reverse-engineering `COUNTIES/*.MAP` against the tile atlas in
+`ART/BATTLE.ART`, decoded by `src/lib/art` (see
+[`ART_FORMAT.md`](./ART_FORMAT.md)). Written to guide a future converter
+that turns these into a more readable format (e.g. JSON + PNG layers).
 
 Confirmed against **all 12 county files** (`BRAILA`, `BRASOV`, `CUERTA`,
 `FAGARAS`, `GIURGIU`, `HIRSOVA`, `OSTROV`, `PITESTI`, `RASOVA`, `SIBIU`,
@@ -30,31 +30,39 @@ Section A `hi` is `0` in every single one of these 12 files, and Section B
 `BUILDING.MAP` breaks both invariants (see its own section below) — it is
 **not** just three more county maps.
 
-## Tile atlas — `ART/BATTLE.png`
+## Tile atlas — `ART/BATTLE.ART`
 
-- 640 × 9367 px, 8-bit palette.
-- Built from **64×64 px tiles**, **10 columns wide**, packed row-major into a
-  single flat index:
+> **Corrected.** An earlier pass of this doc read the atlas as **64×64
+> tiles, 10 columns** and concluded it was truncated at index 1459. That
+> was wrong, and several conclusions below depended on it — see
+> [`ART_FORMAT.md`](./ART_FORMAT.md) for the measurements. The tile size
+> and the affected conclusions have been corrected in place.
+
+- 640 × 9367 px, 8-bit palette, decoded straight from the `.ART` (a PCX)
+  by `src/lib/art`. The `.png` conversion is redundant.
+- Built from **40×40 px tiles**, **16 columns wide**, packed row-major into
+  a single flat index:
 
   ```
-  tile_index = row * 10 + col
-  row = y / 64
-  col = x / 64
-  x0,y0 = col*64, row*64  (tile occupies [x0,y0]..[x0+64,y0+64))
+  tile_index = row * 16 + col
+  row = y / 40
+  col = x / 40
+  x0,y0 = col*40, row*40  (tile occupies [x0,y0]..[x0+40,y0+40))
   ```
 
-- Observed `tile_index` range: 0–1471 (0 = "empty/no tile").
-- The atlas is **not** just terrain — it's one contiguous sheet holding
-  terrain/wall tiles (roughly rows 0–56, i.e. y 0–3648, all opaque, no
-  transparency), then sprite frames on a `(0, 251, 192)` teal color-key
-  background: units, decorative objects, a bitmap font, and a border
-  graphic near the very end. All of it shares the same index space.
+- The sheet holds **3744 complete tiles** (234 whole rows, plus a 7px
+  remainder that carries no tile).
+- Observed `tile_index` range in the county maps: 0–1471 (0 = "empty/no
+  tile") — well inside the sheet.
+- The atlas is **not** just terrain: one contiguous sheet holds terrain and
+  wall tiles, sprite frames on a `(0, 251, 192)` teal color-key
+  background, units, decorative objects, a bitmap font and UI furniture,
+  all sharing the same index space. 1576 of the 3744 tiles are fully
+  opaque; the first tile containing any transparency is index 205.
 - Verified by decoding real map indices and cropping the corresponding
-  atlas tile: e.g. indices 1382–1387 (the most common non-zero tile in
-  every county's Section A, see below) land at row 138, cols 2–7, and are
-  a row of impaled-victim/stake battlefield decorations — thematically
-  correct for this game and visually coherent, confirming the row/col
-  formula.
+  atlas tile: indices 1437–1439, 1453–1455 and 1469–1471 form a single
+  coherent 3×3 rocky-shoreline object (three horizontal runs of three,
+  stacked), and the same object appears as a 3×3 block in the map grid.
 
 ## `COUNTIES/<NAME>.MAP` — 327,680 bytes, always
 
@@ -62,13 +70,14 @@ Every cell in the file, in both sections below, is a **4-byte little-endian
 record** = two `u16` fields:
 
 ```
-u16 lo  (bytes 0-1)  — tile index into BATTLE.png (see above)
+u16 lo  (bytes 0-1)  — tile index into the BATTLE.ART atlas (see above)
 u16 hi  (bytes 2-3)  — flags / secondary layer value
 ```
 
 ### Section A — offset `0x00000`, 65,536 bytes = 128×128 grid
 
-- Row-major, 128 cells wide, 128 rows: `offset = (y*128 + x) * 4`.
+- 128 cells per axis, stored column-major: `offset = (x*128 + y) * 4`
+  (see the orientation note below).
 - `lo` = tile_index as decoded above (0 = empty, else index into the
   atlas).
 - `hi` = always 0 in this section (county files only — `BUILDING.MAP`
@@ -79,25 +88,35 @@ u16 hi  (bytes 2-3)  — flags / secondary layer value
   other divisor, and rendering the grid at that width produces a
   visually coherent map (vs. noise at other widths).
 
-**Correction from the first pass of this doc:** Section A is *not* a full
-ground/terrain fill. Rendering it with the actual atlas art (compositing
-the real 64×64 tile per cell, not just visualizing the raw index as
-grayscale) shows the canvas is overwhelmingly the atlas's `(0,251,192)`
-teal transparent color-key, with only sparse solid content. Checked on
-`TIRGO`: of 16,215 non-zero cells, only 572 (3.5%) reference the opaque
-terrain rows (0–56) of the atlas — the other 96.5% reference sprite-region
-tiles sitting on transparent background (dominated by the impaled-stake
-decoration frames, see atlas section above). So **Section A is a sparse
-object/decoration overlay** (props, corpses-on-stakes, fence pieces, wall
-fragments — individual sprites), not the ground itself. The actual base
-terrain/ground graphic for a battle is not present in this file at all —
-it must come from elsewhere (a separate fixed background per county, not
-yet located, or something generated outside these `.MAP` files).
+**Section A is the full ground layer.** Composited with the real atlas art
+on the corrected 40×40/16-column grid, it renders as continuous, coherent
+terrain — grass, rock, roads, a winding river with rocky shorelines.
+Measured on `TIRGO`: **all 16,215** non-zero cells (100%) reference fully
+opaque atlas tiles; none reference a tile with any transparent pixel.
+
+> An earlier pass claimed the opposite — that only 3.5% of cells hit opaque
+> terrain, that Section A was "a sparse object/decoration overlay", and
+> that the real ground graphic lived somewhere else entirely. All three
+> followed from reading the atlas on the wrong 64×64 grid, which made most
+> cells land on the wrong (transparent) part of the sheet. There is no
+> missing background to find.
+
+**Cell order is column-major.** `offset = (x*128 + y) * 4`, i.e. a flat
+index `i` is at `x = i / 128`, `y = i % 128` — horizontally adjacent cells
+are 128 records apart, vertically adjacent cells 1 apart. The 128×128 grid
+is square, so the autocorrelation that established the row width could not
+distinguish the two orientations; the atlas settles it. The 3×3 shoreline
+object above occupies three *horizontally* adjacent atlas tiles per run
+(1437,1438,1439), and those three land 128 records apart in the map, which
+only works if 128 is the x stride.
 
 ### Section B — offset `0x10000`, 262,144 bytes = 256×256 grid
 
 - Exactly 2× Section A's resolution per axis (2 sub-samples per terrain
-  tile). Row-major, 256 wide: `offset = 0x10000 + (y*256 + x) * 4`.
+  tile), 256 cells per axis: `offset = 0x10000 + (x*256 + y) * 4`.
+  Presumed column-major to match Section A; unlike Section A this has not
+  been pinned against the atlas (there are no tile indices here to pin it
+  with), so the two axes could still be the other way round.
 - `lo` = always 0 in every county file checked.
 - `hi` = the real payload, values seen across county files: `0`, `4`, and
   rarely `256` (~20 occurrences per map). Rendering `hi` as an image
@@ -136,15 +155,20 @@ Rendering block 0's Section A with the real atlas art (composited, not
 grayscale) confirms what it is: a **library of prefab multi-tile
 buildings**, matching the hypothesis that buildings are combined-tile
 structures meant to be placed into a county map's Section A object layer.
-On the same 128×128 canvas (mostly transparent teal, same as a county map),
-there are roughly a dozen separate, discrete clusters of solid
-architecture — walls, tiled roofs, towers — each cluster maybe 15–25 tiles
-across, scattered at distinct, non-overlapping positions across the grid,
-clearly distinguishable from the surrounding transparency. This is a very
-different composition from a county map: block 0 pulls 4,096/15,913 (25.7%)
-of its non-zero refs from the opaque terrain rows of the atlas (vs. 3.5% in
-`TIRGO`), consistent with solid building walls/roofs rather than sparse
-decorations. Each cluster is very likely one building "prefab" — assembled
+On the same 128×128 canvas — a plain grass fill, not transparency — there
+are **eleven** separate, discrete compounds: octagonal and hexagonal
+walled enclosures, several ringed by a water moat, each containing tiled
+roofs and towers, plus a few loose stretches of wall/fence. Each is
+roughly 15–25 tiles across, at distinct non-overlapping positions.
+
+> The earlier figures here ("4,096/15,913 (25.7%) of non-zero refs from
+> opaque terrain rows, vs. 3.5% in `TIRGO`") came from the wrong 64×64
+> atlas grid and are withdrawn. On the corrected grid **100%** of block 0's
+> 15,913 non-zero refs are fully opaque tiles — the same as a county map —
+> so that contrast does not exist. The prefab reading below still holds; it
+> rests on the rendered layout, which is unambiguous.
+
+Each cluster is very likely one building "prefab" — assembled
 once here from atlas tiles, then copy-pasted (stamped) into a county's
 Section A at the right grid position wherever that building exists in the
 actual map, rather than every county map re-authoring every building
@@ -164,10 +188,6 @@ to individual buildings still needs work.
 
 ## Open questions for later
 
-- Where the actual ground/terrain graphic comes from for a county battle —
-  it is not in Section A (that's a sparse object overlay, see above) or
-  Section B (`lo` always 0 in county files). Possibly a fixed background
-  per county not yet located, or derived some other way.
 - The individual building clusters in `BUILDING.MAP` block 0 need their
   bounding boxes extracted (e.g. connected-component analysis on non-zero
   cells) so each prefab can be cut out and placed independently — this is
@@ -183,6 +203,10 @@ to individual buildings still needs work.
   resolve this.
 - Whether Section A's `hi` field is ever non-zero in a *county* file (only
   ever seen non-zero in `BUILDING.MAP` so far).
+- Whether Section B uses the same column-major cell order as Section A. It
+  carries no tile indices, so the trick that pinned Section A's
+  orientation against the atlas doesn't apply; something else (e.g.
+  lining its river mask up against Section A's rendered river) is needed.
 
 ## Test fixture strategy
 
@@ -193,7 +217,12 @@ assets, this repository is public, and redistributing them would be a
 copyright/redistribution risk — so `.cd/` stays local-only and gitignored,
 and none of the original `.MAP`/`.ART` files are committed.
 
-Any future automated test for a `.MAP`/`.ART` parser should instead use a
+The `.ART` decoder added since follows exactly this strategy — synthetic
+in-memory PCX fixtures for the format-level tests, plus golden hashes
+(never pixels) for the real file, skipped when `.cd/` is absent. See
+[`ART_FORMAT.md`](./ART_FORMAT.md).
+
+Any future automated test for a `.MAP` parser should likewise use a
 small **synthetic fixture**: a hand-built byte buffer (or a tiny committed
 binary file) shaped like the format documented above — e.g. one 327,680-byte
 buffer with a handful of non-zero Section A `lo` tile indices and a couple
