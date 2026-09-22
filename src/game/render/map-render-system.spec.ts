@@ -1,0 +1,251 @@
+import { Container, Sprite, TextureSource } from 'pixi.js';
+import { describe, expect, it } from 'vitest';
+
+import type { MapTileset, ParsedMap, TerrainType } from '~/game/map/load-tiled-map';
+import { FLIPPED_DIAGONALLY_FLAG, FLIPPED_HORIZONTALLY_FLAG } from '~/game/map/tile-gid';
+import {
+  createPrimitiveTerrainTextures,
+  MapRenderSystem,
+  TileTextureCache,
+} from './map-render-system';
+
+const TERRAIN_URL = 'http://host/maps/terrain.png';
+
+/** The committed `terrain` tileset's geometry, referenced at `firstgid`. */
+function terrainTileset(firstgid = 1): MapTileset {
+  return {
+    name: 'terrain',
+    firstgid,
+    tileWidth: 40,
+    tileHeight: 40,
+    tileCount: 1552,
+    columns: 16,
+    margin: 0,
+    spacing: 0,
+    imageUrl: TERRAIN_URL,
+    imageWidth: 640,
+    imageHeight: 3880,
+  };
+}
+
+function terrainSources(): Map<string, TextureSource> {
+  return new Map([[TERRAIN_URL, new TextureSource({ width: 640, height: 3880 })]]);
+}
+
+function makeMap(overrides: Partial<ParsedMap> & { width: number; height: number }): ParsedMap {
+  const { width, height } = overrides;
+  return {
+    tileSize: 32,
+    terrain: Array.from({ length: height }, () => new Array<TerrainType>(width).fill('grass')),
+    collision: new Uint8Array(width * height),
+    spawns: [],
+    tilesets: [terrainTileset()],
+    tileLayers: [],
+    ...overrides,
+  };
+}
+
+/** Every sprite across every chunk, in draw order. */
+function sprites(system: MapRenderSystem): Sprite[] {
+  return system.container.children.flatMap((chunk) => (chunk as Container).children as Sprite[]);
+}
+
+describe('TileTextureCache', () => {
+  it('maps a gid to its tile’s frame, applying the firstgid offset', () => {
+    const cache = new TileTextureCache([terrainTileset(4)], terrainSources());
+
+    // gid 1076 at firstgid 4 is tile 1072: row 67, column 0.
+    const grass = cache.get(1076)!;
+    expect(grass.tileset.name).toBe('terrain');
+    expect(grass.texture.frame).toMatchObject({ x: 0, y: 2680, width: 40, height: 40 });
+
+    // gid 4 is tile 0, the sheet's top-left corner — a real ground tile.
+    expect(cache.get(4)!.texture.frame).toMatchObject({ x: 0, y: 0 });
+    // gid 22 is tile 18: row 1, column 2.
+    expect(cache.get(22)!.texture.frame).toMatchObject({ x: 80, y: 40 });
+  });
+
+  it('reuses one texture per gid', () => {
+    const cache = new TileTextureCache([terrainTileset()], terrainSources());
+    expect(cache.get(5)!.texture).toBe(cache.get(5)!.texture);
+  });
+
+  it('returns undefined, never throwing, for empty, unknown or unloadable gids', () => {
+    const cache = new TileTextureCache([terrainTileset(4)], terrainSources());
+
+    expect(cache.get(0)).toBeUndefined();
+    // Below the tileset's firstgid, and past its last tile.
+    expect(cache.get(3)).toBeUndefined();
+    expect(cache.get(4 + 1552)).toBeUndefined();
+    // Repeated lookups of a miss stay a miss.
+    expect(cache.get(3)).toBeUndefined();
+
+    // A tileset whose image never loaded.
+    expect(new TileTextureCache([terrainTileset()], new Map()).get(1)).toBeUndefined();
+  });
+
+  it('treats a tile whose frame falls outside its image as unknown', () => {
+    const short = new Map([[TERRAIN_URL, new TextureSource({ width: 640, height: 40 })]]);
+    const cache = new TileTextureCache([terrainTileset()], short);
+
+    expect(cache.get(1)).toBeDefined();
+    expect(cache.get(17)).toBeUndefined();
+  });
+});
+
+describe('MapRenderSystem', () => {
+  it('draws one sprite per non-empty cell per visible tile layer, skipping empty and unknown gids', () => {
+    const map = makeMap({
+      width: 2,
+      height: 2,
+      tileLayers: [
+        { name: 'ground', data: [1, 2, 0, 99999], opacity: 1 },
+        { name: 'decoration', data: [0, 0, 0, 3], opacity: 0.5 },
+      ],
+    });
+    const system = new MapRenderSystem({
+      map,
+      tileTextures: new TileTextureCache(map.tilesets, terrainSources()),
+    });
+
+    const drawn = sprites(system);
+    expect(drawn).toHaveLength(3);
+    // Layer order is preserved: the decoration tile draws after the ground.
+    expect(drawn.map((sprite) => sprite.alpha)).toEqual([1, 1, 0.5]);
+  });
+
+  it('fits each tile to its map cell, centred, whatever the tileset’s tile size', () => {
+    const map = makeMap({ width: 3, height: 1, tileLayers: [{ name: 'g', data: [0, 0, 1], opacity: 1 }] });
+    const system = new MapRenderSystem({
+      map,
+      tileTextures: new TileTextureCache(map.tilesets, terrainSources()),
+    });
+
+    const [sprite] = sprites(system);
+    // Cell (2, 0) on a 32px grid, from a 40px tile.
+    expect(sprite.position.x).toBe(80);
+    expect(sprite.position.y).toBe(16);
+    expect(sprite.scale.x).toBeCloseTo(0.8);
+    expect(sprite.scale.y).toBeCloseTo(0.8);
+    expect(sprite.getBounds().width).toBeCloseTo(32);
+  });
+
+  it('applies flip flags to the sprite’s orientation', () => {
+    const flippedH = (1 | FLIPPED_HORIZONTALLY_FLAG) >>> 0;
+    const flippedD = (1 | FLIPPED_DIAGONALLY_FLAG) >>> 0;
+    const map = makeMap({ width: 2, height: 1, tileLayers: [{ name: 'g', data: [flippedH, flippedD], opacity: 1 }] });
+    const system = new MapRenderSystem({
+      map,
+      tileTextures: new TileTextureCache(map.tilesets, terrainSources()),
+    });
+
+    const [h, d] = sprites(system);
+    expect(h.scale.x).toBeCloseTo(-0.8);
+    expect(h.rotation).toBe(0);
+    expect(d.rotation).toBeCloseTo(Math.PI / 2);
+    // Still fills exactly its own cell once rotated.
+    const bounds = d.getBounds();
+    expect(bounds.x).toBeCloseTo(32);
+    expect(bounds.width).toBeCloseTo(32);
+    expect(bounds.height).toBeCloseTo(32);
+  });
+
+  it('groups tiles into fixed-size chunk containers covering the whole map', () => {
+    const map = makeMap({ width: 20, height: 20, tileLayers: [{ name: 'g', data: new Array(400).fill(1), opacity: 1 }] });
+    const system = new MapRenderSystem({
+      map,
+      tileTextures: new TileTextureCache(map.tilesets, terrainSources()),
+      chunkSize: 16,
+    });
+
+    expect(system.chunkCount).toBe(4);
+    const sizes = system.container.children.map((chunk) => chunk.children.length);
+    expect(sizes).toEqual([16 * 16, 4 * 16, 16 * 4, 4 * 4]);
+  });
+
+  it('culls chunks outside the camera view', () => {
+    // 64x64 tiles of 32px in 16-tile chunks: 4x4 chunks of 512px.
+    const map = makeMap({ width: 64, height: 64, tileLayers: [{ name: 'g', data: new Array(4096).fill(1), opacity: 1 }] });
+    const system = new MapRenderSystem({
+      map,
+      tileTextures: new TileTextureCache(map.tilesets, terrainSources()),
+      chunkSize: 16,
+    });
+
+    system.cull({ x: 0, y: 0, width: 400, height: 400 });
+    expect(system.visibleChunkCount).toBe(1);
+    expect(system.container.children[0].visible).toBe(true);
+
+    // Panned to straddle the centre: four chunks.
+    system.cull({ x: 800, y: 800, width: 400, height: 400 });
+    expect(system.visibleChunkCount).toBe(4);
+    expect(system.container.children[0].visible).toBe(false);
+
+    // Zoomed out over the whole map.
+    system.cull({ x: 0, y: 0, width: 4096, height: 4096 });
+    expect(system.visibleChunkCount).toBe(16);
+
+    // Entirely off the map.
+    system.cull({ x: 10000, y: 10000, width: 100, height: 100 });
+    expect(system.visibleChunkCount).toBe(0);
+  });
+
+  it('switches to primitive terrain-type rectangles and back, keeping the culled view', () => {
+    const terrain: TerrainType[][] = [
+      ['grass', 'wall'],
+      ['water', 'grass'],
+    ];
+    const map = makeMap({ width: 2, height: 2, terrain, tileLayers: [{ name: 'g', data: [1, 0, 0, 0], opacity: 1 }] });
+    const primitiveTextures = createPrimitiveTerrainTextures(new TextureSource({ width: 96, height: 32 }));
+    const system = new MapRenderSystem({
+      map,
+      tileTextures: new TileTextureCache(map.tilesets, terrainSources()),
+      primitiveTextures,
+    });
+    system.cull({ x: 1000, y: 1000, width: 10, height: 10 });
+
+    expect(sprites(system)).toHaveLength(1);
+
+    system.setPrimitives(true);
+    expect(system.primitivesEnabled).toBe(true);
+    const primitives = sprites(system);
+    expect(primitives.map((sprite) => sprite.texture)).toEqual([
+      primitiveTextures.grass,
+      primitiveTextures.wall,
+      primitiveTextures.water,
+      primitiveTextures.grass,
+    ]);
+    expect(primitives[1].texture.frame).toMatchObject({ x: 32, y: 0, width: 32, height: 32 });
+    // The rebuilt chunks inherit the last cull rather than all showing.
+    expect(system.visibleChunkCount).toBe(0);
+
+    system.setPrimitives(false);
+    expect(sprites(system)).toHaveLength(1);
+  });
+
+  it('can start in primitive mode', () => {
+    const map = makeMap({ width: 1, height: 1 });
+    const system = new MapRenderSystem({
+      map,
+      tileTextures: new TileTextureCache(map.tilesets, terrainSources()),
+      primitiveTextures: createPrimitiveTerrainTextures(new TextureSource({ width: 96, height: 32 })),
+      primitives: true,
+    });
+    expect(sprites(system)).toHaveLength(1);
+  });
+
+  it('destroys every chunk on dispose, leaving no orphaned Pixi objects', () => {
+    const map = makeMap({ width: 20, height: 20, tileLayers: [{ name: 'g', data: new Array(400).fill(1), opacity: 1 }] });
+    const system = new MapRenderSystem({
+      map,
+      tileTextures: new TileTextureCache(map.tilesets, terrainSources()),
+    });
+    const chunks = [...system.container.children];
+
+    system.dispose();
+
+    expect(system.chunkCount).toBe(0);
+    expect(chunks.every((chunk) => chunk.destroyed)).toBe(true);
+    expect(system.container.destroyed).toBe(true);
+  });
+});
