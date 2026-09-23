@@ -42,7 +42,6 @@ export interface MapTileLayer {
   name: string;
   /** Row-major, `width * height` long — always the map's own size. */
   data: readonly number[];
-  opacity: number;
 }
 
 export interface ParsedMap {
@@ -58,8 +57,8 @@ export interface ParsedMap {
   /** Every tileset the map references, for resolving {@link tileLayers}' gids. */
   tilesets: MapTileset[];
   /**
-   * Every visible tile layer, flattened out of any groups, back to front —
-   * what the art renderer draws. Hidden layers are left out.
+   * Every visible top-level tile layer, back to front — what the renderer
+   * draws. Hidden layers are left out, and group layers aren't supported.
    */
   tileLayers: MapTileLayer[];
 }
@@ -140,23 +139,16 @@ function parseCollision(
 }
 
 /**
- * Collects every visible tile layer, descending into groups (a hidden group
- * hides everything in it), in the order Tiled draws them: back to front.
+ * Collects every visible top-level tile layer, in the order Tiled draws
+ * them: back to front.
  */
-function collectVisibleTileLayers(
-  layers: TiledLayer[],
-  map: TiledMap,
-  parentOpacity = 1
-): MapTileLayer[] {
+function collectVisibleTileLayers(map: TiledMap): MapTileLayer[] {
   const out: MapTileLayer[] = [];
-  for (const layer of layers) {
+  for (const layer of map.layers) {
     if (layer.visible === false) {
       continue;
     }
-    const opacity = parentOpacity * (layer.opacity ?? 1);
-    if (layer.type === 'group') {
-      out.push(...collectVisibleTileLayers(layer.layers, map, opacity));
-    } else if (layer.type === 'tilelayer') {
+    if (layer.type === 'tilelayer') {
       if (layer.width !== map.width || layer.height !== map.height) {
         throw new TiledMapError(
           `Tile layer "${layer.name}" size (${layer.width}x${layer.height}) does not match map size (${map.width}x${map.height})`
@@ -167,7 +159,7 @@ function collectVisibleTileLayers(
           `Tile layer "${layer.name}" uses an unsupported encoding; expected an uncompressed tile array`
         );
       }
-      out.push({ name: layer.name, data: layer.data, opacity });
+      out.push({ name: layer.name, data: layer.data });
     }
   }
   return out;
@@ -197,7 +189,7 @@ export function parseTiledMap(map: TiledMap, tilesets: MapTileset[]): ParsedMap 
 
   const collision = parseCollision(terrainLayer, map, tilesets);
   const spawns = parseSpawns(spawnsLayer);
-  const tileLayers = collectVisibleTileLayers(map.layers, map);
+  const tileLayers = collectVisibleTileLayers(map);
 
   return {
     width: map.width,

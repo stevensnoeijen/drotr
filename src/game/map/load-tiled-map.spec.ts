@@ -58,7 +58,6 @@ function tileLayer(name: string, gid: number, extra: Partial<TiledLayerTilelayer
     name,
     data: new Array(fixtureMap.width * fixtureMap.height).fill(gid),
     visible: true,
-    opacity: 1,
     ...extra,
   };
 }
@@ -163,23 +162,11 @@ describe('parseTiledMap tile layers', () => {
     expect(result.tileLayers.map((layer) => layer.name)).toEqual(['terrain']);
   });
 
-  it('flattens groups, skipping hidden ones and multiplying opacity', () => {
-    const group = (name: string, layers: TiledLayer[], extra: object = {}) =>
-      ({ ...tileLayer(name, 0), type: 'group', layers, ...extra }) as unknown as TiledLayer;
-    const map = withLayers(
-      group('outer', [tileLayer('a', 1, { opacity: 0.5 }), group('inner', [tileLayer('b', 1)])], {
-        opacity: 0.5,
-      }),
-      group('hidden-group', [tileLayer('c', 1)], { visible: false })
-    );
+  it('ignores group layers and what is inside them', () => {
+    const group = { ...tileLayer('group', 0), type: 'group', layers: [tileLayer('inside', 1)] } as unknown as TiledLayer;
+    const result = parseTiledMap(withLayers(group), [terrainTileset]);
 
-    const result = parseTiledMap(map, [terrainTileset]);
-
-    expect(result.tileLayers.map(({ name, opacity }) => ({ name, opacity }))).toEqual([
-      { name: 'terrain', opacity: 1 },
-      { name: 'a', opacity: 0.25 },
-      { name: 'b', opacity: 0.5 },
-    ]);
+    expect(result.tileLayers.map((layer) => layer.name)).toEqual(['terrain']);
   });
 
   it('rejects a visible tile layer whose size does not match the map', () => {

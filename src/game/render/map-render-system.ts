@@ -190,7 +190,6 @@ export class MapRenderSystem {
           }
           const sprite = new Sprite(tile.texture);
           placeTileSprite(sprite, x, y, map.tileSize, decoded);
-          sprite.alpha = layer.opacity;
           chunk.addChild(sprite);
         }
       }
