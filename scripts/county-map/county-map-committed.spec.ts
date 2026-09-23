@@ -33,12 +33,12 @@ describe('public/maps/fagaras.tmj', () => {
     expect(map.tilesets).toEqual([{ firstgid: 1, source: 'terrain.tsx' }]);
   });
 
-  it('passes parseTiledMap as a 128x128, 40 px map with no spawns', () => {
+  it('passes parseTiledMap as a 128x128, 40 px map with red and blue spawns', () => {
     const parsed = parseTiledMap(map, tileset);
     expect(parsed.width).toEqual(128);
     expect(parsed.height).toEqual(128);
     expect(parsed.tileSize).toEqual(40);
-    expect(parsed.spawns).toEqual([]);
+    expect(parsed.spawns.map((spawn) => spawn.id).sort()).toEqual(['blue', 'red']);
     // collision-debug is hidden, so terrain is the only drawn layer.
     expect(parsed.tileLayers).toHaveLength(1);
     expect(parsed.collision).toHaveLength(128 * 128);

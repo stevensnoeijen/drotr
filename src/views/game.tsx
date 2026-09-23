@@ -69,6 +69,25 @@ export default function Game() {
   // value — or fight the live camera once panning starts.
   const [initialViewport] = useState(() => parseViewport(searchParams));
 
+  // Set by GameCanvas when the resolved scenario rejects the resolved map
+  // (e.g. it needs named spawn points this map doesn't have), since that
+  // can only be known once the map has actually loaded. Reset whenever the
+  // scenario/map combination changes (adjusting state during render, per
+  // https://react.dev/learn/you-might-not-need-an-effect, rather than in an
+  // effect) so a fixed `?map=`/`?scenario=` isn't stuck showing a stale
+  // error after GameCanvas remounts (it's keyed on this same pair below).
+  const [canvasError, setCanvasError] = useState<string | undefined>(undefined);
+  const scenarioMapKey = `${resolvedScenario.error ? '' : resolvedScenario.scenario.id}:${
+    resolvedMap.error ? '' : resolvedMap.map.id
+  }`;
+  const [prevScenarioMapKey, setPrevScenarioMapKey] = useState(scenarioMapKey);
+  if (prevScenarioMapKey !== scenarioMapKey) {
+    setPrevScenarioMapKey(scenarioMapKey);
+    if (canvasError) {
+      setCanvasError(undefined);
+    }
+  }
+
   // `searchParams` as of the most recent render, read inside the debounced
   // handleViewportChange callback below (which can fire well after the
   // render that scheduled it) so a save never clobbers a `?debug=` toggle —
@@ -146,10 +165,13 @@ export default function Game() {
     return renderAssetCase(searchParams);
   }
 
-  if (resolvedScenario.error || resolvedMap.error) {
+  if (resolvedScenario.error || resolvedMap.error || canvasError) {
     return (
       <div className="flex h-screen flex-col items-center justify-center gap-4 bg-neutral-900 px-6 text-center">
         <h1 className="text-2xl font-bold text-white">Can't load this game</h1>
+        {canvasError && !resolvedScenario.error && !resolvedMap.error && (
+          <p className="text-neutral-300">{canvasError}</p>
+        )}
         {resolvedScenario.error && (
           <p className="text-neutral-300">
             {resolvedScenario.requestedId
@@ -204,6 +226,7 @@ export default function Game() {
         onStats={(next) => {
           statsRef.current = next;
         }}
+        onError={setCanvasError}
         onViewportChange={handleViewportChange}
       />
       <DebugOverlay

@@ -33,4 +33,14 @@ export interface Scenario {
   setup(world: World<Entity>, map?: ParsedMap): void;
   /** Subset of systems to run this tick. Defaults to all systems. */
   systems?: SystemName[];
+  /**
+   * Checks whether `map` (the loaded map, or `undefined` for the blank map
+   * or a failed load) satisfies whatever this scenario requires of it —
+   * e.g. named spawn points `setup` will call `claimSpawn` against. Returns
+   * a human-readable reason the combination can't be used, or `undefined`
+   * when it's fine. Most scenarios need nothing from the map and can leave
+   * this unset; one that does should implement it rather than have `setup`
+   * silently spawn nothing (or throw) for a map that doesn't fit.
+   */
+  validateMap?(map?: ParsedMap): string | undefined;
 }
