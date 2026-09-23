@@ -12,7 +12,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test-coverage": "vitest run --coverage",
-    "export:terrain-tileset": "jiti scripts/terrain-tileset/main.ts"
+    "export:terrain-tileset": "jiti scripts/terrain-tileset/main.ts",
+    "convert:map": "jiti scripts/county-map/main.ts"
   },
   "dependencies": {
     "lodash": "^4.17.21",
