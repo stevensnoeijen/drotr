@@ -100,7 +100,7 @@ function parseSpawns(layer: TiledLayerObjectgroup): SpawnPoint[] {
 /**
  * Derives the collision grid from the `terrain` layer: a cell blocks when
  * its tile carries the {@link BLOCKED_TILE_PROPERTY} or the cell is empty
- * (gid 0); flip flags don't change a tile's walkability. A gid no tileset
+ * (gid 0); a flipped tile is as walkable as the unflipped one. A gid no tileset
  * covers is malformed data and rejected.
  */
 function parseCollision(
@@ -123,7 +123,7 @@ function parseCollision(
   for (let y = 0; y < map.height; y++) {
     for (let x = 0; x < map.width; x++) {
       const index = y * map.width + x;
-      const { gid } = decodeGid(layer.data[index]);
+      const gid = decodeGid(layer.data[index]);
       if (gid === 0) {
         collision[index] = 1;
         continue;

@@ -2,7 +2,6 @@ import { Container, Sprite, TextureSource } from 'pixi.js';
 import { describe, expect, it } from 'vitest';
 
 import type { MapTileset, ParsedMap } from '~/game/map/load-tiled-map';
-import { FLIPPED_DIAGONALLY_FLAG, FLIPPED_HORIZONTALLY_FLAG } from '~/game/map/tile-gid';
 import { MapRenderSystem, TileTextureCache } from './map-render-system';
 
 const TERRAIN_URL = 'http://host/maps/terrain.png';
@@ -111,8 +110,8 @@ describe('MapRenderSystem', () => {
     expect(drawn.map((sprite) => sprite.texture.frame.x)).toEqual([0, 40, 80]);
   });
 
-  it('fits each tile to its map cell, centred, whatever the tileset’s tile size', () => {
-    const map = makeMap({ width: 3, height: 1, tileLayers: [{ name: 'g', data: [0, 0, 1]}] });
+  it('fits each tile to its map cell, whatever the tileset’s tile size', () => {
+    const map = makeMap({ width: 3, height: 1, tileLayers: [{ name: 'g', data: [0, 0, 1] }] });
     const system = new MapRenderSystem({
       map,
       tileTextures: new TileTextureCache(map.tilesets, terrainSources()),
@@ -120,31 +119,27 @@ describe('MapRenderSystem', () => {
 
     const [sprite] = sprites(system);
     // Cell (2, 0) on a 32px grid, from a 40px tile.
-    expect(sprite.position.x).toBe(80);
-    expect(sprite.position.y).toBe(16);
+    expect(sprite.position.x).toBe(64);
+    expect(sprite.position.y).toBe(0);
     expect(sprite.scale.x).toBeCloseTo(0.8);
     expect(sprite.scale.y).toBeCloseTo(0.8);
     expect(sprite.getBounds().width).toBeCloseTo(32);
   });
 
-  it('applies flip flags to the sprite’s orientation', () => {
-    const flippedH = (1 | FLIPPED_HORIZONTALLY_FLAG) >>> 0;
-    const flippedD = (1 | FLIPPED_DIAGONALLY_FLAG) >>> 0;
-    const map = makeMap({ width: 2, height: 1, tileLayers: [{ name: 'g', data: [flippedH, flippedD]}] });
+  it('draws a flipped gid as its tile, unflipped', () => {
+    // gid 1 with the horizontal and diagonal flip flags set.
+    const map = makeMap({ width: 2, height: 1, tileLayers: [{ name: 'g', data: [0x80000001, 0x20000001] }] });
     const system = new MapRenderSystem({
       map,
       tileTextures: new TileTextureCache(map.tilesets, terrainSources()),
     });
 
-    const [h, d] = sprites(system);
-    expect(h.scale.x).toBeCloseTo(-0.8);
-    expect(h.rotation).toBe(0);
-    expect(d.rotation).toBeCloseTo(Math.PI / 2);
-    // Still fills exactly its own cell once rotated.
-    const bounds = d.getBounds();
-    expect(bounds.x).toBeCloseTo(32);
-    expect(bounds.width).toBeCloseTo(32);
-    expect(bounds.height).toBeCloseTo(32);
+    for (const sprite of sprites(system)) {
+      expect(sprite.texture.frame).toMatchObject({ x: 0, y: 0 });
+      expect(sprite.rotation).toBe(0);
+      expect(sprite.scale.x).toBeCloseTo(0.8);
+      expect(sprite.scale.y).toBeCloseTo(0.8);
+    }
   });
 
   it('groups tiles into fixed-size chunk containers covering the whole map', () => {

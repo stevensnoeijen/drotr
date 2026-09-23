@@ -1,16 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import {
-  decodeGid,
-  FLIPPED_DIAGONALLY_FLAG,
-  FLIPPED_HORIZONTALLY_FLAG,
-  FLIPPED_VERTICALLY_FLAG,
-  resolveGid,
-  ROTATED_HEXAGONAL_120_FLAG,
-  tileFrame,
-  tileOrientation,
-  type TilesetGeometry,
-} from './tile-gid';
+import { decodeGid, resolveGid, tileFrame, type TilesetGeometry } from './tile-gid';
 
 function tileset(overrides: Partial<TilesetGeometry> = {}): TilesetGeometry {
   return {
@@ -26,34 +16,27 @@ function tileset(overrides: Partial<TilesetGeometry> = {}): TilesetGeometry {
 }
 
 describe('decodeGid', () => {
-  it('passes a plain gid through with no flags', () => {
-    expect(decodeGid(42)).toEqual({
-      gid: 42,
-      flippedHorizontally: false,
-      flippedVertically: false,
-      flippedDiagonally: false,
-    });
+  it('passes a plain gid through', () => {
+    expect(decodeGid(42)).toBe(42);
+    expect(decodeGid(0)).toBe(0);
   });
 
-  it('strips each flip flag into its own boolean', () => {
-    const raw =
-      (7 | FLIPPED_HORIZONTALLY_FLAG | FLIPPED_VERTICALLY_FLAG | FLIPPED_DIAGONALLY_FLAG) >>> 0;
-    expect(decodeGid(raw)).toEqual({
-      gid: 7,
-      flippedHorizontally: true,
-      flippedVertically: true,
-      flippedDiagonally: true,
-    });
+  it('strips each of the four flag bits, alone or together', () => {
+    // Horizontal, vertical and diagonal flip, and hexagonal rotation.
+    for (const flag of [0x80000000, 0x40000000, 0x20000000, 0x10000000]) {
+      expect(decodeGid((7 | flag) >>> 0)).toBe(7);
+    }
+    expect(decodeGid((7 | 0xf0000000) >>> 0)).toBe(7);
   });
 
   it('decodes a horizontally flipped gid stored as a negative signed int', () => {
-    const signed = (5 | FLIPPED_HORIZONTALLY_FLAG) | 0;
+    const signed = (5 | 0x80000000) | 0;
     expect(signed).toBeLessThan(0);
-    expect(decodeGid(signed)).toMatchObject({ gid: 5, flippedHorizontally: true });
+    expect(decodeGid(signed)).toBe(5);
   });
 
-  it('strips the hexagonal rotation bit too', () => {
-    expect(decodeGid((3 | ROTATED_HEXAGONAL_120_FLAG) >>> 0).gid).toBe(3);
+  it('keeps the largest gid the flags leave room for', () => {
+    expect(decodeGid(0x0fffffff)).toBe(0x0fffffff);
   });
 });
 
@@ -106,56 +89,5 @@ describe('tileFrame', () => {
   it('accounts for margin and spacing', () => {
     const spaced = tileset({ tileWidth: 32, tileHeight: 32, columns: 3, margin: 2, spacing: 1 });
     expect(tileFrame(spaced, 4)).toEqual({ x: 2 + 33, y: 2 + 33, width: 32, height: 32 });
-  });
-});
-
-describe('tileOrientation', () => {
-  const none = { flippedHorizontally: false, flippedVertically: false, flippedDiagonally: false };
-
-  /** Applies rotate(rotation) · scale(sx, sy) to a point, rounding away float noise. */
-  function apply({ rotation, scaleX, scaleY }: ReturnType<typeof tileOrientation>, x: number, y: number) {
-    const sx = x * scaleX;
-    const sy = y * scaleY;
-    const cos = Math.cos(rotation);
-    const sin = Math.sin(rotation);
-    return [Math.round(sx * cos - sy * sin), Math.round(sx * sin + sy * cos)];
-  }
-
-  /** Tiled's own definition: diagonal swaps x/y, then h negates x, then v negates y. */
-  function reference(flags: typeof none, x: number, y: number) {
-    let [px, py] = flags.flippedDiagonally ? [y, x] : [x, y];
-    if (flags.flippedHorizontally) px = -px;
-    if (flags.flippedVertically) py = -py;
-    return [px, py];
-  }
-
-  it('is the identity with no flags', () => {
-    expect(tileOrientation(none)).toEqual({ rotation: 0, scaleX: 1, scaleY: 1 });
-  });
-
-  it('maps a plain horizontal/vertical flip onto a negative scale', () => {
-    expect(tileOrientation({ ...none, flippedHorizontally: true })).toEqual({
-      rotation: 0,
-      scaleX: -1,
-      scaleY: 1,
-    });
-    expect(tileOrientation({ ...none, flippedVertically: true })).toEqual({
-      rotation: 0,
-      scaleX: 1,
-      scaleY: -1,
-    });
-  });
-
-  it('matches Tiled’s flip order for all eight flag combinations', () => {
-    for (const flippedDiagonally of [false, true]) {
-      for (const flippedHorizontally of [false, true]) {
-        for (const flippedVertically of [false, true]) {
-          const flags = { flippedDiagonally, flippedHorizontally, flippedVertically };
-          const orientation = tileOrientation(flags);
-          // A point off every axis and diagonal pins the transform down uniquely.
-          expect(apply(orientation, 1, 2)).toEqual(reference(flags, 1, 2));
-        }
-      }
-    }
   });
 });

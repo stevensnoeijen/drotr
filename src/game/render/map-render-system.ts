@@ -1,7 +1,7 @@
 import { Assets, Container, Rectangle, Sprite, Texture, type TextureSource } from 'pixi.js';
 
 import type { MapTileset, ParsedMap } from '~/game/map/load-tiled-map';
-import { decodeGid, resolveGid, tileFrame, tileOrientation, type DecodedGid } from '~/game/map/tile-gid';
+import { decodeGid, resolveGid, tileFrame } from '~/game/map/tile-gid';
 import {
   chunkCells,
   chunkRangesEqual,
@@ -77,27 +77,14 @@ export class TileTextureCache {
 }
 
 /**
- * Positions a tile sprite to fill map cell `(x, y)` exactly: anchored at
- * its centre so flips and the diagonal-flip rotation turn it in place, and
- * scaled from the tileset's tile size to the map's cell size (the engine's
- * grid is authoritative; a tileset whose tiles are larger or smaller than
- * the map's is fitted to it rather than overhanging neighbouring cells).
+ * Positions a tile sprite to fill map cell `(x, y)` exactly, scaled from the
+ * tileset's tile size to the map's cell size (the engine's grid is
+ * authoritative; a tileset whose tiles are larger or smaller than the
+ * map's is fitted to it rather than overhanging neighbouring cells).
  */
-function placeTileSprite(
-  sprite: Sprite,
-  x: number,
-  y: number,
-  cellSize: number,
-  flags: Pick<DecodedGid, 'flippedHorizontally' | 'flippedVertically' | 'flippedDiagonally'>
-): void {
-  const orientation = tileOrientation(flags);
-  sprite.anchor.set(0.5);
-  sprite.position.set((x + 0.5) * cellSize, (y + 0.5) * cellSize);
-  sprite.rotation = orientation.rotation;
-  sprite.scale.set(
-    (orientation.scaleX * cellSize) / sprite.texture.frame.width,
-    (orientation.scaleY * cellSize) / sprite.texture.frame.height
-  );
+function placeTileSprite(sprite: Sprite, x: number, y: number, cellSize: number): void {
+  sprite.position.set(x * cellSize, y * cellSize);
+  sprite.scale.set(cellSize / sprite.texture.frame.width, cellSize / sprite.texture.frame.height);
 }
 
 export interface MapRenderSystemOptions {
@@ -183,13 +170,12 @@ export class MapRenderSystem {
     for (const layer of map.tileLayers) {
       for (let y = y0; y < y1; y++) {
         for (let x = x0; x < x1; x++) {
-          const decoded = decodeGid(layer.data[y * map.width + x] ?? 0);
-          const tile = tileTextures.get(decoded.gid);
+          const tile = tileTextures.get(decodeGid(layer.data[y * map.width + x] ?? 0));
           if (!tile) {
             continue;
           }
           const sprite = new Sprite(tile.texture);
-          placeTileSprite(sprite, x, y, map.tileSize, decoded);
+          placeTileSprite(sprite, x, y, map.tileSize);
           chunk.addChild(sprite);
         }
       }

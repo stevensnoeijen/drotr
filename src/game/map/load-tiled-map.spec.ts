@@ -11,7 +11,6 @@ import {
   TiledMapError,
   type MapTileset,
 } from './load-tiled-map';
-import { FLIPPED_HORIZONTALLY_FLAG } from './tile-gid';
 
 const FIXTURE_DIR = path.resolve(import.meta.dirname, '../../../public/maps');
 const mapJson = fs.readFileSync(path.join(FIXTURE_DIR, 'test.tmj'), 'utf-8');
@@ -100,7 +99,7 @@ describe('parseTiledMap', () => {
   });
 
   it('ignores flip flags when deciding walkability', () => {
-    const flipped = (gid: number) => (gid | FLIPPED_HORIZONTALLY_FLAG) >>> 0;
+    const flipped = (gid: number) => (gid | 0x80000000) >>> 0;
     const result = parseTiledMap(tinyMap([flipped(1), flipped(2), 1, 1]), [smallTileset()]);
     expect([...result.collision]).toEqual([0, 1, 0, 0]);
   });
