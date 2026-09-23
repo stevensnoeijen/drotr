@@ -5,6 +5,8 @@ import { buildPcx, greyscalePalette } from '~/test/pcx-fixture';
 import { decodePcx, type PcxImage } from '~/lib/art/pcx';
 import { extractTileRgba, tileRect, ATLAS_TILE_SIZE } from '~/lib/art/atlas';
 import { TEAL_COLOR_KEY } from '~/lib/art/rgba';
+import { BLOCKED_TILE_PROPERTY } from '~/game/map/tile-properties';
+import { isWalkableTile } from './tile-categories';
 import {
   atlasIndexToTileId,
   buildTerrainTilesetImage,
@@ -169,12 +171,15 @@ describe('buildTerrainTilesetImage', () => {
   });
 
   it('leaves every filler id fully transparent', () => {
-    for (const id of FILLER_IDS) {
-      const tile = readTile(tilesetImage.rgba, TERRAIN_TILESET_WIDTH, id);
-      for (let i = 0; i < tile.length; i++) {
-        expect(tile[i]).toEqual(0);
-      }
-    }
+    // One assertion over the collected offenders rather than one per byte:
+    // ~326k individual `expect` calls took long enough to time the test out
+    // under a loaded full-suite run.
+    const nonTransparentIds = FILLER_IDS.filter((id) =>
+      readTile(tilesetImage.rgba, TERRAIN_TILESET_WIDTH, id).some(
+        (byte) => byte !== 0
+      )
+    );
+    expect(nonTransparentIds).toEqual([]);
   });
 
   it('never draws a pixel sourced from an excluded atlas tile', () => {
@@ -264,7 +269,30 @@ describe('buildTerrainTilesetXml', () => {
     expect(xml).toContain(
       '<image source="terrain.png" width="640" height="3880"/>'
     );
-    expect(xml).not.toContain('<properties>');
+  });
+
+  it('marks exactly the non-walkable tiles with blocked=true, and leaves walkable tiles bare', () => {
+    const doc = new DOMParser().parseFromString(buildTerrainTilesetXml(), 'application/xml');
+    expect(doc.querySelector('parsererror')).toBeNull();
+
+    const blockedIds = [...doc.querySelectorAll('tileset > tile')].map((tile) => {
+      const property = tile.querySelector('properties > property');
+      expect(property?.getAttribute('name')).toBe(BLOCKED_TILE_PROPERTY);
+      expect(property?.getAttribute('type')).toBe('bool');
+      expect(property?.getAttribute('value')).toBe('true');
+      return Number(tile.getAttribute('id'));
+    });
+
+    const expected = [];
+    for (let id = 0; id < TERRAIN_TILE_COUNT; id++) {
+      if (!isWalkableTile(id)) expected.push(id);
+    }
+    expect(blockedIds).toEqual(expected);
+    // Spot checks: grass and a drawbridge tile stay bare; water, a wall and
+    // an unused filler slot are blocked.
+    expect(blockedIds).not.toContain(1072);
+    expect(blockedIds).not.toContain(1482);
+    expect(blockedIds).toEqual(expect.arrayContaining([398, 210, 1472]));
   });
 
   it('is deterministic', () => {

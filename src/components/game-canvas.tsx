@@ -1,13 +1,5 @@
 import { useEffect, useRef } from 'react';
-import {
-  Application,
-  Assets,
-  Container,
-  Graphics,
-  Rectangle,
-  Sprite,
-  Texture,
-} from 'pixi.js';
+import { Application, Container, Graphics } from 'pixi.js';
 import type { Viewport } from 'pixi-viewport';
 
 import { GameLoop } from '~/game/game-loop';
@@ -15,9 +7,11 @@ import { SystemRunner } from '~/game/ecs/system';
 import { findEntityById, queries, world } from '~/game/ecs/world';
 import type { Entity } from '~/game/ecs/entity';
 import type { MapDefinition } from '~/game/maps';
-import { loadTiledMap, type ParsedMap, type TerrainType } from '~/game/map/load-tiled-map';
+import { loadTiledMap, type ParsedMap } from '~/game/map/load-tiled-map';
 import { applyViewportBounds, createGameViewport } from '~/game/render/create-game-viewport';
+import { createMapRenderSystem, type MapRenderSystem } from '~/game/render/map-render-system';
 import { RenderSystem } from '~/game/render/render-system';
+import { visibleWorldRect } from '~/game/render/tile-chunks';
 import { drawTargetLines } from '~/game/render/target-lines';
 import { drawMoveLines } from '~/game/render/move-lines';
 import { NO_CELL, OccupancyGrid } from '~/game/navigation/occupancy-grid';
@@ -43,71 +37,6 @@ import {
 } from '~/game/scenarios';
 import type { GameStats } from './debug-overlay';
 import { units } from '~/game/data/units';
-
-/** Column each terrain type occupies in `maps/terrain-atlas.png`. */
-const TERRAIN_ATLAS_COLUMN: Record<TerrainType, number> = {
-  grass: 0,
-  wall: 1,
-  water: 2,
-};
-
-/**
- * Loads a scenario's Tiled map and draws one sprite per tile, added to
- * `worldContainer` below any existing children. Returns the parsed map so
- * the caller can spawn its units and size the camera to its bounds.
- */
-async function drawTiledMap(
-  mapSource: string,
-  worldContainer: Container
-): Promise<ParsedMap> {
-  const map = await loadTiledMap(mapSource);
-  const atlasUrl = `${import.meta.env.BASE_URL}maps/terrain-atlas.png`;
-  const atlas = await Assets.load(atlasUrl);
-  // Nearest-neighbor sampling: the atlas is flat-color placeholder art
-  // packed edge-to-edge, so linear filtering bleeds neighboring tiles'
-  // colors in at non-integer zoom scales, producing visible seams.
-  atlas.source.scaleMode = 'nearest';
-
-  const terrainTextures: Record<TerrainType, Texture> = {
-    grass: new Texture({
-      source: atlas.source,
-      frame: new Rectangle(
-        TERRAIN_ATLAS_COLUMN.grass * map.tileSize,
-        0,
-        map.tileSize,
-        map.tileSize
-      ),
-    }),
-    wall: new Texture({
-      source: atlas.source,
-      frame: new Rectangle(
-        TERRAIN_ATLAS_COLUMN.wall * map.tileSize,
-        0,
-        map.tileSize,
-        map.tileSize
-      ),
-    }),
-    water: new Texture({
-      source: atlas.source,
-      frame: new Rectangle(
-        TERRAIN_ATLAS_COLUMN.water * map.tileSize,
-        0,
-        map.tileSize,
-        map.tileSize
-      ),
-    }),
-  };
-
-  for (let y = 0; y < map.height; y++) {
-    for (let x = 0; x < map.width; x++) {
-      const sprite = new Sprite(terrainTextures[map.terrain[y][x]]);
-      sprite.position.set(x * map.tileSize, y * map.tileSize);
-      worldContainer.addChild(sprite);
-    }
-  }
-
-  return map;
-}
 
 /**
  * Draws a light grid overlay over the given canvas size, for `?debug=grid`.
@@ -211,6 +140,7 @@ export default function GameCanvas({
     let viewport: Viewport | undefined;
     let resizeObserver: ResizeObserver | undefined;
     let renderSystem: RenderSystem | undefined;
+    let mapRenderSystem: MapRenderSystem | undefined;
     let inputSystem: InputSystem | undefined;
     let selectionBoxDrag: SelectionBoxDrag | undefined;
     let cameraPanSystem: CameraPanSystem | undefined;
@@ -306,7 +236,15 @@ export default function GameCanvas({
       let map: ParsedMap | undefined;
       if (mapSource) {
         try {
-          map = await drawTiledMap(mapSource, gameViewport);
+          map = await loadTiledMap(mapSource);
+          const terrain = await createMapRenderSystem(map);
+          if (cancelled) {
+            terrain.dispose();
+            return;
+          }
+          mapRenderSystem = terrain;
+          // Beneath everything else in the world: units and overlays draw over it.
+          gameViewport.addChildAt(terrain.container, 0);
           applyViewportBounds(
             gameViewport,
             map.width * map.tileSize,
@@ -499,6 +437,16 @@ export default function GameCanvas({
         loop.advance(ticker.deltaMS / 1000);
         cameraPanSystem?.update(gameViewport, ticker.deltaMS / 1000);
 
+        // After the camera moved for this frame: show only the terrain
+        // chunks it can now see.
+        mapRenderSystem?.cull(
+          visibleWorldRect(
+            getViewportTransform(),
+            gameViewport.screenWidth,
+            gameViewport.screenHeight
+          )
+        );
+
         renderSystem?.sync();
 
         if (debugFlagsRef.current?.has('targets')) {
@@ -586,6 +534,7 @@ export default function GameCanvas({
       cameraPanSystem?.dispose();
       deathCleanupSystem?.dispose();
       renderSystem?.dispose();
+      mapRenderSystem?.dispose();
       viewport?.destroy({ children: true });
       if (app) {
         app.canvas.remove();

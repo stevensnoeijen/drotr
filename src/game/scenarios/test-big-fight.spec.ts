@@ -17,9 +17,19 @@ function mapWithWallColumn(width: number, height: number, wallCol: number): Pars
     width,
     height,
     tileSize: 32,
-    terrain: [],
     collision,
     spawns: [],
+    // Never drawn here; the scenario only reads the collision grid.
+    tileset: {
+      firstgid: 1,
+      tileWidth: 32,
+      tileHeight: 32,
+      tileCount: 0,
+      columns: 1,
+      imageUrl: '',
+      blockedTileIds: new Set(),
+    },
+    tileLayers: [],
   };
 }
 
