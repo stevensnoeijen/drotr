@@ -163,7 +163,8 @@ nothing.
 `scripts/terrain-tileset/terrain-tileset.ts` builds a Tiled tileset named
 `terrain` out of the decoded atlas: only the map-art tiles (terrain, walls,
 buildings, the drawbridge and rubble) — no unit sprites, no UI. It's meant
-to be referenced by a `.MAP` converter with tile indices unchanged, and to
+to be referenced by the county `.MAP` converter with tile indices unchanged
+(see "Converting to Tiled" in [`MAP_FORMAT.md`](./MAP_FORMAT.md)), and to
 open cleanly in the Tiled editor.
 
 - **Included range.** Atlas tiles **0–1471** (rows 0–91) verbatim, `id =

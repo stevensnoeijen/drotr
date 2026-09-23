@@ -2,8 +2,9 @@
 
 Notes from reverse-engineering `COUNTIES/*.MAP` against the tile atlas in
 `ART/BATTLE.ART`, decoded by `src/lib/art` (see
-[`ART_FORMAT.md`](./ART_FORMAT.md)). Written to guide a future converter
-that turns these into a more readable format (e.g. JSON + PNG layers).
+[`ART_FORMAT.md`](./ART_FORMAT.md)). The county files are parsed by
+`src/lib/county-map` and converted to Tiled maps by `scripts/county-map` —
+see "Converting to Tiled" below.
 
 Confirmed against **all 12 county files** (`BRAILA`, `BRASOV`, `CUERTA`,
 `FAGARAS`, `GIURGIU`, `HIRSOVA`, `OSTROV`, `PITESTI`, `RASOVA`, `SIBIU`,
@@ -349,6 +350,50 @@ something else — is not yet resolved; that's follow-up work for whoever
 extracts the block 0 prefab boundaries, not this document's terrain
 tileset export.
 
+## Converting to Tiled
+
+A county converts to a Tiled map, drawn with the committed
+`public/maps/terrain.tsx` tileset, with:
+
+```
+npm run convert:map -- FAGARAS
+```
+
+The name is case-insensitive; `BUILDING` is rejected, since it isn't a
+county. The script reads `COUNTIES/<NAME>.MAP` from the CD data
+(`DROTR_CD_DIR`, defaulting to `.cd/`) and writes
+`public/maps/<name>.tmj`. The raw `.MAP` is never committed, but the
+converted `.tmj` is (so far `fagaras.tmj`). The output is deterministic,
+so re-running the script over an up-to-date file changes nothing.
+`src/lib/county-map` does the pure parsing and
+`scripts/county-map/county-map-tiled.ts` builds the Tiled JSON.
+
+The map is 128×128 tiles of 40 px, matching the tileset, and references
+`terrain.tsx` as its only (external) tileset, at `firstgid` 1. It has three
+layers:
+
+- **`terrain`** — Section A, the full ground layer: `gid = tile index + 1`,
+  so index 0 is gid 1 and gid 0 never appears. The engine's collision grid
+  is built from this layer, through the tileset's per-tile `blocked` flags.
+- **`spawns`** — an empty object layer; spawn points aren't in the `.MAP`
+  and are placed by hand.
+- **`collision-debug`** — hidden by default. Section B collapsed to one
+  value per tile (blocked only when all four subcells are; see "Test
+  fixture strategy" below), drawn as the plain ground tile (gid 1) where
+  blocked and left empty (gid 0) where open. It is **for inspection in the
+  Tiled editor only**: toggle it on (and `terrain` off) to see the original
+  collision data. The engine never reads it; the loader only looks at the
+  layer named `terrain`.
+
+The two collision sources don't agree. For `FAGARAS`, the collapsed
+Section B mask blocks **3,315** tiles, while the tileset-derived grid the
+engine actually uses blocks **5,152**; they differ on **1,859 of 16,384
+cells (11.3%)**. Per tile, the number of blocked subcells is 0 for 10,748
+tiles, 1 for 448, 2 for 1,049, 3 for 824 and 4 for 3,315. (Counting only
+bit 2, i.e. leaving the `256`-only subcells open, would give 3,307 blocked
+tiles and 1,867 disagreeing cells instead.) Which source the engine should
+end up using is still open.
+
 ## Open questions for later
 
 - The individual building clusters in `BUILDING.MAP` block 0 need their
@@ -391,14 +436,21 @@ in-memory PCX fixtures for the format-level tests, plus golden hashes
 (never pixels) for the real file, skipped when `.cd/` is absent. See
 [`ART_FORMAT.md`](./ART_FORMAT.md).
 
-Any future automated test for a `.MAP` parser should likewise use a
-small **synthetic fixture**: a hand-built byte buffer (or a tiny committed
-binary file) shaped like the format documented above — e.g. one 327,680-byte
-buffer with a handful of non-zero Section A `lo` tile indices and a couple
-of Section B `hi` flag values (`4`, `256`) — rather than a trimmed copy of a
-real county file. That's enough to exercise the section-offset math, the
-128×128 / 256×256 row-major decoding, and the two-`u16`-per-record layout
-without shipping any original game data. No parser or test currently reads
-`.MAP` files (see `docs/ASSETS.md` for the current state of the asset
-pipeline), so no fixture has been created yet — this section documents the
-decision for whoever implements that parser next.
+The county `.MAP` parser, `src/lib/county-map`, and its converter,
+`scripts/county-map` (see "Converting to Tiled" above), follow it too.
+Their tests use a **synthetic fixture** (`src/test/county-map-fixture.ts`):
+a hand-built, in-memory 327,680-byte buffer with a handful of Section A
+`lo` tile indices and Section B `hi` flag values (`4`, `256`) set, never a
+trimmed copy of a real county file. That's enough to exercise the
+section-offset math, the 128×128 / 256×256 **column-major** decoding (file
+order: `offset = (x*size + y) * 4`), and the two-`u16`-per-record layout
+without shipping any original game data. The parser reads the file
+column-major but stores both grids **row-major** (`[y*size + x]`), like
+every other grid in the engine. Golden tests against the real `FAGARAS.MAP`
+skip when `.cd/` is absent.
+
+The parser treats a Section B subcell as blocked when `hi != 0`, so a
+subcell carrying only `256` counts (see "`256` is not a third terrain
+class" above). `collapseCollisionMaskPerTile` folds the 2×2 subcells down
+to one value per tile, which is blocked only when **all four** of its
+subcells are.

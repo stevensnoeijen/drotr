@@ -78,6 +78,18 @@ repo today. `README.md`'s "Pack" section is stale, and in any case
 described a `raw/`-based pipeline that the new `.cd`-based approach is
 meant to supersede rather than restore.
 
+Maps, unlike sprites, are now built from `.cd` directly:
+
+- `npm run export:terrain-tileset` decodes `ART/BATTLE.ART` into the
+  committed `public/maps/terrain.tsx` and `terrain.png` (see
+  [`ART_FORMAT.md`](./ART_FORMAT.md)).
+- `npm run convert:map -- <COUNTY>` converts a county's
+  `COUNTIES/<NAME>.MAP` into a Tiled map, `public/maps/<name>.tmj`, drawn
+  with that tileset (see "Converting to Tiled" in
+  [`MAP_FORMAT.md`](./MAP_FORMAT.md)). So far only
+  `public/maps/fagaras.tmj` is converted and committed; the other 11
+  counties, and `BUILDING.MAP`'s prefabs, aren't yet.
+
 One remaining script operates only on the already-packed spritesheet, not
 on `.cd` or `raw/`:
 
