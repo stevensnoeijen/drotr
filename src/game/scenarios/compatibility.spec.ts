@@ -1,7 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import type { ParsedMap } from '~/game/map/load-tiled-map';
 import type { MapDefinition } from '~/game/maps/types';
-import { isScenarioCompatibleWithMap, type MapLoadState } from './compatibility';
+import {
+  isScenarioCompatibleWithMap,
+  pickCompatibleScenarioId,
+  type MapLoadState,
+} from './compatibility';
 import type { Scenario } from './types';
 
 const unconstrainedScenario: Scenario = {
@@ -78,5 +82,37 @@ describe('isScenarioCompatibleWithMap', () => {
 
   it('accepts a scenario in the map allowedScenarioIds allowlist', () => {
     expect(isScenarioCompatibleWithMap(constrainedScenario, restrictedMap, readyMap)).toBe(true);
+  });
+});
+
+describe('pickCompatibleScenarioId', () => {
+  const scenarios = [unconstrainedScenario, constrainedScenario];
+
+  it('keeps the current scenario when it is still compatible', () => {
+    expect(
+      pickCompatibleScenarioId(scenarios, 'unconstrained', unrestrictedMap, readyMap)
+    ).toBe('unconstrained');
+  });
+
+  it('switches to the first compatible scenario when the current one no longer fits', () => {
+    // `unconstrained` isn't in restrictedMap's allowlist, so it should fall
+    // back to `constrained`, the first (and only) scenario that is.
+    expect(pickCompatibleScenarioId(scenarios, 'unconstrained', restrictedMap, readyMap)).toBe(
+      'constrained'
+    );
+  });
+
+  it('picks scenarios in registry order, not alphabetically or by id', () => {
+    // Both scenarios are compatible with an unrestricted, ready map, so the
+    // first one in the list passed in should win regardless of current pick.
+    expect(pickCompatibleScenarioId(scenarios, 'constrained', unrestrictedMap, readyBlank)).toBe(
+      'unconstrained'
+    );
+  });
+
+  it('falls back to the current selection when nothing in the list is compatible', () => {
+    expect(pickCompatibleScenarioId(scenarios, 'unconstrained', restrictedMap, readyBlank)).toBe(
+      'unconstrained'
+    );
   });
 });

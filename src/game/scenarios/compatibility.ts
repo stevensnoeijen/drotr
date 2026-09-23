@@ -34,3 +34,28 @@ export function isScenarioCompatibleWithMap(
   }
   return scenario.validateMap?.(mapState.map) === undefined;
 }
+
+/**
+ * Picks which scenario id should be considered selected for `map`: the
+ * current selection if it's still compatible, otherwise the first scenario
+ * (in registry order) that is. Falls back to the current selection itself if
+ * no scenario in the list is compatible with `map` — which shouldn't happen
+ * today (every map allows at least the unrestricted `test`/`test-big-fight`
+ * scenarios), but keeps this pure and total rather than crashing or
+ * returning `undefined` for a case that can't currently occur.
+ */
+export function pickCompatibleScenarioId(
+  scenarios: readonly Scenario[],
+  currentScenarioId: string,
+  map: MapDefinition | undefined,
+  mapState: MapLoadState | undefined
+): string {
+  const currentScenario = scenarios.find((s) => s.id === currentScenarioId);
+  if (currentScenario && isScenarioCompatibleWithMap(currentScenario, map, mapState)) {
+    return currentScenarioId;
+  }
+  const firstCompatible = scenarios.find((s) =>
+    isScenarioCompatibleWithMap(s, map, mapState)
+  );
+  return firstCompatible?.id ?? currentScenarioId;
+}
