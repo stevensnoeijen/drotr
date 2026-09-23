@@ -11,6 +11,12 @@ export const maps: readonly MapDefinition[] = [
       'A Tiled test map with two spawn points and a walled maze block, for exercising pathfinding around obstacles.',
     mapSource: `${import.meta.env.BASE_URL}maps/test.tmj`,
   },
+  {
+    id: 'fagaras',
+    title: 'Fagaras',
+    description: 'The Fagaras county map, converted from the original .MAP file.',
+    mapSource: `${import.meta.env.BASE_URL}maps/fagaras.tmj`,
+  },
 ];
 
 const mapsById = new Map(maps.map((map) => [map.id, map]));
