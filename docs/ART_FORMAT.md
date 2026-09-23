@@ -185,14 +185,14 @@ open cleanly in the Tiled editor.
 - **gid.** Maps reference it with `firstgid = 1` (the hand-made
   `test.tmj` included), so `gid = id + 1`. Index 0 is a real ground tile
   (see above), not a "no tile" sentinel, so it becomes gid 1 like every
-  other tile — gid 0 is never emitted for a real cell. The engine resolves
-  any `firstgid`, should a map ever list this tileset after another.
+  other tile — gid 0 is never emitted for a real cell. The engine loads
+  maps with exactly one tileset, and rejects any other count.
 
 In the engine, `MapRenderSystem` (`src/game/render/map-render-system.ts`)
-draws every visible tile layer of a map straight from its tilesets: each
-gid resolves through its tileset's `firstgid` to a frame of the tileset
-image, Tiled's flip flags are honoured, and gid 0 or a gid no tileset
-covers draws nothing. Tiles are fitted to the map's own cell size, so this
+draws every visible top-level tile layer of a map straight from its
+tileset: each gid resolves through the tileset's `firstgid` to a frame of
+the tileset image, Tiled's flip flags are honoured, and gid 0 or a gid the
+tileset doesn't cover draws nothing. Tiles are fitted to the map's own cell size, so this
 tileset's 40 px tiles fill the test map's 32 px cells. Tiles are drawn in
 16×16-tile chunks, and only chunks inside the camera's view are rendered.
 

@@ -69,7 +69,7 @@ function withLayers(...extra: TiledLayer[]): TiledMap {
 
 describe('parseTiledMap', () => {
   it('parses the committed test map to the expected dimensions and spawn list', () => {
-    const result = parseTiledMap(fixtureMap, [terrainTileset]);
+    const result = parseTiledMap(fixtureMap, terrainTileset);
 
     expect(result.width).toBe(64);
     expect(result.height).toBe(64);
@@ -83,29 +83,29 @@ describe('parseTiledMap', () => {
 
   it('blocks a cell whose tile is marked blocked, and only that', () => {
     // Local ids 0 and 1 at firstgid 1: gid 1 walkable, gid 2 blocked.
-    const result = parseTiledMap(tinyMap([1, 2, 1, 1]), [smallTileset()]);
+    const result = parseTiledMap(tinyMap([1, 2, 1, 1]), smallTileset());
     expect([...result.collision]).toEqual([0, 1, 0, 0]);
   });
 
   it('applies the firstgid offset when looking a tile’s blocked flag up', () => {
     // At firstgid 10 the blocked local id 1 is gid 11.
-    const result = parseTiledMap(tinyMap([10, 11, 12, 13]), [smallTileset(10)]);
+    const result = parseTiledMap(tinyMap([10, 11, 12, 13]), smallTileset(10));
     expect([...result.collision]).toEqual([0, 1, 0, 0]);
   });
 
   it('blocks an empty cell (gid 0)', () => {
-    const result = parseTiledMap(tinyMap([0, 1, 1, 1]), [smallTileset()]);
+    const result = parseTiledMap(tinyMap([0, 1, 1, 1]), smallTileset());
     expect([...result.collision]).toEqual([1, 0, 0, 0]);
   });
 
   it('ignores flip flags when deciding walkability', () => {
     const flipped = (gid: number) => (gid | 0x80000000) >>> 0;
-    const result = parseTiledMap(tinyMap([flipped(1), flipped(2), 1, 1]), [smallTileset()]);
+    const result = parseTiledMap(tinyMap([flipped(1), flipped(2), 1, 1]), smallTileset());
     expect([...result.collision]).toEqual([0, 1, 0, 0]);
   });
 
   it('rejects a gid no tileset covers', () => {
-    expect(() => parseTiledMap(tinyMap([1, 99, 1, 1]), [smallTileset()])).toThrow(/unknown tile gid 99/i);
+    expect(() => parseTiledMap(tinyMap([1, 99, 1, 1]), smallTileset())).toThrow(/unknown tile gid 99/i);
   });
 
   it('rejects a map missing the terrain layer', () => {
@@ -114,14 +114,14 @@ describe('parseTiledMap', () => {
       layers: fixtureMap.layers.filter((layer) => layer.name !== 'terrain'),
     };
 
-    expect(() => parseTiledMap(map, [terrainTileset])).toThrow(TiledMapError);
-    expect(() => parseTiledMap(map, [terrainTileset])).toThrow(/terrain/i);
+    expect(() => parseTiledMap(map, terrainTileset)).toThrow(TiledMapError);
+    expect(() => parseTiledMap(map, terrainTileset)).toThrow(/terrain/i);
   });
 
   it('rejects a non-orthogonal orientation', () => {
     const map = { ...fixtureMap, orientation: 'isometric' } as TiledMap;
 
-    expect(() => parseTiledMap(map, [terrainTileset])).toThrow(/orientation/i);
+    expect(() => parseTiledMap(map, terrainTileset)).toThrow(/orientation/i);
   });
 
   it('rejects a terrain layer whose size does not match the map', () => {
@@ -132,23 +132,23 @@ describe('parseTiledMap', () => {
       ),
     };
 
-    expect(() => parseTiledMap(map, [terrainTileset])).toThrow(/size/i);
+    expect(() => parseTiledMap(map, terrainTileset)).toThrow(/size/i);
   });
 });
 
 describe('parseTiledMap tile layers', () => {
   it('draws the test map from its terrain layer, every cell a real terrain tile', () => {
-    const result = parseTiledMap(fixtureMap, [terrainTileset]);
+    const result = parseTiledMap(fixtureMap, terrainTileset);
 
     expect(result.tileLayers.map((layer) => layer.name)).toEqual(['terrain']);
-    expect(result.tilesets).toEqual([terrainTileset]);
+    expect(result.tileset).toEqual(terrainTileset);
     // Grass (tile 1072) and a wall (tile 210) at firstgid 1, nothing else.
     expect(new Set(result.tileLayers[0].data)).toEqual(new Set([1073, 211]));
   });
 
   it('exposes visible tile layers back to front', () => {
     const map = withLayers(tileLayer('decoration', 0), tileLayer('overlay', 5));
-    const result = parseTiledMap(map, [terrainTileset]);
+    const result = parseTiledMap(map, terrainTileset);
 
     expect(result.tileLayers.map((layer) => layer.name)).toEqual(['terrain', 'decoration', 'overlay']);
     expect(result.tileLayers[2].data[0]).toBe(5);
@@ -156,28 +156,28 @@ describe('parseTiledMap tile layers', () => {
 
   it('leaves out hidden layers', () => {
     const map = withLayers(tileLayer('hidden', 5, { visible: false }));
-    const result = parseTiledMap(map, [terrainTileset]);
+    const result = parseTiledMap(map, terrainTileset);
 
     expect(result.tileLayers.map((layer) => layer.name)).toEqual(['terrain']);
   });
 
   it('ignores group layers and what is inside them', () => {
     const group = { ...tileLayer('group', 0), type: 'group', layers: [tileLayer('inside', 1)] } as unknown as TiledLayer;
-    const result = parseTiledMap(withLayers(group), [terrainTileset]);
+    const result = parseTiledMap(withLayers(group), terrainTileset);
 
     expect(result.tileLayers.map((layer) => layer.name)).toEqual(['terrain']);
   });
 
   it('rejects a visible tile layer whose size does not match the map', () => {
     const map = withLayers(tileLayer('overlay', 1, { width: 10 }));
-    expect(() => parseTiledMap(map, [terrainTileset])).toThrow(/"overlay" size/);
+    expect(() => parseTiledMap(map, terrainTileset)).toThrow(/"overlay" size/);
   });
 
   it('rejects a visible tile layer with encoded data', () => {
     const map = withLayers(
       tileLayer('overlay', 1, { data: 'AAAA', encoding: 'base64' } as Partial<TiledLayerTilelayer>)
     );
-    expect(() => parseTiledMap(map, [terrainTileset])).toThrow(/encoding/);
+    expect(() => parseTiledMap(map, terrainTileset)).toThrow(/encoding/);
   });
 });
 
@@ -240,8 +240,7 @@ describe('loadTiledMap', () => {
     vi.stubGlobal(
       'fetch',
       vi.fn(async (url: string) => {
-        // Serve each referenced tileset from disk by file name, so the
-        // fixture can reference as many as it likes.
+        // Serve the referenced tileset from disk by file name.
         const body = url.toString().endsWith('.tsx')
           ? fs.readFileSync(path.join(FIXTURE_DIR, path.basename(new URL(url).pathname)), 'utf-8')
           : mapJson;
@@ -253,34 +252,21 @@ describe('loadTiledMap', () => {
 
     expect(result.width).toBe(64);
     expect(result.spawns).toHaveLength(2);
-    expect(result.tilesets.map((tileset) => tileset.name)).toEqual(['terrain']);
+    expect(result.tileset.name).toBe('terrain');
+    expect(result.tileset.imageUrl).toMatch(/\/maps\/terrain\.png$/);
   });
 
-  it('loads every referenced tileset, offsetting each one’s blocked tiles by its own firstgid', async () => {
-    const firstXml = `<tileset name="first" tilewidth="32" tileheight="32" tilecount="4" columns="2"><image source="first.png" width="64" height="64"/></tileset>`;
-    // Only local id 0 blocks: at firstgid 10 it must answer to gid 10.
-    const extraXml = `<tileset name="extra" tilewidth="32" tileheight="32" tilecount="2" columns="2"><image source="img/extra.png" width="64" height="32"/><tile id="0"><properties><property name="blocked" type="bool" value="true"/></properties></tile></tileset>`;
-    const map = tinyMap([1, 10, 11, 4]);
-    map.tilesets = [
-      { firstgid: 1, source: 'first.tsx' },
-      { firstgid: 10, source: 'sets/extra.tsx' },
-    ] as TiledMap['tilesets'];
+  it.each([0, 2])('rejects a map that references %i tilesets', async (count) => {
+    const map = {
+      ...fixtureMap,
+      tilesets: Array.from({ length: count }, (_, i) => ({ firstgid: 1 + i * 2000, source: 'terrain.tsx' })),
+    };
     vi.stubGlobal(
       'fetch',
-      vi.fn(async (url: string) => {
-        const body = url.endsWith('extra.tsx') ? extraXml : url.endsWith('.tsx') ? firstXml : JSON.stringify(map);
-        return { ok: true, text: async () => body } as Response;
-      })
+      vi.fn(async () => ({ ok: true, text: async () => JSON.stringify(map) }) as Response)
     );
 
-    const result = await loadTiledMap('/maps/test.tmj');
-
-    expect([...result.collision]).toEqual([0, 1, 0, 0]);
-    expect(result.tilesets.map(({ name, firstgid }) => ({ name, firstgid }))).toEqual([
-      { name: 'first', firstgid: 1 },
-      { name: 'extra', firstgid: 10 },
-    ]);
-    expect(result.tilesets[1].imageUrl).toMatch(/\/maps\/sets\/img\/extra\.png$/);
+    await expect(loadTiledMap('/maps/test.tmj')).rejects.toThrow(/exactly one external tileset/);
   });
 
   it('rejects a map that embeds its tileset', async () => {

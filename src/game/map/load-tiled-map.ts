@@ -21,7 +21,7 @@ export interface SpawnPoint {
 }
 
 /**
- * An external tileset a map references, with everything needed to cut its
+ * The external tileset a map references, with everything needed to cut its
  * tiles out of its image. `firstgid` comes from the map's reference to it.
  */
 export interface MapTileset extends TilesetGeometry {
@@ -54,8 +54,8 @@ export interface ParsedMap {
    */
   collision: Uint8Array;
   spawns: SpawnPoint[];
-  /** Every tileset the map references, for resolving {@link tileLayers}' gids. */
-  tilesets: MapTileset[];
+  /** The map's one tileset, which every gid in {@link tileLayers} resolves through. */
+  tileset: MapTileset;
   /**
    * Every visible top-level tile layer, back to front — what the renderer
    * draws. Hidden layers are left out, and group layers aren't supported.
@@ -100,13 +100,13 @@ function parseSpawns(layer: TiledLayerObjectgroup): SpawnPoint[] {
 /**
  * Derives the collision grid from the `terrain` layer: a cell blocks when
  * its tile carries the {@link BLOCKED_TILE_PROPERTY} or the cell is empty
- * (gid 0); a flipped tile is as walkable as the unflipped one. A gid no tileset
- * covers is malformed data and rejected.
+ * (gid 0); a flipped tile is as walkable as the unflipped one. A gid the
+ * tileset doesn't cover is malformed data and rejected.
  */
 function parseCollision(
   layer: TiledLayerTilelayer,
   map: TiledMap,
-  tilesets: readonly MapTileset[]
+  tileset: MapTileset
 ): Uint8Array {
   if (layer.width !== map.width || layer.height !== map.height) {
     throw new TiledMapError(
@@ -128,11 +128,11 @@ function parseCollision(
         collision[index] = 1;
         continue;
       }
-      const tile = resolveGid(gid, tilesets);
-      if (!tile) {
+      const localId = resolveGid(gid, tileset);
+      if (localId === undefined) {
         throw new TiledMapError(`Unknown tile gid ${gid} in terrain layer at (${x}, ${y})`);
       }
-      collision[index] = tile.tileset.blockedTileIds.has(tile.localId) ? 1 : 0;
+      collision[index] = tileset.blockedTileIds.has(localId) ? 1 : 0;
     }
   }
   return collision;
@@ -170,7 +170,7 @@ function collectVisibleTileLayers(map: TiledMap): MapTileLayer[] {
  * agnostic contract. Pure and synchronous so it's testable without mocking
  * `fetch` — {@link loadTiledMap} handles the actual I/O.
  */
-export function parseTiledMap(map: TiledMap, tilesets: MapTileset[]): ParsedMap {
+export function parseTiledMap(map: TiledMap, tileset: MapTileset): ParsedMap {
   if (map.orientation !== 'orthogonal') {
     throw new TiledMapError(
       `Unsupported map orientation "${map.orientation}"; only orthogonal maps are supported`
@@ -187,7 +187,7 @@ export function parseTiledMap(map: TiledMap, tilesets: MapTileset[]): ParsedMap 
     throw new TiledMapError('Map is missing a "spawns" object layer');
   }
 
-  const collision = parseCollision(terrainLayer, map, tilesets);
+  const collision = parseCollision(terrainLayer, map, tileset);
   const spawns = parseSpawns(spawnsLayer);
   const tileLayers = collectVisibleTileLayers(map);
 
@@ -197,7 +197,7 @@ export function parseTiledMap(map: TiledMap, tilesets: MapTileset[]): ParsedMap 
     tileSize: map.tilewidth,
     collision,
     spawns,
-    tilesets,
+    tileset,
     tileLayers,
   };
 }
@@ -280,29 +280,27 @@ async function fetchText(url: string): Promise<string> {
 }
 
 /**
- * Fetches a `.tmj` map and every external `.tsx` tileset it references,
+ * Fetches a `.tmj` map and the one external `.tsx` tileset it references,
  * then parses and validates them into the engine's {@link ParsedMap}
- * contract.
+ * contract. A map with no tileset, more than one, or an embedded one is
+ * rejected.
  */
 export async function loadTiledMap(mapUrl: string): Promise<ParsedMap> {
   const map = JSON.parse(await fetchText(mapUrl)) as TiledMap;
 
-  if (map.tilesets.length === 0) {
-    throw new TiledMapError('Map does not reference an external tileset');
+  if (map.tilesets.length !== 1) {
+    throw new TiledMapError(
+      `Map references ${map.tilesets.length} tilesets; exactly one external tileset is supported`
+    );
   }
-  const absoluteMapUrl = new URL(mapUrl, window.location.href);
+  const [reference] = map.tilesets;
+  if (!reference.source) {
+    throw new TiledMapError(
+      `Map embeds tileset "${reference.name}"; only external tilesets are supported`
+    );
+  }
 
-  const tilesets = await Promise.all(
-    map.tilesets.map(async (reference) => {
-      if (!reference.source) {
-        throw new TiledMapError(
-          `Map embeds tileset "${reference.name}"; only external tilesets are supported`
-        );
-      }
-      const tilesetUrl = new URL(reference.source, absoluteMapUrl).toString();
-      return parseTilesetDescription(await fetchText(tilesetUrl), reference.firstgid, tilesetUrl);
-    })
-  );
-
-  return parseTiledMap(map, tilesets);
+  const tilesetUrl = new URL(reference.source, new URL(mapUrl, window.location.href)).toString();
+  const tileset = parseTilesetDescription(await fetchText(tilesetUrl), reference.firstgid, tilesetUrl);
+  return parseTiledMap(map, tileset);
 }

@@ -1,6 +1,6 @@
 /**
- * Pure helpers for turning a Tiled tile-layer gid into "which tileset, which
- * tile". Deliberately free of Pixi so the mapping — firstgid offsets,
+ * Pure helpers for turning a Tiled tile-layer gid into the tile it names.
+ * Deliberately free of Pixi so the mapping — firstgid offsets,
  * empty/unknown gids — is unit-testable on its own.
  *
  * @see https://doc.mapeditor.org/en/stable/reference/global-tile-ids/
@@ -40,44 +40,18 @@ export interface TilesetGeometry {
   spacing: number;
 }
 
-export interface ResolvedTile<T extends TilesetGeometry> {
-  tileset: T;
-  /** Tile id local to {@link tileset}: `gid - tileset.firstgid`. */
-  localId: number;
-}
-
 /**
- * Finds the tileset a (flag-free) gid belongs to: the one with the highest
- * `firstgid` not above it, as Tiled defines it. Returns `undefined` for
- * the empty gid `0`, for a gid below every tileset, and for one past the end
- * of the tileset it lands in, so a caller can draw nothing rather than
- * throw on bad data.
- *
- * `tilesets` needn't be sorted.
+ * The tile id local to `tileset` that a (flag-free) gid names:
+ * `gid - tileset.firstgid`. Returns `undefined` for the empty gid `0`, a gid
+ * below the tileset's `firstgid`, or one past its last tile, so a caller can
+ * draw nothing rather than throw on bad data.
  */
-export function resolveGid<T extends TilesetGeometry>(
-  gid: number,
-  tilesets: readonly T[]
-): ResolvedTile<T> | undefined {
+export function resolveGid(gid: number, tileset: TilesetGeometry): number | undefined {
   if (gid <= 0 || !Number.isInteger(gid)) {
     return undefined;
   }
-
-  let owner: T | undefined;
-  for (const tileset of tilesets) {
-    if (tileset.firstgid <= gid && (!owner || tileset.firstgid > owner.firstgid)) {
-      owner = tileset;
-    }
-  }
-  if (!owner) {
-    return undefined;
-  }
-
-  const localId = gid - owner.firstgid;
-  if (localId >= owner.tileCount) {
-    return undefined;
-  }
-  return { tileset: owner, localId };
+  const localId = gid - tileset.firstgid;
+  return localId >= 0 && localId < tileset.tileCount ? localId : undefined;
 }
 
 export interface TileFrame {

@@ -14,63 +14,53 @@ import {
   type WorldRect,
 } from './tile-chunks';
 
-/** A resolved tile: the texture to draw and the tileset it was cut from. */
-export interface TileTexture {
-  texture: Texture;
-  tileset: MapTileset;
-}
-
 /**
- * Lazily cuts tile textures out of their tilesets' images, one per gid
+ * Lazily cuts tile textures out of the tileset's image, one per gid
  * actually drawn, and reuses them for every cell showing that gid. Every
- * texture shares its tileset's single image source, so Pixi batches a whole
- * chunk into as few draw calls as there are tileset images.
+ * texture shares the one image source, so Pixi can batch a whole chunk into
+ * a single draw call.
  */
 export class TileTextureCache {
-  private readonly textures = new Map<number, TileTexture | null>();
+  private readonly textures = new Map<number, Texture | null>();
 
   constructor(
-    private readonly tilesets: readonly MapTileset[],
-    /** Loaded image source per {@link MapTileset.imageUrl}. */
-    private readonly sources: ReadonlyMap<string, TextureSource>
+    private readonly tileset: MapTileset,
+    /** The tileset's loaded image. */
+    private readonly source: TextureSource
   ) {}
 
   /**
-   * The texture for a flag-free gid, or `undefined` for the empty gid 0, a
-   * gid no tileset covers, or one whose tileset image isn't loaded — all of
-   * which draw nothing rather than throw.
+   * The texture for a flag-free gid, or `undefined` for the empty gid 0 or a
+   * gid the tileset doesn't cover (or whose frame falls outside its image) —
+   * all of which draw nothing rather than throw.
    */
-  public get(gid: number): TileTexture | undefined {
+  public get(gid: number): Texture | undefined {
     const cached = this.textures.get(gid);
     if (cached !== undefined) {
       return cached ?? undefined;
     }
 
-    const resolved = resolveGid(gid, this.tilesets);
-    const source = resolved && this.sources.get(resolved.tileset.imageUrl);
-    let entry: TileTexture | null = null;
-    if (resolved && source) {
-      const frame = tileFrame(resolved.tileset, resolved.localId);
+    const localId = resolveGid(gid, this.tileset);
+    let texture: Texture | null = null;
+    if (localId !== undefined) {
+      const frame = tileFrame(this.tileset, localId);
       // A frame reaching past the image (a tileset whose tilecount
       // overstates its image) would make Pixi throw; treat it as unknown.
-      if (frame.x + frame.width <= source.width && frame.y + frame.height <= source.height) {
-        entry = {
-          tileset: resolved.tileset,
-          texture: new Texture({
-            source,
-            frame: new Rectangle(frame.x, frame.y, frame.width, frame.height),
-          }),
-        };
+      if (frame.x + frame.width <= this.source.width && frame.y + frame.height <= this.source.height) {
+        texture = new Texture({
+          source: this.source,
+          frame: new Rectangle(frame.x, frame.y, frame.width, frame.height),
+        });
       }
     }
-    this.textures.set(gid, entry);
-    return entry ?? undefined;
+    this.textures.set(gid, texture);
+    return texture ?? undefined;
   }
 
-  /** Destroys the per-gid textures (not the shared image sources). */
+  /** Destroys the per-gid textures (not the shared image source). */
   public destroy(): void {
-    for (const entry of this.textures.values()) {
-      entry?.texture.destroy(false);
+    for (const texture of this.textures.values()) {
+      texture?.destroy(false);
     }
     this.textures.clear();
   }
@@ -97,7 +87,7 @@ export interface MapRenderSystemOptions {
 
 /**
  * Draws a map's terrain into {@link container}: every visible tile layer,
- * each gid resolved through the map's tilesets to its tile's art.
+ * each gid resolved through the map's tileset to its tile's art.
  *
  * Tiles are grouped into fixed-size chunks, one container each, and
  * {@link cull} hides every chunk outside the camera's view, so a full-size
@@ -170,11 +160,11 @@ export class MapRenderSystem {
     for (const layer of map.tileLayers) {
       for (let y = y0; y < y1; y++) {
         for (let x = x0; x < x1; x++) {
-          const tile = tileTextures.get(decodeGid(layer.data[y * map.width + x] ?? 0));
-          if (!tile) {
+          const texture = tileTextures.get(decodeGid(layer.data[y * map.width + x] ?? 0));
+          if (!texture) {
             continue;
           }
-          const sprite = new Sprite(tile.texture);
+          const sprite = new Sprite(texture);
           placeTileSprite(sprite, x, y, map.tileSize);
           chunk.addChild(sprite);
         }
@@ -192,14 +182,8 @@ async function loadNearestSource(url: string): Promise<TextureSource> {
   return texture.source;
 }
 
-/**
- * Loads every tileset image a map references and builds a
- * {@link MapRenderSystem} for it.
- */
+/** Loads a map's tileset image and builds a {@link MapRenderSystem} for it. */
 export async function createMapRenderSystem(map: ParsedMap): Promise<MapRenderSystem> {
-  const imageUrls = [...new Set(map.tilesets.map((tileset) => tileset.imageUrl))];
-  const tilesetSources = await Promise.all(imageUrls.map(loadNearestSource));
-  const sources = new Map(imageUrls.map((url, i) => [url, tilesetSources[i]]));
-
-  return new MapRenderSystem({ map, tileTextures: new TileTextureCache(map.tilesets, sources) });
+  const source = await loadNearestSource(map.tileset.imageUrl);
+  return new MapRenderSystem({ map, tileTextures: new TileTextureCache(map.tileset, source) });
 }

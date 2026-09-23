@@ -41,40 +41,28 @@ describe('decodeGid', () => {
 });
 
 describe('resolveGid', () => {
-  it('applies the firstgid offset: gid = localId + firstgid', () => {
-    const terrain = tileset({ firstgid: 1 });
-    expect(resolveGid(1, [terrain])).toEqual({ tileset: terrain, localId: 0 });
-    expect(resolveGid(1073, [terrain])).toEqual({ tileset: terrain, localId: 1072 });
-  });
-
-  it('picks the tileset with the highest firstgid not above the gid', () => {
-    const first = tileset({ firstgid: 1, tileCount: 3, columns: 3 });
-    const second = tileset({ firstgid: 4 });
-    // Deliberately unsorted.
-    const tilesets = [second, first];
-
-    expect(resolveGid(3, tilesets)).toEqual({ tileset: first, localId: 2 });
-    expect(resolveGid(4, tilesets)).toEqual({ tileset: second, localId: 0 });
-    expect(resolveGid(1076, tilesets)).toEqual({ tileset: second, localId: 1072 });
+  it('applies the firstgid offset: localId = gid - firstgid', () => {
+    expect(resolveGid(1, tileset({ firstgid: 1 }))).toBe(0);
+    expect(resolveGid(1073, tileset({ firstgid: 1 }))).toBe(1072);
+    expect(resolveGid(1076, tileset({ firstgid: 4 }))).toBe(1072);
   });
 
   it('returns undefined for the empty gid 0', () => {
-    expect(resolveGid(0, [tileset()])).toBeUndefined();
+    expect(resolveGid(0, tileset())).toBeUndefined();
   });
 
-  it('returns undefined for a gid below every tileset', () => {
-    expect(resolveGid(3, [tileset({ firstgid: 10 })])).toBeUndefined();
+  it('returns undefined for a gid below the tileset’s firstgid', () => {
+    expect(resolveGid(3, tileset({ firstgid: 10 }))).toBeUndefined();
   });
 
-  it('returns undefined for a gid past the end of its tileset', () => {
-    expect(resolveGid(1553, [tileset()])).toBeUndefined();
-    expect(resolveGid(1552, [tileset()])).toBeDefined();
+  it('returns undefined for a gid past the end of the tileset', () => {
+    expect(resolveGid(1553, tileset())).toBeUndefined();
+    expect(resolveGid(1552, tileset())).toBe(1551);
   });
 
-  it('returns undefined with no tilesets, or for a non-integer gid', () => {
-    expect(resolveGid(1, [])).toBeUndefined();
-    expect(resolveGid(1.5, [tileset()])).toBeUndefined();
-    expect(resolveGid(Number.NaN, [tileset()])).toBeUndefined();
+  it('returns undefined for a non-integer gid', () => {
+    expect(resolveGid(1.5, tileset())).toBeUndefined();
+    expect(resolveGid(Number.NaN, tileset())).toBeUndefined();
   });
 });
 

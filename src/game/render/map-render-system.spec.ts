@@ -24,8 +24,8 @@ function terrainTileset(firstgid = 1): MapTileset {
   };
 }
 
-function terrainSources(): Map<string, TextureSource> {
-  return new Map([[TERRAIN_URL, new TextureSource({ width: 640, height: 3880 })]]);
+function terrainSource(): TextureSource {
+  return new TextureSource({ width: 640, height: 3880 });
 }
 
 function makeMap(overrides: Partial<ParsedMap> & { width: number; height: number }): ParsedMap {
@@ -34,7 +34,7 @@ function makeMap(overrides: Partial<ParsedMap> & { width: number; height: number
     tileSize: 32,
     collision: new Uint8Array(width * height),
     spawns: [],
-    tilesets: [terrainTileset()],
+    tileset: terrainTileset(),
     tileLayers: [],
     ...overrides,
   };
@@ -47,26 +47,23 @@ function sprites(system: MapRenderSystem): Sprite[] {
 
 describe('TileTextureCache', () => {
   it('maps a gid to its tile’s frame, applying the firstgid offset', () => {
-    const cache = new TileTextureCache([terrainTileset(4)], terrainSources());
+    const cache = new TileTextureCache(terrainTileset(4), terrainSource());
 
     // gid 1076 at firstgid 4 is tile 1072: row 67, column 0.
-    const grass = cache.get(1076)!;
-    expect(grass.tileset.name).toBe('terrain');
-    expect(grass.texture.frame).toMatchObject({ x: 0, y: 2680, width: 40, height: 40 });
-
+    expect(cache.get(1076)!.frame).toMatchObject({ x: 0, y: 2680, width: 40, height: 40 });
     // gid 4 is tile 0, the sheet's top-left corner — a real ground tile.
-    expect(cache.get(4)!.texture.frame).toMatchObject({ x: 0, y: 0 });
+    expect(cache.get(4)!.frame).toMatchObject({ x: 0, y: 0 });
     // gid 22 is tile 18: row 1, column 2.
-    expect(cache.get(22)!.texture.frame).toMatchObject({ x: 80, y: 40 });
+    expect(cache.get(22)!.frame).toMatchObject({ x: 80, y: 40 });
   });
 
   it('reuses one texture per gid', () => {
-    const cache = new TileTextureCache([terrainTileset()], terrainSources());
-    expect(cache.get(5)!.texture).toBe(cache.get(5)!.texture);
+    const cache = new TileTextureCache(terrainTileset(), terrainSource());
+    expect(cache.get(5)).toBe(cache.get(5));
   });
 
-  it('returns undefined, never throwing, for empty, unknown or unloadable gids', () => {
-    const cache = new TileTextureCache([terrainTileset(4)], terrainSources());
+  it('returns undefined, never throwing, for empty or unknown gids', () => {
+    const cache = new TileTextureCache(terrainTileset(4), terrainSource());
 
     expect(cache.get(0)).toBeUndefined();
     // Below the tileset's firstgid, and past its last tile.
@@ -74,14 +71,10 @@ describe('TileTextureCache', () => {
     expect(cache.get(4 + 1552)).toBeUndefined();
     // Repeated lookups of a miss stay a miss.
     expect(cache.get(3)).toBeUndefined();
-
-    // A tileset whose image never loaded.
-    expect(new TileTextureCache([terrainTileset()], new Map()).get(1)).toBeUndefined();
   });
 
   it('treats a tile whose frame falls outside its image as unknown', () => {
-    const short = new Map([[TERRAIN_URL, new TextureSource({ width: 640, height: 40 })]]);
-    const cache = new TileTextureCache([terrainTileset()], short);
+    const cache = new TileTextureCache(terrainTileset(), new TextureSource({ width: 640, height: 40 }));
 
     expect(cache.get(1)).toBeDefined();
     expect(cache.get(17)).toBeUndefined();
@@ -100,7 +93,7 @@ describe('MapRenderSystem', () => {
     });
     const system = new MapRenderSystem({
       map,
-      tileTextures: new TileTextureCache(map.tilesets, terrainSources()),
+      tileTextures: new TileTextureCache(map.tileset, terrainSource()),
     });
 
     const drawn = sprites(system);
@@ -114,7 +107,7 @@ describe('MapRenderSystem', () => {
     const map = makeMap({ width: 3, height: 1, tileLayers: [{ name: 'g', data: [0, 0, 1] }] });
     const system = new MapRenderSystem({
       map,
-      tileTextures: new TileTextureCache(map.tilesets, terrainSources()),
+      tileTextures: new TileTextureCache(map.tileset, terrainSource()),
     });
 
     const [sprite] = sprites(system);
@@ -131,7 +124,7 @@ describe('MapRenderSystem', () => {
     const map = makeMap({ width: 2, height: 1, tileLayers: [{ name: 'g', data: [0x80000001, 0x20000001] }] });
     const system = new MapRenderSystem({
       map,
-      tileTextures: new TileTextureCache(map.tilesets, terrainSources()),
+      tileTextures: new TileTextureCache(map.tileset, terrainSource()),
     });
 
     for (const sprite of sprites(system)) {
@@ -146,7 +139,7 @@ describe('MapRenderSystem', () => {
     const map = makeMap({ width: 20, height: 20, tileLayers: [{ name: 'g', data: new Array(400).fill(1)}] });
     const system = new MapRenderSystem({
       map,
-      tileTextures: new TileTextureCache(map.tilesets, terrainSources()),
+      tileTextures: new TileTextureCache(map.tileset, terrainSource()),
       chunkSize: 16,
     });
 
@@ -160,7 +153,7 @@ describe('MapRenderSystem', () => {
     const map = makeMap({ width: 64, height: 64, tileLayers: [{ name: 'g', data: new Array(4096).fill(1)}] });
     const system = new MapRenderSystem({
       map,
-      tileTextures: new TileTextureCache(map.tilesets, terrainSources()),
+      tileTextures: new TileTextureCache(map.tileset, terrainSource()),
       chunkSize: 16,
     });
 
@@ -188,7 +181,7 @@ describe('MapRenderSystem', () => {
     const map = makeMap({ width: 20, height: 20, tileLayers: [{ name: 'g', data: new Array(400).fill(1)}] });
     const system = new MapRenderSystem({
       map,
-      tileTextures: new TileTextureCache(map.tilesets, terrainSources()),
+      tileTextures: new TileTextureCache(map.tileset, terrainSource()),
     });
     const chunks = [...system.container.children];
 
