@@ -450,7 +450,7 @@ layers:
   is built from this layer, through the tileset's per-tile `blocked` flags.
 - **`spawns`** — an empty object layer; spawn points aren't in the `.MAP`
   and are placed by hand.
-- **`collision-debug`** — hidden by default. Section B collapsed to one
+- **`collision`** — hidden by default. Section B collapsed to one
   value per tile (blocked only when all four subcells are; see "Test
   fixture strategy" below), drawn as the plain ground tile (gid 1) where
   blocked and left empty (gid 0) where open. It is **for inspection in the

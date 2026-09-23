@@ -110,7 +110,7 @@ describe('buildCountyTiledMap', () => {
     expect(map.layers.map((l) => [l.id, l.name, l.type, l.visible])).toEqual([
       [1, 'terrain', 'tilelayer', true],
       [2, 'spawns', 'objectgroup', true],
-      [3, 'collision-debug', 'tilelayer', false],
+      [3, 'collision', 'tilelayer', false],
     ]);
   });
 
@@ -146,9 +146,9 @@ describe('buildCountyTiledMap', () => {
     });
   });
 
-  it('fills collision-debug from collapseCollisionMaskPerTile, hidden', () => {
+  it('fills collision from collapseCollisionMaskPerTile, hidden', () => {
     const county = syntheticCountyMap();
-    const debug = layer(buildCountyTiledMap(county), 'collision-debug');
+    const debug = layer(buildCountyTiledMap(county), 'collision');
     const collapsed = collapseCollisionMaskPerTile(county);
 
     expect(debug.visible).toBe(false);
@@ -169,7 +169,7 @@ describe('buildCountyTiledMap', () => {
     ]);
   });
 
-  it('passes parseTiledMap, which ignores collision-debug', () => {
+  it('passes parseTiledMap, which ignores collision', () => {
     const map = buildCountyTiledMap(syntheticCountyMap());
     const parsed = parseTiledMap(map, terrainTileset);
 

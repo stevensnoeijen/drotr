@@ -92,7 +92,7 @@ describe.skipIf(!available)('FAGARAS.MAP', () => {
     });
   });
 
-  it('collapses to 3,315 blocked tiles, as drawn in collision-debug', () => {
+  it('collapses to 3,315 blocked tiles, as drawn in collision', () => {
     // Any non-zero hi blocks, so the 59 subcells carrying only 256 count.
     // Counting bit 2 (4) alone would give 3,307 instead.
     const collapsed = collapseCollisionMaskPerTile(county);
@@ -100,7 +100,7 @@ describe.skipIf(!available)('FAGARAS.MAP', () => {
 
     const map = buildCountyTiledMap(county) as TiledMap;
     const debug = map.layers.find(
-      (layer): layer is TiledLayerTilelayer => layer.name === 'collision-debug'
+      (layer): layer is TiledLayerTilelayer => layer.name === 'collision'
     );
     const drawn = (debug?.data as number[]).filter((gid) => gid === 1);
     expect(drawn).toHaveLength(3315);

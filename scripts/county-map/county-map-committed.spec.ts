@@ -39,7 +39,7 @@ describe('public/maps/fagaras.tmj', () => {
     expect(parsed.height).toEqual(128);
     expect(parsed.tileSize).toEqual(40);
     expect(parsed.spawns.map((spawn) => spawn.id).sort()).toEqual(['blue', 'red']);
-    // collision-debug is hidden, so terrain is the only drawn layer.
+    // collision is hidden, so terrain is the only drawn layer.
     expect(parsed.tileLayers).toHaveLength(1);
     expect(parsed.collision).toHaveLength(128 * 128);
   });
