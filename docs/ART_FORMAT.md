@@ -191,8 +191,8 @@ open cleanly in the Tiled editor.
 In the engine, `MapRenderSystem` (`src/game/render/map-render-system.ts`)
 draws every visible top-level tile layer of a map straight from its
 tileset: each gid resolves through the tileset's `firstgid` to a frame of
-the tileset image, Tiled's flip flags are honoured, and gid 0 or a gid the
-tileset doesn't cover draws nothing. Tiles are fitted to the map's own cell size, so this
+the tileset image, a flipped gid is drawn as its unflipped tile (no map
+flips tiles), and gid 0 or a gid the tileset doesn't cover draws nothing. Tiles are fitted to the map's own cell size, so this
 tileset's 40 px tiles fill the test map's 32 px cells. Tiles are drawn in
 16×16-tile chunks, and only chunks inside the camera's view are rendered.
 
