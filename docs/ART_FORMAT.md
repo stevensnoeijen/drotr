@@ -249,8 +249,9 @@ passability per tile: each county `.MAP` carries its own impassable mask
 at 2×2 subcells per tile (Section B `hi` bit 2, see
 [`MAP_FORMAT.md`](./MAP_FORMAT.md)). A per-tile flag can't reproduce a
 tile that's blocked on only some of its subcells, or the same tile
-blocked in one place and open in another. Measured over all 12 counties
-(786,432 subcells; `walkability-golden.spec.ts` pins these numbers):
+blocked in one place and open in another. A one-off measurement over all
+12 counties (786,432 subcells), taken when the classification was made —
+a research note, not something kept up to date automatically:
 
 | tile category | subcells | mask blocked, tile walkable | mask open, tile blocked |
 |---|---|---|---|
