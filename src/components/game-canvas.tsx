@@ -83,6 +83,14 @@ export interface GameCanvasProps {
    * read on the caller's side so it can throttle its own re-renders.
    */
   onStats?: (stats: GameStats) => void;
+  /**
+   * Called once, instead of ever calling `scenario.setup`, when
+   * `scenario.validateMap` rejects the loaded map (or its absence) as
+   * unusable for this scenario — e.g. a scenario that needs named spawn
+   * points the selected map doesn't have. The message is meant to be shown
+   * to the user.
+   */
+  onError?: (message: string) => void;
   /** Called whenever the camera pans or zooms, with its latest transform. */
   onViewportChange?: (transform: ViewportTransform) => void;
 }
@@ -94,10 +102,12 @@ export default function GameCanvas({
   initialViewport,
   debugFlags,
   onStats,
+  onError,
   onViewportChange,
 }: GameCanvasProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const onStatsRef = useRef(onStats);
+  const onErrorRef = useRef(onError);
   const onViewportChangeRef = useRef(onViewportChange);
   const scenarioRef = useRef(scenario);
   const mapRef = useRef(mapProp);
@@ -115,6 +125,7 @@ export default function GameCanvas({
   // Pixi-setup effect below (which must run exactly once).
   useEffect(() => {
     onStatsRef.current = onStats;
+    onErrorRef.current = onError;
     onViewportChangeRef.current = onViewportChange;
     scenarioRef.current = scenario;
     mapRef.current = mapProp;
@@ -263,6 +274,18 @@ export default function GameCanvas({
       if (cancelled) {
         return;
       }
+
+      // Some scenarios need specific things from the map (e.g. named spawn
+      // points) that not every map provides; let the scenario reject the
+      // combination up front rather than have `setup` silently spawn
+      // nothing or throw. Surfaced to the caller instead of rendered here —
+      // this component owns the canvas, not the page-level error UI.
+      const validationError = scenarioRef.current.validateMap?.(map);
+      if (validationError) {
+        onErrorRef.current?.(validationError);
+        return;
+      }
+
       scenarioRef.current.setup(world, map);
 
       // Units can spawn already within each other's aggro range; run one
