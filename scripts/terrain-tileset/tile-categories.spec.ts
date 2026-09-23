@@ -63,8 +63,10 @@ describe('tileCategory', () => {
     [1317, 'closed-gate', 'a closed gate'],
     [1440, 'open-gate', 'an open gate'],
     [1445, 'open-gate', 'an open gate'],
-    [1360, 'rubble', 'a smashed gate'],
-    [1408, 'rubble', 'a smashed gate'],
+    [1360, 'rubble', 'splintered gate doors still hanging'],
+    [1365, 'rubble', 'splintered gate doors still hanging'],
+    [1408, 'open-gate', 'a gateway with its doors smashed out'],
+    [1413, 'open-gate', 'a gateway with its doors smashed out'],
     [1482, 'bridge', 'the intact drawbridge'],
     [1514, 'broken-bridge', 'the broken drawbridge'],
     [1535, 'broken-bridge', 'the broken drawbridge'],
@@ -89,10 +91,10 @@ describe('isWalkableTile', () => {
   });
 
   it('blocks walls, closed gates, water, rock, rubble, broken bridges, roofs, trees and filler', () => {
-    for (const id of [210, 1312, 398, 9, 800, 100, 919, 108, 1146, 1472]) {
+    for (const id of [210, 1312, 1360, 398, 9, 800, 100, 919, 108, 1146, 1472]) {
       expect(isWalkableTile(id)).toBe(false);
     }
-    for (const id of [0, 1072, 915, 1440, 1482]) {
+    for (const id of [0, 1072, 915, 1440, 1408, 1482]) {
       expect(isWalkableTile(id)).toBe(true);
     }
   });

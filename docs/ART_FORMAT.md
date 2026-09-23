@@ -221,13 +221,13 @@ tile — mapping each tile to what it depicts:
 | code | category | walkable | what |
 |---|---|---|---|
 | `g` | ground | yes | grass, gravel, stone, dirt, paths, cobbled paving |
-| `o` | open-gate | yes | a gateway with its wooden doors swung open |
+| `o` | open-gate | yes | a gateway with its wooden doors swung open (ids 1440–1445), or smashed out entirely, leaving only splinters (ids 1408–1413) |
 | `G` | closed-gate | no | a gateway with its wooden doors shut |
 | `b` | bridge | yes | an intact bridge deck; the intact drawbridge (ids 1482–1487, 1498–1503) |
 | `k` | rock | no | boulders, rock piles, cliffs, cave mouths, rocky props |
 | `w` | wall | no | stone walls and wall faces, intact |
 | `~` | water | no | rivers, lakes, ponds, moats, rocks standing in water |
-| `r` | rubble | no | damaged or destroyed walls, towers, gates and paving |
+| `r` | rubble | no | damaged or destroyed walls, towers and paving; a gate whose splintered doors still hang in the frame (ids 1360–1365) |
 | `x` | broken-bridge | no | a bridge deck with holes smashed through it; the broken drawbridge (ids 1514–1519, 1530–1535) |
 | `R` | roof | no | tiled and wooden roofs, including tower tops |
 | `t` | tree | no | trees and forest |

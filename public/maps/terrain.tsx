@@ -5686,36 +5686,6 @@
    <property name="blocked" type="bool" value="true"/>
   </properties>
  </tile>
- <tile id="1408">
-  <properties>
-   <property name="blocked" type="bool" value="true"/>
-  </properties>
- </tile>
- <tile id="1409">
-  <properties>
-   <property name="blocked" type="bool" value="true"/>
-  </properties>
- </tile>
- <tile id="1410">
-  <properties>
-   <property name="blocked" type="bool" value="true"/>
-  </properties>
- </tile>
- <tile id="1411">
-  <properties>
-   <property name="blocked" type="bool" value="true"/>
-  </properties>
- </tile>
- <tile id="1412">
-  <properties>
-   <property name="blocked" type="bool" value="true"/>
-  </properties>
- </tile>
- <tile id="1413">
-  <properties>
-   <property name="blocked" type="bool" value="true"/>
-  </properties>
- </tile>
  <tile id="1414">
   <properties>
    <property name="blocked" type="bool" value="true"/>

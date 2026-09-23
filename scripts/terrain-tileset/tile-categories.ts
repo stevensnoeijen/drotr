@@ -35,7 +35,7 @@ export type TileCategory =
 /** One-character code per category, as used in {@link TILE_CATEGORY_ROWS}. */
 export const CATEGORY_BY_CODE: Readonly<Record<string, TileCategory>> = {
   g: 'ground', // grass, gravel, stone, dirt, paths, cobbled paving
-  o: 'open-gate', // a gateway in a wall with its wooden doors swung open
+  o: 'open-gate', // a gateway in a wall with its doors swung open or smashed out
   G: 'closed-gate', // a gateway in a wall with its wooden doors shut
   b: 'bridge', // an intact wooden bridge deck or drawbridge
   k: 'rock', // boulders, rock piles, cliffs, cave mouths, small rocky props
@@ -154,7 +154,8 @@ export const TILE_CATEGORY_ROWS: readonly string[] = [
   'wwwrrrrrrrRRRRRR',
   'ggggggggggRRRRRR',
   '~~~~~~~gggRRRRRR',
-  // 81-91: gatehouses (wall top, closed gate, road, smashed gate, open gate);
+  // 81-91: gatehouses (wall top, closed gate, road, splintered gate, gate
+  // smashed out, open gate);
   // towers; rocks, caves, paths and rocks in water
   'wwwwww~~RRrrrrrr',
   'GGGGGG~~RRrrrrrr',
@@ -163,7 +164,7 @@ export const TILE_CATEGORY_ROWS: readonly string[] = [
   'rrrrrrggrrrrrrrr',
   'ggggggggggggkkkk',
   'wgwwgwRRrrrrkgkk',
-  'rrrrrrRRrrrrgggg',
+  'ooooooRRrrrrgggg',
   'ggggggRRrrrrg~~~',
   'ooooooggggggg~~~',
   'ggggggggggggg~~~',

@@ -244,7 +244,7 @@ describe('parseTilesetDescription', () => {
 
   it('reads the terrain tileset’s blocked tiles', () => {
     const { blockedTileIds } = terrainTileset;
-    expect(blockedTileIds.size).toBe(1232);
+    expect(blockedTileIds.size).toBe(1226);
     // A wall, water and an unused slot block; grass and the drawbridge don't.
     expect([210, 398, 1472].every((id) => blockedTileIds.has(id))).toBe(true);
     expect([1072, 1482].some((id) => blockedTileIds.has(id))).toBe(false);
