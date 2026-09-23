@@ -264,9 +264,13 @@ here. In order of likelihood:
    a per-county placement table rather than a per-prefab mask. Nothing
    suggests this yet, and prefab extraction is its own separate piece of work.
 
-Until one of those is checked, build spots for the engine have to be
-**authored by hand**, the same way spawn points are: as objects in a
-county's Tiled map. There's no original data to convert them from.
+**Decision:** rather than wait on any of the above, build spots will be
+**authored by hand**, the same way spawn points are: as objects in each
+county's Tiled map, added/curated manually per county as that county's
+scenario work needs them. There's no original data to convert them from,
+so this is a deliberate scope call, not a placeholder pending further
+research — it can be revisited if `BUILDING.MAP` prefab work (a separate
+ticket) or another source later turns up real per-county placement data.
 
 The evidence is pinned by golden tests across all 12 counties, in
 `scripts/county-map/county-map-markers-golden.spec.ts` (skipped without
@@ -477,8 +481,9 @@ end up using is still open.
 - **Where build spots come from.** They aren't in the county files (see
   "Buildable locations: not encoded in the county files" above). The
   remaining candidates are the original executable (not on this CD),
-  runtime derivation from terrain, or `BUILDING.MAP` blocks 1/2. Until one
-  is confirmed, build spots have to be hand-authored in the Tiled maps.
+  runtime derivation from terrain, or `BUILDING.MAP` blocks 1/2 — but the
+  decision made there is to hand-author build spots in the Tiled maps
+  rather than wait on one of those being confirmed.
 - What the Section B `hi` bits *other than* bit 2 mean, including what
   bit 8 (`256`) marks on the water blobs and cliff-rim subcells it occurs
   on. `BUILDING.MAP`
