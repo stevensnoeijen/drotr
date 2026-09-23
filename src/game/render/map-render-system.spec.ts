@@ -9,7 +9,6 @@ const TERRAIN_URL = 'http://host/maps/terrain.png';
 /** The committed `terrain` tileset's geometry, referenced at `firstgid`. */
 function terrainTileset(firstgid = 1): MapTileset {
   return {
-    name: 'terrain',
     firstgid,
     tileWidth: 40,
     tileHeight: 40,
@@ -18,8 +17,6 @@ function terrainTileset(firstgid = 1): MapTileset {
     margin: 0,
     spacing: 0,
     imageUrl: TERRAIN_URL,
-    imageWidth: 640,
-    imageHeight: 3880,
     blockedTileIds: new Set(),
   };
 }
@@ -87,8 +84,9 @@ describe('MapRenderSystem', () => {
       width: 2,
       height: 2,
       tileLayers: [
-        { name: 'ground', data: [1, 2, 0, 99999]},
-        { name: 'decoration', data: [0, 0, 0, 3] },
+        // Ground, then a decoration layer drawn over it.
+        [1, 2, 0, 99999],
+        [0, 0, 0, 3],
       ],
     });
     const system = new MapRenderSystem({
@@ -104,7 +102,7 @@ describe('MapRenderSystem', () => {
   });
 
   it('fits each tile to its map cell, whatever the tileset’s tile size', () => {
-    const map = makeMap({ width: 3, height: 1, tileLayers: [{ name: 'g', data: [0, 0, 1] }] });
+    const map = makeMap({ width: 3, height: 1, tileLayers: [[0, 0, 1]] });
     const system = new MapRenderSystem({
       map,
       tileTextures: new TileTextureCache(map.tileset, terrainSource()),
@@ -121,7 +119,7 @@ describe('MapRenderSystem', () => {
 
   it('draws a flipped gid as its tile, unflipped', () => {
     // gid 1 with the horizontal and diagonal flip flags set.
-    const map = makeMap({ width: 2, height: 1, tileLayers: [{ name: 'g', data: [0x80000001, 0x20000001] }] });
+    const map = makeMap({ width: 2, height: 1, tileLayers: [[0x80000001, 0x20000001]] });
     const system = new MapRenderSystem({
       map,
       tileTextures: new TileTextureCache(map.tileset, terrainSource()),
@@ -136,7 +134,7 @@ describe('MapRenderSystem', () => {
   });
 
   it('groups tiles into fixed-size chunk containers covering the whole map', () => {
-    const map = makeMap({ width: 20, height: 20, tileLayers: [{ name: 'g', data: new Array(400).fill(1)}] });
+    const map = makeMap({ width: 20, height: 20, tileLayers: [new Array(400).fill(1)] });
     const system = new MapRenderSystem({
       map,
       tileTextures: new TileTextureCache(map.tileset, terrainSource()),
@@ -150,7 +148,7 @@ describe('MapRenderSystem', () => {
 
   it('culls chunks outside the camera view', () => {
     // 64x64 tiles of 32px in 16-tile chunks: 4x4 chunks of 512px.
-    const map = makeMap({ width: 64, height: 64, tileLayers: [{ name: 'g', data: new Array(4096).fill(1)}] });
+    const map = makeMap({ width: 64, height: 64, tileLayers: [new Array(4096).fill(1)] });
     const system = new MapRenderSystem({
       map,
       tileTextures: new TileTextureCache(map.tileset, terrainSource()),
@@ -178,7 +176,7 @@ describe('MapRenderSystem', () => {
   });
 
   it('destroys every chunk on dispose, leaving no orphaned Pixi objects', () => {
-    const map = makeMap({ width: 20, height: 20, tileLayers: [{ name: 'g', data: new Array(400).fill(1)}] });
+    const map = makeMap({ width: 20, height: 20, tileLayers: [new Array(400).fill(1)] });
     const system = new MapRenderSystem({
       map,
       tileTextures: new TileTextureCache(map.tileset, terrainSource()),

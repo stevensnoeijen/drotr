@@ -25,23 +25,10 @@ export interface SpawnPoint {
  * tiles out of its image. `firstgid` comes from the map's reference to it.
  */
 export interface MapTileset extends TilesetGeometry {
-  name: string;
   /** Absolute URL of the tileset's image, resolved against the `.tsx`. */
   imageUrl: string;
-  imageWidth: number;
-  imageHeight: number;
   /** Local ids of the tiles marked {@link BLOCKED_TILE_PROPERTY}. */
   blockedTileIds: ReadonlySet<number>;
-}
-
-/**
- * A visible tile layer to draw, in the map's back-to-front order. `data`
- * holds the raw Tiled gids, flip flags included; `0` is an empty cell.
- */
-export interface MapTileLayer {
-  name: string;
-  /** Row-major, `width * height` long — always the map's own size. */
-  data: readonly number[];
 }
 
 export interface ParsedMap {
@@ -58,9 +45,11 @@ export interface ParsedMap {
   tileset: MapTileset;
   /**
    * Every visible top-level tile layer, back to front — what the renderer
-   * draws. Hidden layers are left out, and group layers aren't supported.
+   * draws — as its raw Tiled gids (flip flags included; `0` is an empty
+   * cell), row-major and always the map's own size. Hidden layers are left
+   * out, and group layers aren't supported.
    */
-  tileLayers: MapTileLayer[];
+  tileLayers: (readonly number[])[];
 }
 
 /** Thrown for any map that fails validation, with a human-readable reason. */
@@ -142,8 +131,8 @@ function parseCollision(
  * Collects every visible top-level tile layer, in the order Tiled draws
  * them: back to front.
  */
-function collectVisibleTileLayers(map: TiledMap): MapTileLayer[] {
-  const out: MapTileLayer[] = [];
+function collectVisibleTileLayers(map: TiledMap): (readonly number[])[] {
+  const out: (readonly number[])[] = [];
   for (const layer of map.layers) {
     if (layer.visible === false) {
       continue;
@@ -159,7 +148,7 @@ function collectVisibleTileLayers(map: TiledMap): MapTileLayer[] {
           `Tile layer "${layer.name}" uses an unsupported encoding; expected an uncompressed tile array`
         );
       }
-      out.push({ name: layer.name, data: layer.data });
+      out.push(layer.data);
     }
   }
   return out;
@@ -247,16 +236,14 @@ export function parseTilesetDescription(
 
   const name = tilesetEl.getAttribute('name') ?? '';
   const context = `Tileset "${name}"`;
-  const imageEl = doc.querySelector('tileset > image');
-  const imageSource = imageEl?.getAttribute('source');
-  if (!imageEl || !imageSource) {
+  const imageSource = doc.querySelector('tileset > image')?.getAttribute('source');
+  if (!imageSource) {
     throw new TiledMapError(
       `${context} has no single tileset image; image-collection tilesets are not supported`
     );
   }
 
   return {
-    name,
     firstgid,
     tileWidth: requiredNumberAttribute(tilesetEl, 'tilewidth', context),
     tileHeight: requiredNumberAttribute(tilesetEl, 'tileheight', context),
@@ -265,8 +252,6 @@ export function parseTilesetDescription(
     margin: Number(tilesetEl.getAttribute('margin') ?? 0) || 0,
     spacing: Number(tilesetEl.getAttribute('spacing') ?? 0) || 0,
     imageUrl: new URL(imageSource, tilesetUrl).toString(),
-    imageWidth: requiredNumberAttribute(imageEl, 'width', `${context} image`),
-    imageHeight: requiredNumberAttribute(imageEl, 'height', `${context} image`),
     blockedTileIds: parseBlockedTileIds(doc),
   };
 }

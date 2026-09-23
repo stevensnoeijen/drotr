@@ -160,7 +160,7 @@ export class MapRenderSystem {
     for (const layer of map.tileLayers) {
       for (let y = y0; y < y1; y++) {
         for (let x = x0; x < x1; x++) {
-          const texture = tileTextures.get(decodeGid(layer.data[y * map.width + x] ?? 0));
+          const texture = tileTextures.get(decodeGid(layer[y * map.width + x] ?? 0));
           if (!texture) {
             continue;
           }

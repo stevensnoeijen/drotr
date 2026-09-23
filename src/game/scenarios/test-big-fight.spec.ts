@@ -21,7 +21,6 @@ function mapWithWallColumn(width: number, height: number, wallCol: number): Pars
     spawns: [],
     // Never drawn here; the scenario only reads the collision grid.
     tileset: {
-      name: 'none',
       firstgid: 1,
       tileWidth: 32,
       tileHeight: 32,
@@ -30,8 +29,6 @@ function mapWithWallColumn(width: number, height: number, wallCol: number): Pars
       margin: 0,
       spacing: 0,
       imageUrl: '',
-      imageWidth: 0,
-      imageHeight: 0,
       blockedTileIds: new Set(),
     },
     tileLayers: [],

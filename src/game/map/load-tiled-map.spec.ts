@@ -21,7 +21,6 @@ const terrainTileset = parseTilesetDescription(terrainXml, 1, 'http://host/maps/
 /** A tiny synthetic tileset: local ids 0-3, of which 1 is blocked. */
 function smallTileset(firstgid = 1, blocked: number[] = [1]): MapTileset {
   return {
-    name: 'small',
     firstgid,
     tileWidth: 32,
     tileHeight: 32,
@@ -30,8 +29,6 @@ function smallTileset(firstgid = 1, blocked: number[] = [1]): MapTileset {
     margin: 0,
     spacing: 0,
     imageUrl: 'http://host/small.png',
-    imageWidth: 64,
-    imageHeight: 64,
     blockedTileIds: new Set(blocked),
   };
 }
@@ -140,32 +137,32 @@ describe('parseTiledMap tile layers', () => {
   it('draws the test map from its terrain layer, every cell a real terrain tile', () => {
     const result = parseTiledMap(fixtureMap, terrainTileset);
 
-    expect(result.tileLayers.map((layer) => layer.name)).toEqual(['terrain']);
+    expect(result.tileLayers).toHaveLength(1);
     expect(result.tileset).toEqual(terrainTileset);
     // Grass (tile 1072) and a wall (tile 210) at firstgid 1, nothing else.
-    expect(new Set(result.tileLayers[0].data)).toEqual(new Set([1073, 211]));
+    expect(new Set(result.tileLayers[0])).toEqual(new Set([1073, 211]));
   });
 
   it('exposes visible tile layers back to front', () => {
     const map = withLayers(tileLayer('decoration', 0), tileLayer('overlay', 5));
     const result = parseTiledMap(map, terrainTileset);
 
-    expect(result.tileLayers.map((layer) => layer.name)).toEqual(['terrain', 'decoration', 'overlay']);
-    expect(result.tileLayers[2].data[0]).toBe(5);
+    // The test map's terrain layer starts with a wall (gid 211).
+    expect(result.tileLayers.map((layer) => layer[0])).toEqual([211, 0, 5]);
   });
 
   it('leaves out hidden layers', () => {
     const map = withLayers(tileLayer('hidden', 5, { visible: false }));
     const result = parseTiledMap(map, terrainTileset);
 
-    expect(result.tileLayers.map((layer) => layer.name)).toEqual(['terrain']);
+    expect(result.tileLayers.map((layer) => layer[0])).toEqual([211]);
   });
 
   it('ignores group layers and what is inside them', () => {
     const group = { ...tileLayer('group', 0), type: 'group', layers: [tileLayer('inside', 1)] } as unknown as TiledLayer;
     const result = parseTiledMap(withLayers(group), terrainTileset);
 
-    expect(result.tileLayers.map((layer) => layer.name)).toEqual(['terrain']);
+    expect(result.tileLayers.map((layer) => layer[0])).toEqual([211]);
   });
 
   it('rejects a visible tile layer whose size does not match the map', () => {
@@ -184,7 +181,6 @@ describe('parseTiledMap tile layers', () => {
 describe('parseTilesetDescription', () => {
   it('reads the committed terrain tileset, resolving its image against the tileset URL', () => {
     expect(parseTilesetDescription(terrainXml, 4, 'http://host/drotr/maps/terrain.tsx')).toMatchObject({
-      name: 'terrain',
       firstgid: 4,
       tileWidth: 40,
       tileHeight: 40,
@@ -193,8 +189,6 @@ describe('parseTilesetDescription', () => {
       margin: 0,
       spacing: 0,
       imageUrl: 'http://host/drotr/maps/terrain.png',
-      imageWidth: 640,
-      imageHeight: 3880,
     });
   });
 
@@ -252,7 +246,6 @@ describe('loadTiledMap', () => {
 
     expect(result.width).toBe(64);
     expect(result.spawns).toHaveLength(2);
-    expect(result.tileset.name).toBe('terrain');
     expect(result.tileset.imageUrl).toMatch(/\/maps\/terrain\.png$/);
   });
 
