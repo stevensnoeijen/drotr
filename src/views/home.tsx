@@ -4,7 +4,10 @@ import { Link } from 'react-router';
 import { useParsedMaps } from '~/game/map/use-parsed-maps';
 import { maps } from '~/game/maps';
 import { scenarios } from '~/game/scenarios';
-import { isScenarioCompatibleWithMap } from '~/game/scenarios/compatibility';
+import {
+  isScenarioCompatibleWithMap,
+  pickCompatibleScenarioId,
+} from '~/game/scenarios/compatibility';
 
 function PickerCard({
   id,
@@ -48,33 +51,18 @@ export default function Home() {
   const [selectedMapId, setSelectedMapId] = useState(maps[0].id);
   const [selectedScenarioId, setSelectedScenarioId] = useState(scenarios[0].id);
 
-  const selectedScenario =
-    scenarios.find((s) => s.id === selectedScenarioId) ?? scenarios[0];
-
-  // Whether each map can be used with the user's selected scenario.
-  const mapAvailability = new Map(
-    maps.map((map) => [
-      map.id,
-      isScenarioCompatibleWithMap(selectedScenario, map, parsedMaps[map.id]),
-    ])
-  );
-
-  // If the selected map isn't usable with the selected scenario (e.g. the
-  // scenario was just switched to one this map doesn't support), fall back
-  // to the first map that is, rather than highlighting a disabled card and
-  // pointing Launch at a combination `validateMap` would reject. Derived at
-  // render time — not written back into `selectedMapId` — so this never
-  // needs a state-syncing effect; it just recomputes as inputs change.
-  const mapId = mapAvailability.get(selectedMapId)
-    ? selectedMapId
-    : (maps.find((map) => mapAvailability.get(map.id))?.id ?? selectedMapId);
-
+  // Map cards are always clickable — never greyed out — so the selected map
+  // is just whatever the user last clicked, with no compatibility fallback.
+  const mapId = selectedMapId;
   const mapState = parsedMaps[mapId];
   const mapDefinition = maps.find((map) => map.id === mapId);
 
-  // Same idea in the other direction: whether each scenario can be used
-  // with the (possibly just-fallen-back-to) selected map, and falling back
-  // to the first one that can if the current pick no longer fits.
+  // Whether each scenario can be used with the selected map, so incompatible
+  // scenario cards stay greyed out. Falls back to the first compatible
+  // scenario if the current pick no longer fits (e.g. right after switching
+  // maps, before `handleSelectMap`'s state write below has taken effect, or
+  // while the map is still loading) — a display/launch-link safety net, not
+  // the mechanism that actually performs the auto-switch.
   const scenarioAvailability = new Map(
     scenarios.map((s) => [s.id, isScenarioCompatibleWithMap(s, mapDefinition, mapState)])
   );
@@ -82,7 +70,21 @@ export default function Home() {
     ? selectedScenarioId
     : (scenarios.find((s) => scenarioAvailability.get(s.id))?.id ?? selectedScenarioId);
 
-  const launchDisabled = !mapAvailability.get(mapId) || !scenarioAvailability.get(scenarioId);
+  const launchDisabled = !scenarioAvailability.get(scenarioId);
+
+  // Selecting a map is a real user action: if the newly picked map isn't
+  // compatible with the currently selected scenario, stick the selection to
+  // the first scenario (in registry order) that is, rather than leaving the
+  // scenario picker's visible selection stale until a later render's
+  // fallback silently redirects Launch underneath it.
+  function handleSelectMap(newMapId: string) {
+    setSelectedMapId(newMapId);
+    const newMapDefinition = maps.find((map) => map.id === newMapId);
+    const newMapState = parsedMaps[newMapId];
+    setSelectedScenarioId((currentScenarioId) =>
+      pickCompatibleScenarioId(scenarios, currentScenarioId, newMapDefinition, newMapState)
+    );
+  }
 
   return (
     <div className="flex min-h-screen flex-col items-center gap-8 bg-neutral-900 px-6 py-12">
@@ -100,8 +102,7 @@ export default function Home() {
               title={map.title}
               description={map.description}
               selected={map.id === mapId}
-              disabled={!mapAvailability.get(map.id)}
-              onSelect={() => setSelectedMapId(map.id)}
+              onSelect={() => handleSelectMap(map.id)}
             />
           ))}
         </div>
