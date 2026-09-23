@@ -55,7 +55,7 @@ export default function Home() {
   const mapAvailability = new Map(
     maps.map((map) => [
       map.id,
-      isScenarioCompatibleWithMap(selectedScenario, parsedMaps[map.id]),
+      isScenarioCompatibleWithMap(selectedScenario, map, parsedMaps[map.id]),
     ])
   );
 
@@ -70,12 +70,13 @@ export default function Home() {
     : (maps.find((map) => mapAvailability.get(map.id))?.id ?? selectedMapId);
 
   const mapState = parsedMaps[mapId];
+  const mapDefinition = maps.find((map) => map.id === mapId);
 
   // Same idea in the other direction: whether each scenario can be used
   // with the (possibly just-fallen-back-to) selected map, and falling back
   // to the first one that can if the current pick no longer fits.
   const scenarioAvailability = new Map(
-    scenarios.map((s) => [s.id, isScenarioCompatibleWithMap(s, mapState)])
+    scenarios.map((s) => [s.id, isScenarioCompatibleWithMap(s, mapDefinition, mapState)])
   );
   const scenarioId = scenarioAvailability.get(selectedScenarioId)
     ? selectedScenarioId

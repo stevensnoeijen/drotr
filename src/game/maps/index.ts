@@ -16,6 +16,7 @@ export const maps: readonly MapDefinition[] = [
     title: 'Fagaras',
     description: 'The Fagaras county map, converted from the original .MAP file.',
     mapSource: `${import.meta.env.BASE_URL}maps/fagaras.tmj`,
+    allowedScenarioIds: ['knights'],
   },
 ];
 
