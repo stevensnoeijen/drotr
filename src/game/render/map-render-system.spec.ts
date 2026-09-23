@@ -154,7 +154,7 @@ describe('MapRenderSystem', () => {
       chunkSize: 16,
     });
 
-    expect(system.chunkCount).toBe(4);
+    expect(system.container.children).toHaveLength(4);
     const sizes = system.container.children.map((chunk) => chunk.children.length);
     expect(sizes).toEqual([16 * 16, 4 * 16, 16 * 4, 4 * 4]);
   });
@@ -168,22 +168,24 @@ describe('MapRenderSystem', () => {
       chunkSize: 16,
     });
 
-    system.cull({ x: 0, y: 0, width: 400, height: 400 });
-    expect(system.visibleChunkCount).toBe(1);
-    expect(system.container.children[0].visible).toBe(true);
+    /** Which of the 4x4 chunk containers are shown, row-major, as a grid of 0/1. */
+    const shown = () =>
+      system.container.children.map((chunk) => (chunk.visible ? 1 : 0)).join('').match(/.{4}/g);
 
-    // Panned to straddle the centre: four chunks.
+    system.cull({ x: 0, y: 0, width: 400, height: 400 });
+    expect(shown()).toEqual(['1000', '0000', '0000', '0000']);
+
+    // Panned to straddle the centre: the middle four chunks.
     system.cull({ x: 800, y: 800, width: 400, height: 400 });
-    expect(system.visibleChunkCount).toBe(4);
-    expect(system.container.children[0].visible).toBe(false);
+    expect(shown()).toEqual(['0000', '0110', '0110', '0000']);
 
     // Zoomed out over the whole map.
     system.cull({ x: 0, y: 0, width: 4096, height: 4096 });
-    expect(system.visibleChunkCount).toBe(16);
+    expect(shown()).toEqual(['1111', '1111', '1111', '1111']);
 
     // Entirely off the map.
     system.cull({ x: 10000, y: 10000, width: 100, height: 100 });
-    expect(system.visibleChunkCount).toBe(0);
+    expect(shown()).toEqual(['0000', '0000', '0000', '0000']);
   });
 
   it('destroys every chunk on dispose, leaving no orphaned Pixi objects', () => {
@@ -196,7 +198,7 @@ describe('MapRenderSystem', () => {
 
     system.dispose();
 
-    expect(system.chunkCount).toBe(0);
+    expect(chunks).toHaveLength(4);
     expect(chunks.every((chunk) => chunk.destroyed)).toBe(true);
     expect(system.container.destroyed).toBe(true);
   });

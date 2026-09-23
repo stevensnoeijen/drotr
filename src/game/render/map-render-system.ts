@@ -149,16 +149,6 @@ export class MapRenderSystem {
     }
   }
 
-  /** Total chunk count — exposed for tests. */
-  public get chunkCount(): number {
-    return this.chunks.length;
-  }
-
-  /** Chunks currently shown — exposed for tests and stats. */
-  public get visibleChunkCount(): number {
-    return this.chunks.filter((chunk) => chunk.visible).length;
-  }
-
   /** Destroys every chunk and its sprites, and the per-gid textures. */
   public dispose(): void {
     this.destroyChunks();
