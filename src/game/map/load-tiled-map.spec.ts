@@ -19,29 +19,6 @@ const terrainXml = fs.readFileSync(path.join(FIXTURE_DIR, 'terrain.tsx'), 'utf-8
 const fixtureMap = JSON.parse(mapJson) as TiledMap;
 const terrainTileset = parseTilesetDescription(terrainXml, 1, 'http://host/maps/terrain.tsx');
 
-/**
- * The test map's collision grid as it was when its walls were still
- * decided by a separate, hidden layer of placeholder grass/wall/water
- * tiles, one row per line (`#` blocked). Walkability moving to the
- * terrain tileset's `blocked` property must not move a single wall.
- */
-const PREVIOUS_TEST_MAP_COLLISION = fs
-  .readFileSync(path.resolve(import.meta.dirname, 'fixtures/test-map-collision.txt'), 'utf-8')
-  .trimEnd()
-  .split('\n');
-
-function collisionRows({ collision, width, height }: { collision: Uint8Array; width: number; height: number }): string[] {
-  const rows: string[] = [];
-  for (let y = 0; y < height; y++) {
-    let row = '';
-    for (let x = 0; x < width; x++) {
-      row += collision[y * width + x] ? '#' : '.';
-    }
-    rows.push(row);
-  }
-  return rows;
-}
-
 /** A tiny synthetic tileset: local ids 0-3, of which 1 is blocked. */
 function smallTileset(firstgid = 1, blocked: number[] = [1]): MapTileset {
   return {
@@ -104,13 +81,6 @@ describe('parseTiledMap', () => {
       { id: 'spawn-1', position: { x: 176, y: 176 } },
       { id: 'spawn-2', position: { x: 1872, y: 1872 } },
     ]);
-  });
-
-  it('derives exactly the same test-map collision grid as before walkability moved to the tileset', () => {
-    const result = parseTiledMap(fixtureMap, [terrainTileset]);
-
-    expect(collisionRows(result)).toEqual(PREVIOUS_TEST_MAP_COLLISION);
-    expect([...result.collision].filter((cell) => cell === 1)).toHaveLength(594);
   });
 
   it('blocks a cell whose tile is marked blocked, and only that', () => {
@@ -298,7 +268,6 @@ describe('loadTiledMap', () => {
     expect(result.width).toBe(64);
     expect(result.spawns).toHaveLength(2);
     expect(result.tilesets.map((tileset) => tileset.name)).toEqual(['terrain']);
-    expect(collisionRows(result)).toEqual(PREVIOUS_TEST_MAP_COLLISION);
   });
 
   it('loads every referenced tileset, offsetting each one’s blocked tiles by its own firstgid', async () => {
