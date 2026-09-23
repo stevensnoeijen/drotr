@@ -268,6 +268,10 @@ Until one of those is checked, build spots for the engine have to be
 **authored by hand**, the same way spawn points are: as objects in a
 county's Tiled map. There's no original data to convert them from.
 
+The evidence is pinned by golden tests across all 12 counties, in
+`scripts/county-map/county-map-markers-golden.spec.ts` (skipped without
+`.cd/`).
+
 ### Map-edge signposts (tile 701)
 
 This turned up during the buildable-location search. It isn't a build spot,
