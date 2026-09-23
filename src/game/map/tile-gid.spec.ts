@@ -9,8 +9,6 @@ function tileset(overrides: Partial<TilesetGeometry> = {}): TilesetGeometry {
     tileHeight: 40,
     tileCount: 1552,
     columns: 16,
-    margin: 0,
-    spacing: 0,
     ...overrides,
   };
 }
@@ -74,8 +72,8 @@ describe('tileFrame', () => {
     expect(tileFrame(tileset(), 1072)).toEqual({ x: 0, y: 2680, width: 40, height: 40 });
   });
 
-  it('accounts for margin and spacing', () => {
-    const spaced = tileset({ tileWidth: 32, tileHeight: 32, columns: 3, margin: 2, spacing: 1 });
-    expect(tileFrame(spaced, 4)).toEqual({ x: 2 + 33, y: 2 + 33, width: 32, height: 32 });
+  it('uses the tileset’s own tile size and column count', () => {
+    const small = tileset({ tileWidth: 32, tileHeight: 16, columns: 3 });
+    expect(tileFrame(small, 4)).toEqual({ x: 32, y: 16, width: 32, height: 16 });
   });
 });

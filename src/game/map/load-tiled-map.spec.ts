@@ -26,8 +26,6 @@ function smallTileset(firstgid = 1, blocked: number[] = [1]): MapTileset {
     tileHeight: 32,
     tileCount: 4,
     columns: 2,
-    margin: 0,
-    spacing: 0,
     imageUrl: 'http://host/small.png',
     blockedTileIds: new Set(blocked),
   };
@@ -186,8 +184,6 @@ describe('parseTilesetDescription', () => {
       tileHeight: 40,
       tileCount: 1552,
       columns: 16,
-      margin: 0,
-      spacing: 0,
       imageUrl: 'http://host/drotr/maps/terrain.png',
     });
   });
@@ -209,9 +205,9 @@ describe('parseTilesetDescription', () => {
     expect([...parseTilesetDescription(xml, 1, 'http://h/p.tsx').blockedTileIds]).toEqual([0]);
   });
 
-  it('reads margin and spacing when present', () => {
-    const xml = `<tileset name="s" tilewidth="16" tileheight="16" tilecount="4" columns="2" margin="1" spacing="2"><image source="s.png" width="37" height="37"/></tileset>`;
-    expect(parseTilesetDescription(xml, 1, 'http://h/s.tsx')).toMatchObject({ margin: 1, spacing: 2 });
+  it.each(['margin="1"', 'spacing="2"'])('rejects a tileset with %s between tiles', (attribute) => {
+    const xml = `<tileset name="s" tilewidth="16" tileheight="16" tilecount="4" columns="2" ${attribute}><image source="s.png" width="37" height="37"/></tileset>`;
+    expect(() => parseTilesetDescription(xml, 1, 'http://h/s.tsx')).toThrow(/tightly packed/);
   });
 
   it('rejects an image-collection tileset', () => {

@@ -14,8 +14,6 @@ function terrainTileset(firstgid = 1): MapTileset {
     tileHeight: 40,
     tileCount: 1552,
     columns: 16,
-    margin: 0,
-    spacing: 0,
     imageUrl: TERRAIN_URL,
     blockedTileIds: new Set(),
   };

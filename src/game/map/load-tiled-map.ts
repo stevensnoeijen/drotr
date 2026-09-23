@@ -220,8 +220,9 @@ function requiredNumberAttribute(element: Element, name: string, context: string
  * file (it's the map's to assign), so it's passed in, and the image path is
  * resolved against `tilesetUrl`.
  *
- * Only single-image tilesets are supported; an image-collection tileset
- * (one `<image>` per `<tile>`) is rejected.
+ * Only tightly packed single-image tilesets are supported: an
+ * image-collection tileset (one `<image>` per `<tile>`), or one with a
+ * margin or spacing between tiles, is rejected.
  */
 export function parseTilesetDescription(
   xml: string,
@@ -242,6 +243,11 @@ export function parseTilesetDescription(
       `${context} has no single tileset image; image-collection tilesets are not supported`
     );
   }
+  for (const attribute of ['margin', 'spacing']) {
+    if (Number(tilesetEl.getAttribute(attribute) ?? 0) !== 0) {
+      throw new TiledMapError(`${context} sets a ${attribute}; only tightly packed tilesets are supported`);
+    }
+  }
 
   return {
     firstgid,
@@ -249,8 +255,6 @@ export function parseTilesetDescription(
     tileHeight: requiredNumberAttribute(tilesetEl, 'tileheight', context),
     tileCount: requiredNumberAttribute(tilesetEl, 'tilecount', context),
     columns: requiredNumberAttribute(tilesetEl, 'columns', context),
-    margin: Number(tilesetEl.getAttribute('margin') ?? 0) || 0,
-    spacing: Number(tilesetEl.getAttribute('spacing') ?? 0) || 0,
     imageUrl: new URL(imageSource, tilesetUrl).toString(),
     blockedTileIds: parseBlockedTileIds(doc),
   };

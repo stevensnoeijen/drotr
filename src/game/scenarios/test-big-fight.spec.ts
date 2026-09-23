@@ -26,8 +26,6 @@ function mapWithWallColumn(width: number, height: number, wallCol: number): Pars
       tileHeight: 32,
       tileCount: 0,
       columns: 1,
-      margin: 0,
-      spacing: 0,
       imageUrl: '',
       blockedTileIds: new Set(),
     },

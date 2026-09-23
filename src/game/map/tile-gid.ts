@@ -34,10 +34,6 @@ export interface TilesetGeometry {
   /** Number of tiles in the tileset; local ids run `0..tileCount - 1`. */
   tileCount: number;
   columns: number;
-  /** Pixels around the tile grid's outer edge. */
-  margin: number;
-  /** Pixels between adjacent tiles. */
-  spacing: number;
 }
 
 /**
@@ -66,8 +62,8 @@ export function tileFrame(tileset: TilesetGeometry, localId: number): TileFrame 
   const column = localId % tileset.columns;
   const row = Math.floor(localId / tileset.columns);
   return {
-    x: tileset.margin + column * (tileset.tileWidth + tileset.spacing),
-    y: tileset.margin + row * (tileset.tileHeight + tileset.spacing),
+    x: column * tileset.tileWidth,
+    y: row * tileset.tileHeight,
     width: tileset.tileWidth,
     height: tileset.tileHeight,
   };
