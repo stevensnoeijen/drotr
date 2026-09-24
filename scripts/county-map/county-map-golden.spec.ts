@@ -246,3 +246,24 @@ describe.skipIf(!snagovAvailable)('SNAGOV.MAP', () => {
     );
   });
 });
+
+const BRAILA_SOURCE = countyMapCdPath('BRAILA');
+const brailaAvailable = hasCdFile(BRAILA_SOURCE);
+
+describe.skipIf(!brailaAvailable)('BRAILA.MAP', () => {
+  it('converts to exactly the committed public/maps/braila.tmj (catches a stale committed file)', () => {
+    const county = parseCountyMap(readCdFile(BRAILA_SOURCE));
+    const committed = fs.readFileSync(
+      path.join(
+        process.cwd(),
+        'public',
+        'maps',
+        countyTiledMapFileName('BRAILA')
+      ),
+      'utf-8'
+    );
+    expect(serializeTiledMap(buildCountyTiledMap(county)) === committed).toBe(
+      true
+    );
+  });
+});
