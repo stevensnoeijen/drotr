@@ -43,4 +43,13 @@ export interface Scenario {
    * silently spawn nothing (or throw) for a map that doesn't fit.
    */
   validateMap?(map?: ParsedMap): string | undefined;
+  /**
+   * Bypasses a map's `allowedScenarioIds` allowlist (see
+   * `MapDefinition`), so this scenario is compatible with every map, including
+   * ones added later that don't list it. Its own {@link validateMap} and the
+   * map-loading checks in `isScenarioCompatibleWithMap` still apply. Meant
+   * for scenarios that can't disturb any map, such as one that spawns
+   * nothing.
+   */
+  allowedOnEveryMap?: boolean;
 }

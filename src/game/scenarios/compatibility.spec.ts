@@ -6,6 +6,7 @@ import {
   pickCompatibleScenarioId,
   type MapLoadState,
 } from './compatibility';
+import { emptyScenario } from './empty';
 import type { Scenario } from './types';
 
 const unconstrainedScenario: Scenario = {
@@ -82,6 +83,71 @@ describe('isScenarioCompatibleWithMap', () => {
 
   it('accepts a scenario in the map allowedScenarioIds allowlist', () => {
     expect(isScenarioCompatibleWithMap(constrainedScenario, restrictedMap, readyMap)).toBe(true);
+  });
+
+  describe('allowedOnEveryMap', () => {
+    const emptyAllowlistMap: MapDefinition = {
+      id: 'empty-allowlist',
+      title: 'Empty allowlist',
+      description: '',
+      allowedScenarioIds: [],
+    };
+    const everyMapScenario: Scenario = {
+      ...unconstrainedScenario,
+      id: 'every-map',
+      allowedOnEveryMap: true,
+    };
+
+    it('accepts `empty` on a map whose allowlist excludes it', () => {
+      expect(restrictedMap.allowedScenarioIds).not.toContain('empty');
+      expect(isScenarioCompatibleWithMap(emptyScenario, restrictedMap, readyMap)).toBe(true);
+      expect(isScenarioCompatibleWithMap(emptyScenario, emptyAllowlistMap, readyMap)).toBe(true);
+    });
+
+    it('still rejects a scenario without the flag from that map', () => {
+      expect(isScenarioCompatibleWithMap(unconstrainedScenario, restrictedMap, readyMap)).toBe(
+        false
+      );
+      expect(isScenarioCompatibleWithMap(unconstrainedScenario, emptyAllowlistMap, readyMap)).toBe(
+        false
+      );
+    });
+
+    it('accepts `empty` on an unrestricted map and the blank map', () => {
+      expect(isScenarioCompatibleWithMap(emptyScenario, unrestrictedMap, readyMap)).toBe(true);
+      expect(isScenarioCompatibleWithMap(emptyScenario, undefined, readyBlank)).toBe(true);
+    });
+
+    it('still defers to the map load state', () => {
+      expect(isScenarioCompatibleWithMap(emptyScenario, restrictedMap, loading)).toBe(false);
+      expect(isScenarioCompatibleWithMap(emptyScenario, restrictedMap, error)).toBe(false);
+      expect(isScenarioCompatibleWithMap(emptyScenario, restrictedMap, undefined)).toBe(false);
+    });
+
+    it("still applies the scenario's own validateMap", () => {
+      const picky: Scenario = { ...constrainedScenario, allowedOnEveryMap: true };
+      expect(isScenarioCompatibleWithMap(picky, emptyAllowlistMap, readyMap)).toBe(true);
+      expect(isScenarioCompatibleWithMap(picky, emptyAllowlistMap, readyBlank)).toBe(false);
+    });
+
+    it('lets pickCompatibleScenarioId fall back to it on a map that allows nothing else', () => {
+      expect(
+        pickCompatibleScenarioId(
+          [unconstrainedScenario, everyMapScenario],
+          'unconstrained',
+          emptyAllowlistMap,
+          readyMap
+        )
+      ).toBe('every-map');
+      expect(
+        pickCompatibleScenarioId(
+          [constrainedScenario, emptyScenario],
+          'constrained',
+          emptyAllowlistMap,
+          readyMap
+        )
+      ).toBe('empty');
+    });
   });
 });
 
