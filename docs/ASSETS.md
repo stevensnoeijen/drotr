@@ -93,7 +93,8 @@ Maps, unlike sprites, are now built from `.cd` directly:
   `public/maps/snagov.tmj`, `public/maps/braila.tmj`,
   `public/maps/giurgiu.tmj`, `public/maps/tirgo.tmj`,
   `public/maps/cuerta.tmj` and `public/maps/ostrov.tmj` (the 12
-  counties) are converted and committed. `npm run convert:map -- BUILDING` converts
+  counties) are converted and committed; `npm run convert:maps`
+  re-converts all 12 at once, keeping any hand-placed spawn points. `npm run convert:map -- BUILDING` converts
   `BUILDING.MAP` as-is into `public/maps/buildings.tmj` (committed); its
   buildings aren't yet cut out as individual prefabs.
 
