@@ -20,6 +20,15 @@ Combat and perception are left out to keep the focus on movement.
 A unit on a map with no terrain gets a `MoveTarget` and no `MovePath` — there
 is nothing to route around, so the straight-line path is the path.
 
+A **cell** is always one of the loaded map's own tiles: the cell size is the
+map's tile size (`cellSizeOf` in `src/lib/grid.ts` — 32 px for the
+hand-authored maps, 40 px for the converted county maps, 32 px with no map).
+Units are placed on, routed through and collide in the same grid the
+terrain's collision is authored in, so nothing is resampled between grids of
+different resolutions; `createMapNavigation`
+(`src/game/navigation/map-navigation.ts`) sets up pathfinding and occupancy
+for any tile size.
+
 ## Issuing an order
 
 `InputSystem` drains the right-click, and `moveSelectedTo` plans a route per
