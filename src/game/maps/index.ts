@@ -64,6 +64,15 @@ export const maps: readonly MapDefinition[] = [
     allowedScenarioIds: [],
   },
   {
+    id: 'snagov',
+    title: 'Snagov',
+    description:
+      'The Snagov county map, converted from the original .MAP file.',
+    mapSource: `${import.meta.env.BASE_URL}maps/snagov.tmj`,
+    // No spawn points yet, so only `empty` (allowed on every map) applies.
+    allowedScenarioIds: [],
+  },
+  {
     id: 'buildings',
     title: 'Buildings',
     description:

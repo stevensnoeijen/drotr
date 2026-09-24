@@ -225,3 +225,24 @@ describe.skipIf(!hirsovaAvailable)('HIRSOVA.MAP', () => {
     );
   });
 });
+
+const SNAGOV_SOURCE = countyMapCdPath('SNAGOV');
+const snagovAvailable = hasCdFile(SNAGOV_SOURCE);
+
+describe.skipIf(!snagovAvailable)('SNAGOV.MAP', () => {
+  it('converts to exactly the committed public/maps/snagov.tmj (catches a stale committed file)', () => {
+    const county = parseCountyMap(readCdFile(SNAGOV_SOURCE));
+    const committed = fs.readFileSync(
+      path.join(
+        process.cwd(),
+        'public',
+        'maps',
+        countyTiledMapFileName('SNAGOV')
+      ),
+      'utf-8'
+    );
+    expect(serializeTiledMap(buildCountyTiledMap(county)) === committed).toBe(
+      true
+    );
+  });
+});
