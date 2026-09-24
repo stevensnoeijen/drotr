@@ -10,18 +10,17 @@ import {
 } from '~/game/map/load-tiled-map';
 
 /**
- * Tests against the **committed** `public/maps/fagaras.tmj` itself. These
- * need no `.cd/` data, so they always run (CI included). That the file is
- * exactly what the converter produces from the real `FAGARAS.MAP` is
- * checked by the golden suite (`county-map-golden.spec.ts`), which skips
- * without `.cd/`.
+ * Tests against the **committed** `public/maps/sibiu.tmj` itself. These need
+ * no `.cd/` data, so they always run (CI included). That the file is exactly
+ * what the converter produces from the real `SIBIU.MAP` is checked by the
+ * golden suite (`county-map-golden.spec.ts`), which skips without `.cd/`.
  */
 
 const MAPS_DIR = path.join(process.cwd(), 'public', 'maps');
 
-describe('public/maps/fagaras.tmj', () => {
+describe('public/maps/sibiu.tmj', () => {
   const map = JSON.parse(
-    fs.readFileSync(path.join(MAPS_DIR, 'fagaras.tmj'), 'utf-8')
+    fs.readFileSync(path.join(MAPS_DIR, 'sibiu.tmj'), 'utf-8')
   ) as TiledMap;
   const tileset = parseTilesetDescription(
     fs.readFileSync(path.join(MAPS_DIR, 'terrain.tsx'), 'utf-8'),
@@ -33,15 +32,12 @@ describe('public/maps/fagaras.tmj', () => {
     expect(map.tilesets).toEqual([{ firstgid: 1, source: 'terrain.tsx' }]);
   });
 
-  it('passes parseTiledMap as a 128x128, 40 px map with red and blue spawns', () => {
+  it('passes parseTiledMap as a 128x128, 40 px map with no spawns yet', () => {
     const parsed = parseTiledMap(map, tileset);
     expect(parsed.width).toEqual(128);
     expect(parsed.height).toEqual(128);
     expect(parsed.tileSize).toEqual(40);
-    expect(parsed.spawns.map((spawn) => spawn.id).sort()).toEqual([
-      'blue',
-      'red',
-    ]);
+    expect(parsed.spawns).toEqual([]);
     // collision is kept but hidden, so terrain is the only shown layer.
     expect(
       parsed.tileLayers.map((layer) => [layer.name, layer.visible])
@@ -55,6 +51,6 @@ describe('public/maps/fagaras.tmj', () => {
   it('takes engine collision from the collision layer only', () => {
     const parsed = parseTiledMap(map, tileset);
     const blocked = parsed.collision.reduce((sum, cell) => sum + cell, 0);
-    expect(blocked).toEqual(5188);
+    expect(blocked).toEqual(4331);
   });
 });

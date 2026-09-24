@@ -120,3 +120,24 @@ describe.skipIf(!available)('FAGARAS.MAP', () => {
     expect(drawn).toHaveLength(5188);
   });
 });
+
+const SIBIU_SOURCE = countyMapCdPath('SIBIU');
+const sibiuAvailable = hasCdFile(SIBIU_SOURCE);
+
+describe.skipIf(!sibiuAvailable)('SIBIU.MAP', () => {
+  it('converts to exactly the committed public/maps/sibiu.tmj (catches a stale committed file)', () => {
+    const county = parseCountyMap(readCdFile(SIBIU_SOURCE));
+    const committed = fs.readFileSync(
+      path.join(
+        process.cwd(),
+        'public',
+        'maps',
+        countyTiledMapFileName('SIBIU')
+      ),
+      'utf-8'
+    );
+    expect(serializeTiledMap(buildCountyTiledMap(county)) === committed).toBe(
+      true
+    );
+  });
+});
