@@ -184,19 +184,25 @@ describe('buildTerrainTilesetImage', () => {
     expect(nonTransparentIds).toEqual([]);
   });
 
-  it('draws the collision-marker tile fully opaque with more than one colour', () => {
+  it('draws the collision-marker tile as red stripes on a transparent field', () => {
     const tile = readTile(
       tilesetImage.rgba,
       TERRAIN_TILESET_WIDTH,
       COLLISION_MARKER_TILE_ID
     );
-    const colors = new Set<string>();
+    let sawOpaqueStripe = false;
+    let sawTransparentPixel = false;
     for (let i = 0; i < tile.length; i += 4) {
-      expect(tile[i + 3]).toEqual(255); // fully opaque
-      colors.add(`${tile[i]},${tile[i + 1]},${tile[i + 2]}`);
+      if (tile[i + 3] === 255) {
+        sawOpaqueStripe = true;
+        expect([tile[i], tile[i + 1], tile[i + 2]]).toEqual([220, 20, 20]);
+      } else {
+        expect(tile[i + 3]).toEqual(0); // fully transparent, not merely dark
+        sawTransparentPixel = true;
+      }
     }
-    // A striped pattern, not a solid fill.
-    expect(colors.size).toBeGreaterThan(1);
+    expect(sawOpaqueStripe).toEqual(true);
+    expect(sawTransparentPixel).toEqual(true);
   });
 
   it('never draws a pixel sourced from an excluded atlas tile', () => {

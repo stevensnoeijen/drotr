@@ -16,21 +16,27 @@ import type { RgbaPixels } from './rgba';
  */
 export const COLLISION_MARKER_TILE_ID = 1551;
 
-/** Stripe colours: bright red alternating with a darker red. */
+/** Stripe colour: bright red. */
 const STRIPE_COLOR_A: readonly [number, number, number, number] = [
   220, 20, 20, 255,
 ];
-const STRIPE_COLOR_B: readonly [number, number, number, number] = [
-  110, 0, 0, 255,
-];
 
 /** Width, in pixels, of one diagonal stripe. */
-const STRIPE_WIDTH = 5;
+const STRIPE_WIDTH = 2;
+
+/** Width, in pixels, of the transparent gap between two stripes. */
+const STRIPE_GAP = 4;
+
+/** Period, in pixels, of one stripe-plus-gap cycle. */
+const STRIPE_PERIOD = STRIPE_WIDTH + STRIPE_GAP;
 
 /**
- * Renders the collision-marker tile's pixels: opaque diagonal red/dark-red
- * stripes, chosen to be immediately recognisable as "blocked" against any
- * terrain tile it might sit next to in the Tiled editor.
+ * Renders the collision-marker tile's pixels: a sparse diagonal hazard
+ * stripe in opaque red, with every other pixel fully transparent
+ * (alpha 0, not merely a dark fill). Tiled overlays this tile directly on
+ * top of the map's normal terrain tile on the `collision` layer, so
+ * anything less than true transparency between the stripes would blot out
+ * the terrain underneath instead of just flagging it as blocked.
  */
 export function drawCollisionMarkerTile(): RgbaPixels {
   const rgba = new Uint8ClampedArray(
@@ -39,13 +45,16 @@ export function drawCollisionMarkerTile(): RgbaPixels {
 
   for (let y = 0; y < ATLAS_TILE_SIZE; y++) {
     for (let x = 0; x < ATLAS_TILE_SIZE; x++) {
-      const stripe = Math.floor((x + y) / STRIPE_WIDTH) % 2;
-      const color = stripe === 0 ? STRIPE_COLOR_A : STRIPE_COLOR_B;
       const offset = (y * ATLAS_TILE_SIZE + x) * 4;
-      rgba[offset] = color[0];
-      rgba[offset + 1] = color[1];
-      rgba[offset + 2] = color[2];
-      rgba[offset + 3] = color[3];
+      const onStripe = ((x + y) % STRIPE_PERIOD) < STRIPE_WIDTH;
+      if (onStripe) {
+        rgba[offset] = STRIPE_COLOR_A[0];
+        rgba[offset + 1] = STRIPE_COLOR_A[1];
+        rgba[offset + 2] = STRIPE_COLOR_A[2];
+        rgba[offset + 3] = STRIPE_COLOR_A[3];
+      } else {
+        rgba[offset + 3] = 0;
+      }
     }
   }
 

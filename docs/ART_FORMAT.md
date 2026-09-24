@@ -179,9 +179,10 @@ open cleanly in the Tiled editor.
   - Both map to a tileset id via one constant offset,
     `EXTRA_TILE_ID_OFFSET = 96` (e.g. atlas 1578 → id 1482).
 - **Collision marker.** Id **1551**, the last filler slot in row 96,
-  is repurposed as a synthetic tile with no atlas source: opaque
-  diagonal red/dark-red stripes, drawn directly by
-  `drawCollisionMarkerTile` rather than copied from `BATTLE.ART`. It's
+  is repurposed as a synthetic tile with no atlas source: a sparse
+  diagonal hazard stripe in opaque red, transparent everywhere else, drawn
+  directly by `drawCollisionMarkerTile` rather than copied from
+  `BATTLE.ART`. It's
   exported as `COLLISION_MARKER_TILE_ID` (`src/lib/art/collision-marker.ts`,
   shared by the `scripts/county-map` converters and the engine) and is what
   every `collision` layer draws at a blocked cell — see "Tile walkability:

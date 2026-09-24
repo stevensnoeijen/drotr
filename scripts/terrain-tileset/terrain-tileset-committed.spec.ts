@@ -94,11 +94,20 @@ describe('public/maps/terrain.png', () => {
     }
   });
 
-  it('draws the collision-marker id fully opaque', () => {
+  it('draws the collision-marker id as stripes on a transparent field', () => {
     const tile = readTile(png, COLLISION_MARKER_TILE_ID);
+    let sawOpaquePixel = false;
+    let sawTransparentPixel = false;
     for (let i = 3; i < tile.length; i += 4) {
-      expect(tile[i]).toEqual(255);
+      if (tile[i] === 255) {
+        sawOpaquePixel = true;
+      } else {
+        expect(tile[i]).toEqual(0);
+        sawTransparentPixel = true;
+      }
     }
+    expect(sawOpaquePixel).toEqual(true);
+    expect(sawTransparentPixel).toEqual(true);
   });
 
   const EXTRA_IDS = [
