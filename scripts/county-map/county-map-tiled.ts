@@ -31,7 +31,8 @@ import {
  * - `collision`: hidden by default, Section B collapsed to one value per
  *   tile ({@link collapseCollisionMaskPerTile}) — the plain ground tile
  *   where blocked, empty where open. It exists only to inspect the original
- *   collision data in the Tiled editor; the engine never reads it.
+ *   collision data, in the Tiled editor or through the engine's
+ *   `tile-layers` debug option; engine collision never reads it.
  */
 
 /** Tile size of the `terrain` tileset, in pixels. */

@@ -1,5 +1,8 @@
-/** Debug overlays a scenario can be loaded with, via `?debug=grid,health,unit-info`. */
-export type DebugFlag = 'grid' | 'health' | 'unit-info' | 'targets' | 'paths';
+/**
+ * Debug overlays a scenario can be loaded with, via `?debug=grid,health,unit-info`.
+ * `tile-layers` offers a show/hide toggle per map tile layer in the debug menu.
+ */
+export type DebugFlag = 'grid' | 'health' | 'unit-info' | 'targets' | 'paths' | 'tile-layers';
 
 /** Every known debug flag, in the order they're offered in the UI. */
 export const ALL_DEBUG_FLAGS: readonly DebugFlag[] = [
@@ -8,6 +11,7 @@ export const ALL_DEBUG_FLAGS: readonly DebugFlag[] = [
   'unit-info',
   'targets',
   'paths',
+  'tile-layers',
 ];
 
 const VALID_DEBUG_FLAGS: ReadonlySet<string> = new Set(ALL_DEBUG_FLAGS);

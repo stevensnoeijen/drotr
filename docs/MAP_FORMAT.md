@@ -461,10 +461,11 @@ layers:
 - **`collision`** — hidden by default. Section B collapsed to one
   value per tile (blocked only when all four subcells are; see "Test
   fixture strategy" below), drawn as the plain ground tile (gid 1) where
-  blocked and left empty (gid 0) where open. It is **for inspection in the
-  Tiled editor only**: toggle it on (and `terrain` off) to see the original
-  collision data. The engine never reads it; the loader only looks at the
-  layer named `terrain`.
+  blocked and left empty (gid 0) where open. It is **for inspection only**:
+  toggle it on (and `terrain` off) to see the original collision data, in
+  the Tiled editor or through the engine's `tile-layers` debug option.
+  Engine collision never reads it; it comes from the layer named `terrain`
+  alone.
 
 The two collision sources don't agree. For `FAGARAS`, the collapsed
 Section B mask blocks **3,315** tiles, while the tileset-derived grid the
@@ -492,7 +493,8 @@ it. Its layers, back to front:
 - **`intact`** — grid 1, visible. Empty (gid 0) where the grid is 0.
 - **`ruined`** — grid 2, **hidden**. Empty (gid 0) where the grid is 0.
   The engine loads it but starts it hidden; to see it, toggle `intact`
-  off and `ruined` on in the Tiled editor.
+  off and `ruined` on, in the Tiled editor or through the engine's
+  `tile-layers` debug option (`?debug=tile-layers`).
 - **`spawns`** — an empty object layer (the loader requires one).
 
 In the engine it is the `buildings` map; view it with the `empty`

@@ -44,6 +44,7 @@ Current debug options are:
 - `unit-info`, shows a tooltip with the stats of the hovered unit
 - `targets`, draws a line from each unit to its attack target
 - `paths`, draws each unit's planned move path
+- `tile-layers`, lists the map's tile layers under the option in the "Debug" menu, each with a show/hide toggle (starting from the layer's `visible` flag in the `.tmj`, so hidden layers such as `ruined` on the `buildings` map can be switched on). Display only: collision is unaffected
 
 # Scenarios
 

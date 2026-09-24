@@ -28,7 +28,8 @@ import {
  *   the grid is 0.
  * - `ruined`: the ruined overlay, hidden. Empty (gid 0) where the grid is 0.
  *   The engine loads it but starts it hidden; to see it, toggle `intact`
- *   off and `ruined` on in the Tiled editor.
+ *   off and `ruined` on, in the Tiled editor or through the engine's
+ *   `tile-layers` debug option.
  * - `spawns`: an empty object layer (the loader requires one).
  */
 
