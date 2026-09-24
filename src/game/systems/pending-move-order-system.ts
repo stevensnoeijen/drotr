@@ -2,7 +2,6 @@ import type { Queries } from '~/game/ecs/world';
 import type { System } from '~/game/ecs/system';
 import { applyMoveOrder, planMoveOrder } from '~/game/navigation/move-order';
 import type { GridLike } from '~/lib/navigation/astar';
-import { CELL_SIZE } from '~/lib/grid';
 
 /**
  * Applies a `PendingMoveOrder` staged by `moveSelectedTo` once the unit it
@@ -27,10 +26,12 @@ import { CELL_SIZE } from '~/lib/grid';
  * `grid` is the loaded map's collision data — the same one passed to
  * `createInputSystem` — used to route a staged order around terrain; omit
  * it for a map with no terrain, matching `moveSelectedTo`'s own fallback to
- * a straight line.
+ * a straight line. `cellSize` is the world size of that grid's cells (see
+ * `cellSizeOf`).
  */
 export function createPendingMoveOrderSystem(
   queries: Queries,
+  cellSize: number,
   grid?: GridLike
 ): System {
   return () => {
@@ -43,7 +44,7 @@ export function createPendingMoveOrderSystem(
       delete self.pendingMoveOrder;
       applyMoveOrder(
         self,
-        planMoveOrder(grid, self.transform.position, pending.destination, CELL_SIZE)
+        planMoveOrder(grid, self.transform.position, pending.destination, cellSize)
       );
     }
   };

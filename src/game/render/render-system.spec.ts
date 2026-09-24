@@ -5,6 +5,7 @@ import { describe, expect, it } from 'vitest';
 import { createQueries } from '~/game/ecs/world';
 import type { Entity } from '~/game/ecs/entity';
 import { RenderSystem } from './render-system';
+import { DEFAULT_CELL_SIZE } from '~/lib/grid';
 
 function addEntity(world: World<Entity>, x = 0): Entity {
   return world.add({
@@ -18,7 +19,7 @@ describe('RenderSystem', () => {
     const world = new World<Entity>();
     const { renderable } = createQueries(world);
     const parent = new Container();
-    new RenderSystem(renderable, parent);
+    new RenderSystem(renderable, parent, DEFAULT_CELL_SIZE);
 
     addEntity(world, 1);
     addEntity(world, 2);
@@ -31,7 +32,7 @@ describe('RenderSystem', () => {
     const world = new World<Entity>();
     const { renderable } = createQueries(world);
     const parent = new Container();
-    new RenderSystem(renderable, parent);
+    new RenderSystem(renderable, parent, DEFAULT_CELL_SIZE);
 
     const a = addEntity(world, 1);
     addEntity(world, 2);
@@ -48,7 +49,7 @@ describe('RenderSystem', () => {
     const world = new World<Entity>();
     const { renderable } = createQueries(world);
     const parent = new Container();
-    const system = new RenderSystem(renderable, parent);
+    const system = new RenderSystem(renderable, parent, DEFAULT_CELL_SIZE);
 
     const entities = [addEntity(world, 1), addEntity(world, 2), addEntity(world, 3)];
     expect(system.size).toBe(3);
@@ -65,7 +66,7 @@ describe('RenderSystem', () => {
     const world = new World<Entity>();
     const { renderable } = createQueries(world);
     const parent = new Container();
-    const system = new RenderSystem(renderable, parent);
+    const system = new RenderSystem(renderable, parent, DEFAULT_CELL_SIZE);
 
     const entity = addEntity(world, 5);
     entity.transform!.position.x = 42;
@@ -86,7 +87,7 @@ describe('RenderSystem', () => {
     const world = new World<Entity>();
     const { renderable } = createQueries(world);
     const parent = new Container();
-    const system = new RenderSystem(renderable, parent);
+    const system = new RenderSystem(renderable, parent, DEFAULT_CELL_SIZE);
 
     const entity = world.add({
       transform: { position: { x: 0, y: 0 }, rotation: 0 },
@@ -108,11 +109,32 @@ describe('RenderSystem', () => {
     expect(entity.renderable!.dirty).toBe(false);
   });
 
+  it('lays the health bar out against the edges of the cell it is given', () => {
+    const world = new World<Entity>();
+    const { renderable } = createQueries(world);
+    const parent = new Container();
+    new RenderSystem(renderable, parent, 40);
+
+    world.add({
+      transform: { position: { x: 0, y: 0 }, rotation: 0 },
+      renderable: { shape: 'circle', color: 0xffffff, size: 4 },
+      health: { current: 10, max: 10 },
+    });
+
+    const [view] = parent.children;
+    const healthBar = view.children[1];
+    // Pinned to the 40px cell's own edges: starting at its left edge, and
+    // resting on its bottom edge.
+    expect(healthBar.position.x).toBe(-20);
+    expect(healthBar.position.y).toBeLessThan(20);
+    expect(healthBar.position.y).toBeGreaterThan(0);
+  });
+
   it('hides health bars by default and shows them once made visible', () => {
     const world = new World<Entity>();
     const { renderable } = createQueries(world);
     const parent = new Container();
-    const system = new RenderSystem(renderable, parent);
+    const system = new RenderSystem(renderable, parent, DEFAULT_CELL_SIZE);
 
     world.add({
       transform: { position: { x: 0, y: 0 }, rotation: 0 },
@@ -132,7 +154,7 @@ describe('RenderSystem', () => {
     const world = new World<Entity>();
     const { renderable } = createQueries(world);
     const parent = new Container();
-    new RenderSystem(renderable, parent, true);
+    new RenderSystem(renderable, parent, DEFAULT_CELL_SIZE, true);
 
     world.add({
       transform: { position: { x: 0, y: 0 }, rotation: 0 },
@@ -149,7 +171,7 @@ describe('RenderSystem', () => {
     const world = new World<Entity>();
     const { renderable } = createQueries(world);
     const parent = new Container();
-    const system = new RenderSystem(renderable, parent);
+    const system = new RenderSystem(renderable, parent, DEFAULT_CELL_SIZE);
 
     const entity = world.add({
       transform: { position: { x: 0, y: 0 }, rotation: 0 },
@@ -174,7 +196,7 @@ describe('RenderSystem', () => {
     const world = new World<Entity>();
     const { renderable } = createQueries(world);
     const parent = new Container();
-    const system = new RenderSystem(renderable, parent);
+    const system = new RenderSystem(renderable, parent, DEFAULT_CELL_SIZE);
 
     const entity = world.add({
       transform: { position: { x: 0, y: 0 }, rotation: 0 },
@@ -200,7 +222,7 @@ describe('RenderSystem', () => {
     const world = new World<Entity>();
     const { renderable } = createQueries(world);
     const parent = new Container();
-    const system = new RenderSystem(renderable, parent);
+    const system = new RenderSystem(renderable, parent, DEFAULT_CELL_SIZE);
 
     const entity = world.add({
       transform: { position: { x: 0, y: 0 }, rotation: 0 },
@@ -223,7 +245,7 @@ describe('RenderSystem', () => {
     const world = new World<Entity>();
     const { renderable } = createQueries(world);
     const parent = new Container();
-    const system = new RenderSystem(renderable, parent);
+    const system = new RenderSystem(renderable, parent, DEFAULT_CELL_SIZE);
 
     const entity = world.add({
       transform: { position: { x: 0, y: 0 }, rotation: 0.8 },
@@ -247,7 +269,7 @@ describe('RenderSystem', () => {
     const world = new World<Entity>();
     const { renderable } = createQueries(world);
     const parent = new Container();
-    const system = new RenderSystem(renderable, parent, true);
+    const system = new RenderSystem(renderable, parent, DEFAULT_CELL_SIZE, true);
 
     const entity = world.add({
       transform: { position: { x: 0, y: 0 }, rotation: 0 },
@@ -269,7 +291,7 @@ describe('RenderSystem', () => {
     const world = new World<Entity>();
     const { renderable } = createQueries(world);
     const parent = new Container();
-    const system = new RenderSystem(renderable, parent);
+    const system = new RenderSystem(renderable, parent, DEFAULT_CELL_SIZE);
 
     world.add({
       transform: { position: { x: 0, y: 0 }, rotation: 0 },
@@ -291,7 +313,7 @@ describe('RenderSystem', () => {
     const world = new World<Entity>();
     const { renderable } = createQueries(world);
     const parent = new Container();
-    new RenderSystem(renderable, parent);
+    new RenderSystem(renderable, parent, DEFAULT_CELL_SIZE);
 
     world.add({
       transform: { position: { x: 0, y: 0 }, rotation: 0 },
@@ -312,7 +334,7 @@ describe('RenderSystem', () => {
     const world = new World<Entity>();
     const { renderable } = createQueries(world);
     const parent = new Container();
-    const system = new RenderSystem(renderable, parent);
+    const system = new RenderSystem(renderable, parent, DEFAULT_CELL_SIZE);
 
     const entity = world.add({
       transform: { position: { x: 0, y: 0 }, rotation: 0 },
@@ -338,7 +360,7 @@ describe('RenderSystem', () => {
     const world = new World<Entity>();
     const { renderable } = createQueries(world);
     const parent = new Container();
-    new RenderSystem(renderable, parent);
+    new RenderSystem(renderable, parent, DEFAULT_CELL_SIZE);
 
     const entity = world.add({
       transform: { position: { x: 0, y: 0 }, rotation: 0 },
@@ -359,7 +381,7 @@ describe('RenderSystem', () => {
     const world = new World<Entity>();
     const { renderable } = createQueries(world);
     const parent = new Container();
-    const system = new RenderSystem(renderable, parent);
+    const system = new RenderSystem(renderable, parent, DEFAULT_CELL_SIZE);
 
     addEntity(world, 1);
     const [view] = parent.children;

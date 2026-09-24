@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 
 import type { Entity } from '~/game/ecs/entity';
 import { createQueries } from '~/game/ecs/world';
-import { CELL_SIZE, toGridPosition } from '~/lib/grid';
+import { DEFAULT_CELL_SIZE, toGridPosition } from '~/lib/grid';
 import { Vector2 } from '~/lib/math/vector2';
 import { isWalkable } from '~/lib/navigation/astar';
 import { moveSelectedTo } from './input-system';
@@ -30,8 +30,8 @@ const gridFrom = (art: string) => {
 };
 
 const centre = (col: number, row: number) => ({
-  x: col * CELL_SIZE + CELL_SIZE / 2,
-  y: row * CELL_SIZE + CELL_SIZE / 2,
+  x: col * DEFAULT_CELL_SIZE + DEFAULT_CELL_SIZE / 2,
+  y: row * DEFAULT_CELL_SIZE + DEFAULT_CELL_SIZE / 2,
 });
 
 /**
@@ -52,7 +52,7 @@ describe('move order + path + movement integration', () => {
     const dt = 1 / 60;
     const world = new World<Entity>();
     const queries = createQueries(world);
-    const pendingOrder = createPendingMoveOrderSystem(queries, wallWithGap);
+    const pendingOrder = createPendingMoveOrderSystem(queries, DEFAULT_CELL_SIZE, wallWithGap);
     const path = createMovePathSystem(queries);
     const target = createMoveTargetSystem(queries);
     const move = createMoveVelocitySystem(queries);
@@ -60,7 +60,7 @@ describe('move order + path + movement integration', () => {
     const unit = world.add({
       transform: { position: { ...centre(0, 0) }, rotation: 0 },
       velocity: { x: 0, y: 0 },
-      moveSpeed: { value: 4 * CELL_SIZE },
+      moveSpeed: { value: 4 * DEFAULT_CELL_SIZE },
       team: 'blue',
       selectable: true,
       selected: true,
@@ -80,7 +80,12 @@ describe('move order + path + movement integration', () => {
     const { queries, unit, tick } = setup();
     const destination = centre(8, 0);
 
-    moveSelectedTo(queries, new Vector2(destination.x, destination.y), wallWithGap);
+    moveSelectedTo(
+      queries,
+      new Vector2(destination.x, destination.y),
+      DEFAULT_CELL_SIZE,
+      wallWithGap
+    );
 
     expect(unit.movePath?.waypoints.at(-1)).toEqual(destination);
 
@@ -88,7 +93,7 @@ describe('move order + path + movement integration', () => {
       tick();
       const cell = toGridPosition(
         new Vector2(unit.transform.position.x, unit.transform.position.y),
-        CELL_SIZE
+        DEFAULT_CELL_SIZE
       );
       expect(isWalkable(wallWithGap, cell.x, cell.y)).toBe(true);
     }
@@ -100,7 +105,12 @@ describe('move order + path + movement integration', () => {
   it('comes to rest with no order left once it arrives', () => {
     const { queries, unit, tick } = setup();
 
-    moveSelectedTo(queries, new Vector2(centre(8, 0).x, centre(8, 0).y), wallWithGap);
+    moveSelectedTo(
+      queries,
+      new Vector2(centre(8, 0).x, centre(8, 0).y),
+      DEFAULT_CELL_SIZE,
+      wallWithGap
+    );
     for (let i = 0; i < 1200; i++) {
       tick();
     }
@@ -113,7 +123,12 @@ describe('move order + path + movement integration', () => {
   it('visits every waypoint of the route, in order', () => {
     const { queries, unit, tick } = setup();
 
-    moveSelectedTo(queries, new Vector2(centre(8, 0).x, centre(8, 0).y), wallWithGap);
+    moveSelectedTo(
+      queries,
+      new Vector2(centre(8, 0).x, centre(8, 0).y),
+      DEFAULT_CELL_SIZE,
+      wallWithGap
+    );
     const waypoints = [...unit.movePath!.waypoints];
 
     const reached: number[] = [];
@@ -139,7 +154,12 @@ describe('move order + path + movement integration', () => {
   it('stages a second order given mid-walk, applying it once the in-progress leg finishes', () => {
     const { queries, unit, tick } = setup();
 
-    moveSelectedTo(queries, new Vector2(centre(8, 0).x, centre(8, 0).y), wallWithGap);
+    moveSelectedTo(
+      queries,
+      new Vector2(centre(8, 0).x, centre(8, 0).y),
+      DEFAULT_CELL_SIZE,
+      wallWithGap
+    );
     for (let i = 0; i < 60; i++) {
       tick();
     }
@@ -149,7 +169,12 @@ describe('move order + path + movement integration', () => {
     // direction of travel mid-cell.
     const previousMoveTarget = { ...unit.moveTarget!.position };
     const destination = centre(0, 4);
-    moveSelectedTo(queries, new Vector2(destination.x, destination.y), wallWithGap);
+    moveSelectedTo(
+      queries,
+      new Vector2(destination.x, destination.y),
+      DEFAULT_CELL_SIZE,
+      wallWithGap
+    );
 
     expect(unit.moveTarget).toEqual({ position: previousMoveTarget });
     expect(unit.pendingMoveOrder).toBeDefined();
@@ -174,7 +199,12 @@ describe('move order + path + movement integration', () => {
   it('stages a stop order given mid-walk, only halting once the in-progress leg finishes', () => {
     const { queries, unit, tick } = setup();
 
-    moveSelectedTo(queries, new Vector2(centre(8, 0).x, centre(8, 0).y), wallWithGap);
+    moveSelectedTo(
+      queries,
+      new Vector2(centre(8, 0).x, centre(8, 0).y),
+      DEFAULT_CELL_SIZE,
+      wallWithGap
+    );
     for (let i = 0; i < 60; i++) {
       tick();
     }
@@ -184,7 +214,7 @@ describe('move order + path + movement integration', () => {
     // toward — once it arrives there, the destination and its position
     // coincide, so the staged order resolves to a stop.
     const legTarget = { ...unit.moveTarget!.position };
-    moveSelectedTo(queries, new Vector2(legTarget.x, legTarget.y), wallWithGap);
+    moveSelectedTo(queries, new Vector2(legTarget.x, legTarget.y), DEFAULT_CELL_SIZE, wallWithGap);
 
     // Still mid-transition: the stop order is staged, not applied yet, so
     // the unit keeps moving toward the cell it already committed to.
@@ -219,7 +249,12 @@ describe('move order + path + movement integration', () => {
     const { queries, unit, tick } = setup();
     const start = { ...unit.transform.position };
 
-    moveSelectedTo(queries, new Vector2(centre(4, 4).x, centre(4, 4).y), divided);
+    moveSelectedTo(
+      queries,
+      new Vector2(centre(4, 4).x, centre(4, 4).y),
+      DEFAULT_CELL_SIZE,
+      divided
+    );
     for (let i = 0; i < 60; i++) {
       tick();
     }

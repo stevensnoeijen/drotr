@@ -2,7 +2,7 @@ import { Graphics } from 'pixi.js';
 import { describe, expect, it } from 'vitest';
 
 import type { Entity } from '~/game/ecs/entity';
-import { CELL_SIZE, cellCentreCoordinate } from '~/lib/grid';
+import { DEFAULT_CELL_SIZE, cellCentreCoordinate } from '~/lib/grid';
 import { NO_CELL } from '~/game/navigation/occupancy-grid';
 import { drawTargetLines } from './target-lines';
 
@@ -13,8 +13,8 @@ import { drawTargetLines } from './target-lines';
  * way a real unit comes to rest.
  */
 const centre = (col: number, row = 0) => ({
-  x: cellCentreCoordinate(col, CELL_SIZE),
-  y: cellCentreCoordinate(row, CELL_SIZE),
+  x: cellCentreCoordinate(col, DEFAULT_CELL_SIZE),
+  y: cellCentreCoordinate(row, DEFAULT_CELL_SIZE),
 });
 
 describe('drawTargetLines', () => {
@@ -31,7 +31,7 @@ describe('drawTargetLines', () => {
       { transform: { position: centre(0), rotation: 0 }, team: 'blue' },
     ];
 
-    drawTargetLines(graphics, entities);
+    drawTargetLines(graphics, entities, DEFAULT_CELL_SIZE);
 
     expect(cleared).toBe(true);
   });
@@ -45,7 +45,7 @@ describe('drawTargetLines', () => {
       target: { entityId: 999 },
     };
 
-    expect(() => drawTargetLines(graphics, [origin])).not.toThrow();
+    expect(() => drawTargetLines(graphics, [origin], DEFAULT_CELL_SIZE)).not.toThrow();
   });
 
   it('resolves a target within the pool without throwing', () => {
@@ -62,7 +62,7 @@ describe('drawTargetLines', () => {
       team: 'red',
     };
 
-    expect(() => drawTargetLines(graphics, [origin, target])).not.toThrow();
+    expect(() => drawTargetLines(graphics, [origin, target], DEFAULT_CELL_SIZE)).not.toThrow();
   });
 
   it('offsets the dash phase differently for two origins sharing the same path', () => {
@@ -92,7 +92,7 @@ describe('drawTargetLines', () => {
         calls.push([x, y]);
         return original(x, y);
       };
-      drawTargetLines(graphics, entities);
+      drawTargetLines(graphics, entities, DEFAULT_CELL_SIZE);
       return calls;
     };
 
@@ -124,7 +124,7 @@ describe('drawTargetLines', () => {
       return graphics;
     }) as typeof graphics.circle;
 
-    drawTargetLines(graphics, [origin, target]);
+    drawTargetLines(graphics, [origin, target], DEFAULT_CELL_SIZE);
 
     expect(drawn).toHaveLength(0);
   });
@@ -154,7 +154,7 @@ describe('drawTargetLines', () => {
       return graphics;
     }) as typeof graphics.circle;
 
-    drawTargetLines(graphics, [origin, target]);
+    drawTargetLines(graphics, [origin, target], DEFAULT_CELL_SIZE);
 
     expect(drawn).toHaveLength(0);
   });
@@ -180,7 +180,7 @@ describe('drawTargetLines', () => {
       return graphics;
     }) as typeof graphics.circle;
 
-    drawTargetLines(graphics, [origin, target]);
+    drawTargetLines(graphics, [origin, target], DEFAULT_CELL_SIZE);
 
     expect(drawn).toHaveLength(0);
   });
@@ -208,7 +208,7 @@ describe('drawTargetLines', () => {
       return graphics;
     }) as typeof graphics.circle;
 
-    drawTargetLines(graphics, [origin, target]);
+    drawTargetLines(graphics, [origin, target], DEFAULT_CELL_SIZE);
 
     expect(drawn).toHaveLength(1);
   });

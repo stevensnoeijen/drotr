@@ -7,6 +7,7 @@ import { Vector2 } from '~/lib/math/vector2';
 import { findHoverableUnitAt } from './input-system';
 import { units } from '~/game/data/units';
 import { spawnUnit, resetEntityIdCounter } from '~/game/data/spawn';
+import { DEFAULT_CELL_SIZE } from '~/lib/grid';
 
 /**
  * Integration test: verify hover detection works on red units with real
@@ -24,7 +25,7 @@ describe('Hover detection on red units (swordsmen)', () => {
       type: 'swordsmen',
       team: 'red',
       position: { x: 360, y: 120 },
-    });
+    }, DEFAULT_CELL_SIZE);
 
     // Verify red unit has hoverable component but NOT selectable
     expect(redUnit.hoverable).toBe(true);
@@ -83,7 +84,7 @@ describe('Hover detection on red units (swordsmen)', () => {
       type: 'swordsmen',
       team: 'blue',
       position: { x: 120, y: 120 },
-    });
+    }, DEFAULT_CELL_SIZE);
 
     // Verify blue unit has both hoverable AND selectable
     expect(blueUnit.hoverable).toBe(true);
@@ -115,13 +116,13 @@ describe('Hover detection on red units (swordsmen)', () => {
       type: 'swordsmen',
       team: 'red',
       position: { x: 200, y: 200 },
-    });
+    }, DEFAULT_CELL_SIZE);
 
     const blueUnit = spawnUnit(world, {
       type: 'swordsmen',
       team: 'blue',
       position: { x: 200, y: 200 },
-    });
+    }, DEFAULT_CELL_SIZE);
 
     // Hover exactly at their center (which is the same snapped position for both)
     const hoveredUnit = findHoverableUnitAt(

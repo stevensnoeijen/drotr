@@ -5,10 +5,10 @@ import type { Entity } from '~/game/ecs/entity';
 import { createQueries, type Queries } from '~/game/ecs/world';
 import { markDirtyOnHealthChange } from '~/game/render/health-bar';
 import type { Health, Renderable } from '~/game/ecs/components';
-import { CELL_SIZE, cellCentreCoordinate, toWorldPositionCellCenter } from '~/lib/grid';
+import { DEFAULT_CELL_SIZE, cellCentreCoordinate, toWorldPositionCellCenter } from '~/lib/grid';
 import { Vector2 } from '~/lib/math/vector2';
 import { NO_CELL } from '~/game/navigation/occupancy-grid';
-import { createCombatSystem } from './combat-system';
+import { cellDistance, createCombatSystem, isSettled } from './combat-system';
 
 /** The fixed timestep the game loop runs systems at (60 Hz). */
 const DT = 1 / 60;
@@ -51,7 +51,7 @@ function makeUnit(
 ): Entity {
   // Snapped to the cell centre, exactly as `spawnUnit` places a real unit —
   // and as `isSettled` now requires before a unit may fight at all.
-  const position = toWorldPositionCellCenter(new Vector2(x, y), CELL_SIZE);
+  const position = toWorldPositionCellCenter(new Vector2(x, y), DEFAULT_CELL_SIZE);
   const entity: Entity = {
     id: nextId++,
     transform: { position: { x: position.x, y: position.y }, rotation: 0 },
@@ -98,7 +98,7 @@ function setupDuel(options: {
   const world = new World<Entity>();
   const queries = createQueries(world);
 
-  const target = makeUnit(world, { team: 'red', x: gapCells * CELL_SIZE, health: targetHealth });
+  const target = makeUnit(world, { team: 'red', x: gapCells * DEFAULT_CELL_SIZE, health: targetHealth });
   const attacker = makeUnit(world, {
     team: 'blue',
     x: 0,
@@ -110,7 +110,7 @@ function setupDuel(options: {
     attacker.target = { entityId: target.id! };
   }
 
-  return { world, queries, attacker, target, system: createCombatSystem(queries) };
+  return { world, queries, attacker, target, system: createCombatSystem(queries, DEFAULT_CELL_SIZE) };
 }
 
 /** Runs `ticks` fixed steps of `system`. */
@@ -218,7 +218,7 @@ describe('CombatSystem', () => {
       damage: 5,
       attackCooldown: 0.5,
     });
-    target.transform!.position.x = cellCentreCoordinate(1, CELL_SIZE) + Number.EPSILON * CELL_SIZE * 4;
+    target.transform!.position.x = cellCentreCoordinate(1, DEFAULT_CELL_SIZE) + Number.EPSILON * DEFAULT_CELL_SIZE * 4;
 
     run(system, world, 30);
 
@@ -260,12 +260,12 @@ describe('CombatSystem', () => {
 
   it('hits a target one cell diagonally away at attack range 1', () => {
     // A Euclidean range check would reject this: a diagonal neighbour is
-    // `CELL_SIZE * sqrt(2)` away, further than one cell's width. Range is
+    // `DEFAULT_CELL_SIZE * sqrt(2)` away, further than one cell's width. Range is
     // measured in 8-way cell steps instead, so a diagonal neighbour counts
     // the same as an orthogonal one.
     const world = new World<Entity>();
     const queries = createQueries(world);
-    const target = makeUnit(world, { team: 'red', x: CELL_SIZE, y: CELL_SIZE });
+    const target = makeUnit(world, { team: 'red', x: DEFAULT_CELL_SIZE, y: DEFAULT_CELL_SIZE });
     const attacker = makeUnit(world, {
       team: 'blue',
       x: 0,
@@ -274,7 +274,7 @@ describe('CombatSystem', () => {
       attackCooldown: 0.5,
     });
     attacker.target = { entityId: target.id! };
-    const system = createCombatSystem(queries);
+    const system = createCombatSystem(queries, DEFAULT_CELL_SIZE);
 
     run(system, world, 30);
 
@@ -284,7 +284,7 @@ describe('CombatSystem', () => {
   it('does not hit a target two cells diagonally away at attack range 1', () => {
     const world = new World<Entity>();
     const queries = createQueries(world);
-    const target = makeUnit(world, { team: 'red', x: CELL_SIZE * 2, y: CELL_SIZE * 2 });
+    const target = makeUnit(world, { team: 'red', x: DEFAULT_CELL_SIZE * 2, y: DEFAULT_CELL_SIZE * 2 });
     const attacker = makeUnit(world, {
       team: 'blue',
       x: 0,
@@ -293,7 +293,7 @@ describe('CombatSystem', () => {
       attackCooldown: 0.5,
     });
     attacker.target = { entityId: target.id! };
-    const system = createCombatSystem(queries);
+    const system = createCombatSystem(queries, DEFAULT_CELL_SIZE);
 
     run(system, world, 30);
 
@@ -494,9 +494,9 @@ describe('CombatSystem', () => {
   it('excludes a unit missing any combat stat from attacking at all', () => {
     const world = new World<Entity>();
     const queries = createQueries(world);
-    const system = createCombatSystem(queries);
+    const system = createCombatSystem(queries, DEFAULT_CELL_SIZE);
 
-    const victim = makeUnit(world, { team: 'red', x: CELL_SIZE });
+    const victim = makeUnit(world, { team: 'red', x: DEFAULT_CELL_SIZE });
     // Has range and damage, but no cooldown: nothing schedules its swings.
     const halfEquipped = makeUnit(world, {
       team: 'blue',
@@ -515,7 +515,7 @@ describe('CombatSystem', () => {
   it('lets both sides of a duel trade blows on their own schedules', () => {
     const world = new World<Entity>();
     const queries = createQueries(world);
-    const system = createCombatSystem(queries);
+    const system = createCombatSystem(queries, DEFAULT_CELL_SIZE);
 
     const blue = makeUnit(world, {
       team: 'blue',
@@ -527,7 +527,7 @@ describe('CombatSystem', () => {
     });
     const red = makeUnit(world, {
       team: 'red',
-      x: CELL_SIZE,
+      x: DEFAULT_CELL_SIZE,
       health: 20,
       attackRangeCells: 1,
       damage: 5,
@@ -578,16 +578,16 @@ describe('CombatSystem ranged attacks', () => {
   it('fires a travelling projectile instead of dealing instant damage on a landed swing', () => {
     const world = new World<Entity>();
     const queries = createQueries(world);
-    const system = createCombatSystem(queries);
+    const system = createCombatSystem(queries, DEFAULT_CELL_SIZE);
 
-    const target = makeUnit(world, { team: 'red', x: 3 * CELL_SIZE });
+    const target = makeUnit(world, { team: 'red', x: 3 * DEFAULT_CELL_SIZE });
     const crossbowman = makeUnit(world, {
       team: 'blue',
       x: 0,
       attackRangeCells: 5,
       damage: 2,
       attackCooldown: 1,
-      projectileSpeed: 10 * CELL_SIZE,
+      projectileSpeed: 10 * DEFAULT_CELL_SIZE,
     });
     crossbowman.target = { entityId: target.id! };
 
@@ -607,16 +607,16 @@ describe('CombatSystem ranged attacks', () => {
   it('does not fire at a target beyond its 5-cell attack range', () => {
     const world = new World<Entity>();
     const queries = createQueries(world);
-    const system = createCombatSystem(queries);
+    const system = createCombatSystem(queries, DEFAULT_CELL_SIZE);
 
-    const target = makeUnit(world, { team: 'red', x: 6 * CELL_SIZE });
+    const target = makeUnit(world, { team: 'red', x: 6 * DEFAULT_CELL_SIZE });
     const crossbowman = makeUnit(world, {
       team: 'blue',
       x: 0,
       attackRangeCells: 5,
       damage: 2,
       attackCooldown: 0.5,
-      projectileSpeed: 10 * CELL_SIZE,
+      projectileSpeed: 10 * DEFAULT_CELL_SIZE,
     });
     crossbowman.target = { entityId: target.id! };
 
@@ -640,9 +640,30 @@ describe('attackers query', () => {
       attackCooldown: 1,
     });
     // Targetable, but has no combat stats of its own.
-    makeUnit(world, { team: 'red', x: CELL_SIZE });
+    makeUnit(world, { team: 'red', x: DEFAULT_CELL_SIZE });
 
     expect([...queries.attackers]).toEqual([armed]);
     expect(queries.combatants.size).toBe(2);
+  });
+});
+
+describe('cell geometry at a cell size other than the default', () => {
+  // A 40px-tile map: range and "settled" are judged in that map's own cells.
+  const cellSize = 40;
+
+  it('counts cell steps between the 40px cells two points fall in', () => {
+    // 79px apart along x: two 32px cells, but only one 40px cell.
+    expect(cellDistance({ x: 1, y: 1 }, { x: 80, y: 1 }, DEFAULT_CELL_SIZE)).toBe(2);
+    expect(cellDistance({ x: 1, y: 1 }, { x: 79, y: 1 }, cellSize)).toBe(1);
+  });
+
+  it('only counts a unit settled on the centre of a 40px cell', () => {
+    expect(isSettled({ transform: { position: { x: 60, y: 20 }, rotation: 0 } }, cellSize)).toBe(
+      true
+    );
+    // The centre of a 32px cell is part-way across a 40px one.
+    expect(isSettled({ transform: { position: { x: 48, y: 16 }, rotation: 0 } }, cellSize)).toBe(
+      false
+    );
   });
 });

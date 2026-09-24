@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 import type { Entity } from '~/game/ecs/entity';
 import type { SpawnPoint } from '~/game/map/load-tiled-map';
 import { claimSpawn } from './spawn-system';
+import { DEFAULT_CELL_SIZE } from '~/lib/grid';
 
 const spawns: SpawnPoint[] = [
   { id: 'spawn-1', position: { x: 10, y: 20 } },
@@ -17,7 +18,7 @@ describe('claimSpawn', () => {
     const [unit] = claimSpawn(world, spawns, 'spawn-1', {
       team: 'blue',
       units: ['swordsmen'],
-    });
+    }, DEFAULT_CELL_SIZE);
 
     expect(world.size).toBe(1);
     // (10, 20) is centered in the [0, 32) cell on both axes: (16, 16).
@@ -33,7 +34,7 @@ describe('claimSpawn', () => {
     const claimed = claimSpawn(world, spawns, 'spawn-1', {
       team: 'red',
       units: ['swordsmen', 'knight', 'crossbowsoldier'],
-    });
+    }, DEFAULT_CELL_SIZE);
 
     expect(world.size).toBe(3);
     expect(claimed.map((e) => e.unitType)).toEqual([
@@ -53,8 +54,14 @@ describe('claimSpawn', () => {
   it('lets different spawns be claimed for different teams', () => {
     const world = new World<Entity>();
 
-    claimSpawn(world, spawns, 'spawn-1', { team: 'blue', units: ['swordsmen'] });
-    claimSpawn(world, spawns, 'spawn-2', { team: 'red', units: ['crossbowsoldier'] });
+    claimSpawn(world, spawns, 'spawn-1', { team: 'blue', units: ['swordsmen'] }, DEFAULT_CELL_SIZE);
+    claimSpawn(
+      world,
+      spawns,
+      'spawn-2',
+      { team: 'red', units: ['crossbowsoldier'] },
+      DEFAULT_CELL_SIZE
+    );
 
     expect(world.size).toBe(2);
     const entities = [...world];
@@ -70,7 +77,26 @@ describe('claimSpawn', () => {
     const world = new World<Entity>();
 
     expect(() =>
-      claimSpawn(world, spawns, 'does-not-exist', { team: 'blue', units: ['knight'] })
+      claimSpawn(world, spawns, 'does-not-exist', { team: 'blue', units: ['knight'] }, DEFAULT_CELL_SIZE)
     ).toThrow(/does-not-exist/);
+  });
+
+  it('spaces units one cell apart at the cell size it is given', () => {
+    const world = new World<Entity>();
+
+    const claimed = claimSpawn(
+      world,
+      [{ id: 'spawn', position: { x: 100, y: 20 } }],
+      'spawn',
+      { team: 'blue', units: ['swordsmen', 'swordsmen', 'swordsmen'] },
+      40
+    );
+
+    // Offsets of -40/0/+40 around x = 100 land in three adjacent 40px cells.
+    expect(claimed.map((unit) => unit.transform?.position)).toEqual([
+      { x: 60, y: 20 },
+      { x: 100, y: 20 },
+      { x: 140, y: 20 },
+    ]);
   });
 });

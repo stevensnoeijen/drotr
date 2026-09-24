@@ -6,11 +6,14 @@ import type { ParsedMap } from '~/game/map/load-tiled-map';
 import { knightsScenario } from './knights';
 
 /** A minimal map fixture with the given named spawn points. */
-function mapWithSpawns(spawns: { id: string; x: number; y: number }[]): ParsedMap {
+function mapWithSpawns(
+  spawns: { id: string; x: number; y: number }[],
+  tileSize = 32
+): ParsedMap {
   return {
     width: 4,
     height: 4,
-    tileSize: 32,
+    tileSize,
     collision: new Uint8Array(16),
     spawns: spawns.map(({ id, x, y }) => ({ id, position: { x, y } })),
     tileset: {
@@ -52,6 +55,26 @@ describe('knightsScenario', () => {
 
     expect(red[0].transform?.position).toEqual({ x: 48, y: 48 });
     expect(blue[0].transform?.position).toEqual({ x: 112, y: 112 });
+  });
+
+  it("places the knights on the map's own tile grid when its tiles are not 32px", () => {
+    const world = new World<Entity>();
+    const map = mapWithSpawns(
+      [
+        { id: 'red', x: 45, y: 45 },
+        { id: 'blue', x: 125, y: 125 },
+      ],
+      40
+    );
+
+    knightsScenario.setup(world, map);
+
+    const red = [...world].find((e) => e.team === 'red');
+    const blue = [...world].find((e) => e.team === 'blue');
+    // Centred in 40px cells (1, 1) and (3, 3), not in the 32px cells those
+    // points would fall in.
+    expect(red?.transform?.position).toEqual({ x: 60, y: 60 });
+    expect(blue?.transform?.position).toEqual({ x: 140, y: 140 });
   });
 
   it('spawns nothing when no map is given', () => {

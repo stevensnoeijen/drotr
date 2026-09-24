@@ -5,6 +5,7 @@ import { createQueries } from '~/game/ecs/world';
 import type { Entity } from '~/game/ecs/entity';
 import { units, type UnitDefinition } from './units';
 import { spawnUnit } from './spawn';
+import { DEFAULT_CELL_SIZE } from '~/lib/grid';
 
 /**
  * A fabricated, stats-free unit definition, stood in for a real unit type
@@ -27,7 +28,7 @@ describe('spawnUnit', () => {
       team: 'red',
       // Falls inside the [0, 32) cell on both axes, which centers on (16, 16).
       position: { x: 10, y: 20 },
-    });
+    }, DEFAULT_CELL_SIZE);
 
     expect(unit.transform?.position).toEqual({ x: 16, y: 16 });
     expect(unit.renderable?.shape).toBe('circle');
@@ -40,8 +41,16 @@ describe('spawnUnit', () => {
     const world = new World<Entity>();
     const queries = createQueries(world);
 
-    const blue = spawnUnit(world, { type: 'knight', team: 'blue', position: { x: 0, y: 0 } });
-    const red = spawnUnit(world, { type: 'knight', team: 'red', position: { x: 64, y: 0 } });
+    const blue = spawnUnit(
+      world,
+      { type: 'knight', team: 'blue', position: { x: 0, y: 0 } },
+      DEFAULT_CELL_SIZE
+    );
+    const red = spawnUnit(
+      world,
+      { type: 'knight', team: 'red', position: { x: 64, y: 0 } },
+      DEFAULT_CELL_SIZE
+    );
 
     expect(blue.selectable).toBe(true);
     expect(red.selectable).toBeUndefined();
@@ -55,7 +64,7 @@ describe('spawnUnit', () => {
       type: 'swordsmen',
       team: 'blue',
       position: { x: 0, y: 0 },
-    });
+    }, DEFAULT_CELL_SIZE);
 
     expect(unit.attackRange).toEqual({ value: 1 });
   });
@@ -79,7 +88,7 @@ describe('spawnUnit', () => {
         type: 'knight',
         team: 'blue',
         position: { x: 0, y: 0 },
-      });
+      }, DEFAULT_CELL_SIZE);
 
       expect(unit.attackRange).toBeUndefined();
     });
@@ -91,7 +100,7 @@ describe('spawnUnit', () => {
         type: 'knight',
         team: 'blue',
         position: { x: 0, y: 0 },
-      });
+      }, DEFAULT_CELL_SIZE);
 
       expect(unit.aggroRange).toBeUndefined();
     });
@@ -100,12 +109,16 @@ describe('spawnUnit', () => {
       const world = new World<Entity>();
       const queries = createQueries(world);
 
-      const knight = spawnUnit(world, { type: 'knight', team: 'blue', position: { x: 0, y: 0 } });
+      const knight = spawnUnit(
+        world,
+        { type: 'knight', team: 'blue', position: { x: 0, y: 0 } },
+        DEFAULT_CELL_SIZE
+      );
       const swordsmen = spawnUnit(world, {
         type: 'swordsmen',
         team: 'red',
         position: { x: 64, y: 0 },
-      });
+      }, DEFAULT_CELL_SIZE);
 
       expect(knight.damage).toBeUndefined();
       expect(knight.attackCooldown).toBeUndefined();
@@ -117,7 +130,11 @@ describe('spawnUnit', () => {
     it('spawns no `ranged` component', () => {
       const world = new World<Entity>();
 
-      const knight = spawnUnit(world, { type: 'knight', team: 'blue', position: { x: 0, y: 0 } });
+      const knight = spawnUnit(
+        world,
+        { type: 'knight', team: 'blue', position: { x: 0, y: 0 } },
+        DEFAULT_CELL_SIZE
+      );
 
       expect(knight.ranged).toBeUndefined();
     });
@@ -130,7 +147,7 @@ describe('spawnUnit', () => {
       type: 'swordsmen',
       team: 'blue',
       position: { x: 0, y: 0 },
-    });
+    }, DEFAULT_CELL_SIZE);
 
     expect(unit.aggroRange).toEqual({ value: 5 });
   });
@@ -142,7 +159,7 @@ describe('spawnUnit', () => {
       type: 'swordsmen',
       team: 'blue',
       position: { x: 0, y: 0 },
-    });
+    }, DEFAULT_CELL_SIZE);
 
     expect(unit.damage).toEqual({ value: 3 });
     expect(unit.attackCooldown).toEqual({ duration: 1 });
@@ -152,7 +169,11 @@ describe('spawnUnit', () => {
     const world = new World<Entity>();
     const queries = createQueries(world);
 
-    const knight = spawnUnit(world, { type: 'knight', team: 'blue', position: { x: 0, y: 0 } });
+    const knight = spawnUnit(
+      world,
+      { type: 'knight', team: 'blue', position: { x: 0, y: 0 } },
+      DEFAULT_CELL_SIZE
+    );
 
     expect(knight.attackRange).toEqual({ value: 1 });
     expect(knight.aggroRange).toEqual({ value: 8 });
@@ -170,7 +191,7 @@ describe('spawnUnit', () => {
       type: 'crossbowsoldier',
       team: 'blue',
       position: { x: 0, y: 0 },
-    });
+    }, DEFAULT_CELL_SIZE);
 
     expect(world.entities).toHaveLength(1);
     expect(world.entities[0].ranged).toBeDefined();
@@ -180,9 +201,72 @@ describe('spawnUnit', () => {
     const world = new World<Entity>();
     const position = { x: 1, y: 2 };
 
-    const unit = spawnUnit(world, { type: 'knight', team: 'blue', position });
+    const unit = spawnUnit(world, { type: 'knight', team: 'blue', position }, DEFAULT_CELL_SIZE);
     position.x = 999;
 
     expect(unit.transform?.position.x).toBe(16);
+  });
+
+  describe('on a map whose cells are not the default size', () => {
+    // The unit grid is the loaded map's own tile grid, so a 40px-tile map
+    // places, sizes and speeds units in 40px cells.
+    const cellSize = 40;
+
+    it('snaps to the centre of a cell of that size', () => {
+      const world = new World<Entity>();
+
+      const unit = spawnUnit(
+        world,
+        // Inside the [40, 80) x [0, 40) cell, centred on (60, 20).
+        { type: 'knight', team: 'blue', position: { x: 41, y: 39 } },
+        cellSize
+      );
+
+      expect(unit.transform?.position).toEqual({ x: 60, y: 20 });
+    });
+
+    it('converts cell-based movement and projectile speeds to world units at that size', () => {
+      const world = new World<Entity>();
+
+      const knight = spawnUnit(
+        world,
+        { type: 'knight', team: 'blue', position: { x: 0, y: 0 } },
+        cellSize
+      );
+      const crossbow = spawnUnit(
+        world,
+        { type: 'crossbowsoldier', team: 'blue', position: { x: 0, y: 0 } },
+        cellSize
+      );
+      const defaultCrossbow = spawnUnit(
+        world,
+        { type: 'crossbowsoldier', team: 'blue', position: { x: 0, y: 0 } },
+        DEFAULT_CELL_SIZE
+      );
+
+      expect(knight.moveSpeed).toEqual({ value: units.knight.movementSpeed! * cellSize });
+      expect(crossbow.ranged!.projectileSpeed / cellSize).toBe(
+        defaultCrossbow.ranged!.projectileSpeed / DEFAULT_CELL_SIZE
+      );
+    });
+
+    it('sizes the unit shape to fit inside a cell of that size', () => {
+      const world = new World<Entity>();
+
+      const small = spawnUnit(
+        world,
+        { type: 'knight', team: 'blue', position: { x: 0, y: 0 } },
+        DEFAULT_CELL_SIZE
+      );
+      const large = spawnUnit(
+        world,
+        { type: 'knight', team: 'blue', position: { x: 0, y: 0 } },
+        cellSize
+      );
+
+      expect(small.renderable?.size).toBe(13);
+      expect(large.renderable?.size).toBe(17);
+      expect(large.renderable!.size).toBeLessThan(cellSize / 2);
+    });
   });
 });

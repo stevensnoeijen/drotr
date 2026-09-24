@@ -3,7 +3,6 @@ import type { World } from 'miniplex';
 import type { Entity } from '~/game/ecs/entity';
 import type { Queries } from '~/game/ecs/world';
 import type { System } from '~/game/ecs/system';
-import { CELL_SIZE } from '~/lib/grid';
 
 /**
  * Seconds between periodic perception scans. An O(n²) linear nearest-enemy
@@ -20,7 +19,8 @@ export const PERCEPTION_INTERVAL = 1;
  * setting or clearing its `target` component. For each attacker, the
  * candidate pool is `queries.combatants` filtered to a different team and
  * still alive (`health.current > 0`); the closest such candidate within the
- * attacker's `aggroRange` (converted from grid cells to world units) wins.
+ * attacker's `aggroRange` (converted from grid cells to world units, at
+ * `cellSize` world units per cell) wins.
  *
  * Re-picks from scratch every call rather than validating the existing
  * target first: a dead or out-of-range target is naturally dropped (no
@@ -45,7 +45,11 @@ export const PERCEPTION_INTERVAL = 1;
  * periodic system alone would leave them untargeted until its first
  * interval elapses.
  */
-export function runPerceptionScan(_world: World<Entity>, queries: Queries): void {
+export function runPerceptionScan(
+  _world: World<Entity>,
+  queries: Queries,
+  cellSize: number
+): void {
   const candidates = [...queries.combatants].filter((entity) => entity.health.current > 0);
 
   for (const self of queries.targeting) {
@@ -65,7 +69,7 @@ export function runPerceptionScan(_world: World<Entity>, queries: Queries): void
       }
     }
 
-    const rangeWorld = self.aggroRange.value * CELL_SIZE;
+    const rangeWorld = self.aggroRange.value * cellSize;
     const rangeSq = rangeWorld * rangeWorld;
 
     let nearest: Entity | undefined;
@@ -101,7 +105,11 @@ export function runPerceptionScan(_world: World<Entity>, queries: Queries): void
  * part of this system — call {@link runPerceptionScan} directly once, right
  * after scenario setup, for that.
  */
-export function createPerceptionSystem(queries: Queries, interval = PERCEPTION_INTERVAL): System {
+export function createPerceptionSystem(
+  queries: Queries,
+  cellSize: number,
+  interval = PERCEPTION_INTERVAL
+): System {
   let accumulator = 0;
 
   return (world, dt) => {
@@ -110,6 +118,6 @@ export function createPerceptionSystem(queries: Queries, interval = PERCEPTION_I
       return;
     }
     accumulator -= interval;
-    runPerceptionScan(world, queries);
+    runPerceptionScan(world, queries, cellSize);
   };
 }

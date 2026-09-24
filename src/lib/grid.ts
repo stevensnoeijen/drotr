@@ -3,15 +3,32 @@ import * as PathFinding from './navigation/astar';
 import type { Point } from './math/types';
 
 /**
- * Matches the map's own tile size — and the original game's raw infantry
- * sprites (`raw/sprites/units/swordsmen.*`, `crossbowsoldier.*`, 32x32) —
- * so the unit-placement grid and the terrain/collision grid are the same
- * grid rather than two grids at different resolutions. Larger unit types
- * (knight, juggernaut, catapult: 64x64 in the raw sprites) still place on
- * this same grid; sizing individual units to their real sprite dimensions
- * is asset-integration work (phase 6), not something this constant does.
+ * Cell size, in world units, used when there is no map to take one from
+ * (the blank map, or a map that failed to load). Also the tile size of the
+ * hand-authored 32px maps, and of the original game's raw infantry sprites
+ * (`raw/sprites/units/swordsmen.*`, `crossbowsoldier.*`, 32x32).
+ *
+ * The unit-placement grid is otherwise always the loaded map's own tile
+ * grid — see {@link cellSizeOf} — so units, pathfinding, occupancy and
+ * terrain collision share one grid rather than two at different
+ * resolutions. Larger unit types (knight, juggernaut, catapult: 64x64 in
+ * the raw sprites) still place on that same grid; sizing individual units
+ * to their real sprite dimensions is asset-integration work (phase 6).
  */
-export const CELL_SIZE = 32;
+export const DEFAULT_CELL_SIZE = 32;
+
+/**
+ * The unit-placement cell size for a map: its own tile size, so a cell index
+ * means the same thing to units, A*, occupancy and the terrain's collision
+ * grid (the converted county maps use 40px tiles, the hand-authored ones
+ * 32px). {@link DEFAULT_CELL_SIZE} when there is no map.
+ *
+ * Takes just the one field it reads, rather than a `ParsedMap`, so this
+ * module stays free of any dependency on the game's map loader.
+ */
+export const cellSizeOf = (map?: { tileSize: number }): number => {
+  return map?.tileSize ?? DEFAULT_CELL_SIZE;
+};
 
 /**
  * The grid cell a world-space position falls in, on a grid of `cellSize`
@@ -36,7 +53,10 @@ export const toWorldPosition = (vector: Vector2, cellSize: number): Vector2 => {
   );
 };
 
-/** World-space centre of the cell at column `x`, row `y` — {@link toWorldPosition} for loose coordinates. */
+/**
+ * World-space centre of the cell at column `x`, row `y` — {@link toWorldPosition}
+ * for loose coordinates.
+ */
 export const cellPositionToVector = (x: number, y: number, cellSize: number): Vector2 => {
   return toWorldPosition(new Vector2(x, y), cellSize);
 };

@@ -12,12 +12,7 @@ import {
   NO_OCCUPANT,
   type OccupancyGrid,
 } from '~/game/navigation/occupancy-grid';
-import {
-  CELL_SIZE,
-  screenToWorld,
-  toWorldPositionCellCenter,
-  type ViewportTransform,
-} from '~/lib/grid';
+import { screenToWorld, toWorldPositionCellCenter, type ViewportTransform } from '~/lib/grid';
 import { Vector2 } from '~/lib/math/vector2';
 import type { GridLike } from '~/lib/navigation/astar';
 import type { Point } from '~/lib/math/types';
@@ -329,6 +324,7 @@ export function selectAt(
 export function moveSelectedTo(
   queries: Queries,
   worldPosition: Vector2,
+  cellSize: number,
   grid?: GridLike,
   occupancy?: OccupancyGrid
 ): void {
@@ -338,7 +334,7 @@ export function moveSelectedTo(
     return;
   }
 
-  const clicked = toWorldPositionCellCenter(worldPosition, CELL_SIZE);
+  const clicked = toWorldPositionCellCenter(worldPosition, cellSize);
   /** Destination cells already handed out within this one order. */
   const assigned = new Set<number>();
 
@@ -383,7 +379,7 @@ export function moveSelectedTo(
     }
 
     delete entity.pendingMoveOrder;
-    const result = planMoveOrder(grid, entity.transform.position, destination, CELL_SIZE);
+    const result = planMoveOrder(grid, entity.transform.position, destination, cellSize);
     applyMoveOrder(entity, result);
   }
 }
@@ -445,11 +441,14 @@ export function attackSelectedTarget(queries: Queries, enemy: Entity): void {
  * straight lines (see {@link moveSelectedTo}). `occupancy` is the live
  * unit-occupancy layer over that same grid, used to give each unit in a
  * group order a destination cell of its own; omit it and they all share one.
+ * `cellSize` is the world size of the map's grid cells (see `cellSizeOf`),
+ * which a clicked point is snapped to.
  */
 export function createInputSystem(
   input: InputSystem,
   queries: Queries,
   getViewport: () => ViewportTransform,
+  cellSize: number,
   grid?: GridLike,
   occupancy?: OccupancyGrid
 ): System {
@@ -472,7 +471,7 @@ export function createInputSystem(
         if (enemy) {
           attackSelectedTarget(queries, enemy);
         } else {
-          moveSelectedTo(queries, worldPosition, grid, occupancy);
+          moveSelectedTo(queries, worldPosition, cellSize, grid, occupancy);
         }
       }
     }

@@ -17,7 +17,7 @@ import { createMoveTargetSystem } from './move-target-system';
 import { createMoveVelocitySystem } from './move-velocity-system';
 import { createPerceptionSystem, runPerceptionScan } from './perception-system';
 import { createSeekSystem } from './seek-system';
-import { CELL_SIZE } from '~/lib/grid';
+import { DEFAULT_CELL_SIZE } from '~/lib/grid';
 
 /**
  * End-to-end coverage for the visual milestone: a scripted battle run to
@@ -41,23 +41,31 @@ describe('death + render cleanup integration', () => {
     const world = new World<Entity>();
     const queries = createQueries(world);
     const parent = new Container();
-    const renderSystem = new RenderSystem(queries.renderable, parent);
+    const renderSystem = new RenderSystem(queries.renderable, parent, DEFAULT_CELL_SIZE);
     new DeathCleanupSystem(world);
 
-    const blue = spawnUnit(world, { type: 'swordsmen', team: 'blue', position: cellPosition(2, 0) });
-    const red = spawnUnit(world, { type: 'swordsmen', team: 'red', position: cellPosition(6, 0) });
+    const blue = spawnUnit(
+      world,
+      { type: 'swordsmen', team: 'blue', position: cellPosition(2, 0, DEFAULT_CELL_SIZE) },
+      DEFAULT_CELL_SIZE
+    );
+    const red = spawnUnit(
+      world,
+      { type: 'swordsmen', team: 'red', position: cellPosition(6, 0, DEFAULT_CELL_SIZE) },
+      DEFAULT_CELL_SIZE
+    );
 
-    runPerceptionScan(world, queries);
+    runPerceptionScan(world, queries, DEFAULT_CELL_SIZE);
     const grid = { width: 16, height: 4, collision: new Uint8Array(16 * 4) };
-    const occupancy = new OccupancyGrid(grid, CELL_SIZE);
+    const occupancy = new OccupancyGrid(grid, DEFAULT_CELL_SIZE);
 
-    const perception = createPerceptionSystem(queries);
-    const seek = createSeekSystem(queries, grid, occupancy);
+    const perception = createPerceptionSystem(queries, DEFAULT_CELL_SIZE);
+    const seek = createSeekSystem(queries, DEFAULT_CELL_SIZE, grid, occupancy);
     const movePath = createMovePathSystem(queries);
     const moveTarget = createMoveTargetSystem(queries);
     const cellOccupancy = createCellOccupancySystem(queries, occupancy);
     const move = createMoveVelocitySystem(queries);
-    const combat = createCombatSystem(queries);
+    const combat = createCombatSystem(queries, DEFAULT_CELL_SIZE);
     const death = createDeathSystem(queries);
 
     const tick = () => {

@@ -1,6 +1,7 @@
 import { cellPosition, spawnUnit } from '~/game/data/spawn';
 import type { UnitType } from '~/game/data/units';
 import type { ParsedMap } from '~/game/map/load-tiled-map';
+import { cellSizeOf } from '~/lib/grid';
 import type { Scenario } from './types';
 
 /**
@@ -96,6 +97,7 @@ export const testBigFightScenario: Scenario = {
   description: `${UNITS_PER_TEAM} vs ${UNITS_PER_TEAM} units (a mix of swordsmen, knights and crossbow soldiers) scattered randomly across the map, to exercise the engine under load.`,
   setup: (world, map) => {
     const totalUnits = UNITS_PER_TEAM * 2;
+    const cellSize = cellSizeOf(map);
     const cells = shuffle(walkableCells(map));
 
     if (cells.length < totalUnits) {
@@ -112,8 +114,8 @@ export const testBigFightScenario: Scenario = {
       spawnUnit(world, {
         type: TEAM_ROSTER[rosterIndex],
         team,
-        position: cellPosition(col, row),
-      });
+        position: cellPosition(col, row, cellSize),
+      }, cellSize);
     }
   },
 };

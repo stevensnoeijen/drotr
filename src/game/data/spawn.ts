@@ -2,7 +2,7 @@ import type { World } from 'miniplex';
 
 import type { Entity } from '~/game/ecs/entity';
 import type { Team } from '~/game/ecs/components';
-import { CELL_SIZE, toWorldPositionCellCenter } from '~/lib/grid';
+import { toWorldPositionCellCenter } from '~/lib/grid';
 import { Vector2 } from '~/lib/math/vector2';
 import type { Point } from '~/lib/math/types';
 import { units, type UnitType } from './units';
@@ -14,10 +14,10 @@ const TEAM_COLOR: Record<Team, number> = {
 };
 
 /**
- * Rendered radius/half-extent of a unit shape, in world units — 3px
- * smaller than half of the {@link file://../../lib/grid.ts#CELL_SIZE}
- * (32px) grid cell it's centered in, so the shape fits inside the cell
- * with a small margin on every side. Its selection marks and health bar
+ * How much smaller, in world units, a unit shape's rendered radius/half-extent
+ * is than half of the grid cell it's centered in, so the shape fits inside
+ * the cell with a small margin on every side — 13px in a 32px cell, 17px in
+ * a 40px one. Its selection marks and health bar
  * (see `render-system.ts`, `health-bar.ts`) are positioned against the
  * cell's own edges rather than this shape size, so they stay pinned to
  * the cell regardless of how big the shape is. This is
@@ -25,15 +25,15 @@ const TEAM_COLOR: Record<Team, number> = {
  * sprites vary (32x32 to 64x64) and per-type sizing is asset-integration
  * work (phase 6), not this constant.
  */
-const UNIT_SIZE = 13;
+const UNIT_MARGIN = 3;
 
 /**
- * World units per second a fired projectile (currently just the crossbow
+ * Grid cells per second a fired projectile (currently just the crossbow
  * soldier's bolt) travels. Fast enough to visibly cross the map as a
  * "shot" rather than a crawl, while still taking a handful of ticks to reach
  * `attackRange` so the travel actually reads on screen.
  */
-const PROJECTILE_SPEED = 10 * CELL_SIZE;
+const PROJECTILE_SPEED_CELLS = 10;
 
 /** Auto-incrementing counter for entity IDs (for debugging/identification). */
 let nextEntityId = 1;
@@ -68,13 +68,18 @@ export interface SpawnUnitOptions {
  * (see {@link toWorldPositionCellCenter}), so every unit — however its
  * caller computed its placement — renders centered in a cell rather than
  * wherever it happened to land.
+ *
+ * `cellSize` is the world size of that grid's cells — the loaded map's tile
+ * size (see `cellSizeOf`). Unit data is authored in cells (movement speed in
+ * cells per second), so it's also what turns that into world units.
  */
 export function spawnUnit(
   world: World<Entity>,
-  { type, team, position }: SpawnUnitOptions
+  { type, team, position }: SpawnUnitOptions,
+  cellSize: number
 ): Entity {
   const definition = units[type];
-  const cellCenter = toWorldPositionCellCenter(new Vector2(position.x, position.y), CELL_SIZE);
+  const cellCenter = toWorldPositionCellCenter(new Vector2(position.x, position.y), cellSize);
 
   const entity: Entity = {
     id: nextEntityId++,
@@ -82,7 +87,7 @@ export function spawnUnit(
     renderable: {
       shape: definition.shape,
       color: TEAM_COLOR[team],
-      size: UNIT_SIZE,
+      size: cellSize / 2 - UNIT_MARGIN,
     },
     team,
     unitType: type,
@@ -108,13 +113,13 @@ export function spawnUnit(
     entity.attackCooldown = { duration: definition.attackCooldown };
   }
   if (definition.movementSpeed !== undefined) {
-    entity.moveSpeed = { value: definition.movementSpeed * CELL_SIZE };
+    entity.moveSpeed = { value: definition.movementSpeed * cellSize };
   }
   // Marks this unit type's attacks as fired projectiles rather than instant
   // melee damage — read by `CombatSystem` to fire a travelling `Projectile`
   // (`fireProjectile`) instead of applying damage directly.
   if (definition.projectile) {
-    entity.ranged = { projectileSpeed: PROJECTILE_SPEED };
+    entity.ranged = { projectileSpeed: PROJECTILE_SPEED_CELLS * cellSize };
   }
   // Only the player's own (blue) units can be click-selected; red is the
   // opposing side and has no `selectable` component at all — a query for
@@ -129,7 +134,11 @@ export function spawnUnit(
   return world.add(entity);
 }
 
-/** World-space position of the center of grid cell (`col`, `row`). */
-export function cellPosition(col: number, row: number): Point {
-  return { x: col * CELL_SIZE, y: row * CELL_SIZE };
+/**
+ * A world-space point inside grid cell (`col`, `row`) — its top-left corner,
+ * which {@link spawnUnit} snaps to the cell's centre — on a grid of
+ * `cellSize` world units per cell.
+ */
+export function cellPosition(col: number, row: number, cellSize: number): Point {
+  return { x: col * cellSize, y: row * cellSize };
 }

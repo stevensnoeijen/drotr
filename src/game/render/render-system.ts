@@ -3,7 +3,6 @@ import type { Query, With } from 'miniplex';
 
 import type { Entity } from '~/game/ecs/entity';
 import type { Renderable } from '~/game/ecs/components';
-import { CELL_SIZE } from '~/lib/grid';
 import {
   createHealthBar,
   drawDeathMark,
@@ -36,9 +35,6 @@ interface EntityView {
   /** Black corner marks shown while the entity has a `selected` component. */
   selectionMarks?: Graphics;
 }
-
-/** Half the grid cell — the fixed boundary selection marks and the health bar are positioned against, independent of the unit shape's own (possibly smaller) render size. */
-const CELL_HALF_EXTENT = CELL_SIZE / 2;
 
 /**
  * `zIndex` a unit's container sorts at within its (sortable) parent layer —
@@ -76,13 +72,13 @@ const SELECTION_MARK_ARM_LENGTH = 4;
 /**
  * Draws small black "⌐"-shaped marks at the top-left and top-right corners
  * of a unit's grid cell, inset inward by {@link SELECTION_MARK_INSET} from
- * {@link CELL_HALF_EXTENT} — the cell's own edge, not the (possibly
- * smaller) shape's, so the marks stay put regardless of the shape's size.
+ * `cellHalfExtent` — the cell's own edge, not the (possibly smaller)
+ * shape's, so the marks stay put regardless of the shape's size.
  */
-function drawSelectionMarks(): Graphics {
-  const left = -CELL_HALF_EXTENT + SELECTION_MARK_INSET;
-  const right = CELL_HALF_EXTENT - SELECTION_MARK_INSET;
-  const top = -CELL_HALF_EXTENT + SELECTION_MARK_INSET;
+function drawSelectionMarks(cellHalfExtent: number): Graphics {
+  const left = -cellHalfExtent + SELECTION_MARK_INSET;
+  const right = cellHalfExtent - SELECTION_MARK_INSET;
+  const top = -cellHalfExtent + SELECTION_MARK_INSET;
   const arm = SELECTION_MARK_ARM_LENGTH;
 
   return new Graphics()
@@ -170,13 +166,13 @@ export class RenderSystem {
 
     const view: EntityView = { container, shape };
     if (entity.selectable) {
-      const selectionMarks = drawSelectionMarks();
+      const selectionMarks = drawSelectionMarks(this.cellHalfExtent);
       selectionMarks.visible = Boolean(entity.selected);
       container.addChild(selectionMarks);
       view.selectionMarks = selectionMarks;
     }
     if (entity.health) {
-      const healthBar = createHealthBar(CELL_HALF_EXTENT);
+      const healthBar = createHealthBar(this.cellHalfExtent);
       healthBar.container.visible = shouldShowHealthBar(
         entity as LivingRenderableEntity,
         this.healthBarsVisible
@@ -221,12 +217,25 @@ export class RenderSystem {
   /** Whether health bars are currently shown, toggled via `?debug=health`. */
   private healthBarsVisible: boolean;
 
+  /**
+   * Half the grid cell — the fixed boundary selection marks and the health
+   * bar are positioned against, independent of the unit shape's own
+   * (possibly smaller) render size.
+   */
+  private readonly cellHalfExtent: number;
+
+  /**
+   * `cellSize` is the world size of the map's grid cells (see `cellSizeOf`),
+   * which a unit's selection marks and health bar are laid out against.
+   */
   constructor(
     query: Query<RenderableEntity>,
     private readonly parent: Container,
+    cellSize: number,
     healthBarsVisible = false
   ) {
     this.query = query;
+    this.cellHalfExtent = cellSize / 2;
     this.healthBarsVisible = healthBarsVisible;
     this.query.onEntityAdded.subscribe(this.handleAdded);
     this.query.onEntityRemoved.subscribe(this.handleRemoved);
