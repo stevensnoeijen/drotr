@@ -267,3 +267,24 @@ describe.skipIf(!brailaAvailable)('BRAILA.MAP', () => {
     );
   });
 });
+
+const GIURGIU_SOURCE = countyMapCdPath('GIURGIU');
+const giurgiuAvailable = hasCdFile(GIURGIU_SOURCE);
+
+describe.skipIf(!giurgiuAvailable)('GIURGIU.MAP', () => {
+  it('converts to exactly the committed public/maps/giurgiu.tmj (catches a stale committed file)', () => {
+    const county = parseCountyMap(readCdFile(GIURGIU_SOURCE));
+    const committed = fs.readFileSync(
+      path.join(
+        process.cwd(),
+        'public',
+        'maps',
+        countyTiledMapFileName('GIURGIU')
+      ),
+      'utf-8'
+    );
+    expect(serializeTiledMap(buildCountyTiledMap(county)) === committed).toBe(
+      true
+    );
+  });
+});
