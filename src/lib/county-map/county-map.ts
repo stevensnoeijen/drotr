@@ -64,9 +64,9 @@ export class CountyMapError extends Error {
 
 /**
  * Reads one field of every record in a square, column-major section into a
- * row-major grid.
+ * row-major grid. `fieldOffset` is `0` for `lo` or `2` for `hi`.
  */
-function readSection(
+export function readSection(
   view: DataView,
   sectionOffset: number,
   size: number,
