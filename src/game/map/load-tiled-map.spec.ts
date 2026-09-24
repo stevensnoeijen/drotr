@@ -135,7 +135,8 @@ describe('parseTiledMap tile layers', () => {
   it('draws the test map from its terrain layer, every cell a real terrain tile', () => {
     const result = parseTiledMap(fixtureMap, terrainTileset);
 
-    expect(result.tileLayers).toHaveLength(1);
+    // A hidden `collision` layer now ships alongside `terrain` (see test.tmj).
+    expect(result.tileLayers).toHaveLength(2);
     expect(result.tileLayers[0]).toMatchObject({ name: 'terrain', visible: true });
     expect(result.tileset).toEqual(terrainTileset);
     // Grass (tile 1072) and a wall (tile 210) at firstgid 1, nothing else.

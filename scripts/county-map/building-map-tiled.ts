@@ -19,11 +19,10 @@ import {
  * `src/game/map/load-tiled-map.ts` accepts. Same size, tile size, tileset
  * reference and key order as a converted county (see `./county-map-tiled`).
  *
- * The output has four layers, back to front:
+ * The output has five layers, back to front:
  *
  * - `terrain`: the interior grid, every cell set (`gid = atlas index + 1`,
- *   so index 0 is gid 1). The engine's collision grid comes from its tiles'
- *   `blocked` flags.
+ *   so index 0 is gid 1).
  * - `intact`: the intact exterior overlay, hidden. Empty (gid 0) where
  *   the grid is 0.
  * - `ruined`: the ruined overlay, hidden. Empty (gid 0) where the grid is 0.
@@ -32,6 +31,11 @@ import {
  * overlays but starts them hidden; to see a building intact or ruined, toggle
  * `intact` or `ruined` on, in the Tiled editor or through the engine's
  * `tile-layers` debug option.
+ * - `collision`: hidden, and currently all open (every cell gid 0) — real
+ *   building collision isn't derived yet. The source is unresolved: either
+ *   the `intact` overlay's footprint or `BUILDING.MAP`'s unread flag grids
+ *   3-14 (see `docs/MAP_FORMAT.md`). A follow-up will fill this in; until
+ *   then a unit can walk straight through a building.
  * - `spawns`: an empty object layer (the loader requires one).
  */
 
@@ -72,6 +76,16 @@ export function buildBuildingsTiledMap(map: BuildingMap): TiledMap {
     tileLayer(1, 'terrain', interiorData(map)),
     tileLayer(2, 'intact', overlayData(map.intact), false),
     tileLayer(3, 'ruined', overlayData(map.ruined), false),
-    spawnsLayer(4),
+    tileLayer(4, 'collision', allOpenCollisionData(), false),
+    spawnsLayer(5),
   ]);
+}
+
+/**
+ * An all-open collision grid (every cell gid 0): the loader requires a
+ * `collision` layer, but real building collision isn't derived yet (see
+ * this file's top comment).
+ */
+function allOpenCollisionData(): number[] {
+  return new Array(BUILDING_GRID_SIZE * BUILDING_GRID_SIZE).fill(0);
 }
