@@ -136,39 +136,71 @@ describe('parseTiledMap tile layers', () => {
     const result = parseTiledMap(fixtureMap, terrainTileset);
 
     expect(result.tileLayers).toHaveLength(1);
+    expect(result.tileLayers[0]).toMatchObject({ name: 'terrain', visible: true });
     expect(result.tileset).toEqual(terrainTileset);
     // Grass (tile 1072) and a wall (tile 210) at firstgid 1, nothing else.
-    expect(new Set(result.tileLayers[0])).toEqual(new Set([1073, 211]));
+    expect(new Set(result.tileLayers[0].data)).toEqual(new Set([1073, 211]));
   });
 
-  it('exposes visible tile layers back to front', () => {
+  it('exposes tile layers back to front, with their names', () => {
     const map = withLayers(tileLayer('decoration', 0), tileLayer('overlay', 5));
     const result = parseTiledMap(map, terrainTileset);
 
     // The test map's terrain layer starts with a wall (gid 211).
-    expect(result.tileLayers.map((layer) => layer[0])).toEqual([211, 0, 5]);
+    expect(result.tileLayers.map((layer) => [layer.name, layer.data[0]])).toEqual([
+      ['terrain', 211],
+      ['decoration', 0],
+      ['overlay', 5],
+    ]);
   });
 
-  it('leaves out hidden layers', () => {
-    const map = withLayers(tileLayer('hidden', 5, { visible: false }));
+  it('keeps hidden layers, flagged not visible, so they can be switched on', () => {
+    const map = withLayers(
+      tileLayer('hidden', 5, { visible: false }),
+      tileLayer('shown', 6),
+      tileLayer('unflagged', 7, { visible: undefined })
+    );
     const result = parseTiledMap(map, terrainTileset);
 
-    expect(result.tileLayers.map((layer) => layer[0])).toEqual([211]);
+    expect(result.tileLayers.map((layer) => [layer.name, layer.visible, layer.data[0]])).toEqual([
+      ['terrain', true, 211],
+      ['hidden', false, 5],
+      ['shown', true, 6],
+      ['unflagged', true, 7],
+    ]);
+  });
+
+  it('takes collision from the terrain layer alone, whatever the layers\' visibility', () => {
+    const baseline = parseTiledMap(fixtureMap, terrainTileset).collision;
+    const terrain = fixtureMap.layers.find((layer) => layer.name === 'terrain') as TiledLayerTilelayer;
+    // A hidden terrain layer, and an all-wall overlay (gid 211, blocked) over it.
+    const map = {
+      ...withLayers(tileLayer('walls', 211)),
+      layers: [
+        { ...terrain, visible: false },
+        tileLayer('walls', 211),
+        fixtureMap.layers.find((layer) => layer.name === 'spawns')!,
+      ],
+    };
+
+    expect(parseTiledMap(map, terrainTileset).collision).toEqual(baseline);
   });
 
   it('ignores group layers and what is inside them', () => {
     const group = { ...tileLayer('group', 0), type: 'group', layers: [tileLayer('inside', 1)] } as unknown as TiledLayer;
     const result = parseTiledMap(withLayers(group), terrainTileset);
 
-    expect(result.tileLayers.map((layer) => layer[0])).toEqual([211]);
+    expect(result.tileLayers.map((layer) => layer.data[0])).toEqual([211]);
   });
 
-  it('rejects a visible tile layer whose size does not match the map', () => {
+  it('rejects a tile layer, hidden or not, whose size does not match the map', () => {
     const map = withLayers(tileLayer('overlay', 1, { width: 10 }));
     expect(() => parseTiledMap(map, terrainTileset)).toThrow(/"overlay" size/);
+    const hidden = withLayers(tileLayer('hidden', 1, { width: 10, visible: false }));
+    expect(() => parseTiledMap(hidden, terrainTileset)).toThrow(/"hidden" size/);
   });
 
-  it('rejects a visible tile layer with encoded data', () => {
+  it('rejects a tile layer with encoded data', () => {
     const map = withLayers(
       tileLayer('overlay', 1, { data: 'AAAA', encoding: 'base64' } as Partial<TiledLayerTilelayer>)
     );

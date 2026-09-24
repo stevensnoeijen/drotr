@@ -3,6 +3,7 @@ export {
   COUNTY_MAP_BYTES,
   CountyMapError,
   parseCountyMap,
+  readSection,
   RECORD_BYTES,
   SECTION_A_OFFSET,
   SECTION_A_SIZE,

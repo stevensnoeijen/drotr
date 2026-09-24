@@ -28,8 +28,8 @@ Per-file measurements:
 
 Section A `hi` is `0` in every single one of these 12 files, and Section B
 `lo` is all-zero in every one — both invariants hold with no exceptions.
-`BUILDING.MAP` breaks both invariants (see its own section below) — it is
-**not** just three more county maps.
+`BUILDING.MAP` doesn't follow this layout at all (see its own section
+below) — it is **not** just three more county maps.
 
 ## Tile atlas — `ART/BATTLE.ART`
 
@@ -86,8 +86,8 @@ u16 hi  (bytes 2-3)  — flags / secondary layer value
 - `lo` = tile_index as decoded above. Every value is a real tile, index 0
   included — there is no "empty cell" encoding, and all 16,384 cells carry
   ground.
-- `hi` = always 0 in this section (county files only — `BUILDING.MAP`
-  breaks this, see below).
+- `hi` = always 0 in this section (county files only — `BUILDING.MAP`'s
+  flag grids, laid out the same way, carry flags there; see below).
 - Row width of 128 was derived empirically (not assumed): computed
   average `|value[i] - value[i+W]|` for every integer divisor `W` of the
   cell count and took the minimum — `W=128` came out far ahead of any
@@ -215,8 +215,8 @@ cliff edge, both fit better than anything to do with buildings.
 
 Remaining detail on the field:
 
-- `4` and `256` are both powers of two (bit 2 and bit 8). `BUILDING.MAP`
-  (below) additionally shows `8, 12, 16, 32, 64, 128` in the same field,
+- `4` and `256` are both powers of two (bit 2 and bit 8). `BUILDING.MAP`'s
+  flag grids (below) additionally show `8, 12, 16, 32, 64, 128`,
   including `12 = 4|8` — i.e. this is a **bitmask of terrain/feature
   flags**, not an enum. Those extra bits appear **only** in `BUILDING.MAP`
   and never in a county file.
@@ -242,7 +242,7 @@ checked against all 12 counties. **None of them holds it.**
 | Section B `hi` bit 8 (`256`) | not build spots | absent from 7 of 12 counties. Where present it's water blobs or a cliff-rim lattice, dozens of subcells rather than a few plots (see "`256` is not a third terrain class") |
 | Section B `hi` bit 2 (`4`) deviations | not build spots | Section B is nearly a function of the tile beneath it. The cells that break from their tile's usual 2×2 pattern are one-subcell nudges along cliff and shore edges, plus a few isolated unblocked holes in open water that no unit could reach. There are 6–707 per county, scattered (2–240 clusters), with no shared shape |
 | a marker tile index in Section A | not build spots | the only tile in all 12 counties at a few-per-map count is **701**, a signpost on a cairn, and it only ever sits on the map border. See "Map-edge signposts" below |
-| building art stamped into Section A | none present | block 0 of `BUILDING.MAP` (Section A `lo` plus Section B `lo`) uses 922 distinct tiles. 856 of them — every roof, tower and wall — appear in **no** county. The other 66 are plain terrain (gravel, grass, water, shoreline, one tree), used for the ground around the compounds |
+| building art stamped into Section A | none present | `BUILDING.MAP`'s three tile grids (interior, intact and ruined) use 922 distinct tiles. 856 of them — every roof, tower and wall — appear in **no** county. The other 66 are plain terrain (gravel, grass, water, shoreline, one tree), used for the ground around the compounds |
 | a third section / trailing bytes | none | Sections A + B are exactly 327,680 bytes |
 
 **Conclusion (high confidence for the negative):** county `.MAP` files do
@@ -260,8 +260,8 @@ here. In order of likelihood:
    scenario setup the `.MAP` files also leave out (unit spawns, for one).
 2. Derived at runtime from terrain (e.g. any open grass area large enough
    for a prefab's footprint), with no per-map data at all.
-3. `BUILDING.MAP` blocks 1/2, if one of their flag regions turns out to be
-   a per-county placement table rather than a per-prefab mask. Nothing
+3. `BUILDING.MAP`'s flag grids (3–14), if one of their flag regions turns
+   out to be a per-county placement table rather than a per-prefab mask. Nothing
    suggests this yet, and prefab extraction is its own separate piece of work.
 
 **Decision:** rather than wait on any of the above, build spots will be
@@ -362,66 +362,73 @@ wide river delta between stone flats and grassland. Rendering Section B's
 `hi` over the same coordinates (0 = open, 4 = blocked) lands the blocked
 cells exactly on that river, those ridges and the tree clusters.
 
-## `COUNTIES/BUILDING.MAP` — 983,040 bytes = 3 × 327,680
+## `COUNTIES/BUILDING.MAP` — 983,040 bytes = 15 × 128×128 grids
 
-Same overall byte size as 3 county files, and splits cleanly into three
-327,680-byte blocks at the same offsets — but it is **not** three county
-maps. Checked each block against the county layout (Section A = first
-65,536 bytes / 128×128, Section B = next 262,144 bytes / 256×256):
+Same overall byte size as 3 county files, but it is **not** three county
+maps, nor laid out like one. It is a series of **fifteen 128×128 grids**,
+each exactly like a county's Section A: 4-byte records (`u16 lo`, `u16 hi`,
+little-endian), stored column-major (`offset = gridOffset + (x*128 + y) *
+4`). Grid `k` starts at byte `k * 65536`, so each 327,680-byte "block" holds
+five grids. Parsed by `src/lib/building-map`.
 
-| block | secA nonzero lo | secA max lo | secA hi distinct | secB lo all-zero | secB hi distinct |
-|---|---|---|---|---|---|
-| 0 | 15913/16384 | 1447 | `0` | **no** (max 1451) | `0,4,8,12,16,32,128,256` |
-| 1 | 0/16384 | 0 | `0,4,8,12,16,32,128,256` | yes | `0,4,8,12,16,32,64,128,256` |
-| 2 | 0/16384 | 0 | `0,4,12,64,128` | yes | `0,4` |
+| grid | offset | non-zero `lo` | max `lo` | `hi` distinct (non-zero cells) |
+|---|---|---|---|---|
+| 0 | `0x00000` | 15,913/16,384 | 1447 | `0` |
+| 1 | `0x10000` | 4,940 | 1449 | `0` |
+| 2 | `0x20000` | 2,767 | 1451 | `0` |
+| 3–6 | `0x30000`–`0x60000` | 0 | — | `4,8,12,16,32,128,256` (5,230 / 3,788 / 2,157 / 2,944) |
+| 7–10 | `0x70000`–`0xA0000` | 0 | — | `4,12,64,128` (5,959 / 3,802 / 1,655 / 2,715) |
+| 11–14 | `0xB0000`–`0xE0000` | 0 | — | `4` (149 / 189 / 235 / 194) |
 
-Both invariants that hold across every county file break here: Section A's
-`hi` is non-zero (block 1/2), and Section B's `lo` is non-zero (block 0).
+The first three grids hold tiles (`BATTLE.ART` atlas indices, all ≤ 1451,
+inside the terrain tileset's verbatim range), drawn on one shared canvas
+and aligned cell-for-cell:
 
-Rendering block 0's Section A with the real atlas art (composited, not
-grayscale) confirms what it is: a **library of prefab multi-tile
-buildings**, matching the hypothesis that buildings are combined-tile
-structures meant to be placed into a county map's Section A object layer.
-On the same 128×128 canvas — a plain grass fill, not transparency — there
-are **eleven** separate, discrete compounds: octagonal and hexagonal
-walled enclosures, several ringed by a water moat, each containing tiled
-roofs and towers, plus a few loose stretches of wall/fence. Each is
-roughly 15–25 tiles across, at distinct non-overlapping positions.
+- **Grid 0 — interior view.** Open buildings seen from above: wooden
+  floors and the walls around them, on a plain grass fill (atlas tiles
+  1382–1387). Every cell is a real tile: the 471 zero cells are atlas
+  index 0, the plain ground tile, running as seams and lines through the
+  building interiors — not holes. Every tile in this grid is fully opaque.
+- **Grid 1 — intact exterior.** Battlements and red roofs. Where non-zero,
+  the tile **replaces** the interior tile under it; `0` means no overlay.
+  Only 229 of its 4,940 cells use a tile with any transparency.
+- **Grid 2 — ruined state.** Crumbled walls with the interior still
+  showing through, with the same alignment and semantics as grid 1 (34 of
+  its 2,767 cells use a tile with any transparency).
 
-> The earlier figures here ("4,096/15,913 (25.7%) of non-zero refs from
-> opaque terrain rows, vs. 3.5% in `TIRGO`") came from the wrong 64×64
-> atlas grid and are withdrawn. On the corrected grid **100%** of block 0's
-> 15,913 non-zero refs are fully opaque tiles — the same as a county map —
-> so that contrast does not exist. The prefab reading below still holds; it
-> rests on the rendered layout, which is unambiguous.
+Rendered, grid 0 shows **12 castle compounds**:
 
-Each cluster is very likely one building "prefab" — assembled
-once here from atlas tiles, then copy-pasted (stamped) into a county's
-Section A at the right grid position wherever that building exists in the
-actual map, rather than every county map re-authoring every building
-tile-by-tile.
+- 5 unmoated castles of increasing size down the left column;
+- 1 large unmoated castle (top centre);
+- 1 large moated castle (top right);
+- 3 small castles on stone pads (right column);
+- 2 moated castles (bottom);
 
-Blocks 1 and 2 have no tile references at all (`lo` is all-zero throughout)
-but carry the same bitmask-flag values seen in Section B `hi` elsewhere —
-likely per-building collision/placement masks paired with block 0's
-clusters (e.g. which cells are blocked/buildable under each prefab), but
-the exact block-to-block correspondence (which flag region belongs to
-which building cluster) is **not** resolved yet.
+plus two strips of loose wall, gate and palisade pieces. 121 overlay cells
+(in both grid 1 and grid 2) lie on the grass fill just outside the walls —
+hedge and rubble spill that belongs to the buildings.
 
-**Do not assume `BUILDING.MAP` decodes with the plain county
-interpretation** — block 0's `lo` fields are prefab tile data (usable once
-cluster boundaries are extracted), blocks 1/2 are flags whose association
-to individual buildings still needs work.
+Each compound is very likely one building "prefab", assembled once here
+from atlas tiles and stamped into a county's Section A wherever that
+building stands, rather than every county re-authoring every building tile
+by tile. The file carries **no building names or identifiers** (no text at
+all), and nothing else on the CD provides them.
 
-**Block 0's Section B `lo` also holds tile data**, on top of Section A's —
-another way `BUILDING.MAP` breaks the county-file invariants. Measured
-directly: 7,707 of its 65,536 cells are non-zero, referencing **554**
-distinct tile indices (max **1451**), every one within the 0–1471 map-art
-range the terrain tileset covers. What it renders as — a second, finer
-layer over the same building compounds, alternate prefab variants, or
-something else — is not yet resolved; that's follow-up work for whoever
-extracts the block 0 prefab boundaries, not this document's terrain
-tileset export.
+Grids 3–14 have all-zero `lo` and carry only flag values in `hi`, the same
+bitmask vocabulary as a county's Section B `hi` plus the extra bits
+`8,16,32,64,128`. Their meaning, and which flag region belongs to which
+building, is unresolved (see "Open questions" below).
+
+> **Correction.** Earlier revisions of this document read each 327,680-byte
+> block as a county file (a 128×128 Section A, then one 256×256 Section B),
+> described eleven compounds, and noted that "block 0's Section B `lo`"
+> held a second layer of tile data (7,707 non-zero cells, 554 distinct
+> indices, max 1451). That reading is **wrong for this file**: block 0's
+> "Section B" is grids 1–4, i.e. the two 128×128 overlay grids above
+> (4,940 + 2,767 = 7,707 cells) followed by two flag-only grids. Drawn as
+> one 256×256 grid, the buildings come out squashed and duplicated.
+> Likewise the "Section A `hi`" of blocks 1 and 2 is the `hi` of grids 5
+> and 10.
 
 ## Converting to Tiled
 
@@ -432,8 +439,9 @@ A county converts to a Tiled map, drawn with the committed
 npm run convert:map -- FAGARAS
 ```
 
-The name is case-insensitive; `BUILDING` is rejected, since it isn't a
-county. The script reads `COUNTIES/<NAME>.MAP` from the CD data
+The name is case-insensitive (`BUILDING` converts `BUILDING.MAP` instead;
+see "Converting `BUILDING.MAP`" below). The script reads
+`COUNTIES/<NAME>.MAP` from the CD data
 (`DROTR_CD_DIR`, defaulting to `.cd/`) and writes
 `public/maps/<name>.tmj`. The raw `.MAP` is never committed, but the
 converted `.tmj` is (so far `fagaras.tmj`). The output is deterministic,
@@ -453,10 +461,11 @@ layers:
 - **`collision`** — hidden by default. Section B collapsed to one
   value per tile (blocked only when all four subcells are; see "Test
   fixture strategy" below), drawn as the plain ground tile (gid 1) where
-  blocked and left empty (gid 0) where open. It is **for inspection in the
-  Tiled editor only**: toggle it on (and `terrain` off) to see the original
-  collision data. The engine never reads it; the loader only looks at the
-  layer named `terrain`.
+  blocked and left empty (gid 0) where open. It is **for inspection only**:
+  toggle it on (and `terrain` off) to see the original collision data, in
+  the Tiled editor or through the engine's `tile-layers` debug option.
+  Engine collision never reads it; it comes from the layer named `terrain`
+  alone.
 
 The two collision sources don't agree. For `FAGARAS`, the collapsed
 Section B mask blocks **3,315** tiles, while the tileset-derived grid the
@@ -467,21 +476,51 @@ bit 2, i.e. leaving the `256`-only subcells open, would give 3,307 blocked
 tiles and 1,867 disagreeing cells instead.) Which source the engine should
 end up using is still open.
 
+### Converting `BUILDING.MAP`
+
+```
+npm run convert:map -- BUILDING
+```
+
+converts `COUNTIES/BUILDING.MAP` **as-is** into one Tiled map,
+`public/maps/buildings.tmj` (committed), on the same terms as a county —
+128×128 tiles of 40 px, `terrain.tsx` at `firstgid` 1, `gid = atlas index +
+1`, deterministic output. `scripts/county-map/building-map-tiled.ts` builds
+it. Its layers, back to front:
+
+- **`terrain`** — grid 0, the interior view, every cell set (index 0 is
+  gid 1). The engine's collision grid comes from this layer.
+- **`intact`** — grid 1, **hidden**. Empty (gid 0) where the grid is 0.
+- **`ruined`** — grid 2, **hidden**. Empty (gid 0) where the grid is 0.
+
+So by default only the interior view shows. The engine loads both overlays
+but starts them hidden; to see the buildings intact or ruined, toggle
+`intact` or `ruined` on, in the Tiled editor or through the engine's
+`tile-layers` debug option (`?debug=tile-layers`).
+- **`spawns`** — an empty object layer (the loader requires one).
+
+In the engine it is the `buildings` map; view it with the `empty`
+scenario, which spawns nothing and is allowed on every map
+(`/game?map=buildings&scenario=empty`).
+
 ## Open questions for later
 
-- The individual building clusters in `BUILDING.MAP` block 0 need their
-  bounding boxes extracted (e.g. connected-component analysis on non-zero
-  cells) so each prefab can be cut out and placed independently — this is
-  the next concrete step toward a converter.
-- How `BUILDING.MAP` block 0's clusters correspond to blocks 1/2's flag
-  regions (same coordinates? a lookup by index?), and whether a building's
-  placement *into* a county map is recorded anywhere. It isn't in the
-  county file itself: no county contains any prefab building tile (see
-  "Buildable locations" above).
+- The individual compounds in `BUILDING.MAP` (and its loose wall pieces)
+  need their bounding boxes extracted (e.g. connected-component analysis
+  on the interior grid) so each prefab can be cut out and placed
+  independently, in all three states. Today `buildings.tmj` is the whole
+  file as-is.
+- What `BUILDING.MAP`'s flag grids (3–14, `hi` values `4, 8, 12, 16, 32,
+  64, 128, 256`) mean, and which flag region belongs to which building
+  (same coordinates? a lookup by index?). They come in three runs of four
+  grids with distinct vocabularies (see the table above). Also, whether a
+  building's placement *into* a county map is recorded anywhere. It isn't
+  in the county file itself: no county contains any prefab building tile
+  (see "Buildable locations" above).
 - **Where build spots come from.** They aren't in the county files (see
   "Buildable locations: not encoded in the county files" above). The
   remaining candidates are the original executable (not on this CD),
-  runtime derivation from terrain, or `BUILDING.MAP` blocks 1/2 — but the
+  runtime derivation from terrain, or `BUILDING.MAP`'s flag grids — but the
   decision made there is to hand-author build spots in the Tiled maps
   rather than wait on one of those being confirmed.
 - What the Section B `hi` bits *other than* bit 2 mean, including what
@@ -490,7 +529,7 @@ end up using is still open.
   shows more bits set (`8,16,32,64,128`) than any county file (`4,256`
   only), so county data alone won't resolve the rest.
 - Whether Section A's `hi` field is ever non-zero in a *county* file (only
-  ever seen non-zero in `BUILDING.MAP` so far).
+  ever seen non-zero in `BUILDING.MAP`'s flag grids so far).
 
 Resolved since: Section B's cell order (column-major, same as Section A),
 whether a separate ground layer exists elsewhere on the CD (it does not),
@@ -522,7 +561,9 @@ order: `offset = (x*size + y) * 4`), and the two-`u16`-per-record layout
 without shipping any original game data. The parser reads the file
 column-major but stores both grids **row-major** (`[y*size + x]`), like
 every other grid in the engine. Golden tests against the real `FAGARAS.MAP`
-skip when `.cd/` is absent.
+skip when `.cd/` is absent. The `BUILDING.MAP` parser, `src/lib/building-map`,
+does the same with its own synthetic 983,040-byte fixture
+(`src/test/building-map-fixture.ts`) and golden tests against the real file.
 
 The parser treats a Section B subcell as blocked when `hi != 0`, so a
 subcell carrying only `256` counts (see "`256` is not a third terrain

@@ -1,3 +1,4 @@
+import { emptyScenario } from './empty';
 import { knightsScenario } from './knights';
 import { testBigFightScenario } from './test-big-fight';
 import { testScenario } from './test';
@@ -12,6 +13,7 @@ export const scenarios: readonly Scenario[] = [
   testScenario,
   testBigFightScenario,
   knightsScenario,
+  emptyScenario,
 ];
 
 const scenariosById = new Map(scenarios.map((scenario) => [scenario.id, scenario]));

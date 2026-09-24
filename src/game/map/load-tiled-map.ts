@@ -31,6 +31,23 @@ export interface MapTileset extends TilesetGeometry {
   blockedTileIds: ReadonlySet<number>;
 }
 
+/** One top-level tile layer of a map, as the renderer draws it. */
+export interface MapTileLayer {
+  /** The layer's name in Tiled, e.g. `terrain`. */
+  name: string;
+  /**
+   * Whether the layer is shown by default: Tiled's `visible` flag (absent
+   * counts as visible). A hidden layer is still kept, and rendered hidden, so
+   * it can be switched on at runtime.
+   */
+  visible: boolean;
+  /**
+   * The layer's raw Tiled gids (flip flags included; `0` is an empty cell),
+   * row-major and always the map's own size.
+   */
+  data: readonly number[];
+}
+
 export interface ParsedMap {
   width: number;
   height: number;
@@ -44,12 +61,12 @@ export interface ParsedMap {
   /** The map's one tileset, which every gid in {@link tileLayers} resolves through. */
   tileset: MapTileset;
   /**
-   * Every visible top-level tile layer, back to front — what the renderer
-   * draws — as its raw Tiled gids (flip flags included; `0` is an empty
-   * cell), row-major and always the map's own size. Hidden layers are left
-   * out, and group layers aren't supported.
+   * Every top-level tile layer, back to front — what the renderer draws —
+   * hidden ones included (flagged by {@link MapTileLayer.visible}). Group
+   * layers aren't supported. Display only: collision comes from the
+   * `terrain` layer alone, whatever is shown.
    */
-  tileLayers: (readonly number[])[];
+  tileLayers: MapTileLayer[];
 }
 
 /** Thrown for any map that fails validation, with a human-readable reason. */
@@ -128,15 +145,12 @@ function parseCollision(
 }
 
 /**
- * Collects every visible top-level tile layer, in the order Tiled draws
- * them: back to front.
+ * Collects every top-level tile layer, hidden ones included, in the order
+ * Tiled draws them: back to front.
  */
-function collectVisibleTileLayers(map: TiledMap): (readonly number[])[] {
-  const out: (readonly number[])[] = [];
+function collectTileLayers(map: TiledMap): MapTileLayer[] {
+  const out: MapTileLayer[] = [];
   for (const layer of map.layers) {
-    if (layer.visible === false) {
-      continue;
-    }
     if (layer.type === 'tilelayer') {
       if (layer.width !== map.width || layer.height !== map.height) {
         throw new TiledMapError(
@@ -148,7 +162,7 @@ function collectVisibleTileLayers(map: TiledMap): (readonly number[])[] {
           `Tile layer "${layer.name}" uses an unsupported encoding; expected an uncompressed tile array`
         );
       }
-      out.push(layer.data);
+      out.push({ name: layer.name, visible: layer.visible !== false, data: layer.data });
     }
   }
   return out;
@@ -178,7 +192,7 @@ export function parseTiledMap(map: TiledMap, tileset: MapTileset): ParsedMap {
 
   const collision = parseCollision(terrainLayer, map, tileset);
   const spawns = parseSpawns(spawnsLayer);
-  const tileLayers = collectVisibleTileLayers(map);
+  const tileLayers = collectTileLayers(map);
 
   return {
     width: map.width,

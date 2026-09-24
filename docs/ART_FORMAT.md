@@ -270,8 +270,8 @@ blocked rock, tree or water tile has some open subcells (rock is the worst
 at a quarter of its subcells), and open ground has some blocked ones. Wall, roof
 and rubble tiles don't occur in the county ground layers at all (the
 counties' buildings aren't stamped in yet), so this doesn't test them;
-`BUILDING.MAP`'s block 0 does use them, but its Section B isn't a
-reliable unit mask (it marks even water open).
+`BUILDING.MAP` does use them, but its flag grids aren't decoded yet (see
+[`MAP_FORMAT.md`](./MAP_FORMAT.md)).
 
 To (re)generate the committed `public/maps/terrain.tsx` and `terrain.png`,
 run `npm run export:terrain-tileset` with `.cd/` present. Generation is

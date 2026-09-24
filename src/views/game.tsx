@@ -7,6 +7,11 @@ import UnitInfoTooltip from '~/components/unit-info-tooltip';
 import Atlas from '~/views/atlas';
 import { resolveMap } from '~/game/maps';
 import {
+  effectiveTileLayerVisibility,
+  toggleTileLayer,
+  type TileLayerInfo,
+} from '~/game/map/tile-layer-visibility';
+import {
   type DebugFlag,
   parseDebugFlags,
   resolveScenario,
@@ -80,12 +85,35 @@ export default function Game() {
   const scenarioMapKey = `${resolvedScenario.error ? '' : resolvedScenario.scenario.id}:${
     resolvedMap.error ? '' : resolvedMap.map.id
   }`;
+  // The loaded map's tile layers (reported by GameCanvas once it's drawn)
+  // and the `tile-layers` debug toggles over them — `undefined` until a
+  // layer is first toggled, i.e. still the map's own defaults. Both belong
+  // to one map, so they're reset alongside canvasError below.
+  const [tileLayers, setTileLayers] = useState<TileLayerInfo[]>([]);
+  const [tileLayerToggles, setTileLayerToggles] = useState<boolean[] | undefined>(undefined);
   const [prevScenarioMapKey, setPrevScenarioMapKey] = useState(scenarioMapKey);
   if (prevScenarioMapKey !== scenarioMapKey) {
     setPrevScenarioMapKey(scenarioMapKey);
     if (canvasError) {
       setCanvasError(undefined);
     }
+    setTileLayers([]);
+    setTileLayerToggles(undefined);
+  }
+  // With the option off, every layer shows exactly as the map sets it.
+  const tileLayerVisibility = effectiveTileLayerVisibility(
+    tileLayers,
+    tileLayerToggles,
+    debugFlags.has('tile-layers')
+  );
+
+  function handleTileLayers(layers: TileLayerInfo[]) {
+    setTileLayers(layers);
+    setTileLayerToggles(undefined);
+  }
+
+  function handleToggleTileLayer(index: number) {
+    setTileLayerToggles((current) => toggleTileLayer(tileLayers, current, index));
   }
 
   // `searchParams` as of the most recent render, read inside the debounced
@@ -110,6 +138,11 @@ export default function Game() {
     const next = new Set(debugFlags);
     if (next.has(flag)) {
       next.delete(flag);
+      // Switching the option off forgets its toggles, so switching it back
+      // on starts again from the map's own layer visibility.
+      if (flag === 'tile-layers') {
+        setTileLayerToggles(undefined);
+      }
     } else {
       next.add(flag);
     }
@@ -228,11 +261,16 @@ export default function Game() {
         }}
         onError={setCanvasError}
         onViewportChange={handleViewportChange}
+        onTileLayers={handleTileLayers}
+        tileLayerVisibility={tileLayerVisibility}
       />
       <DebugOverlay
         stats={stats}
         debugFlags={debugFlags}
         onToggleDebugFlag={handleToggleDebugFlag}
+        tileLayers={tileLayers}
+        tileLayerVisibility={tileLayerVisibility}
+        onToggleTileLayer={handleToggleTileLayer}
       />
       {debugFlags.has('unit-info') && (
         <UnitInfoTooltip

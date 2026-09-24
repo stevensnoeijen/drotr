@@ -32,6 +32,10 @@ describe('parseDebugFlags', () => {
   it('parses the paths flag', () => {
     expect(parseDebugFlags('paths')).toEqual(new Set(['paths']));
   });
+
+  it('parses the tile-layers flag', () => {
+    expect(parseDebugFlags('grid,tile-layers')).toEqual(new Set(['grid', 'tile-layers']));
+  });
 });
 
 describe('serializeDebugFlags', () => {

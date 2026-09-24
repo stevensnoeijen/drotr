@@ -1,5 +1,6 @@
 import { useState } from 'react';
 
+import type { TileLayerInfo } from '~/game/map/tile-layer-visibility';
 import { ALL_DEBUG_FLAGS, type DebugFlag } from '~/game/scenarios';
 import { usePageZoomCounterScale } from '~/lib/use-page-zoom-scale';
 
@@ -53,6 +54,15 @@ export interface DebugOverlayProps {
   debugFlags: ReadonlySet<DebugFlag>;
   /** Called when a flag is clicked in the dropdown, to flip it on/off. */
   onToggleDebugFlag: (flag: DebugFlag) => void;
+  /**
+   * The current map's tile layers, back to front, listed under the
+   * `tile-layers` flag while it's on.
+   */
+  tileLayers?: readonly TileLayerInfo[];
+  /** Whether each of {@link tileLayers} is currently shown, by index. */
+  tileLayerVisibility?: readonly boolean[];
+  /** Called when a tile layer is clicked, with its index, to show/hide it. */
+  onToggleTileLayer?: (index: number) => void;
   className?: string;
 }
 
@@ -71,6 +81,9 @@ export default function DebugOverlay({
   stats,
   debugFlags,
   onToggleDebugFlag,
+  tileLayers = [],
+  tileLayerVisibility = [],
+  onToggleTileLayer,
   className,
 }: DebugOverlayProps) {
   const [open, setOpen] = useState(false);
@@ -115,6 +128,25 @@ export default function DebugOverlay({
                   />
                   {flag}
                 </label>
+                {flag === 'tile-layers' && debugFlags.has(flag) && (
+                  <ul aria-label="Tile layers" className="ml-5 list-none border-l border-green-400/30 pl-1">
+                    {tileLayers.length === 0 && (
+                      <li className="px-2 py-1 text-green-400/60">no tile layers</li>
+                    )}
+                    {tileLayers.map((layer, index) => (
+                      <li key={index}>
+                        <label className="flex cursor-pointer items-center gap-2 rounded px-2 py-1 hover:bg-white/10">
+                          <input
+                            type="checkbox"
+                            checked={tileLayerVisibility[index] ?? layer.visible}
+                            onChange={() => onToggleTileLayer?.(index)}
+                          />
+                          {layer.name}
+                        </label>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </li>
             ))}
           </ul>

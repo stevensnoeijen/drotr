@@ -169,14 +169,17 @@ describe('buildCountyTiledMap', () => {
     ]);
   });
 
-  it('passes parseTiledMap, which ignores collision', () => {
+  it('passes parseTiledMap, which keeps the collision layer hidden and out of engine collision', () => {
     const map = buildCountyTiledMap(syntheticCountyMap());
     const parsed = parseTiledMap(map, terrainTileset);
 
     expect(parsed).toMatchObject({ width: 128, height: 128, tileSize: 40 });
     expect(parsed.spawns).toEqual([]);
-    // Hidden, so only terrain is drawn.
-    expect(parsed.tileLayers).toEqual([layer(map, 'terrain').data]);
+    // Kept (so it can be switched on), but hidden by default.
+    expect(parsed.tileLayers).toEqual([
+      { name: 'terrain', visible: true, data: layer(map, 'terrain').data },
+      { name: 'collision', visible: false, data: layer(map, 'collision').data },
+    ]);
 
     // Collision comes from the terrain tiles' blocked flags alone.
     const terrain = layer(map, 'terrain').data as number[];

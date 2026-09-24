@@ -20,6 +20,10 @@ export interface MapDefinition {
    * map (checked by `isScenarioCompatibleWithMap` in
    * `~/game/scenarios/compatibility`); when omitted, this map imposes no
    * restriction and works with any scenario the scenario side allows.
+   *
+   * The one exception is a scenario flagged `allowedOnEveryMap` (such as
+   * `empty`), which is compatible regardless of this list, so it doesn't
+   * need adding here.
    */
   allowedScenarioIds?: readonly string[];
 }
