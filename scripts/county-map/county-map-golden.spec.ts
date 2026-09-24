@@ -141,3 +141,24 @@ describe.skipIf(!sibiuAvailable)('SIBIU.MAP', () => {
     );
   });
 });
+
+const BRASOV_SOURCE = countyMapCdPath('BRASOV');
+const brasovAvailable = hasCdFile(BRASOV_SOURCE);
+
+describe.skipIf(!brasovAvailable)('BRASOV.MAP', () => {
+  it('converts to exactly the committed public/maps/brasov.tmj (catches a stale committed file)', () => {
+    const county = parseCountyMap(readCdFile(BRASOV_SOURCE));
+    const committed = fs.readFileSync(
+      path.join(
+        process.cwd(),
+        'public',
+        'maps',
+        countyTiledMapFileName('BRASOV')
+      ),
+      'utf-8'
+    );
+    expect(serializeTiledMap(buildCountyTiledMap(county)) === committed).toBe(
+      true
+    );
+  });
+});
