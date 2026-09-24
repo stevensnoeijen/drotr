@@ -6,8 +6,7 @@ import type {
 } from 'tiled-types';
 
 import type { Point } from '~/lib/math/types';
-import { decodeGid, resolveGid, type TilesetGeometry } from './tile-gid';
-import { BLOCKED_TILE_PROPERTY } from './tile-properties';
+import { decodeGid, type TilesetGeometry } from './tile-gid';
 
 /**
  * A named location a scenario can spawn a unit at. Spawns carry no team or
@@ -27,8 +26,6 @@ export interface SpawnPoint {
 export interface MapTileset extends TilesetGeometry {
   /** Absolute URL of the tileset's image, resolved against the `.tsx`. */
   imageUrl: string;
-  /** Local ids of the tiles marked {@link BLOCKED_TILE_PROPERTY}. */
-  blockedTileIds: ReadonlySet<number>;
 }
 
 /** One top-level tile layer of a map, as the renderer draws it. */
@@ -53,8 +50,10 @@ export interface ParsedMap {
   height: number;
   tileSize: number;
   /**
-   * Row-major, one byte per cell: `1` where the `terrain` layer's tile is
-   * blocked (or the cell is empty), `0` where a unit may stand.
+   * Row-major, one byte per cell, from the map's `collision` tile layer:
+   * `1` where the layer's gid is non-zero (blocked), `0` where it's empty
+   * (a unit may stand). The gid doesn't need to resolve to any particular
+   * tile, and flip flags are ignored.
    */
   collision: Uint8Array;
   spawns: SpawnPoint[];
@@ -64,7 +63,7 @@ export interface ParsedMap {
    * Every top-level tile layer, back to front — what the renderer draws —
    * hidden ones included (flagged by {@link MapTileLayer.visible}). Group
    * layers aren't supported. Display only: collision comes from the
-   * `terrain` layer alone, whatever is shown.
+   * dedicated `collision` layer, not from anything drawn here.
    */
   tileLayers: MapTileLayer[];
 }
@@ -104,42 +103,26 @@ function parseSpawns(layer: TiledLayerObjectgroup): SpawnPoint[] {
 }
 
 /**
- * Derives the collision grid from the `terrain` layer: a cell blocks when
- * its tile carries the {@link BLOCKED_TILE_PROPERTY} or the cell is empty
- * (gid 0); a flipped tile is as walkable as the unflipped one. A gid the
- * tileset doesn't cover is malformed data and rejected.
+ * Derives the collision grid from the `collision` layer: a cell blocks
+ * when its gid is non-zero, whatever tile (if any) that gid names; an
+ * empty cell (gid 0) is walkable. Flip flags are ignored, since they don't
+ * change which gid a cell has, only how it would be drawn.
  */
-function parseCollision(
-  layer: TiledLayerTilelayer,
-  map: TiledMap,
-  tileset: MapTileset
-): Uint8Array {
+function parseCollision(layer: TiledLayerTilelayer, map: TiledMap): Uint8Array {
   if (layer.width !== map.width || layer.height !== map.height) {
     throw new TiledMapError(
-      `Terrain layer size (${layer.width}x${layer.height}) does not match map size (${map.width}x${map.height})`
+      `Collision layer size (${layer.width}x${layer.height}) does not match map size (${map.width}x${map.height})`
     );
   }
   if (!Array.isArray(layer.data)) {
     throw new TiledMapError(
-      `Terrain layer "${layer.name}" uses an unsupported encoding; expected an uncompressed tile array`
+      `Collision layer "${layer.name}" uses an unsupported encoding; expected an uncompressed tile array`
     );
   }
 
   const collision = new Uint8Array(map.width * map.height);
-  for (let y = 0; y < map.height; y++) {
-    for (let x = 0; x < map.width; x++) {
-      const index = y * map.width + x;
-      const gid = decodeGid(layer.data[index]);
-      if (gid === 0) {
-        collision[index] = 1;
-        continue;
-      }
-      const localId = resolveGid(gid, tileset);
-      if (localId === undefined) {
-        throw new TiledMapError(`Unknown tile gid ${gid} in terrain layer at (${x}, ${y})`);
-      }
-      collision[index] = tileset.blockedTileIds.has(localId) ? 1 : 0;
-    }
+  for (let i = 0; i < collision.length; i++) {
+    collision[i] = decodeGid(layer.data[i]) !== 0 ? 1 : 0;
   }
   return collision;
 }
@@ -190,7 +173,12 @@ export function parseTiledMap(map: TiledMap, tileset: MapTileset): ParsedMap {
     throw new TiledMapError('Map is missing a "spawns" object layer');
   }
 
-  const collision = parseCollision(terrainLayer, map, tileset);
+  const collisionLayer = findLayer(map.layers, 'collision', 'tilelayer');
+  if (!collisionLayer) {
+    throw new TiledMapError('Map is missing a "collision" tile layer');
+  }
+
+  const collision = parseCollision(collisionLayer, map);
   const spawns = parseSpawns(spawnsLayer);
   const tileLayers = collectTileLayers(map);
 
@@ -205,21 +193,6 @@ export function parseTiledMap(map: TiledMap, tileset: MapTileset): ParsedMap {
   };
 }
 
-/** Local ids of the `<tile>`s whose {@link BLOCKED_TILE_PROPERTY} is `true`. */
-function parseBlockedTileIds(doc: Document): Set<number> {
-  const blocked = new Set<number>();
-  for (const tileEl of doc.querySelectorAll('tileset > tile')) {
-    const id = Number(tileEl.getAttribute('id') ?? NaN);
-    const property = [...tileEl.querySelectorAll('properties > property')].find(
-      (el) => el.getAttribute('name') === BLOCKED_TILE_PROPERTY
-    );
-    if (Number.isInteger(id) && property?.getAttribute('value') === 'true') {
-      blocked.add(id);
-    }
-  }
-  return blocked;
-}
-
 function requiredNumberAttribute(element: Element, name: string, context: string): number {
   const value = Number(element.getAttribute(name));
   if (element.getAttribute(name) === null || !Number.isFinite(value)) {
@@ -229,10 +202,9 @@ function requiredNumberAttribute(element: Element, name: string, context: string
 }
 
 /**
- * Reads an external `.tsx` tileset: its image, grid layout and which tiles
- * are {@link BLOCKED_TILE_PROPERTY}. `firstgid` isn't part of the tileset
- * file (it's the map's to assign), so it's passed in, and the image path is
- * resolved against `tilesetUrl`.
+ * Reads an external `.tsx` tileset: its image and grid layout. `firstgid`
+ * isn't part of the tileset file (it's the map's to assign), so it's
+ * passed in, and the image path is resolved against `tilesetUrl`.
  *
  * Only tightly packed single-image tilesets are supported: an
  * image-collection tileset (one `<image>` per `<tile>`), or one with a
@@ -270,7 +242,6 @@ export function parseTilesetDescription(
     tileCount: requiredNumberAttribute(tilesetEl, 'tilecount', context),
     columns: requiredNumberAttribute(tilesetEl, 'columns', context),
     imageUrl: new URL(imageSource, tilesetUrl).toString(),
-    blockedTileIds: parseBlockedTileIds(doc),
   };
 }
 

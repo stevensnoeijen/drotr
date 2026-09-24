@@ -169,7 +169,7 @@ describe('buildCountyTiledMap', () => {
     ]);
   });
 
-  it('passes parseTiledMap, which keeps the collision layer hidden and out of engine collision', () => {
+  it('passes parseTiledMap, which draws the collision layer hidden but reads engine collision from it', () => {
     const map = buildCountyTiledMap(syntheticCountyMap());
     const parsed = parseTiledMap(map, terrainTileset);
 
@@ -181,10 +181,10 @@ describe('buildCountyTiledMap', () => {
       { name: 'collision', visible: false, data: layer(map, 'collision').data },
     ]);
 
-    // Collision comes from the terrain tiles' blocked flags alone.
-    const terrain = layer(map, 'terrain').data as number[];
+    // Collision comes from the collision layer's gids alone.
+    const collisionData = layer(map, 'collision').data as number[];
     expect(Array.from(parsed.collision)).toEqual(
-      terrain.map((gid) => (terrainTileset.blockedTileIds.has(gid - 1) ? 1 : 0))
+      collisionData.map((gid) => (gid !== 0 ? 1 : 0))
     );
   });
 });

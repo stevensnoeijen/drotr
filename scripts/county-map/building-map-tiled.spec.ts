@@ -179,11 +179,7 @@ describe('buildBuildingsTiledMap', () => {
       { name: 'collision', visible: false, data: layer(map, 'collision').data },
     ]);
 
-    // Collision still comes from the terrain tiles' blocked flags here; the
-    // loader switches to the dedicated collision layer in a later change.
-    const terrain = layer(map, 'terrain').data as number[];
-    expect(Array.from(parsed.collision)).toEqual(
-      terrain.map((gid) => (terrainTileset.blockedTileIds.has(gid - 1) ? 1 : 0))
-    );
+    // All-open: real building collision is not yet derived.
+    expect(Array.from(parsed.collision)).toEqual(new Array(128 * 128).fill(0));
   });
 });

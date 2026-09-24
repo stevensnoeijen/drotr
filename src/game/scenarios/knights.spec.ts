@@ -23,7 +23,6 @@ function mapWithSpawns(
       tileCount: 0,
       columns: 1,
       imageUrl: '',
-      blockedTileIds: new Set(),
     },
     tileLayers: [],
   };

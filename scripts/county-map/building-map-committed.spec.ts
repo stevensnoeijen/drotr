@@ -75,10 +75,7 @@ describe('public/maps/buildings.tmj', () => {
       { name: 'collision', visible: false, data: tileData('collision') },
     ]);
     expect(parsed.collision).toHaveLength(128 * 128);
-    // Collision still comes from the terrain tiles' blocked flags here; the
-    // loader switches to the dedicated collision layer in a later change.
-    expect(Array.from(parsed.collision)).toEqual(
-      tileData('terrain').map((gid) => (tileset.blockedTileIds.has(gid - 1) ? 1 : 0))
-    );
+    // All open: real building collision is not yet derived.
+    expect([...parsed.collision].every((cell) => cell === 0)).toBe(true);
   });
 });
