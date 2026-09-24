@@ -46,6 +46,15 @@ export const maps: readonly MapDefinition[] = [
     allowedScenarioIds: [],
   },
   {
+    id: 'pitesti',
+    title: 'Pitesti',
+    description:
+      'The Pitesti county map, converted from the original .MAP file.',
+    mapSource: `${import.meta.env.BASE_URL}maps/pitesti.tmj`,
+    // No spawn points yet, so only `empty` (allowed on every map) applies.
+    allowedScenarioIds: [],
+  },
+  {
     id: 'buildings',
     title: 'Buildings',
     description:

@@ -183,3 +183,24 @@ describe.skipIf(!rasovaAvailable)('RASOVA.MAP', () => {
     );
   });
 });
+
+const PITESTI_SOURCE = countyMapCdPath('PITESTI');
+const pitestiAvailable = hasCdFile(PITESTI_SOURCE);
+
+describe.skipIf(!pitestiAvailable)('PITESTI.MAP', () => {
+  it('converts to exactly the committed public/maps/pitesti.tmj (catches a stale committed file)', () => {
+    const county = parseCountyMap(readCdFile(PITESTI_SOURCE));
+    const committed = fs.readFileSync(
+      path.join(
+        process.cwd(),
+        'public',
+        'maps',
+        countyTiledMapFileName('PITESTI')
+      ),
+      'utf-8'
+    );
+    expect(serializeTiledMap(buildCountyTiledMap(county)) === committed).toBe(
+      true
+    );
+  });
+});
