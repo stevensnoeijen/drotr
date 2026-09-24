@@ -1,7 +1,7 @@
 import { Container, Sprite, TextureSource } from 'pixi.js';
 import { describe, expect, it } from 'vitest';
 
-import type { MapTileset, ParsedMap } from '~/game/map/load-tiled-map';
+import type { MapTileLayer, MapTileset, ParsedMap } from '~/game/map/load-tiled-map';
 import { MapRenderSystem, TileTextureCache } from './map-render-system';
 
 const TERRAIN_URL = 'http://host/maps/terrain.png';
@@ -35,9 +35,28 @@ function makeMap(overrides: Partial<ParsedMap> & { width: number; height: number
   };
 }
 
+/** A tile layer with the given gids, visible unless said otherwise. */
+function layer(data: readonly number[], visible = true, name = 'layer'): MapTileLayer {
+  return { name, visible, data };
+}
+
+/** Every sprite in one chunk, across its layer containers, in draw order. */
+function chunkSprites(chunk: Container): Sprite[] {
+  return chunk.children.flatMap((layerContainer) => layerContainer.children as Sprite[]);
+}
+
 /** Every sprite across every chunk, in draw order. */
 function sprites(system: MapRenderSystem): Sprite[] {
-  return system.container.children.flatMap((chunk) => (chunk as Container).children as Sprite[]);
+  return system.container.children.flatMap((chunk) => chunkSprites(chunk as Container));
+}
+
+/** Per layer, whether its container is visible in every chunk (or `mixed`). */
+function layerVisibility(system: MapRenderSystem): (boolean | 'mixed')[] {
+  const chunks = system.container.children as Container[];
+  return chunks[0].children.map((_, index) => {
+    const states = new Set(chunks.map((chunk) => chunk.children[index].visible));
+    return states.size === 1 ? [...states][0] : 'mixed';
+  });
 }
 
 describe('TileTextureCache', () => {
@@ -83,8 +102,8 @@ describe('MapRenderSystem', () => {
       height: 2,
       tileLayers: [
         // Ground, then a decoration layer drawn over it.
-        [1, 2, 0, 99999],
-        [0, 0, 0, 3],
+        layer([1, 2, 0, 99999]),
+        layer([0, 0, 0, 3]),
       ],
     });
     const system = new MapRenderSystem({
@@ -100,7 +119,7 @@ describe('MapRenderSystem', () => {
   });
 
   it('fits each tile to its map cell, whatever the tileset’s tile size', () => {
-    const map = makeMap({ width: 3, height: 1, tileLayers: [[0, 0, 1]] });
+    const map = makeMap({ width: 3, height: 1, tileLayers: [layer([0, 0, 1])] });
     const system = new MapRenderSystem({
       map,
       tileTextures: new TileTextureCache(map.tileset, terrainSource()),
@@ -117,7 +136,7 @@ describe('MapRenderSystem', () => {
 
   it('draws a flipped gid as its tile, unflipped', () => {
     // gid 1 with the horizontal and diagonal flip flags set.
-    const map = makeMap({ width: 2, height: 1, tileLayers: [[0x80000001, 0x20000001]] });
+    const map = makeMap({ width: 2, height: 1, tileLayers: [layer([0x80000001, 0x20000001])] });
     const system = new MapRenderSystem({
       map,
       tileTextures: new TileTextureCache(map.tileset, terrainSource()),
@@ -132,7 +151,7 @@ describe('MapRenderSystem', () => {
   });
 
   it('groups tiles into fixed-size chunk containers covering the whole map', () => {
-    const map = makeMap({ width: 20, height: 20, tileLayers: [new Array(400).fill(1)] });
+    const map = makeMap({ width: 20, height: 20, tileLayers: [layer(new Array(400).fill(1))] });
     const system = new MapRenderSystem({
       map,
       tileTextures: new TileTextureCache(map.tileset, terrainSource()),
@@ -140,13 +159,13 @@ describe('MapRenderSystem', () => {
     });
 
     expect(system.container.children).toHaveLength(4);
-    const sizes = system.container.children.map((chunk) => chunk.children.length);
+    const sizes = system.container.children.map((chunk) => chunkSprites(chunk as Container).length);
     expect(sizes).toEqual([16 * 16, 4 * 16, 16 * 4, 4 * 4]);
   });
 
   it('culls chunks outside the camera view', () => {
     // 64x64 tiles of 32px in 16-tile chunks: 4x4 chunks of 512px.
-    const map = makeMap({ width: 64, height: 64, tileLayers: [new Array(4096).fill(1)] });
+    const map = makeMap({ width: 64, height: 64, tileLayers: [layer(new Array(4096).fill(1))] });
     const system = new MapRenderSystem({
       map,
       tileTextures: new TileTextureCache(map.tileset, terrainSource()),
@@ -173,18 +192,89 @@ describe('MapRenderSystem', () => {
     expect(shown()).toEqual(['0000', '0000', '0000', '0000']);
   });
 
-  it('destroys every chunk on dispose, leaving no orphaned Pixi objects', () => {
-    const map = makeMap({ width: 20, height: 20, tileLayers: [new Array(400).fill(1)] });
+  it('destroys every chunk and layer container on dispose, leaving no orphaned Pixi objects', () => {
+    const map = makeMap({
+      width: 20,
+      height: 20,
+      tileLayers: [layer(new Array(400).fill(1)), layer(new Array(400).fill(2), false)],
+    });
     const system = new MapRenderSystem({
       map,
       tileTextures: new TileTextureCache(map.tileset, terrainSource()),
     });
     const chunks = [...system.container.children];
+    const layerContainers = chunks.flatMap((chunk) => [...chunk.children]);
+    const allSprites = sprites(system);
 
     system.dispose();
 
     expect(chunks).toHaveLength(4);
+    expect(layerContainers).toHaveLength(8);
     expect(chunks.every((chunk) => chunk.destroyed)).toBe(true);
+    expect(layerContainers.every((container) => container.destroyed)).toBe(true);
+    expect(allSprites.every((sprite) => sprite.destroyed)).toBe(true);
     expect(system.container.destroyed).toBe(true);
+    // Toggling after dispose is a harmless no-op.
+    expect(() => system.setLayerVisibility([true, true])).not.toThrow();
+  });
+
+  describe('tile layer visibility', () => {
+    function threeLayers() {
+      const map = makeMap({
+        width: 20,
+        height: 20,
+        tileLayers: [
+          layer(new Array(400).fill(1), true, 'terrain'),
+          layer(new Array(400).fill(2), true, 'intact'),
+          layer(new Array(400).fill(3), false, 'ruined'),
+        ],
+      });
+      return new MapRenderSystem({
+        map,
+        tileTextures: new TileTextureCache(map.tileset, terrainSource()),
+        chunkSize: 16,
+      });
+    }
+
+    it('gives every chunk one container per layer, back to front, labelled by layer', () => {
+      const system = threeLayers();
+      for (const chunk of system.container.children) {
+        expect(chunk.children.map((child) => child.label)).toEqual(['terrain', 'intact', 'ruined']);
+      }
+    });
+
+    it('builds a hidden layer, but starts it out invisible', () => {
+      const system = threeLayers();
+      expect(layerVisibility(system)).toEqual([true, true, false]);
+      // Its sprites exist, ready to be shown.
+      const ruined = system.container.children.flatMap((chunk) => chunk.children[2].children);
+      expect(ruined).toHaveLength(400);
+    });
+
+    it('shows and hides layers in every chunk at once', () => {
+      const system = threeLayers();
+
+      system.setLayerVisibility([true, false, true]);
+      expect(layerVisibility(system)).toEqual([true, false, true]);
+
+      system.setLayerVisibility([false, true, false]);
+      expect(layerVisibility(system)).toEqual([false, true, false]);
+    });
+
+    it('leaves a layer with no entry as it is', () => {
+      const system = threeLayers();
+      system.setLayerVisibility([false]);
+      expect(layerVisibility(system)).toEqual([false, true, false]);
+    });
+
+    it('is independent of chunk culling', () => {
+      const system = threeLayers();
+      system.cull({ x: 0, y: 0, width: 100, height: 100 });
+      system.setLayerVisibility([true, true, true]);
+
+      const chunkShown = system.container.children.map((chunk) => chunk.visible);
+      expect(chunkShown).toEqual([true, false, false, false]);
+      expect(layerVisibility(system)).toEqual([true, true, true]);
+    });
   });
 });

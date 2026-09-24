@@ -27,8 +27,8 @@ import {
  * - `intact`: the intact exterior overlay, visible. Empty (gid 0) where
  *   the grid is 0.
  * - `ruined`: the ruined overlay, hidden. Empty (gid 0) where the grid is 0.
- *   The engine drops hidden layers, so it's only for inspection in the Tiled
- *   editor: toggle `intact` off and `ruined` on.
+ *   The engine loads it but starts it hidden; to see it, toggle `intact`
+ *   off and `ruined` on in the Tiled editor.
  * - `spawns`: an empty object layer (the loader requires one).
  */
 

@@ -155,15 +155,16 @@ describe('buildBuildingsTiledMap', () => {
     expect(first.endsWith('}\n')).toBe(true);
   });
 
-  it('passes parseTiledMap, drawing terrain then intact, not ruined', () => {
+  it('passes parseTiledMap, drawing terrain then intact, with ruined kept hidden', () => {
     const map = buildBuildingsTiledMap(syntheticBuildingMap());
     const parsed = parseTiledMap(map, terrainTileset);
 
     expect(parsed).toMatchObject({ width: 128, height: 128, tileSize: 40 });
     expect(parsed.spawns).toEqual([]);
     expect(parsed.tileLayers).toEqual([
-      layer(map, 'terrain').data,
-      layer(map, 'intact').data,
+      { name: 'terrain', visible: true, data: layer(map, 'terrain').data },
+      { name: 'intact', visible: true, data: layer(map, 'intact').data },
+      { name: 'ruined', visible: false, data: layer(map, 'ruined').data },
     ]);
 
     // Collision comes from the terrain tiles' blocked flags alone.

@@ -66,10 +66,11 @@ describe('public/maps/buildings.tmj', () => {
     expect(parsed.height).toEqual(128);
     expect(parsed.tileSize).toEqual(40);
     expect(parsed.spawns).toEqual([]);
-    // ruined is hidden, so terrain and intact are the drawn layers.
+    // All three are kept; ruined starts out hidden.
     expect(parsed.tileLayers).toEqual([
-      tileData('terrain'),
-      tileData('intact'),
+      { name: 'terrain', visible: true, data: tileData('terrain') },
+      { name: 'intact', visible: true, data: tileData('intact') },
+      { name: 'ruined', visible: false, data: tileData('ruined') },
     ]);
     expect(parsed.collision).toHaveLength(128 * 128);
   });

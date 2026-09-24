@@ -491,8 +491,8 @@ it. Its layers, back to front:
   gid 1). The engine's collision grid comes from this layer.
 - **`intact`** — grid 1, visible. Empty (gid 0) where the grid is 0.
 - **`ruined`** — grid 2, **hidden**. Empty (gid 0) where the grid is 0.
-  The engine drops hidden layers, so this one is for inspection in the
-  Tiled editor: toggle `intact` off and `ruined` on.
+  The engine loads it but starts it hidden; to see it, toggle `intact`
+  off and `ruined` on in the Tiled editor.
 - **`spawns`** — an empty object layer (the loader requires one).
 
 In the engine it is the `buildings` map; view it with the `empty`

@@ -86,12 +86,16 @@ export interface MapRenderSystemOptions {
 }
 
 /**
- * Draws a map's terrain into {@link container}: every visible tile layer,
- * each gid resolved through the map's tileset to its tile's art.
+ * Draws a map's terrain into {@link container}: every tile layer, each gid
+ * resolved through the map's tileset to its tile's art.
  *
  * Tiles are grouped into fixed-size chunks, one container each, and
  * {@link cull} hides every chunk outside the camera's view, so a full-size
- * county map only draws the handful of chunks on screen.
+ * county map only draws the handful of chunks on screen. Inside a chunk,
+ * each tile layer gets its own container, back to front, so a layer can be
+ * shown or hidden ({@link setLayerVisibility}) without rebuilding anything.
+ * A layer hidden in the map starts out built but invisible. Visibility is
+ * display only; it never touches the map's collision.
  */
 export class MapRenderSystem {
   /** Terrain root; add it beneath everything else in the world. */
@@ -100,6 +104,11 @@ export class MapRenderSystem {
   private readonly grid: ChunkGrid;
   /** Chunk containers, row-major by chunk (`row * grid.columns + column`). */
   private chunks: Container[] = [];
+  /**
+   * Per tile layer (same order as `map.tileLayers`), that layer's container
+   * in every chunk, in chunk order.
+   */
+  private layerContainers: Container[][] = [];
   private lastRange: ChunkRange | undefined;
 
   constructor(private readonly options: MapRenderSystemOptions) {
@@ -126,6 +135,22 @@ export class MapRenderSystem {
     }
   }
 
+  /**
+   * Shows or hides each tile layer, by index into `map.tileLayers`. A
+   * missing entry leaves that layer as it is.
+   */
+  public setLayerVisibility(visibility: readonly boolean[]): void {
+    this.layerContainers.forEach((containers, layer) => {
+      const visible = visibility[layer];
+      if (visible === undefined) {
+        return;
+      }
+      for (const container of containers) {
+        container.visible = visible;
+      }
+    });
+  }
+
   /** Destroys every chunk and its sprites, and the per-gid textures. */
   public dispose(): void {
     this.destroyChunks();
@@ -138,10 +163,12 @@ export class MapRenderSystem {
       chunk.destroy({ children: true });
     }
     this.chunks = [];
+    this.layerContainers = [];
     this.lastRange = undefined;
   }
 
   private build(): void {
+    this.layerContainers = this.options.map.tileLayers.map(() => []);
     for (let row = 0; row < this.grid.rows; row++) {
       for (let column = 0; column < this.grid.columns; column++) {
         const chunk = new Container();
@@ -152,24 +179,30 @@ export class MapRenderSystem {
     }
   }
 
-  /** Every visible tile layer's sprites for this chunk, back to front. */
+  /**
+   * One container per tile layer for this chunk, back to front, holding
+   * that layer's sprites and starting out as visible as the layer is.
+   */
   private fillChunk(chunk: Container, column: number, row: number): void {
     const { map, tileTextures } = this.options;
     const { x0, y0, x1, y1 } = chunkCells(this.grid, column, row);
 
-    for (const layer of map.tileLayers) {
+    map.tileLayers.forEach((layer, index) => {
+      const layerContainer = new Container({ label: layer.name, visible: layer.visible });
       for (let y = y0; y < y1; y++) {
         for (let x = x0; x < x1; x++) {
-          const texture = tileTextures.get(decodeGid(layer[y * map.width + x] ?? 0));
+          const texture = tileTextures.get(decodeGid(layer.data[y * map.width + x] ?? 0));
           if (!texture) {
             continue;
           }
           const sprite = new Sprite(texture);
           placeTileSprite(sprite, x, y, map.tileSize);
-          chunk.addChild(sprite);
+          layerContainer.addChild(sprite);
         }
       }
-    }
+      chunk.addChild(layerContainer);
+      this.layerContainers[index].push(layerContainer);
+    });
   }
 }
 
