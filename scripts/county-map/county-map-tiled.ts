@@ -46,13 +46,17 @@ const TERRAIN_TILESET_SOURCE = 'terrain.tsx';
  */
 const COLLISION_BLOCKED_GID = tileIdToGid(atlasIndexToTileId(0));
 
-/** Converts one Section A atlas index to its `terrain` gid. */
-function tileGid(index: number, x: number, y: number): number {
+/**
+ * Converts one `.MAP` atlas index at cell `(x, y)` to its `terrain.tsx` gid.
+ *
+ * @throws {RangeError} for an index above {@link VERBATIM_ATLAS_INDEX_MAX}.
+ */
+export function atlasIndexGid(index: number, x: number, y: number): number {
   // atlasIndexToTileId also accepts the drawbridge/rubble extras past the
-  // verbatim range, which no county uses, so an index there is bad data.
+  // verbatim range, which no .MAP file uses, so an index there is bad data.
   if (index > VERBATIM_ATLAS_INDEX_MAX) {
     throw new RangeError(
-      `Tile index ${index} at (${x}, ${y}) is above ${VERBATIM_ATLAS_INDEX_MAX}, the highest atlas index a county map can use`
+      `Tile index ${index} at (${x}, ${y}) is above ${VERBATIM_ATLAS_INDEX_MAX}, the highest atlas index a .MAP file can use`
     );
   }
   return tileIdToGid(atlasIndexToTileId(index));
@@ -63,7 +67,7 @@ function terrainData(map: CountyMap): number[] {
   for (let y = 0; y < SECTION_A_SIZE; y++) {
     for (let x = 0; x < SECTION_A_SIZE; x++) {
       const index = y * SECTION_A_SIZE + x;
-      data[index] = tileGid(map.tiles[index], x, y);
+      data[index] = atlasIndexGid(map.tiles[index], x, y);
     }
   }
   return data;
@@ -84,20 +88,41 @@ function collisionData(map: CountyMap): number[] {
  * {@link VERBATIM_ATLAS_INDEX_MAX}.
  */
 export function buildCountyTiledMap(map: CountyMap): TiledMap {
-  const terrain: TiledLayerTilelayer = {
-    id: 1,
-    name: 'terrain',
+  return buildTerrainTiledMap([
+    tileLayer(1, 'terrain', terrainData(map)),
+    spawnsLayer(2),
+    tileLayer(3, 'collision', collisionData(map), false),
+  ]);
+}
+
+/** A 128×128 tile layer, in the key order Tiled writes. */
+export function tileLayer(
+  id: number,
+  name: string,
+  data: number[],
+  visible = true
+): TiledLayerTilelayer {
+  return {
+    id,
+    name,
     type: 'tilelayer',
     x: 0,
     y: 0,
     width: SECTION_A_SIZE,
     height: SECTION_A_SIZE,
     opacity: 1,
-    visible: true,
-    data: terrainData(map),
+    visible,
+    data,
   };
-  const spawns: TiledLayerObjectgroup = {
-    id: 2,
+}
+
+/**
+ * The empty `spawns` object layer `parseTiledMap` requires, for spawn
+ * points to be placed by hand.
+ */
+export function spawnsLayer(id: number): TiledLayerObjectgroup {
+  return {
+    id,
     name: 'spawns',
     type: 'objectgroup',
     x: 0,
@@ -109,19 +134,17 @@ export function buildCountyTiledMap(map: CountyMap): TiledMap {
     draworder: 'topdown',
     objects: [],
   };
-  const collision: TiledLayerTilelayer = {
-    id: 3,
-    name: 'collision',
-    type: 'tilelayer',
-    x: 0,
-    y: 0,
-    width: SECTION_A_SIZE,
-    height: SECTION_A_SIZE,
-    opacity: 1,
-    visible: false,
-    data: collisionData(map),
-  };
+}
 
+/**
+ * Wraps `layers` (back to front, ids 1..n) in a 128×128, 40 px map that
+ * references `terrain.tsx` as its one external tileset. Key order is fixed
+ * (it mirrors `public/maps/test.tmj`), so {@link serializeTiledMap} of the
+ * result is deterministic.
+ */
+export function buildTerrainTiledMap(
+  layers: (TiledLayerTilelayer | TiledLayerObjectgroup)[]
+): TiledMap {
   // tiled-types only models an embedded tileset; an external reference is
   // just its firstgid and source, which is all a map file stores for one.
   const tilesetReference = {
@@ -140,12 +163,12 @@ export function buildCountyTiledMap(map: CountyMap): TiledMap {
     tilewidth: COUNTY_TILE_SIZE,
     tileheight: COUNTY_TILE_SIZE,
     infinite: false,
-    nextlayerid: 4,
+    nextlayerid: Math.max(0, ...layers.map((layer) => layer.id ?? 0)) + 1,
     nextobjectid: 1,
     compressionlevel: -1,
     properties: [],
     tilesets: [tilesetReference],
-    layers: [terrain, spawns, collision],
+    layers,
   };
 }
 
