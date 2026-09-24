@@ -459,7 +459,7 @@ layers:
 - **`spawns`** — an empty object layer; spawn points aren't in the `.MAP`
   and are placed by hand.
 - **`collision`** — hidden by default. Section B collapsed to one
-  value per tile (blocked only when all four subcells are; see "Test
+  value per tile (blocked once 2 or more of its 4 subcells are; see "Test
   fixture strategy" below), drawn as the collision-marker tile
   (`COLLISION_MARKER_TILE_ID`, see [`ART_FORMAT.md`](./ART_FORMAT.md),
   "Terrain tileset export") where blocked and left empty (gid 0) where
@@ -469,13 +469,19 @@ layers:
   doesn't draw over `terrain` by default, and can still be switched on, in
   the Tiled editor or through the engine's `tile-layers` debug option.
 
-For `FAGARAS` the collapsed Section B mask blocks **3,315** of 16,384
-tiles. An earlier per-tile classification of the `terrain` tileset (since
-removed — see [`ART_FORMAT.md`](./ART_FORMAT.md), "Tile walkability")
-blocked a different **5,152**, disagreeing with the mask on 1,859 cells
-(11.3%); the `collision` layer is exact where that classification was only
-an approximation. Per tile, the number of blocked subcells is 0 for
-10,748 tiles, 1 for 448, 2 for 1,049, 3 for 824 and 4 for 3,315.
+For `FAGARAS` the collapsed Section B mask blocks **5,188** of 16,384
+tiles: every tile with 2 or more of its 4 subcells blocked. Per tile, the
+number of blocked subcells is 0 for 10,748 tiles, 1 for 448, 2 for 1,049,
+3 for 824 and 4 for 3,315 — so the 2-or-more rule blocks the last three
+groups (1,049 + 824 + 3,315 = 5,188), rather than only the all-four group
+(3,315) that an earlier, stricter rule used. Requiring all four left most
+cliff and partial-rock tiles walkable, since they typically mark only two
+or three of their subcells; requiring a majority instead keeps them
+impassable. An even earlier per-tile classification of the `terrain`
+tileset (since removed — see [`ART_FORMAT.md`](./ART_FORMAT.md), "Tile
+walkability") blocked a different **5,152**, which happens to be close to
+the 2-or-more figure but was arrived at independently and no longer
+applies.
 
 ### Converting `BUILDING.MAP`
 
@@ -574,5 +580,6 @@ does the same with its own synthetic 983,040-byte fixture
 The parser treats a Section B subcell as blocked when `hi != 0`, so a
 subcell carrying only `256` counts (see "`256` is not a third terrain
 class" above). `collapseCollisionMaskPerTile` folds the 2×2 subcells down
-to one value per tile, which is blocked only when **all four** of its
-subcells are.
+to one value per tile, which is blocked when **2 or more** of its
+4 subcells are — a majority rather than all four, so cliffs and other
+partially-solid tiles still block movement.

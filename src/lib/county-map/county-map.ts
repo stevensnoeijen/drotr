@@ -119,9 +119,13 @@ export function subcellAt(map: CountyMap, sx: number, sy: number): number {
 
 /**
  * Collapses Section B's 2×2 subcells down to one collision value per tile,
- * row-major (`[y * 128 + x]`), `128 * 128` long: `1` only when **all four**
- * of the tile's subcells are blocked (any non-zero bitmask, so a lone `256`
- * counts), `0` otherwise.
+ * row-major (`[y * 128 + x]`), `128 * 128` long: `1` when **two or more**
+ * of the tile's four subcells are blocked (any non-zero bitmask, so a lone
+ * `256` counts), `0` otherwise. Requiring only a majority rather than all
+ * four keeps partially-solid tiles — cliffs and rock edges chief among them
+ * — impassable: most of those tiles only mark two or three of their
+ * subcells as blocked, so an "all four" rule left them walkable despite
+ * visibly being cliff faces.
  */
 export function collapseCollisionMaskPerTile(map: CountyMap): Uint8Array {
   const collapsed = new Uint8Array(SECTION_A_SIZE * SECTION_A_SIZE);
@@ -129,12 +133,12 @@ export function collapseCollisionMaskPerTile(map: CountyMap): Uint8Array {
     for (let x = 0; x < SECTION_A_SIZE; x++) {
       const sx = x * 2;
       const sy = y * 2;
-      const blocked =
-        subcellAt(map, sx, sy) !== 0 &&
-        subcellAt(map, sx + 1, sy) !== 0 &&
-        subcellAt(map, sx, sy + 1) !== 0 &&
-        subcellAt(map, sx + 1, sy + 1) !== 0;
-      collapsed[y * SECTION_A_SIZE + x] = blocked ? 1 : 0;
+      const blockedCount =
+        (subcellAt(map, sx, sy) !== 0 ? 1 : 0) +
+        (subcellAt(map, sx + 1, sy) !== 0 ? 1 : 0) +
+        (subcellAt(map, sx, sy + 1) !== 0 ? 1 : 0) +
+        (subcellAt(map, sx + 1, sy + 1) !== 0 ? 1 : 0);
+      collapsed[y * SECTION_A_SIZE + x] = blockedCount >= 2 ? 1 : 0;
     }
   }
   return collapsed;

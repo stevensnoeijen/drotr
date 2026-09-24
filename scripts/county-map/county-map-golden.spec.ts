@@ -104,11 +104,11 @@ describe.skipIf(!available)('FAGARAS.MAP', () => {
     });
   });
 
-  it('collapses to 3,315 blocked tiles, as drawn in collision', () => {
-    // Any non-zero hi blocks, so the 59 subcells carrying only 256 count.
-    // Counting bit 2 (4) alone would give 3,307 instead.
+  it('collapses to 5,188 blocked tiles, as drawn in collision', () => {
+    // A tile blocks once 2 or more of its 4 subcells are non-zero (any
+    // non-zero hi counts, so the 59 subcells carrying only 256 count too).
     const collapsed = collapseCollisionMaskPerTile(county);
-    expect(collapsed.reduce((sum, cell) => sum + cell, 0)).toEqual(3315);
+    expect(collapsed.reduce((sum, cell) => sum + cell, 0)).toEqual(5188);
 
     const map = buildCountyTiledMap(county) as TiledMap;
     const debug = map.layers.find(
@@ -117,6 +117,6 @@ describe.skipIf(!available)('FAGARAS.MAP', () => {
     const drawn = (debug?.data as number[]).filter(
       (gid) => gid === COLLISION_MARKER_GID
     );
-    expect(drawn).toHaveLength(3315);
+    expect(drawn).toHaveLength(5188);
   });
 });

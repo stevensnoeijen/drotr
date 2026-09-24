@@ -166,11 +166,16 @@ describe('collapseCollisionMaskPerTile', () => {
   it.each<[string, [number, number, number, number]]>([
     ['0 of 4', [0, 0, 0, 0]],
     ['1 of 4', [4, 0, 0, 0]],
+  ])('leaves a tile with %s subcells blocked open', (_label, values) => {
+    expect(collapsedAt(values)).toEqual(0);
+  });
+
+  it.each<[string, [number, number, number, number]]>([
     ['2 of 4', [0, 4, 4, 0]],
     ['3 of 4 (bottom-right open)', [4, 4, 4, 0]],
     ['3 of 4 (top-left open)', [0, 4, 4, 4]],
-  ])('leaves a tile with %s subcells blocked open', (_label, values) => {
-    expect(collapsedAt(values)).toEqual(0);
+  ])('blocks a tile with %s subcells blocked', (_label, values) => {
+    expect(collapsedAt(values)).toEqual(1);
   });
 
   it('counts a lone 256 as blocked', () => {

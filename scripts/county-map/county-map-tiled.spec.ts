@@ -165,11 +165,14 @@ describe('buildCountyTiledMap', () => {
     const blocked = (debug.data as number[]).flatMap((gid, i) =>
       gid === COLLISION_MARKER_GID ? [[i % 128, Math.floor(i / 128)]] : []
     );
-    // Row-major order; the 3-of-4, 2-of-4 and 1-of-4 tiles stay open.
+    // Row-major order; the 3-of-4 and 2-of-4 tiles block too, only the
+    // 1-of-4 tile stays open.
     expect(blocked).toEqual([
       [2, 0],
       [0, 2],
       [3, 3],
+      [4, 4],
+      [5, 5],
     ]);
   });
 
