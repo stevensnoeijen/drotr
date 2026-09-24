@@ -87,8 +87,9 @@ Maps, unlike sprites, are now built from `.cd` directly:
   `COUNTIES/<NAME>.MAP` into a Tiled map, `public/maps/<name>.tmj`, drawn
   with that tileset (see "Converting to Tiled" in
   [`MAP_FORMAT.md`](./MAP_FORMAT.md)). So far
-  `public/maps/fagaras.tmj`, `public/maps/sibiu.tmj` and
-  `public/maps/brasov.tmj` are converted and committed; the other 9
+  `public/maps/fagaras.tmj`, `public/maps/sibiu.tmj`,
+  `public/maps/brasov.tmj` and `public/maps/rasova.tmj` are converted and
+  committed; the other 8
   counties aren't yet. `npm run convert:map -- BUILDING` converts
   `BUILDING.MAP` as-is into `public/maps/buildings.tmj` (committed); its
   buildings aren't yet cut out as individual prefabs.
