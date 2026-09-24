@@ -232,7 +232,8 @@ describe('drawMoveLines', () => {
     const expectedRoute = planMovePath(
       openGrid,
       { x: legTarget.x, y: legTarget.y },
-      { x: destination.x, y: destination.y }
+      { x: destination.x, y: destination.y },
+      CELL_SIZE
     );
     expect(expectedRoute.status).toBe('found');
 

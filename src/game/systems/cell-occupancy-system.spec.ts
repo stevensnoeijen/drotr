@@ -41,7 +41,7 @@ const OPEN = `
 function setup(art: string = OPEN) {
   const world = new World<Entity>();
   const queries = createQueries(world);
-  const grid = new OccupancyGrid(gridFrom(art));
+  const grid = new OccupancyGrid(gridFrom(art), CELL_SIZE);
   const occupancy = createCellOccupancySystem(queries, grid);
   const integrate = createMoveVelocitySystem(queries);
 

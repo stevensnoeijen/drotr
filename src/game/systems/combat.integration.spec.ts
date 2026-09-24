@@ -46,7 +46,7 @@ describe('perception + seek + move + combat integration', () => {
     // between them; the occupancy grid is what decides which one gets it (and
     // so stops them walking through one another).
     const grid = { width: 16, height: 4, collision: new Uint8Array(16 * 4) };
-    const occupancy = new OccupancyGrid(grid);
+    const occupancy = new OccupancyGrid(grid, CELL_SIZE);
 
     // Four cells apart: outside swordsmen's 1-cell attack range, inside
     // their 5-cell aggro range.

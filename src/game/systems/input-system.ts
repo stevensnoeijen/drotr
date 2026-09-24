@@ -383,7 +383,7 @@ export function moveSelectedTo(
     }
 
     delete entity.pendingMoveOrder;
-    const result = planMoveOrder(grid, entity.transform.position, destination);
+    const result = planMoveOrder(grid, entity.transform.position, destination, CELL_SIZE);
     applyMoveOrder(entity, result);
   }
 }

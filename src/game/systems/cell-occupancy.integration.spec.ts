@@ -46,7 +46,7 @@ describe('cell occupancy + move order integration', () => {
     const world = new World<Entity>();
     const queries = createQueries(world);
     const map = gridFrom(art);
-    const occupancy = new OccupancyGrid(map);
+    const occupancy = new OccupancyGrid(map, CELL_SIZE);
 
     const path = createMovePathSystem(queries);
     const target = createMoveTargetSystem(queries);

@@ -33,7 +33,8 @@ const open = () =>
       .....
       .....
       .....
-    `)
+    `),
+    CELL_SIZE
   );
 
 describe('OccupancyGrid', () => {
@@ -74,6 +75,17 @@ describe('OccupancyGrid', () => {
 
       expect(centre).toEqual({ x: 3 * CELL_SIZE + CELL_SIZE / 2, y: 2 * CELL_SIZE + CELL_SIZE / 2 });
       expect(grid.indexAt(centre)).toBe(grid.indexOf(3, 2));
+    });
+
+    it('measures world positions in cells of its own cell size', () => {
+      // A map whose tiles aren't the default size: the occupancy grid layers
+      // over that map's own tile grid, so cells are that big too.
+      const grid = new OccupancyGrid(gridFrom(`....\n....`), 40);
+
+      expect(grid.cellSize).toBe(40);
+      expect(grid.indexAt({ x: 39, y: 39 })).toBe(grid.indexOf(0, 0));
+      expect(grid.indexAt({ x: 40, y: 40 })).toBe(grid.indexOf(1, 1));
+      expect(grid.centreOf(grid.indexOf(3, 1))).toEqual({ x: 140, y: 60 });
     });
 
     it('decodes a row-major index back to its (col, row)', () => {
@@ -161,7 +173,7 @@ describe('OccupancyGrid', () => {
     });
 
     it('drops every claim on clear, leaving terrain intact', () => {
-      const grid = new OccupancyGrid(gridFrom(`.#.`));
+      const grid = new OccupancyGrid(gridFrom(`.#.`), CELL_SIZE);
       grid.reserve(grid.indexOf(0, 0), 1);
 
       grid.clear();
@@ -178,7 +190,8 @@ describe('OccupancyGrid', () => {
           ...
           .#.
           ...
-        `)
+        `),
+        CELL_SIZE
       );
 
     it('never offers a terrain-blocked cell, however empty it is of units', () => {
@@ -202,7 +215,7 @@ describe('OccupancyGrid', () => {
         ...
         ...
       `);
-      const grid = new OccupancyGrid(map);
+      const grid = new OccupancyGrid(map, CELL_SIZE);
 
       map.collision[grid.indexOf(1, 0)] = 1;
 
@@ -237,7 +250,8 @@ describe('OccupancyGrid', () => {
           ...
           .#.
           ...
-        `)
+        `),
+        CELL_SIZE
       );
 
       const snapshot = grid.asBlockedGridExcluding(1);
@@ -266,7 +280,8 @@ describe('findNearestAvailableCell', () => {
         .....
         .....
         .....
-      `)
+      `),
+      CELL_SIZE
     );
 
   it('returns the requested cell when it is free', () => {
@@ -309,7 +324,8 @@ describe('findNearestAvailableCell', () => {
         ###
         #.#
         ###
-      `)
+      `),
+      CELL_SIZE
     );
     const centre = occupancy.indexOf(1, 1);
     occupancy.reserve(centre, 9);
@@ -318,7 +334,7 @@ describe('findNearestAvailableCell', () => {
   });
 
   it('gives up rather than searching forever when nothing is free', () => {
-    const occupancy = new OccupancyGrid(gridFrom(`..`));
+    const occupancy = new OccupancyGrid(gridFrom(`..`), CELL_SIZE);
     occupancy.reserve(occupancy.indexOf(0, 0), 9);
     occupancy.reserve(occupancy.indexOf(1, 0), 9);
 

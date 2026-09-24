@@ -190,7 +190,7 @@ describe('createSeekSystem', () => {
     function setup() {
       const world = new World<Entity>();
       const queries = createQueries(world);
-      const occupancy = new OccupancyGrid(openGround);
+      const occupancy = new OccupancyGrid(openGround, CELL_SIZE);
       const system = createSeekSystem(queries, openGround, occupancy);
 
       const target = world.add({

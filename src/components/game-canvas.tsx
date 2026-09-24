@@ -334,7 +334,7 @@ export default function GameCanvas({
       // occupancy. No navigation grid (no map, or a tile size that doesn't
       // line up with CELL_SIZE) means no occupancy either — there is no
       // agreed cell grid to reserve cells in.
-      const occupancyGrid = navigationGrid ? new OccupancyGrid(navigationGrid) : undefined;
+      const occupancyGrid = navigationGrid ? new OccupancyGrid(navigationGrid, CELL_SIZE) : undefined;
 
       const canvas = app.canvas;
       inputSystem = new InputSystem(canvas);

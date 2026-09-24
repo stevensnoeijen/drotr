@@ -37,11 +37,15 @@ export type MoveOrderResult =
  * position is current at plan time, and a caller that plans from a stale
  * position is exactly the bug (see `PendingMoveOrder`) this split guards
  * against.
+ *
+ * `cellSize` is the world size of one of `grid`'s cells (see
+ * `planMovePath`); unused when there is no grid to route through.
  */
 export function planMoveOrder(
   grid: GridLike | undefined,
   from: Point,
-  destination: Point
+  destination: Point,
+  cellSize: number
 ): MoveOrderResult {
   if (!grid) {
     return {
@@ -50,7 +54,7 @@ export function planMoveOrder(
     };
   }
 
-  const { status, waypoints } = planMovePath(grid, from, destination);
+  const { status, waypoints } = planMovePath(grid, from, destination, cellSize);
   if (status !== 'found') {
     return { kind: 'none' };
   }

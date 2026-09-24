@@ -17,6 +17,7 @@ import { createMoveTargetSystem } from './move-target-system';
 import { createMoveVelocitySystem } from './move-velocity-system';
 import { createPerceptionSystem, runPerceptionScan } from './perception-system';
 import { createSeekSystem } from './seek-system';
+import { CELL_SIZE } from '~/lib/grid';
 
 /**
  * End-to-end coverage for the visual milestone: a scripted battle run to
@@ -48,7 +49,7 @@ describe('death + render cleanup integration', () => {
 
     runPerceptionScan(world, queries);
     const grid = { width: 16, height: 4, collision: new Uint8Array(16 * 4) };
-    const occupancy = new OccupancyGrid(grid);
+    const occupancy = new OccupancyGrid(grid, CELL_SIZE);
 
     const perception = createPerceptionSystem(queries);
     const seek = createSeekSystem(queries, grid, occupancy);

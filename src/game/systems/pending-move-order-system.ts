@@ -2,6 +2,7 @@ import type { Queries } from '~/game/ecs/world';
 import type { System } from '~/game/ecs/system';
 import { applyMoveOrder, planMoveOrder } from '~/game/navigation/move-order';
 import type { GridLike } from '~/lib/navigation/astar';
+import { CELL_SIZE } from '~/lib/grid';
 
 /**
  * Applies a `PendingMoveOrder` staged by `moveSelectedTo` once the unit it
@@ -42,7 +43,7 @@ export function createPendingMoveOrderSystem(
       delete self.pendingMoveOrder;
       applyMoveOrder(
         self,
-        planMoveOrder(grid, self.transform.position, pending.destination)
+        planMoveOrder(grid, self.transform.position, pending.destination, CELL_SIZE)
       );
     }
   };

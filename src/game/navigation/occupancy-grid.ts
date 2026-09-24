@@ -1,4 +1,4 @@
-import { CELL_SIZE, toWorldPosition } from '~/lib/grid';
+import { toWorldPosition } from '~/lib/grid';
 import { Vector2 } from '~/lib/math/vector2';
 import type { Point } from '~/lib/math/types';
 import { toCollisionGrid, type CollisionGrid, type GridLike } from '~/lib/navigation/astar';
@@ -42,6 +42,13 @@ export class OccupancyGrid {
   public readonly height: number;
 
   /**
+   * World size of one cell — the map's tile size, since this grid *is* the
+   * map's tile grid. Read by anything that turns a cell index back into a
+   * world position, or plans a route over {@link asBlockedGridExcluding}.
+   */
+  public readonly cellSize: number;
+
+  /**
    * The map's terrain collision buffer, borrowed rather than copied: terrain
    * is static for the lifetime of a map, and sharing it keeps the two layers
    * from drifting apart.
@@ -57,10 +64,11 @@ export class OccupancyGrid {
 
   private nextOccupantId = NO_OCCUPANT + 1;
 
-  constructor(grid: GridLike) {
+  constructor(grid: GridLike, cellSize: number) {
     const { width, height, collision } = toCollisionGrid(grid);
     this.width = width;
     this.height = height;
+    this.cellSize = cellSize;
     this.collision = collision;
     this.occupants = new Int32Array(width * height);
   }
@@ -93,7 +101,7 @@ export class OccupancyGrid {
    * coordinates (which land out of bounds and return {@link NO_CELL}).
    */
   public indexAtWorld(x: number, y: number): number {
-    return this.indexOf(Math.floor(x / CELL_SIZE), Math.floor(y / CELL_SIZE));
+    return this.indexOf(Math.floor(x / this.cellSize), Math.floor(y / this.cellSize));
   }
 
   /** {@link indexAtWorld} for a position that already exists as a point. */
@@ -113,7 +121,7 @@ export class OccupancyGrid {
   public centreOf(index: number): Point {
     const centre = toWorldPosition(
       new Vector2(index % this.width, Math.floor(index / this.width)),
-      CELL_SIZE
+      this.cellSize
     );
     return { x: centre.x, y: centre.y };
   }

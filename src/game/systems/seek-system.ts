@@ -392,7 +392,7 @@ export function createSeekSystem(
         const planned = planMoveOrder(collisionGrid, position, {
           x: destinationX,
           y: destinationY,
-        });
+        },CELL_SIZE);
 
         delete self.movePath;
         delete self.moveTarget;

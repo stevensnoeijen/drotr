@@ -4,7 +4,7 @@ import {
   type GridLike,
   type PathStatus,
 } from '~/lib/navigation/astar';
-import { CELL_SIZE, toGridPosition, toWorldPosition } from '~/lib/grid';
+import { toGridPosition, toWorldPosition } from '~/lib/grid';
 import { Vector2 } from '~/lib/math/vector2';
 import type { Point } from '~/lib/math/types';
 
@@ -22,6 +22,9 @@ export interface PlannedMovePath {
 /**
  * Turns a world-space move order into the world-space waypoints a unit
  * should walk, by routing through the map's collision grid.
+ *
+ * `cellSize` is the world size of one of `grid`'s cells — the loaded map's
+ * tile size, since the collision grid is the map's own tile grid.
  *
  * The whole world<->cell conversion lives here rather than in
  * `~/lib/navigation/astar`, which stays a pure grid algorithm with no notion
@@ -48,10 +51,11 @@ export function planMovePath(
   grid: GridLike,
   from: Point,
   to: Point,
+  cellSize: number,
   options?: FindPathOptions
 ): PlannedMovePath {
-  const start = toGridPosition(new Vector2(from.x, from.y), CELL_SIZE);
-  const end = toGridPosition(new Vector2(to.x, to.y), CELL_SIZE);
+  const start = toGridPosition(new Vector2(from.x, from.y), cellSize);
+  const end = toGridPosition(new Vector2(to.x, to.y), cellSize);
 
   const { status, cells } = findPath(grid, start, end, { ...options, smooth: false });
   if (status !== 'found') {
@@ -60,7 +64,7 @@ export function planMovePath(
 
   // `cells[0]` is the cell the unit already occupies.
   const waypoints = cells.slice(1).map((cell) => {
-    const world = toWorldPosition(new Vector2(cell.x, cell.y), CELL_SIZE);
+    const world = toWorldPosition(new Vector2(cell.x, cell.y), cellSize);
     return { x: world.x, y: world.y };
   });
 

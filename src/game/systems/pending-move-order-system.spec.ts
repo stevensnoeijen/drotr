@@ -68,7 +68,7 @@ describe('createPendingMoveOrderSystem', () => {
     const expected = planMovePath(openGrid, { x: from.x, y: from.y }, {
       x: destination.x,
       y: destination.y,
-    });
+    },CELL_SIZE);
     expect(expected.status).toBe('found');
     expect(self.movePath).toEqual({ waypoints: expected.waypoints, index: 0 });
     expect(self.moveTarget).toBeUndefined();
@@ -165,12 +165,14 @@ describe('createPendingMoveOrderSystem', () => {
     const fromArrival = planMovePath(
       openGrid,
       { x: arrivalCell.x, y: arrivalCell.y },
-      { x: destination.x, y: destination.y }
+      { x: destination.x, y: destination.y },
+      CELL_SIZE
     );
     const fromStaleStart = planMovePath(
       openGrid,
       { x: staleFrom.x, y: staleFrom.y },
-      { x: destination.x, y: destination.y }
+      { x: destination.x, y: destination.y },
+      CELL_SIZE
     );
 
     expect(self.movePath).toEqual({ waypoints: fromArrival.waypoints, index: 0 });

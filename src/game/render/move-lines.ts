@@ -4,6 +4,7 @@ import type { Entity } from '~/game/ecs/entity';
 import { planMoveOrder } from '~/game/navigation/move-order';
 import type { GridLike } from '~/lib/navigation/astar';
 import type { Point } from '~/lib/math/types';
+import { CELL_SIZE } from '~/lib/grid';
 
 /** Colour of a unit's move-order line, drawn regardless of team — pink marks it as a debug overlay. */
 const LINE_COLOR = 0xff69b4;
@@ -53,7 +54,7 @@ function remainingWaypoints(entity: Entity, grid: GridLike | undefined): Point[]
 
   if (entity.pendingMoveOrder) {
     if (entity.moveTarget) {
-      const preview = planMoveOrder(grid, entity.moveTarget.position, entity.pendingMoveOrder.destination);
+      const preview = planMoveOrder(grid, entity.moveTarget.position, entity.pendingMoveOrder.destination, CELL_SIZE);
       switch (preview.kind) {
         case 'path':
           points.push(...preview.movePath.waypoints);
