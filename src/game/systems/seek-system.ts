@@ -112,7 +112,7 @@ function comeToRest(entity: Entity): void {
   delete entity.movePath;
 
   const position = entity.transform!.position;
-  if (isAtCellCentre(position)) {
+  if (isAtCellCentre(position, CELL_SIZE)) {
     delete entity.moveTarget;
     if (entity.velocity) {
       entity.velocity.x = 0;
@@ -123,8 +123,8 @@ function comeToRest(entity: Entity): void {
 
   aimAt(
     entity,
-    cellCentreCoordinate(Math.floor(position.x / CELL_SIZE)),
-    cellCentreCoordinate(Math.floor(position.y / CELL_SIZE))
+    cellCentreCoordinate(Math.floor(position.x / CELL_SIZE), CELL_SIZE),
+    cellCentreCoordinate(Math.floor(position.y / CELL_SIZE), CELL_SIZE)
   );
 }
 
@@ -343,7 +343,7 @@ export function createSeekSystem(
         // of a cell off, which is the whole bug. The position test
         // stays as the other half of the condition, for a unit left standing
         // off-centre by something else (an order it gave up on, say).
-        if (!self.moveTarget && isAtCellCentre(position)) {
+        if (!self.moveTarget && isAtCellCentre(position, CELL_SIZE)) {
           clearPursuitRoute(self);
           self.velocity.x = 0;
           self.velocity.y = 0;
@@ -358,13 +358,17 @@ export function createSeekSystem(
           }
         } else {
           markPursuit(self, target.entityId, targetPosition, PURSUIT_REPATH_INTERVAL);
-          aimAt(self, cellCentreCoordinate(selfCell.x), cellCentreCoordinate(selfCell.y));
+          aimAt(
+            self,
+            cellCentreCoordinate(selfCell.x, CELL_SIZE),
+            cellCentreCoordinate(selfCell.y, CELL_SIZE)
+          );
         }
         continue;
       }
 
-      const destinationX = cellCentreCoordinate(destination.x);
-      const destinationY = cellCentreCoordinate(destination.y);
+      const destinationX = cellCentreCoordinate(destination.x, CELL_SIZE);
+      const destinationY = cellCentreCoordinate(destination.y, CELL_SIZE);
 
       if (isInSight(selfCell, destination)) {
         // Nothing in the way: walk straight at the cell, no search needed.

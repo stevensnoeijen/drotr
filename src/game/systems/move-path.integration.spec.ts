@@ -87,7 +87,8 @@ describe('move order + path + movement integration', () => {
     for (let i = 0; i < 1200; i++) {
       tick();
       const cell = toGridPosition(
-        new Vector2(unit.transform.position.x, unit.transform.position.y)
+        new Vector2(unit.transform.position.x, unit.transform.position.y),
+        CELL_SIZE
       );
       expect(isWalkable(wallWithGap, cell.x, cell.y)).toBe(true);
     }

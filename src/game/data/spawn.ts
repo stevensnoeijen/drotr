@@ -74,7 +74,7 @@ export function spawnUnit(
   { type, team, position }: SpawnUnitOptions
 ): Entity {
   const definition = units[type];
-  const cellCenter = toWorldPositionCellCenter(new Vector2(position.x, position.y));
+  const cellCenter = toWorldPositionCellCenter(new Vector2(position.x, position.y), CELL_SIZE);
 
   const entity: Entity = {
     id: nextEntityId++,

@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 
 import type { Entity } from '~/game/ecs/entity';
 import { planMovePath } from '~/game/navigation/plan-move-path';
-import { cellPositionToVector } from '~/lib/grid';
+import { CELL_SIZE, cellPositionToVector } from '~/lib/grid';
 import type { CollisionGrid } from '~/lib/navigation/astar';
 import { drawMoveLines } from './move-lines';
 
@@ -217,8 +217,8 @@ describe('drawMoveLines', () => {
 
   it('previews a routed reroute (with a grid) from the exact in-flight destination, not the pending order alone', () => {
     const { graphics, points } = trackLineTo();
-    const legTarget = cellPositionToVector(2, 2);
-    const destination = cellPositionToVector(9, 3);
+    const legTarget = cellPositionToVector(2, 2, CELL_SIZE);
+    const destination = cellPositionToVector(9, 3, CELL_SIZE);
     const entity: Entity = {
       // Deliberately a stale live position: the preview must be planned
       // from `moveTarget.position` (the exact upcoming cell), not this.

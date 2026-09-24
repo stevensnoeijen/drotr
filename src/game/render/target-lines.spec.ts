@@ -2,7 +2,7 @@ import { Graphics } from 'pixi.js';
 import { describe, expect, it } from 'vitest';
 
 import type { Entity } from '~/game/ecs/entity';
-import { cellCentreCoordinate } from '~/lib/grid';
+import { CELL_SIZE, cellCentreCoordinate } from '~/lib/grid';
 import { NO_CELL } from '~/game/navigation/occupancy-grid';
 import { drawTargetLines } from './target-lines';
 
@@ -13,8 +13,8 @@ import { drawTargetLines } from './target-lines';
  * way a real unit comes to rest.
  */
 const centre = (col: number, row = 0) => ({
-  x: cellCentreCoordinate(col),
-  y: cellCentreCoordinate(row),
+  x: cellCentreCoordinate(col, CELL_SIZE),
+  y: cellCentreCoordinate(row, CELL_SIZE),
 });
 
 describe('drawTargetLines', () => {

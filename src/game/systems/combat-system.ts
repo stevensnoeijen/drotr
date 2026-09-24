@@ -8,7 +8,7 @@ import { cellSteps } from '~/game/combat/attack-cell';
 import { fireProjectile } from '~/game/combat/fire-projectile';
 import { Cooldown } from '~/lib/cooldown';
 import { GameTime } from '~/lib/game-time';
-import { isAtCellCentre, toGridPosition } from '~/lib/grid';
+import { CELL_SIZE, isAtCellCentre, toGridPosition } from '~/lib/grid';
 import { Vector2 } from '~/lib/math/vector2';
 import type { Point } from '~/lib/math/types';
 import { NO_CELL } from '~/game/navigation/occupancy-grid';
@@ -26,8 +26,8 @@ export type AttackerEntity = With<
  */
 export function cellDistance(a: Point, b: Point): number {
   return cellSteps(
-    toGridPosition(new Vector2(a.x, a.y)),
-    toGridPosition(new Vector2(b.x, b.y))
+    toGridPosition(new Vector2(a.x, a.y), CELL_SIZE),
+    toGridPosition(new Vector2(b.x, b.y), CELL_SIZE)
   );
 }
 
@@ -68,7 +68,7 @@ export function isSettled(entity: Entity): boolean {
   }
 
   const transform = entity.transform;
-  return !transform || isAtCellCentre(transform.position);
+  return !transform || isAtCellCentre(transform.position, CELL_SIZE);
 }
 
 /**

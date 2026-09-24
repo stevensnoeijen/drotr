@@ -12,7 +12,12 @@ import {
   NO_OCCUPANT,
   type OccupancyGrid,
 } from '~/game/navigation/occupancy-grid';
-import { screenToWorld, toWorldPositionCellCenter, type ViewportTransform } from '~/lib/grid';
+import {
+  CELL_SIZE,
+  screenToWorld,
+  toWorldPositionCellCenter,
+  type ViewportTransform,
+} from '~/lib/grid';
 import { Vector2 } from '~/lib/math/vector2';
 import type { GridLike } from '~/lib/navigation/astar';
 import type { Point } from '~/lib/math/types';
@@ -333,7 +338,7 @@ export function moveSelectedTo(
     return;
   }
 
-  const clicked = toWorldPositionCellCenter(worldPosition);
+  const clicked = toWorldPositionCellCenter(worldPosition, CELL_SIZE);
   /** Destination cells already handed out within this one order. */
   const assigned = new Set<number>();
 

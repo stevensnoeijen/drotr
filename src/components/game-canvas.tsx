@@ -414,7 +414,7 @@ export default function GameCanvas({
         const rect = canvas.getBoundingClientRect();
         const screenPos = { x: event.clientX - rect.left, y: event.clientY - rect.top };
         pointerPosition = { x: event.clientX, y: event.clientY };
-        hoveredCell = screenToGrid(screenPos, getViewportTransform(), mapBounds);
+        hoveredCell = screenToGrid(screenPos, getViewportTransform(), CELL_SIZE, mapBounds);
 
         // Track hovered unit for unit-info debug flag (checks all hoverable units, including red team)
         if (debugFlagsRef.current?.has('unit-info')) {

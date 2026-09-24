@@ -118,7 +118,7 @@ describe('pursuit + movement integration', () => {
     }
 
     expect(stepsToEnemy()).toBeLessThanOrEqual(1);
-    expect(isAtCellCentre(self.transform.position)).toBe(true);
+    expect(isAtCellCentre(self.transform.position, CELL_SIZE)).toBe(true);
     expect(self.velocity).toEqual({ x: 0, y: 0 });
     // Arrived: nothing left to route or steer toward.
     expect(self.pursuit).toBeUndefined();
@@ -150,7 +150,7 @@ describe('pursuit + movement integration', () => {
     }
 
     expect(stepsToEnemy()).toBeLessThanOrEqual(1);
-    expect(isAtCellCentre(self.transform.position)).toBe(true);
+    expect(isAtCellCentre(self.transform.position, CELL_SIZE)).toBe(true);
     // At rest, to within the float slack a clamped final approach leaves
     // behind.
     expect(Math.hypot(self.velocity.x, self.velocity.y)).toBeLessThan(1e-6);
@@ -173,6 +173,6 @@ describe('pursuit + movement integration', () => {
     }
 
     expect(stepsToEnemy()).toBeLessThanOrEqual(1);
-    expect(isAtCellCentre(self.transform.position)).toBe(true);
+    expect(isAtCellCentre(self.transform.position, CELL_SIZE)).toBe(true);
   });
 });

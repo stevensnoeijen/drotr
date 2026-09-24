@@ -8,8 +8,8 @@ import { CELL_SIZE, cellCentreCoordinate } from '~/lib/grid';
 import { createSeekSystem, PURSUIT_REPATH_INTERVAL } from './seek-system';
 
 const centre = (col: number, row: number) => ({
-  x: cellCentreCoordinate(col),
-  y: cellCentreCoordinate(row),
+  x: cellCentreCoordinate(col, CELL_SIZE),
+  y: cellCentreCoordinate(row, CELL_SIZE),
 });
 
 /** A collision grid in the exact shape a loaded map exposes. */

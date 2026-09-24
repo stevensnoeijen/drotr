@@ -11,8 +11,8 @@ import { createMoveVelocitySystem } from './move-velocity-system';
 import { createSeekSystem } from './seek-system';
 
 const centre = (col: number, row: number) => ({
-  x: cellCentreCoordinate(col),
-  y: cellCentreCoordinate(row),
+  x: cellCentreCoordinate(col, CELL_SIZE),
+  y: cellCentreCoordinate(row, CELL_SIZE),
 });
 
 const cellOf = (position: { x: number; y: number }) => ({
@@ -72,7 +72,7 @@ describe('seek + move integration', () => {
     // The cell immediately west of the target's — the nearest one it can
     // attack from — and exactly on its centre, not merely inside it.
     expect(self.transform.position).toEqual(centre(9, 0));
-    expect(isAtCellCentre(self.transform.position)).toBe(true);
+    expect(isAtCellCentre(self.transform.position, CELL_SIZE)).toBe(true);
     expect(cellSteps(cellOf(self.transform.position), cellOf(target.transform.position))).toBe(1);
   });
 
@@ -107,7 +107,7 @@ describe('seek + move integration', () => {
       tick();
       const moving = self.velocity.x !== 0 || self.velocity.y !== 0;
       if (!moving) {
-        expect(isAtCellCentre(self.transform.position)).toBe(true);
+        expect(isAtCellCentre(self.transform.position, CELL_SIZE)).toBe(true);
       }
     }
   });
@@ -123,7 +123,7 @@ describe('seek + move integration', () => {
     }
 
     expect(self.transform.position).toEqual(centre(5, 0));
-    expect(isAtCellCentre(self.transform.position)).toBe(true);
+    expect(isAtCellCentre(self.transform.position, CELL_SIZE)).toBe(true);
     expect(cellSteps(cellOf(self.transform.position), cellOf(target.transform.position))).toBe(5);
     expect(self.velocity).toEqual({ x: 0, y: 0 });
   });

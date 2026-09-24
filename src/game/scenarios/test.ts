@@ -1,5 +1,5 @@
 import { cellPosition, spawnUnit } from '~/game/data/spawn';
-import { cellPositionToVector } from '~/lib/grid';
+import { CELL_SIZE, cellPositionToVector } from '~/lib/grid';
 import type { Scenario } from './types';
 
 /**
@@ -102,7 +102,7 @@ export const testScenario: Scenario = {
       position: cellPosition(raceStartCol, knightRow),
     });
     knight.moveTarget = {
-      position: cellPositionToVector(raceStartCol + raceDistanceCols, knightRow),
+      position: cellPositionToVector(raceStartCol + raceDistanceCols, knightRow, CELL_SIZE),
     };
 
     const swordsman = spawnUnit(world, {
@@ -111,7 +111,7 @@ export const testScenario: Scenario = {
       position: cellPosition(raceStartCol, swordsmanRow),
     });
     swordsman.moveTarget = {
-      position: cellPositionToVector(raceStartCol + raceDistanceCols, swordsmanRow),
+      position: cellPositionToVector(raceStartCol + raceDistanceCols, swordsmanRow, CELL_SIZE),
     };
 
     const crossbowsoldier = spawnUnit(world, {
@@ -120,7 +120,7 @@ export const testScenario: Scenario = {
       position: cellPosition(raceStartCol, crossbowsoldierRow),
     });
     crossbowsoldier.moveTarget = {
-      position: cellPositionToVector(raceStartCol + raceDistanceCols, crossbowsoldierRow),
+      position: cellPositionToVector(raceStartCol + raceDistanceCols, crossbowsoldierRow, CELL_SIZE),
     };
 
     // Two blue-vs-red crossbowsoldier pairs, top-right of the layout and

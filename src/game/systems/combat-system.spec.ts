@@ -51,7 +51,7 @@ function makeUnit(
 ): Entity {
   // Snapped to the cell centre, exactly as `spawnUnit` places a real unit —
   // and as `isSettled` now requires before a unit may fight at all.
-  const position = toWorldPositionCellCenter(new Vector2(x, y));
+  const position = toWorldPositionCellCenter(new Vector2(x, y), CELL_SIZE);
   const entity: Entity = {
     id: nextId++,
     transform: { position: { x: position.x, y: position.y }, rotation: 0 },
@@ -218,7 +218,7 @@ describe('CombatSystem', () => {
       damage: 5,
       attackCooldown: 0.5,
     });
-    target.transform!.position.x = cellCentreCoordinate(1) + Number.EPSILON * CELL_SIZE * 4;
+    target.transform!.position.x = cellCentreCoordinate(1, CELL_SIZE) + Number.EPSILON * CELL_SIZE * 4;
 
     run(system, world, 30);
 

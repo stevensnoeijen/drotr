@@ -112,7 +112,8 @@ export class OccupancyGrid {
   /** World-space centre of a cell, i.e. where a unit standing in it rests. */
   public centreOf(index: number): Point {
     const centre = toWorldPosition(
-      new Vector2(index % this.width, Math.floor(index / this.width))
+      new Vector2(index % this.width, Math.floor(index / this.width)),
+      CELL_SIZE
     );
     return { x: centre.x, y: centre.y };
   }

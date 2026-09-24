@@ -4,7 +4,7 @@ import {
   type GridLike,
   type PathStatus,
 } from '~/lib/navigation/astar';
-import { toGridPosition, toWorldPosition } from '~/lib/grid';
+import { CELL_SIZE, toGridPosition, toWorldPosition } from '~/lib/grid';
 import { Vector2 } from '~/lib/math/vector2';
 import type { Point } from '~/lib/math/types';
 
@@ -50,8 +50,8 @@ export function planMovePath(
   to: Point,
   options?: FindPathOptions
 ): PlannedMovePath {
-  const start = toGridPosition(new Vector2(from.x, from.y));
-  const end = toGridPosition(new Vector2(to.x, to.y));
+  const start = toGridPosition(new Vector2(from.x, from.y), CELL_SIZE);
+  const end = toGridPosition(new Vector2(to.x, to.y), CELL_SIZE);
 
   const { status, cells } = findPath(grid, start, end, { ...options, smooth: false });
   if (status !== 'found') {
@@ -60,7 +60,7 @@ export function planMovePath(
 
   // `cells[0]` is the cell the unit already occupies.
   const waypoints = cells.slice(1).map((cell) => {
-    const world = toWorldPosition(new Vector2(cell.x, cell.y));
+    const world = toWorldPosition(new Vector2(cell.x, cell.y), CELL_SIZE);
     return { x: world.x, y: world.y };
   });
 
