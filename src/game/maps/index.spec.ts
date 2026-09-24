@@ -34,4 +34,10 @@ describe('resolveMap', () => {
   it('registers the test map', () => {
     expect(maps.some((m) => m.id === 'test')).toBe(true);
   });
+
+  it('registers the buildings map with an empty scenario allowlist', () => {
+    const buildings = maps.find((m) => m.id === 'buildings');
+    expect(buildings?.mapSource).toMatch(/maps\/buildings\.tmj$/);
+    expect(buildings?.allowedScenarioIds).toEqual([]);
+  });
 });
