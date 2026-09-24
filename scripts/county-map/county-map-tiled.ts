@@ -28,8 +28,8 @@ import {
  *   the whole ground layer (there is no separate decoration layer), and the
  *   engine's collision grid comes from its tiles' `blocked` flags.
  * - `spawns`: an empty object layer, for spawn points to be placed by hand.
- * - `collision-debug`: hidden by default, Section B collapsed to one value
- *   per tile ({@link collapseCollisionMaskPerTile}) — the plain ground tile
+ * - `collision`: hidden by default, Section B collapsed to one value per
+ *   tile ({@link collapseCollisionMaskPerTile}) — the plain ground tile
  *   where blocked, empty where open. It exists only to inspect the original
  *   collision data in the Tiled editor; the engine never reads it.
  */
@@ -41,10 +41,10 @@ export const COUNTY_TILE_SIZE = 40;
 const TERRAIN_TILESET_SOURCE = 'terrain.tsx';
 
 /**
- * Gid drawn in the `collision-debug` layer for a blocked tile: atlas index
- * 0, the plain ground tile. An open tile is left empty (gid 0).
+ * Gid drawn in the `collision` layer for a blocked tile: atlas index 0,
+ * the plain ground tile. An open tile is left empty (gid 0).
  */
-const COLLISION_DEBUG_BLOCKED_GID = tileIdToGid(atlasIndexToTileId(0));
+const COLLISION_BLOCKED_GID = tileIdToGid(atlasIndexToTileId(0));
 
 /** Converts one Section A atlas index to its `terrain` gid. */
 function tileGid(index: number, x: number, y: number): number {
@@ -69,9 +69,9 @@ function terrainData(map: CountyMap): number[] {
   return data;
 }
 
-function collisionDebugData(map: CountyMap): number[] {
+function collisionData(map: CountyMap): number[] {
   return Array.from(collapseCollisionMaskPerTile(map), (blocked) =>
-    blocked ? COLLISION_DEBUG_BLOCKED_GID : 0
+    blocked ? COLLISION_BLOCKED_GID : 0
   );
 }
 
@@ -109,9 +109,9 @@ export function buildCountyTiledMap(map: CountyMap): TiledMap {
     draworder: 'topdown',
     objects: [],
   };
-  const collisionDebug: TiledLayerTilelayer = {
+  const collision: TiledLayerTilelayer = {
     id: 3,
-    name: 'collision-debug',
+    name: 'collision',
     type: 'tilelayer',
     x: 0,
     y: 0,
@@ -119,7 +119,7 @@ export function buildCountyTiledMap(map: CountyMap): TiledMap {
     height: SECTION_A_SIZE,
     opacity: 1,
     visible: false,
-    data: collisionDebugData(map),
+    data: collisionData(map),
   };
 
   // tiled-types only models an embedded tileset; an external reference is
@@ -145,7 +145,7 @@ export function buildCountyTiledMap(map: CountyMap): TiledMap {
     compressionlevel: -1,
     properties: [],
     tilesets: [tilesetReference],
-    layers: [terrain, spawns, collisionDebug],
+    layers: [terrain, spawns, collision],
   };
 }
 

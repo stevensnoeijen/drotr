@@ -16432,7 +16432,7 @@
   },
   {
    "id": 3,
-   "name": "collision-debug",
+   "name": "collision",
    "type": "tilelayer",
    "x": 0,
    "y": 0,
