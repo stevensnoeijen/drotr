@@ -490,11 +490,13 @@ it. Its layers, back to front:
 
 - **`terrain`** — grid 0, the interior view, every cell set (index 0 is
   gid 1). The engine's collision grid comes from this layer.
-- **`intact`** — grid 1, visible. Empty (gid 0) where the grid is 0.
+- **`intact`** — grid 1, **hidden**. Empty (gid 0) where the grid is 0.
 - **`ruined`** — grid 2, **hidden**. Empty (gid 0) where the grid is 0.
-  The engine loads it but starts it hidden; to see it, toggle `intact`
-  off and `ruined` on, in the Tiled editor or through the engine's
-  `tile-layers` debug option (`?debug=tile-layers`).
+
+So by default only the interior view shows. The engine loads both overlays
+but starts them hidden; to see the buildings intact or ruined, toggle
+`intact` or `ruined` on, in the Tiled editor or through the engine's
+`tile-layers` debug option (`?debug=tile-layers`).
 - **`spawns`** — an empty object layer (the loader requires one).
 
 In the engine it is the `buildings` map; view it with the `empty`

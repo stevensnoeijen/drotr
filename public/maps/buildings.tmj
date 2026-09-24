@@ -16426,7 +16426,7 @@
    "width": 128,
    "height": 128,
    "opacity": 1,
-   "visible": true,
+   "visible": false,
    "data": [
     0,
     134,

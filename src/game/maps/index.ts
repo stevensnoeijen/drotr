@@ -22,7 +22,7 @@ export const maps: readonly MapDefinition[] = [
     id: 'buildings',
     title: 'Buildings',
     description:
-      'Every building from BUILDING.MAP, as laid out in the file: twelve castle compounds and loose wall pieces, intact.',
+      'Every building from BUILDING.MAP, as laid out in the file: twelve castle compounds and loose wall pieces, shown as their interiors (switch the intact and ruined layers on with the tile-layers debug option).',
     mapSource: `${import.meta.env.BASE_URL}maps/buildings.tmj`,
     // Units dropped by the unit-placing scenarios would land inside walls;
     // `empty`, allowed on every map, is still available.

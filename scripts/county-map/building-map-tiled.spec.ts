@@ -85,11 +85,11 @@ describe('buildBuildingsTiledMap', () => {
     expect(map.tilesets).toEqual([{ firstgid: 1, source: 'terrain.tsx' }]);
   });
 
-  it('emits terrain, intact, ruined (hidden) and spawns, back to front', () => {
+  it('emits terrain, intact (hidden), ruined (hidden) and spawns, back to front', () => {
     const map = buildBuildingsTiledMap(syntheticBuildingMap());
     expect(map.layers.map((l) => [l.id, l.name, l.type, l.visible])).toEqual([
       [1, 'terrain', 'tilelayer', true],
-      [2, 'intact', 'tilelayer', true],
+      [2, 'intact', 'tilelayer', false],
       [3, 'ruined', 'tilelayer', false],
       [4, 'spawns', 'objectgroup', true],
     ]);
@@ -155,7 +155,7 @@ describe('buildBuildingsTiledMap', () => {
     expect(first.endsWith('}\n')).toBe(true);
   });
 
-  it('passes parseTiledMap, drawing terrain then intact, with ruined kept hidden', () => {
+  it('passes parseTiledMap, drawing only terrain, with intact and ruined kept hidden', () => {
     const map = buildBuildingsTiledMap(syntheticBuildingMap());
     const parsed = parseTiledMap(map, terrainTileset);
 
@@ -163,7 +163,7 @@ describe('buildBuildingsTiledMap', () => {
     expect(parsed.spawns).toEqual([]);
     expect(parsed.tileLayers).toEqual([
       { name: 'terrain', visible: true, data: layer(map, 'terrain').data },
-      { name: 'intact', visible: true, data: layer(map, 'intact').data },
+      { name: 'intact', visible: false, data: layer(map, 'intact').data },
       { name: 'ruined', visible: false, data: layer(map, 'ruined').data },
     ]);
 

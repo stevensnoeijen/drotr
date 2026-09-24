@@ -24,12 +24,14 @@ import {
  * - `terrain`: the interior grid, every cell set (`gid = atlas index + 1`,
  *   so index 0 is gid 1). The engine's collision grid comes from its tiles'
  *   `blocked` flags.
- * - `intact`: the intact exterior overlay, visible. Empty (gid 0) where
+ * - `intact`: the intact exterior overlay, hidden. Empty (gid 0) where
  *   the grid is 0.
  * - `ruined`: the ruined overlay, hidden. Empty (gid 0) where the grid is 0.
- *   The engine loads it but starts it hidden; to see it, toggle `intact`
- *   off and `ruined` on, in the Tiled editor or through the engine's
- *   `tile-layers` debug option.
+ *
+ * So by default only the interior view shows. The engine loads both
+ * overlays but starts them hidden; to see a building intact or ruined, toggle
+ * `intact` or `ruined` on, in the Tiled editor or through the engine's
+ * `tile-layers` debug option.
  * - `spawns`: an empty object layer (the loader requires one).
  */
 
@@ -68,7 +70,7 @@ function gridData(
 export function buildBuildingsTiledMap(map: BuildingMap): TiledMap {
   return buildTerrainTiledMap([
     tileLayer(1, 'terrain', interiorData(map)),
-    tileLayer(2, 'intact', overlayData(map.intact)),
+    tileLayer(2, 'intact', overlayData(map.intact), false),
     tileLayer(3, 'ruined', overlayData(map.ruined), false),
     spawnsLayer(4),
   ]);
