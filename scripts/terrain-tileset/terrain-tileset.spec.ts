@@ -9,6 +9,7 @@ import {
   atlasIndexToTileId,
   buildTerrainTilesetImage,
   buildTerrainTilesetXml,
+  COLLISION_MARKER_TILE_ID,
   EXTRA_TILE_ID_OFFSET,
   gidToTileId,
   TERRAIN_TILE_COUNT,
@@ -40,14 +41,17 @@ function isIncludedAtlasIndex(index: number): boolean {
   );
 }
 
-/** All filler tile ids the issue lists: unused padding in rows 92–96. */
+/**
+ * All filler tile ids that stay fully transparent: unused padding in rows
+ * 92–96, excluding {@link COLLISION_MARKER_TILE_ID}, which repurposes one
+ * such slot as the synthetic collision-marker tile.
+ */
 const FILLER_IDS = [
   ...range(1472, 1481),
   ...range(1488, 1497),
   ...range(1504, 1513),
   ...range(1520, 1529),
   ...range(1536, 1545),
-  1551,
 ];
 
 function range(first: number, last: number): number[] {
@@ -180,6 +184,21 @@ describe('buildTerrainTilesetImage', () => {
     expect(nonTransparentIds).toEqual([]);
   });
 
+  it('draws the collision-marker tile fully opaque with more than one colour', () => {
+    const tile = readTile(
+      tilesetImage.rgba,
+      TERRAIN_TILESET_WIDTH,
+      COLLISION_MARKER_TILE_ID
+    );
+    const colors = new Set<string>();
+    for (let i = 0; i < tile.length; i += 4) {
+      expect(tile[i + 3]).toEqual(255); // fully opaque
+      colors.add(`${tile[i]},${tile[i + 1]},${tile[i + 2]}`);
+    }
+    // A striped pattern, not a solid fill.
+    expect(colors.size).toBeGreaterThan(1);
+  });
+
   it('never draws a pixel sourced from an excluded atlas tile', () => {
     // The fixture marks every excluded atlas tile (UI rows 92-97, the
     // non-extra columns of rows 98-102, and rows 103+) with a reserved
@@ -226,6 +245,12 @@ describe('atlasIndexToTileId / tileIdToAtlasIndex', () => {
 
   it.each(FILLER_IDS)('throws for filler id %d', (id) => {
     expect(() => tileIdToAtlasIndex(id)).toThrow(RangeError);
+  });
+
+  it('throws for the collision-marker id: it has no atlas source', () => {
+    expect(() => tileIdToAtlasIndex(COLLISION_MARKER_TILE_ID)).toThrow(
+      RangeError
+    );
   });
 });
 

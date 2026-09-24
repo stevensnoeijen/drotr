@@ -178,11 +178,18 @@ open cleanly in the Tiled editor.
     102, columns 10–14 → indices 1642–1646.
   - Both map to a tileset id via one constant offset,
     `EXTRA_TILE_ID_OFFSET = 96` (e.g. atlas 1578 → id 1482).
+- **Collision marker.** Id **1551**, the last filler slot in row 96,
+  is repurposed as a synthetic tile with no atlas source: opaque
+  diagonal red/dark-red stripes, drawn directly by
+  `drawCollisionMarkerTile` rather than copied from `BATTLE.ART`. It's
+  exported as `COLLISION_MARKER_TILE_ID` (`src/lib/art/collision-marker.ts`,
+  shared by the `scripts/county-map` converters and the engine) and is what
+  every `collision` layer draws at a blocked cell — see "Tile walkability:
+  the `collision` layer" below.
 - **Filler ids.** The tileset is 640×3880 px, 97 rows × 16 columns, 1552
   tile slots. Rows 92–96 hold the extras at their original columns and are
   otherwise unused padding — ids 1472–1481, 1488–1497, 1504–1513,
-  1520–1529, 1536–1545 and 1551 are never referenced and stay fully
-  transparent.
+  1520–1529 and 1536–1545 are never referenced and stay fully transparent.
 - **gid.** Maps reference it with `firstgid = 1` (the hand-made
   `test.tmj` included), so `gid = id + 1`. Index 0 is a real ground tile
   (see above), not a "no tile" sentinel, so it becomes gid 1 like every
@@ -213,12 +220,17 @@ Walkability used to be a per-tile property of the `terrain` tileset
 `scripts/terrain-tileset/tile-categories.ts`. That approach couldn't
 reproduce the original game's actual mask (below), which blocks at
 2×2 subcells per tile rather than per whole tile, so it was replaced with
-a dedicated `collision` layer that each map ships alongside `terrain`. For
-a converted county map (`scripts/county-map/county-map-tiled.ts`) that
-layer is built exactly from the original mask
-(`collapseCollisionMaskPerTile`); `buildings.tmj` currently ships an
-all-open one (real building collision isn't derived yet), and the
-hand-authored `test.tmj` has its collision hand-added to match its walls.
+a dedicated `collision` layer that each map ships alongside `terrain`. A
+blocked cell there draws the collision-marker tile (`COLLISION_MARKER_TILE_ID`,
+see "Terrain tileset export" above), not gid 1 or any real terrain gid — the
+loader only checks that the gid is non-zero, but the marker's stripes make a
+blocked cell instantly recognisable when the layer is switched on in the
+Tiled editor. For a converted county map
+(`scripts/county-map/county-map-tiled.ts`) that layer is built exactly from
+the original mask (`collapseCollisionMaskPerTile`); `buildings.tmj`
+currently ships an all-open one (real building collision isn't derived
+yet), and the hand-authored `test.tmj` has its collision hand-added to
+match its walls, using the same marker gid.
 
 **Historical disagreement.** For context on why the per-tile property was
 dropped: cross-checking `tile-categories.ts`'s hand classification against

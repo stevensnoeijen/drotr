@@ -4,7 +4,13 @@ import {
   tileRect,
   ATLAS_TILE_SIZE,
 } from '../../src/lib/art/atlas';
+import {
+  COLLISION_MARKER_TILE_ID,
+  drawCollisionMarkerTile,
+} from '../../src/lib/art/collision-marker';
 import type { RgbaPixels } from '../../src/lib/art/rgba';
+
+export { COLLISION_MARKER_TILE_ID } from '../../src/lib/art/collision-marker';
 
 /**
  * Builds the `terrain` Tiled tileset out of `ART/BATTLE.ART`'s decoded
@@ -148,8 +154,9 @@ export interface TerrainTilesetImage {
 /**
  * Builds the full `terrain.png` pixel buffer from a decoded `BATTLE.ART`.
  *
- * Every slot is transparent unless it's one of the 1472 verbatim tiles or
- * one of the 29 drawbridge/rubble extras; the remaining filler ids in rows
+ * Every slot is transparent unless it's one of the 1472 verbatim tiles, one
+ * of the 29 drawbridge/rubble extras, or the single synthetic
+ * {@link COLLISION_MARKER_TILE_ID} slot; the remaining filler ids in rows
  * 92–96 are left fully transparent on purpose (see
  * {@link EXTRA_TILE_ID_OFFSET}).
  */
@@ -159,6 +166,21 @@ export function buildTerrainTilesetImage(image: PcxImage): TerrainTilesetImage {
   ) as RgbaPixels;
 
   for (let id = 0; id < TERRAIN_TILE_COUNT; id++) {
+    if (id === COLLISION_MARKER_TILE_ID) {
+      const dest = tileRect(id, TERRAIN_TILESET_WIDTH);
+      const tile = drawCollisionMarkerTile();
+      for (let row = 0; row < ATLAS_TILE_SIZE; row++) {
+        const srcOffset = row * ATLAS_TILE_SIZE * 4;
+        const destOffset =
+          ((dest.y + row) * TERRAIN_TILESET_WIDTH + dest.x) * 4;
+        rgba.set(
+          tile.subarray(srcOffset, srcOffset + ATLAS_TILE_SIZE * 4),
+          destOffset
+        );
+      }
+      continue;
+    }
+
     let atlasIndex: number;
     try {
       atlasIndex = tileIdToAtlasIndex(id);

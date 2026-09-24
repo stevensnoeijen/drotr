@@ -9,6 +9,7 @@ import { tileRect, ATLAS_TILE_SIZE } from '~/lib/art/atlas';
 import { GOLDEN_TILE_HASHES } from './battle-art-golden-hashes';
 import {
   buildTerrainTilesetXml,
+  COLLISION_MARKER_TILE_ID,
   TERRAIN_TILESET_HEIGHT,
   TERRAIN_TILESET_WIDTH,
 } from './terrain-tileset';
@@ -84,13 +85,19 @@ describe('public/maps/terrain.png', () => {
     ...range(1504, 1513),
     ...range(1520, 1529),
     ...range(1536, 1545),
-    1551,
   ];
 
   it.each(FILLER_IDS)('leaves filler id %d fully transparent', (id) => {
     const tile = readTile(png, id);
     for (let i = 3; i < tile.length; i += 4) {
       expect(tile[i]).toEqual(0);
+    }
+  });
+
+  it('draws the collision-marker id fully opaque', () => {
+    const tile = readTile(png, COLLISION_MARKER_TILE_ID);
+    for (let i = 3; i < tile.length; i += 4) {
+      expect(tile[i]).toEqual(255);
     }
   });
 
