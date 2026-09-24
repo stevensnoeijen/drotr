@@ -8,6 +8,7 @@ import { findEntityById, queries, world } from '~/game/ecs/world';
 import type { Entity } from '~/game/ecs/entity';
 import type { MapDefinition } from '~/game/maps';
 import { loadTiledMap, type ParsedMap } from '~/game/map/load-tiled-map';
+import { tileLayerInfo, type TileLayerInfo } from '~/game/map/tile-layer-visibility';
 import { applyViewportBounds, createGameViewport } from '~/game/render/create-game-viewport';
 import { createMapRenderSystem, type MapRenderSystem } from '~/game/render/map-render-system';
 import { RenderSystem } from '~/game/render/render-system';
@@ -92,6 +93,19 @@ export interface GameCanvasProps {
   onError?: (message: string) => void;
   /** Called whenever the camera pans or zooms, with its latest transform. */
   onViewportChange?: (transform: ViewportTransform) => void;
+  /**
+   * Called once the map is drawn, with its tile layers (names and default
+   * visibility, back to front) — or with none, for the blank map or a
+   * failed load — so the caller can offer per-layer toggles.
+   */
+  onTileLayers?: (layers: TileLayerInfo[]) => void;
+  /**
+   * Which tile layers to show, by index into the layers reported through
+   * {@link onTileLayers}. Applied in place whenever it changes, without
+   * remounting; omitted (or a missing entry) leaves a layer as the map sets
+   * it. Display only: collision never depends on it.
+   */
+  tileLayerVisibility?: readonly boolean[];
 }
 
 export default function GameCanvas({
@@ -103,11 +117,15 @@ export default function GameCanvas({
   onStats,
   onError,
   onViewportChange,
+  onTileLayers,
+  tileLayerVisibility,
 }: GameCanvasProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const onStatsRef = useRef(onStats);
   const onErrorRef = useRef(onError);
   const onViewportChangeRef = useRef(onViewportChange);
+  const onTileLayersRef = useRef(onTileLayers);
+  const tileLayerVisibilityRef = useRef(tileLayerVisibility);
   const scenarioRef = useRef(scenario);
   const mapRef = useRef(mapProp);
   // Read once, at mount, by the setup effect below — never re-applied on a
@@ -119,6 +137,7 @@ export default function GameCanvas({
   // tearing down and remounting the whole canvas.
   const syncGridRef = useRef<() => void>(() => {});
   const syncHealthBarsRef = useRef<() => void>(() => {});
+  const syncTileLayersRef = useRef<() => void>(() => {});
 
   // Keep the refs pointing at the latest props without re-running the
   // Pixi-setup effect below (which must run exactly once).
@@ -126,6 +145,8 @@ export default function GameCanvas({
     onStatsRef.current = onStats;
     onErrorRef.current = onError;
     onViewportChangeRef.current = onViewportChange;
+    onTileLayersRef.current = onTileLayers;
+    tileLayerVisibilityRef.current = tileLayerVisibility;
     scenarioRef.current = scenario;
     mapRef.current = mapProp;
     debugFlagsRef.current = debugFlags;
@@ -138,6 +159,12 @@ export default function GameCanvas({
     syncGridRef.current();
     syncHealthBarsRef.current();
   }, [debugFlagsKey]);
+
+  // Keyed to the visibility's content, not its identity, like the flags.
+  const tileLayerVisibilityKey = tileLayerVisibility?.join(',') ?? '';
+  useEffect(() => {
+    syncTileLayersRef.current();
+  }, [tileLayerVisibilityKey]);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -240,6 +267,13 @@ export default function GameCanvas({
             return;
           }
           mapRenderSystem = terrain;
+          syncTileLayersRef.current = () => {
+            const visibility = tileLayerVisibilityRef.current;
+            if (visibility) {
+              terrain.setLayerVisibility(visibility);
+            }
+          };
+          syncTileLayersRef.current();
           // Beneath everything else in the world: units and overlays draw over it.
           gameViewport.addChildAt(terrain.container, 0);
           applyViewportBounds(
@@ -251,6 +285,12 @@ export default function GameCanvas({
           console.error(`Failed to load map "${mapSource}":`, error);
         }
       }
+      if (!cancelled) {
+        onTileLayersRef.current?.(
+          mapRenderSystem && map ? tileLayerInfo(map.tileLayers) : []
+        );
+      }
+
       // The unit-placement grid is the map's own tile grid, whatever its
       // tile size, so units, pathfinding, occupancy and terrain collision
       // all agree on what a cell is: every system below that converts
@@ -533,6 +573,7 @@ export default function GameCanvas({
       resizeObserver?.disconnect();
       syncGridRef.current = () => {};
       syncHealthBarsRef.current = () => {};
+      syncTileLayersRef.current = () => {};
       // Unsubscribe and destroy views before the viewport/app teardown below
       // destroys the same Pixi objects out from under it.
       inputSystem?.dispose();

@@ -113,8 +113,48 @@ vi.mock('pixi-viewport', () => {
   return { Viewport };
 });
 
+interface MockMapRenderSystem {
+  container: object;
+  setLayerVisibility: ReturnType<typeof vi.fn>;
+  cull: ReturnType<typeof vi.fn>;
+  dispose: ReturnType<typeof vi.fn>;
+}
+
+let mapRenderSystems: MockMapRenderSystem[] = [];
+
+// Only reached for a map with a `mapSource`; the specs above use the blank map.
+vi.mock('~/game/map/load-tiled-map', () => ({
+  loadTiledMap: vi.fn().mockResolvedValue({
+    width: 2,
+    height: 1,
+    tileSize: 40,
+    collision: new Uint8Array(2),
+    spawns: [],
+    tileset: {},
+    tileLayers: [
+      { name: 'terrain', visible: true, data: [1, 1] },
+      { name: 'intact', visible: true, data: [0, 2] },
+      { name: 'ruined', visible: false, data: [3, 0] },
+    ],
+  }),
+}));
+
+vi.mock('~/game/render/map-render-system', () => ({
+  createMapRenderSystem: vi.fn(async () => {
+    const system: MockMapRenderSystem = {
+      container: {},
+      setLayerVisibility: vi.fn(),
+      cull: vi.fn(),
+      dispose: vi.fn(),
+    };
+    mapRenderSystems.push(system);
+    return system;
+  }),
+}));
+
 describe('GameCanvas', () => {
   beforeEach(() => {
+    mapRenderSystems = [];
     instances = [];
     viewportInstances = [];
   });
@@ -181,6 +221,75 @@ describe('GameCanvas', () => {
 
     act(() => {
       root.unmount();
+    });
+  });
+
+  describe('tile layers', () => {
+    const tiledMap: MapDefinition = { ...map, id: 'tiled', mapSource: '/maps/tiled.tmj' };
+
+    it('reports no tile layers for the blank map', async () => {
+      const onTileLayers = vi.fn();
+      const root = createRoot(container);
+
+      await act(async () => {
+        root.render(<GameCanvas scenario={scenario} map={map} onTileLayers={onTileLayers} />);
+      });
+
+      expect(onTileLayers).toHaveBeenCalledExactlyOnceWith([]);
+      act(() => root.unmount());
+    });
+
+    it("reports the loaded map's tile layers, hidden ones included", async () => {
+      const onTileLayers = vi.fn();
+      const root = createRoot(container);
+
+      await act(async () => {
+        root.render(<GameCanvas scenario={scenario} map={tiledMap} onTileLayers={onTileLayers} />);
+      });
+
+      expect(onTileLayers).toHaveBeenCalledExactlyOnceWith([
+        { name: 'terrain', visible: true },
+        { name: 'intact', visible: true },
+        { name: 'ruined', visible: false },
+      ]);
+      act(() => root.unmount());
+    });
+
+    it('leaves layers as built when no visibility is given', async () => {
+      const root = createRoot(container);
+
+      await act(async () => {
+        root.render(<GameCanvas scenario={scenario} map={tiledMap} />);
+      });
+
+      expect(mapRenderSystems).toHaveLength(1);
+      expect(mapRenderSystems[0].setLayerVisibility).not.toHaveBeenCalled();
+      act(() => root.unmount());
+    });
+
+    it('applies tileLayerVisibility in place when it changes, without remounting', async () => {
+      const root = createRoot(container);
+
+      await act(async () => {
+        root.render(
+          <GameCanvas scenario={scenario} map={tiledMap} tileLayerVisibility={[true, true, false]} />
+        );
+      });
+      const [system] = mapRenderSystems;
+      expect(system.setLayerVisibility).toHaveBeenLastCalledWith([true, true, false]);
+
+      await act(async () => {
+        root.render(
+          <GameCanvas scenario={scenario} map={tiledMap} tileLayerVisibility={[true, false, true]} />
+        );
+      });
+
+      expect(system.setLayerVisibility).toHaveBeenLastCalledWith([true, false, true]);
+      expect(instances).toHaveLength(1);
+      expect(mapRenderSystems).toHaveLength(1);
+
+      act(() => root.unmount());
+      expect(system.dispose).toHaveBeenCalledOnce();
     });
   });
 });
