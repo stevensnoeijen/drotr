@@ -15,7 +15,11 @@ import {
 } from '~/lib/county-map';
 import { buildCountyMapBytes, tileSubcells } from '~/test/county-map-fixture';
 
+import { COLLISION_MARKER_TILE_ID } from '~/lib/art/collision-marker';
+
 import { buildCountyTiledMap, serializeTiledMap } from './county-map-tiled';
+
+const COLLISION_MARKER_GID = COLLISION_MARKER_TILE_ID + 1;
 
 const MAPS_DIR = path.join(process.cwd(), 'public', 'maps');
 const terrainTileset = parseTilesetDescription(
@@ -155,11 +159,11 @@ describe('buildCountyTiledMap', () => {
     expect(debug.width).toEqual(128);
     expect(debug.height).toEqual(128);
     expect(debug.data).toEqual(
-      Array.from(collapsed, (blocked) => (blocked ? 1 : 0))
+      Array.from(collapsed, (blocked) => (blocked ? COLLISION_MARKER_GID : 0))
     );
 
     const blocked = (debug.data as number[]).flatMap((gid, i) =>
-      gid === 1 ? [[i % 128, Math.floor(i / 128)]] : []
+      gid === COLLISION_MARKER_GID ? [[i % 128, Math.floor(i / 128)]] : []
     );
     // Row-major order; the 3-of-4, 2-of-4 and 1-of-4 tiles stay open.
     expect(blocked).toEqual([

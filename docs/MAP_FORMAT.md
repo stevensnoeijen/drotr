@@ -460,8 +460,10 @@ layers:
   and are placed by hand.
 - **`collision`** — hidden by default. Section B collapsed to one
   value per tile (blocked only when all four subcells are; see "Test
-  fixture strategy" below), drawn as the plain ground tile (gid 1) where
-  blocked and left empty (gid 0) where open. This is the engine's actual
+  fixture strategy" below), drawn as the collision-marker tile
+  (`COLLISION_MARKER_TILE_ID`, see [`ART_FORMAT.md`](./ART_FORMAT.md),
+  "Terrain tileset export") where blocked and left empty (gid 0) where
+  open. This is the engine's actual
   collision source (`parseTiledMap` in `src/game/map/load-tiled-map.ts`
   blocks every cell whose gid here is non-zero); it's hidden purely so it
   doesn't draw over `terrain` by default, and can still be switched on, in

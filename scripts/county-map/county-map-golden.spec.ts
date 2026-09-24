@@ -14,8 +14,12 @@ import {
 } from '~/lib/county-map';
 import { hasCdFile, readCdFile } from '~/test/cd-assets';
 
+import { COLLISION_MARKER_TILE_ID } from '~/lib/art/collision-marker';
+
 import { buildCountyTiledMap, serializeTiledMap } from './county-map-tiled';
 import { countyMapCdPath, countyTiledMapFileName } from './county-names';
+
+const COLLISION_MARKER_GID = COLLISION_MARKER_TILE_ID + 1;
 
 /**
  * Golden tests against the real `COUNTIES/FAGARAS.MAP`.
@@ -102,7 +106,9 @@ describe.skipIf(!available)('FAGARAS.MAP', () => {
     const debug = map.layers.find(
       (layer): layer is TiledLayerTilelayer => layer.name === 'collision'
     );
-    const drawn = (debug?.data as number[]).filter((gid) => gid === 1);
+    const drawn = (debug?.data as number[]).filter(
+      (gid) => gid === COLLISION_MARKER_GID
+    );
     expect(drawn).toHaveLength(3315);
   });
 });

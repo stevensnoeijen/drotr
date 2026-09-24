@@ -199,7 +199,7 @@ describe('parseTiledMap tile layers', () => {
     // The test map's terrain layer starts with a wall (gid 211).
     expect(result.tileLayers.map((layer) => [layer.name, layer.data[0]])).toEqual([
       ['terrain', 211],
-      ['collision', 1],
+      ['collision', 1552],
       ['decoration', 0],
       ['overlay', 5],
     ]);
@@ -215,7 +215,7 @@ describe('parseTiledMap tile layers', () => {
 
     expect(result.tileLayers.map((layer) => [layer.name, layer.visible, layer.data[0]])).toEqual([
       ['terrain', true, 211],
-      ['collision', false, 1],
+      ['collision', false, 1552],
       ['hidden', false, 5],
       ['shown', true, 6],
       ['unflagged', true, 7],
@@ -245,7 +245,7 @@ describe('parseTiledMap tile layers', () => {
     const group = { ...tileLayer('group', 0), type: 'group', layers: [tileLayer('inside', 1)] } as unknown as TiledLayer;
     const result = parseTiledMap(withLayers(group), terrainTileset);
 
-    expect(result.tileLayers.map((layer) => layer.data[0])).toEqual([211, 1]);
+    expect(result.tileLayers.map((layer) => layer.data[0])).toEqual([211, 1552]);
   });
 
   it('rejects a tile layer, hidden or not, whose size does not match the map', () => {

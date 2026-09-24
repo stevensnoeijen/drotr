@@ -12,6 +12,7 @@ import {
 } from '../../src/lib/county-map';
 import {
   atlasIndexToTileId,
+  COLLISION_MARKER_TILE_ID,
   TERRAIN_TILESET_FIRSTGID,
   tileIdToGid,
   VERBATIM_ATLAS_INDEX_MAX,
@@ -29,7 +30,7 @@ import {
  *   cosmetic: the engine's collision grid never reads it.
  * - `spawns`: an empty object layer, for spawn points to be placed by hand.
  * - `collision`: hidden by default, Section B collapsed to one value per
- *   tile ({@link collapseCollisionMaskPerTile}) — the plain ground tile
+ *   tile ({@link collapseCollisionMaskPerTile}) — the collision-marker tile
  *   where blocked, empty where open. This is what the engine's collision
  *   grid actually reads (`parseTiledMap` in
  *   `src/game/map/load-tiled-map.ts`); it's hidden only so it doesn't
@@ -44,10 +45,10 @@ export const COUNTY_TILE_SIZE = 40;
 const TERRAIN_TILESET_SOURCE = 'terrain.tsx';
 
 /**
- * Gid drawn in the `collision` layer for a blocked tile: atlas index 0,
- * the plain ground tile. An open tile is left empty (gid 0).
+ * Gid drawn in the `collision` layer for a blocked tile: the synthetic
+ * collision-marker tile. An open tile is left empty (gid 0).
  */
-const COLLISION_BLOCKED_GID = tileIdToGid(atlasIndexToTileId(0));
+const COLLISION_BLOCKED_GID = tileIdToGid(COLLISION_MARKER_TILE_ID);
 
 /**
  * Converts one `.MAP` atlas index at cell `(x, y)` to its `terrain.tsx` gid.
