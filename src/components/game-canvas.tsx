@@ -14,7 +14,8 @@ import { RenderSystem } from '~/game/render/render-system';
 import { visibleWorldRect } from '~/game/render/tile-chunks';
 import { drawTargetLines } from '~/game/render/target-lines';
 import { drawMoveLines } from '~/game/render/move-lines';
-import { NO_CELL, OccupancyGrid } from '~/game/navigation/occupancy-grid';
+import { createMapNavigation } from '~/game/navigation/map-navigation';
+import { NO_CELL } from '~/game/navigation/occupancy-grid';
 import { CameraPanSystem } from '~/game/systems/camera-pan-system';
 import { createCellOccupancySystem } from '~/game/systems/cell-occupancy-system';
 import { createCombatSystem } from '~/game/systems/combat-system';
@@ -29,7 +30,7 @@ import { createPerceptionSystem, runPerceptionScan } from '~/game/systems/percep
 import { createProjectileSystem } from '~/game/systems/projectile-system';
 import { createSeekSystem } from '~/game/systems/seek-system';
 import { createSelectionBoxSystem, SelectionBoxDrag } from '~/game/systems/selection-box-system';
-import { cellSizeOf, DEFAULT_CELL_SIZE, screenToGrid, screenToWorld } from '~/lib/grid';
+import { screenToGrid, screenToWorld } from '~/lib/grid';
 import {
   serializeDebugFlags,
   type DebugFlag,
@@ -250,11 +251,14 @@ export default function GameCanvas({
           console.error(`Failed to load map "${mapSource}":`, error);
         }
       }
-      // The unit-placement grid is the map's own tile grid, so units,
-      // pathfinding, occupancy and terrain collision all agree on what a
-      // cell is; every system below that converts between world positions
-      // and cells takes this.
-      const cellSize = cellSizeOf(map);
+      // The unit-placement grid is the map's own tile grid, whatever its
+      // tile size, so units, pathfinding, occupancy and terrain collision
+      // all agree on what a cell is: every system below that converts
+      // between world positions and cells takes `cellSize`, A* routes over
+      // the map's own collision grid, and unit-to-unit occupancy layers
+      // straight over that same grid. No map means straight-line orders and
+      // no occupancy.
+      const { cellSize, navigationGrid, occupancyGrid } = createMapNavigation(map);
 
       // Reactively mirrors `queries.renderable` into Pixi views: it must be
       // live before any spawning happens below so every unit — whether
@@ -317,31 +321,6 @@ export default function GameCanvas({
         scale: gameViewport.scale.x,
       });
       const mapBounds = map ? { width: map.width, height: map.height } : undefined;
-
-      // The map doubles as the pathfinder's collision grid (same `width`,
-      // `height` and row-major `collision` buffer). Only handed over when
-      // its tiles are the same size as the unit-placement cell the ECS uses
-      // (`DEFAULT_CELL_SIZE`), since the world<->cell conversion in
-      // `planMovePath` assumes one grid, not two at different resolutions;
-      // a mismatched map falls back to straight-line orders rather than
-      // routing through cells that don't line up with its terrain.
-      let navigationGrid: ParsedMap | undefined;
-      if (map) {
-        if (map.tileSize === DEFAULT_CELL_SIZE) {
-          navigationGrid = map;
-        } else {
-          console.warn(
-            `Map tile size (${map.tileSize}) differs from DEFAULT_CELL_SIZE (${DEFAULT_CELL_SIZE}); move orders will not be routed around terrain.`
-          );
-        }
-      }
-
-      // Unit-to-unit collision layers straight over the same grid A* routes
-      // on, so a cell index means the same thing to terrain, pathfinding and
-      // occupancy. No navigation grid (no map, or a tile size that doesn't
-      // line up with DEFAULT_CELL_SIZE) means no occupancy either — there is no
-      // agreed cell grid to reserve cells in.
-      const occupancyGrid = navigationGrid ? new OccupancyGrid(navigationGrid, cellSize) : undefined;
 
       const canvas = app.canvas;
       inputSystem = new InputSystem(canvas);
