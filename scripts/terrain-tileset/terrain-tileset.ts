@@ -5,8 +5,6 @@ import {
   ATLAS_TILE_SIZE,
 } from '../../src/lib/art/atlas';
 import type { RgbaPixels } from '../../src/lib/art/rgba';
-import { BLOCKED_TILE_PROPERTY } from '../../src/game/map/tile-properties';
-import { isWalkableTile } from './tile-categories';
 
 /**
  * Builds the `terrain` Tiled tileset out of `ART/BATTLE.ART`'s decoded
@@ -184,24 +182,15 @@ export function buildTerrainTilesetImage(image: PcxImage): TerrainTilesetImage {
 }
 
 /**
- * Builds the `terrain.tsx` Tiled tileset XML, referencing `terrain.png`,
- * with {@link BLOCKED_TILE_PROPERTY} set on every tile a unit can't stand on
- * (see `tile-categories.ts`). Formatted the way the Tiled editor writes it,
- * so re-saving the tileset in Tiled leaves it unchanged.
+ * Builds the `terrain.tsx` Tiled tileset XML, referencing `terrain.png`.
+ * Walkability is no longer a per-tile tileset property: it comes from each
+ * map's own `collision` layer instead. Formatted the way the Tiled editor
+ * writes it, so re-saving the tileset in Tiled leaves it unchanged.
  */
 export function buildTerrainTilesetXml(): string {
-  const tiles: string[] = [];
-  for (let id = 0; id < TERRAIN_TILE_COUNT; id++) {
-    if (!isWalkableTile(id)) {
-      tiles.push(
-        ` <tile id="${id}">\n  <properties>\n   <property name="${BLOCKED_TILE_PROPERTY}" type="bool" value="true"/>\n  </properties>\n </tile>\n`
-      );
-    }
-  }
-
   return `<?xml version="1.0" encoding="UTF-8"?>
 <tileset version="1.10" tiledversion="1.11.0" name="terrain" tilewidth="${ATLAS_TILE_SIZE}" tileheight="${ATLAS_TILE_SIZE}" tilecount="${TERRAIN_TILE_COUNT}" columns="${TERRAIN_TILESET_COLUMNS}">
  <image source="terrain.png" width="${TERRAIN_TILESET_WIDTH}" height="${TERRAIN_TILESET_HEIGHT}"/>
-${tiles.join('')}</tileset>
+</tileset>
 `;
 }
