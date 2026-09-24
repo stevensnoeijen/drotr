@@ -33,6 +33,7 @@ import {
   countyTiledMapFileName,
   isCountyName,
 } from './county-names';
+import { withPreviousSpawns } from './spawns-layer-merge';
 
 const OUTPUT_DIR = path.join(process.cwd(), 'public', 'maps');
 
@@ -97,9 +98,14 @@ function main(args: readonly string[]): void {
     return;
   }
 
+  const destination = path.join(OUTPUT_DIR, fileName);
+  const previous = readExistingTiledMap(destination);
+
   let output: string;
   try {
-    output = serializeTiledMap(convert(readCdFile(source)));
+    output = serializeTiledMap(
+      withPreviousSpawns(convert(readCdFile(source)), previous)
+    );
   } catch (error) {
     fail(
       `Failed to convert ${cdPath(source)}: ${error instanceof Error ? error.message : String(error)}`
@@ -107,10 +113,21 @@ function main(args: readonly string[]): void {
     return;
   }
 
-  const destination = path.join(OUTPUT_DIR, fileName);
   fs.mkdirSync(OUTPUT_DIR, { recursive: true });
   fs.writeFileSync(destination, output);
   console.log(`Wrote ${destination} from ${cdPath(source)}.`);
+}
+
+/**
+ * The previously written map at `destination`, if any, parsed back for
+ * {@link withPreviousSpawns} to carry its hand-placed `spawns` layer
+ * forward. `undefined` if the file doesn't exist yet.
+ */
+function readExistingTiledMap(destination: string): TiledMap | undefined {
+  if (!fs.existsSync(destination)) {
+    return undefined;
+  }
+  return JSON.parse(fs.readFileSync(destination, 'utf-8')) as TiledMap;
 }
 
 main(process.argv.slice(2));

@@ -18,6 +18,7 @@ import { COLLISION_MARKER_TILE_ID } from '~/lib/art/collision-marker';
 
 import { buildCountyTiledMap, serializeTiledMap } from './county-map-tiled';
 import { countyMapCdPath, countyTiledMapFileName } from './county-names';
+import { withPreviousSpawns } from './spawns-layer-merge';
 
 const COLLISION_MARKER_GID = COLLISION_MARKER_TILE_ID + 1;
 
@@ -67,11 +68,18 @@ describe.skipIf(!available)('FAGARAS.MAP', () => {
       ),
       'utf-8'
     );
+    // The committed file's `spawns` layer is hand-placed, not derived from
+    // the source `.MAP` data, so it's spliced in before comparing — the
+    // same carry-over the real converter does on a rerun. Everything else
+    // (terrain, collision) is compared as freshly built, so a stale layer
+    // or stale formatting still fails this test.
+    const built = withPreviousSpawns(
+      buildCountyTiledMap(county),
+      JSON.parse(committed) as TiledMap
+    );
     // A plain string compare rather than `toEqual`: a diff of two ~270 KB
     // strings is unreadable anyway, and slow to build.
-    expect(serializeTiledMap(buildCountyTiledMap(county)) === committed).toBe(
-      true
-    );
+    expect(serializeTiledMap(built) === committed).toBe(true);
   });
 
   it('has an all-zero Section A hi and Section B lo', () => {
