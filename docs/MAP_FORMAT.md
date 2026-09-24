@@ -158,7 +158,8 @@ So bit 2 (`4`) means **impassable**. This is the pathfinding/collision
 grid, at 2× tile resolution — which is what phase 3's A* wants. Note the
 scope of that claim: it is a *unit-movement* mask, and it is the only
 terrain distinction the county files make. It says nothing about where
-buildings may be placed — see "What this does not tell us" below.
+buildings may be placed — see "Buildable locations: not encoded in the
+county files" below.
 
 ### `256` is not a third terrain class
 
@@ -182,9 +183,35 @@ isn't one. Measured across all 12 counties:
 So `256` is a **rare modifier on cells that are already blocked**, nearly
 always water — not a distinct passability or buildability class. Treating
 `hi != 0` as "blocked" is therefore safe, which is what the orientation
-test above relies on. What the bit actually marks is unresolved; a ford,
-a boat or dock spot, or a scripted location are all plausible, and the
-county data is too sparse to choose between them.
+test above relies on.
+
+Splitting the `256` subcells by the tile beneath them, every single one
+falls into exactly one of two shapes, with no exceptions in any county:
+
+| county | whole water tiles (all 4 subcells `256`) | tile-784 subcells |
+|---|---|---|
+| BRAILA  | 3 (2 clusters) | 0 |
+| CUERTA  | 52 (4 clusters) | 1 |
+| FAGARAS | 8 (1 cluster) | 27 |
+| GIURGIU | 34 (9 clusters) | 0 |
+| TIRGO   | 0 | 22 |
+
+- **On water** (tiles 702, 718, 1302, 1303, 1318, 1319) the bit covers all
+  four subcells of a tile, replacing `4` rather than adding to it. The
+  tiles form irregular blobs out in open water. They don't span a river
+  bank to bank, and most don't reach a shore. `FAGARAS`'s is a 2×4-tile
+  strip running *along* its river at the top map edge.
+- **On tile 784**, a cliff-ridge tile, the bit replaces `0` on the tile's
+  **top-left subcell only** (`256, 4, 0, 4` against the usual
+  `0, 4, 0, 4`). It marks some but not all 784 tiles (27 of 48 in
+  `FAGARAS`), and together they trace the western rim of the cliff
+  ridges, every 3 tiles, in a lattice. That's dozens per map, and they
+  follow the geology.
+
+Neither shape looks like a building site: they come as blobs or as rows
+along a ridge, not as a handful of discrete plots. What the bit actually
+marks is still unresolved. A shallow/deep water distinction, or a climbable
+cliff edge, both fit better than anything to do with buildings.
 
 Remaining detail on the field:
 
@@ -196,42 +223,88 @@ Remaining detail on the field:
 - Row width of 256 was derived the same way as Section A (autocorrelation
   minimum over divisors of 65,536).
 
-### What this does *not* tell us: building placement
-
-Read literally, the county files describe terrain with a single binary
-distinction — a cell is either walkable or it is not. Nothing found so far
-distinguishes **"buildable"** from **"walkable but not buildable"**, and it
-is worth being explicit that this is an absence of evidence rather than a
-settled answer, because placing buildings plainly needs more than a walk
-mask (a unit can cross a patch of open ground that a keep could not be
-founded on).
-
-Everything that could have carried a second distinction has been checked
-and is empty or accounted for:
-
-- Section B `hi` has only two meaningful states in county files, per the
-  measurements above.
-- Section B `lo` is all-zero in every county file.
-- Section A `hi` is all-zero in every county file.
-- The richer flag vocabulary exists only in `BUILDING.MAP`, whose blocks
-  1 and 2 are per-prefab masks whose correspondence to individual
-  buildings is still unresolved (see below).
-
-There is also still no identified **building-placement layer** in a county
-file at all: buildings appear in a county only as ordinary tiles stamped
-into Section A, with no separate record of which building was placed where.
-
-So whoever implements building placement should treat buildability as an
-open question rather than assume this document has answered it. The
-plausible sources, none yet verified, are: deriving it from Section A's
-tile index (grass and gravel behaving differently from cliff or water),
-recovering it from `BUILDING.MAP`'s flag blocks once prefab boundaries are
-extracted, or discovering it was logic in the original executable and never
-stored in the map data at all. Establishing which is a piece of research in
-its own right.
-
 `0x10000 (Section A) + 0x40000 (Section B) = 0x50000 = 327,680` — accounts
 for the entire file, no leftover/unknown bytes.
+
+### Buildable locations: not encoded in the county files
+
+A dedicated search looked for per-map coordinates marking where buildings
+(bridge, tower, castle, …) can be built. The expected signature was a
+**handful of discrete spots per county, present in every county**, and
+since the two sections already cover every byte of the file, any such
+marker would have to sit inside one of them. Every place it could hide was
+checked against all 12 counties. **None of them holds it.**
+
+| candidate | verdict | evidence |
+|---|---|---|
+| Section A `hi` | empty | all-zero in all 12 counties |
+| Section B `lo` | empty | all-zero in all 12 counties |
+| Section B `hi` bit 8 (`256`) | not build spots | absent from 7 of 12 counties. Where present it's water blobs or a cliff-rim lattice, dozens of subcells rather than a few plots (see "`256` is not a third terrain class") |
+| Section B `hi` bit 2 (`4`) deviations | not build spots | Section B is nearly a function of the tile beneath it. The cells that break from their tile's usual 2×2 pattern are one-subcell nudges along cliff and shore edges, plus a few isolated unblocked holes in open water that no unit could reach. There are 6–707 per county, scattered (2–240 clusters), with no shared shape |
+| a marker tile index in Section A | not build spots | the only tile in all 12 counties at a few-per-map count is **701**, a signpost on a cairn, and it only ever sits on the map border. See "Map-edge signposts" below |
+| building art stamped into Section A | none present | block 0 of `BUILDING.MAP` (Section A `lo` plus Section B `lo`) uses 922 distinct tiles. 856 of them — every roof, tower and wall — appear in **no** county. The other 66 are plain terrain (gravel, grass, water, shoreline, one tree), used for the ground around the compounds |
+| a third section / trailing bytes | none | Sections A + B are exactly 327,680 bytes |
+
+**Conclusion (high confidence for the negative):** county `.MAP` files do
+not record buildable locations or building-type constraints. The natural
+hypotheses — bits in Section B's `hi`, or marker tiles in Section A — were
+tested directly and don't hold. A cell is walkable or blocked, and
+that's all a county file says about it.
+
+What this leaves open is **where** the build spots live, and this CD
+can't answer that. It holds no game executable (only `ART/`, `AUDIO/`,
+`CINEMA/` and `COUNTIES/`), so the remaining sources can't be checked from
+here. In order of likelihood:
+
+1. Hard-coded per county in the original executable, alongside the other
+   scenario setup the `.MAP` files also leave out (unit spawns, for one).
+2. Derived at runtime from terrain (e.g. any open grass area large enough
+   for a prefab's footprint), with no per-map data at all.
+3. `BUILDING.MAP` blocks 1/2, if one of their flag regions turns out to be
+   a per-county placement table rather than a per-prefab mask. Nothing
+   suggests this yet, and prefab extraction is its own separate piece of work.
+
+**Decision:** rather than wait on any of the above, build spots will be
+**authored by hand**, the same way spawn points are: as objects in each
+county's Tiled map, added/curated manually per county as that county's
+scenario work needs them. There's no original data to convert them from,
+so this is a deliberate scope call, not a placeholder pending further
+research — it can be revisited if `BUILDING.MAP` prefab work (a separate
+ticket) or another source later turns up real per-county placement data.
+
+The evidence is pinned by golden tests across all 12 counties, in
+`scripts/county-map/county-map-markers-golden.spec.ts` (skipped without
+`.cd/`).
+
+### Map-edge signposts (tile 701)
+
+This turned up during the buildable-location search. It isn't a build spot,
+but it is the only per-map *marker-like* feature a county file carries.
+Tile 701 is a wooden signpost on a stone cairn over grass. It appears in
+**every** county, 1–6 times, and **every** occurrence sits on the map
+border (x or y is 0 or 127). It's always set in open grass, and its
+Section B pattern (`4, 4, 0, 0`: top half blocked) is the same everywhere.
+
+| county | signposts (x, y) |
+|---|---|
+| BRAILA  | (0,39) (0,120) |
+| BRASOV  | (127,44) (0,69) (42,127) (84,127) |
+| CUERTA  | (17,0) (123,0) |
+| FAGARAS | (0,28) (127,43) (87,127) |
+| GIURGIU | (72,0) (121,0) |
+| HIRSOVA | (31,0) (0,78) |
+| OSTROV  | (46,0) (0,19) |
+| PITESTI | (77,0) (0,2) (124,127) |
+| RASOVA  | (47,0) (0,8) |
+| SIBIU   | (20,127) |
+| SNAGOV  | (28,0) (127,19) (127,60) (0,62) (127,107) (27,127) |
+| TIRGO   | (50,0) (0,45) (127,73) (71,127) |
+
+The likeliest reading is that they mark where the county borders a
+neighbour: an entry or exit point for armies arriving from the strategic
+map. (Their surroundings are plain grass, tiles 1382–1387, not road.) That's an inference from where they sit and what they look
+like. No game logic confirms it. They aren't currently converted into the
+Tiled output.
 
 ## The search for a separate ground layer — closed
 
@@ -402,25 +475,27 @@ end up using is still open.
   the next concrete step toward a converter.
 - How `BUILDING.MAP` block 0's clusters correspond to blocks 1/2's flag
   regions (same coordinates? a lookup by index?), and whether a building's
-  placement *into* a county map is recorded anywhere in the county file
-  (no second/sparse "building instance" layer has been identified in
-  county `.MAP`s yet — worth another pass once cluster boundaries exist).
-- **Where building *buildability* is encoded, if anywhere.** County files
-  make a single walkable/blocked distinction and nothing more, so the
-  rules for where a building may be founded are not in the map data as
-  currently understood — see "What this does not tell us" above for the
-  candidate sources. This needs answering before building placement is
-  implemented.
+  placement *into* a county map is recorded anywhere. It isn't in the
+  county file itself: no county contains any prefab building tile (see
+  "Buildable locations" above).
+- **Where build spots come from.** They aren't in the county files (see
+  "Buildable locations: not encoded in the county files" above). The
+  remaining candidates are the original executable (not on this CD),
+  runtime derivation from terrain, or `BUILDING.MAP` blocks 1/2 — but the
+  decision made there is to hand-author build spots in the Tiled maps
+  rather than wait on one of those being confirmed.
 - What the Section B `hi` bits *other than* bit 2 mean, including what
-  bit 8 (`256`) marks on the water cells it occurs on. `BUILDING.MAP`
+  bit 8 (`256`) marks on the water blobs and cliff-rim subcells it occurs
+  on. `BUILDING.MAP`
   shows more bits set (`8,16,32,64,128`) than any county file (`4,256`
   only), so county data alone won't resolve the rest.
 - Whether Section A's `hi` field is ever non-zero in a *county* file (only
   ever seen non-zero in `BUILDING.MAP` so far).
 
-Resolved since: Section B's cell order (column-major, same as Section A)
-and whether a separate ground layer exists elsewhere on the CD (it does
-not) — both covered in their sections above.
+Resolved since: Section B's cell order (column-major, same as Section A),
+whether a separate ground layer exists elsewhere on the CD (it does not),
+and whether county files carry buildable-location markers (they do not) —
+all covered in their sections above.
 
 ## Test fixture strategy
 
