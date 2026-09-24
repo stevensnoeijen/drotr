@@ -2,7 +2,7 @@ import { World, type With } from 'miniplex';
 import { describe, expect, it } from 'vitest';
 
 import type { Entity } from '~/game/ecs/entity';
-import { CELL_SIZE } from '~/lib/grid';
+import { DEFAULT_CELL_SIZE } from '~/lib/grid';
 import { fireProjectile, type RangedAttacker } from './fire-projectile';
 
 describe('fireProjectile', () => {
@@ -22,7 +22,7 @@ describe('fireProjectile', () => {
       transform: { position: { x: 0, y: -100 }, rotation: 0 },
     };
 
-    fireProjectile(world, attacker, target, target.id!);
+    fireProjectile(world, attacker, target, target.id!, DEFAULT_CELL_SIZE);
 
     const spawned = [...world.entities].find((e) => e.projectile);
     expect(spawned).toBeDefined();
@@ -31,7 +31,7 @@ describe('fireProjectile', () => {
     expect(spawned!.projectile).toEqual({
       sourceTeam: 'blue',
       targetId: 2,
-      maxRange: 5 * CELL_SIZE,
+      maxRange: 5 * DEFAULT_CELL_SIZE,
       traveled: 0,
     });
     // Aimed straight up (target due north) at the firer's projectile speed.
@@ -54,8 +54,8 @@ describe('fireProjectile', () => {
     };
     const target: With<Entity, 'transform'> = { id: 2, transform: { position: { x: 10, y: 0 }, rotation: 0 } };
 
-    fireProjectile(world, attacker, target, 2);
-    fireProjectile(world, attacker, target, 2);
+    fireProjectile(world, attacker, target, 2, DEFAULT_CELL_SIZE);
+    fireProjectile(world, attacker, target, 2, DEFAULT_CELL_SIZE);
 
     const ids = [...world.entities].filter((e) => e.projectile).map((e) => e.id);
     expect(new Set(ids).size).toBe(2);

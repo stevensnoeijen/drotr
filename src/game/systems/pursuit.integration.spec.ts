@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { cellSteps } from '~/game/combat/attack-cell';
 import { createQueries } from '~/game/ecs/world';
 import type { Entity } from '~/game/ecs/entity';
-import { CELL_SIZE, isAtCellCentre } from '~/lib/grid';
+import { DEFAULT_CELL_SIZE, isAtCellCentre } from '~/lib/grid';
 import type { CollisionGrid } from '~/lib/navigation/astar';
 import { createMovePathSystem } from './move-path-system';
 import { createMoveTargetSystem } from './move-target-system';
@@ -30,8 +30,8 @@ function gridFrom(art: string): CollisionGrid {
 }
 
 const centre = (col: number, row: number) => ({
-  x: col * CELL_SIZE + CELL_SIZE / 2,
-  y: row * CELL_SIZE + CELL_SIZE / 2,
+  x: col * DEFAULT_CELL_SIZE + DEFAULT_CELL_SIZE / 2,
+  y: row * DEFAULT_CELL_SIZE + DEFAULT_CELL_SIZE / 2,
 });
 
 /**
@@ -58,8 +58,8 @@ describe('pursuit + movement integration', () => {
     const world = new World<Entity>();
     const queries = createQueries(world);
 
-    const perception = createPerceptionSystem(queries, 1);
-    const seek = createSeekSystem(queries, grid);
+    const perception = createPerceptionSystem(queries, DEFAULT_CELL_SIZE, 1);
+    const seek = createSeekSystem(queries, DEFAULT_CELL_SIZE, grid);
     const movePath = createMovePathSystem(queries);
     const moveTarget = createMoveTargetSystem(queries);
     const moveVelocity = createMoveVelocitySystem(queries);
@@ -76,7 +76,7 @@ describe('pursuit + movement integration', () => {
       transform: { position: { ...centre(0, 0) }, rotation: 0 },
       velocity: { x: 0, y: 0 },
       // Fast enough to cross the map inside a few simulated seconds.
-      moveSpeed: { value: 6 * CELL_SIZE },
+      moveSpeed: { value: 6 * DEFAULT_CELL_SIZE },
       attackRange: { value: 1 },
       aggroRange: { value: 50 },
       team: 'blue' as const,
@@ -93,8 +93,8 @@ describe('pursuit + movement integration', () => {
     };
 
     const cellOf = (position: { x: number; y: number }) => ({
-      x: Math.floor(position.x / CELL_SIZE),
-      y: Math.floor(position.y / CELL_SIZE),
+      x: Math.floor(position.x / DEFAULT_CELL_SIZE),
+      y: Math.floor(position.y / DEFAULT_CELL_SIZE),
     });
 
     /**
@@ -102,7 +102,7 @@ describe('pursuit + movement integration', () => {
      * measured in, a diagonal neighbour counting the same as an orthogonal
      * one. Deliberately not Euclidean distance: a unit resting on the
      * cell centre diagonally next to its target is one step away and in
-     * range, but `CELL_SIZE * sqrt(2)` apart.
+     * range, but `DEFAULT_CELL_SIZE * sqrt(2)` apart.
      */
     const stepsToEnemy = () => cellSteps(cellOf(self.transform.position), cellOf(enemy.transform.position));
 
@@ -118,7 +118,7 @@ describe('pursuit + movement integration', () => {
     }
 
     expect(stepsToEnemy()).toBeLessThanOrEqual(1);
-    expect(isAtCellCentre(self.transform.position)).toBe(true);
+    expect(isAtCellCentre(self.transform.position, DEFAULT_CELL_SIZE)).toBe(true);
     expect(self.velocity).toEqual({ x: 0, y: 0 });
     // Arrived: nothing left to route or steer toward.
     expect(self.pursuit).toBeUndefined();
@@ -131,8 +131,8 @@ describe('pursuit + movement integration', () => {
 
     for (let i = 0; i < 600; i++) {
       tick();
-      const col = Math.floor(self.transform.position.x / CELL_SIZE);
-      const row = Math.floor(self.transform.position.y / CELL_SIZE);
+      const col = Math.floor(self.transform.position.x / DEFAULT_CELL_SIZE);
+      const row = Math.floor(self.transform.position.y / DEFAULT_CELL_SIZE);
       expect(wallWithGap.collision[row * wallWithGap.width + col]).toBe(0);
     }
   });
@@ -144,13 +144,13 @@ describe('pursuit + movement integration', () => {
       // The enemy shuffles down the far side for the first second, staying
       // out of sight, so the route has to be replanned en route.
       if (i < 60 && i % 20 === 0) {
-        enemy.transform.position.y += CELL_SIZE;
+        enemy.transform.position.y += DEFAULT_CELL_SIZE;
       }
       tick();
     }
 
     expect(stepsToEnemy()).toBeLessThanOrEqual(1);
-    expect(isAtCellCentre(self.transform.position)).toBe(true);
+    expect(isAtCellCentre(self.transform.position, DEFAULT_CELL_SIZE)).toBe(true);
     // At rest, to within the float slack a clamped final approach leaves
     // behind.
     expect(Math.hypot(self.velocity.x, self.velocity.y)).toBeLessThan(1e-6);
@@ -173,6 +173,6 @@ describe('pursuit + movement integration', () => {
     }
 
     expect(stepsToEnemy()).toBeLessThanOrEqual(1);
-    expect(isAtCellCentre(self.transform.position)).toBe(true);
+    expect(isAtCellCentre(self.transform.position, DEFAULT_CELL_SIZE)).toBe(true);
   });
 });

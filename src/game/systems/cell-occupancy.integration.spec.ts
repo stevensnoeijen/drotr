@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import type { Entity } from '~/game/ecs/entity';
 import { createQueries } from '~/game/ecs/world';
 import { NO_OCCUPANT, OccupancyGrid } from '~/game/navigation/occupancy-grid';
-import { CELL_SIZE } from '~/lib/grid';
+import { DEFAULT_CELL_SIZE } from '~/lib/grid';
 import { Vector2 } from '~/lib/math/vector2';
 import { createCellOccupancySystem } from './cell-occupancy-system';
 import { moveSelectedTo } from './input-system';
@@ -30,8 +30,8 @@ const gridFrom = (art: string) => {
 };
 
 const centre = (col: number, row: number) => ({
-  x: col * CELL_SIZE + CELL_SIZE / 2,
-  y: row * CELL_SIZE + CELL_SIZE / 2,
+  x: col * DEFAULT_CELL_SIZE + DEFAULT_CELL_SIZE / 2,
+  y: row * DEFAULT_CELL_SIZE + DEFAULT_CELL_SIZE / 2,
 });
 
 /**
@@ -46,7 +46,7 @@ describe('cell occupancy + move order integration', () => {
     const world = new World<Entity>();
     const queries = createQueries(world);
     const map = gridFrom(art);
-    const occupancy = new OccupancyGrid(map);
+    const occupancy = new OccupancyGrid(map, DEFAULT_CELL_SIZE);
 
     const path = createMovePathSystem(queries);
     const target = createMoveTargetSystem(queries);
@@ -64,7 +64,7 @@ describe('cell occupancy + move order integration', () => {
       world.add({
         transform: { position: { ...centre(col, row) }, rotation: 0 },
         velocity: { x: 0, y: 0 },
-        moveSpeed: { value: speedInCells * CELL_SIZE },
+        moveSpeed: { value: speedInCells * DEFAULT_CELL_SIZE },
         team: 'blue' as const,
         selectable: true,
         selected: true,
@@ -72,7 +72,7 @@ describe('cell occupancy + move order integration', () => {
 
     const order = (col: number, row: number) => {
       const to = centre(col, row);
-      moveSelectedTo(queries, new Vector2(to.x, to.y), map, occupancy);
+      moveSelectedTo(queries, new Vector2(to.x, to.y), DEFAULT_CELL_SIZE, map, occupancy);
     };
 
     const cellOf = (entity: Entity) => occupancy.indexAt(entity.transform!.position);

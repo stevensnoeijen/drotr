@@ -8,7 +8,7 @@ import type { Renderable, Health } from '~/game/ecs/components';
 import { OccupancyGrid } from '~/game/navigation/occupancy-grid';
 import { markDirtyOnHealthChange } from '~/game/render/health-bar';
 import { DEFAULT_FIXED_STEP } from '~/game/game-loop';
-import { CELL_SIZE } from '~/lib/grid';
+import { DEFAULT_CELL_SIZE } from '~/lib/grid';
 import { createCellOccupancySystem } from './cell-occupancy-system';
 import { createCombatSystem } from './combat-system';
 import { createMovePathSystem } from './move-path-system';
@@ -46,23 +46,31 @@ describe('perception + seek + move + combat integration', () => {
     // between them; the occupancy grid is what decides which one gets it (and
     // so stops them walking through one another).
     const grid = { width: 16, height: 4, collision: new Uint8Array(16 * 4) };
-    const occupancy = new OccupancyGrid(grid);
+    const occupancy = new OccupancyGrid(grid, DEFAULT_CELL_SIZE);
 
     // Four cells apart: outside swordsmen's 1-cell attack range, inside
     // their 5-cell aggro range.
-    const blue = spawnUnit(world, { type: 'swordsmen', team: 'blue', position: cellPosition(2, 0) });
-    const red = spawnUnit(world, { type: 'swordsmen', team: 'red', position: cellPosition(6, 0) });
+    const blue = spawnUnit(
+      world,
+      { type: 'swordsmen', team: 'blue', position: cellPosition(2, 0, DEFAULT_CELL_SIZE) },
+      DEFAULT_CELL_SIZE
+    );
+    const red = spawnUnit(
+      world,
+      { type: 'swordsmen', team: 'red', position: cellPosition(6, 0, DEFAULT_CELL_SIZE) },
+      DEFAULT_CELL_SIZE
+    );
 
     // Matches `game-canvas.tsx`: one immediate scan at load, then the
     // periodic system, then seek, then integration, then combat.
-    runPerceptionScan(world, queries);
-    const perception = createPerceptionSystem(queries);
-    const seek = createSeekSystem(queries, grid, occupancy);
+    runPerceptionScan(world, queries, DEFAULT_CELL_SIZE);
+    const perception = createPerceptionSystem(queries, DEFAULT_CELL_SIZE);
+    const seek = createSeekSystem(queries, DEFAULT_CELL_SIZE, grid, occupancy);
     const movePath = createMovePathSystem(queries);
     const moveTarget = createMoveTargetSystem(queries);
     const cellOccupancy = createCellOccupancySystem(queries, occupancy);
     const move = createMoveVelocitySystem(queries);
-    const combat = createCombatSystem(queries);
+    const combat = createCombatSystem(queries, DEFAULT_CELL_SIZE);
 
     const tick = () => {
       perception(world, DT);
@@ -99,7 +107,7 @@ describe('perception + seek + move + combat integration', () => {
 
     // Parked exactly at the 1-cell attack range, not overlapping and not
     // stalled out of reach.
-    expect(distance(blue, red)).toBeCloseTo(CELL_SIZE, 6);
+    expect(distance(blue, red)).toBeCloseTo(DEFAULT_CELL_SIZE, 6);
     expect(blue.velocity).toEqual({ x: 0, y: 0 });
 
     // Both swing on the same schedule, but the blow that lands first kills:

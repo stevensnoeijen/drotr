@@ -1,5 +1,5 @@
 import { cellPosition, spawnUnit } from '~/game/data/spawn';
-import { cellPositionToVector } from '~/lib/grid';
+import { cellPositionToVector, cellSizeOf } from '~/lib/grid';
 import type { Scenario } from './types';
 
 /**
@@ -19,7 +19,8 @@ export const testScenario: Scenario = {
   title: 'Test',
   description:
     'Two swordsmen pairs: one within attack range fighting, one five tiles apart not fighting. Plus a knight-vs-swordsman duel.',
-  setup: (world) => {
+  setup: (world, map) => {
+    const cellSize = cellSizeOf(map);
     const adjacentRow = 2;
     const separatedRow = 9;
 
@@ -27,13 +28,13 @@ export const testScenario: Scenario = {
     spawnUnit(world, {
       type: 'swordsmen',
       team: 'blue',
-      position: cellPosition(2, adjacentRow),
-    });
+      position: cellPosition(2, adjacentRow, cellSize),
+    }, cellSize);
     spawnUnit(world, {
       type: 'swordsmen',
       team: 'red',
-      position: cellPosition(3, adjacentRow),
-    });
+      position: cellPosition(3, adjacentRow, cellSize),
+    }, cellSize);
 
     // Out of attack range: five cells apart. An odd column gap (rather than
     // four) keeps their eventual meeting point off any shared grid line —
@@ -46,23 +47,23 @@ export const testScenario: Scenario = {
     spawnUnit(world, {
       type: 'swordsmen',
       team: 'blue',
-      position: cellPosition(2, separatedRow),
-    });
+      position: cellPosition(2, separatedRow, cellSize),
+    }, cellSize);
     spawnUnit(world, {
       type: 'swordsmen',
       team: 'red',
-      position: cellPosition(7, separatedRow),
-    });
+      position: cellPosition(7, separatedRow, cellSize),
+    }, cellSize);
 
     // Just below (south of) the maze block, lined up with its bottom exit
     // (cols 44-46), for exercising click-to-move into and through the maze
-    // corridors. CELL_SIZE matches the map's tile size, so cellPosition's
+    // corridors. The cell size is the map's own tile size, so cellPosition's
     // col/row lines up directly with the map's own tile grid.
     spawnUnit(world, {
       type: 'swordsmen',
       team: 'blue',
-      position: cellPosition(45, 50),
-    });
+      position: cellPosition(45, 50, cellSize),
+    }, cellSize);
 
     // Knight-vs-swordsman duel: one cell apart so they're immediately
     // within attack range and start trading blows on load. Row 12 sits
@@ -73,13 +74,13 @@ export const testScenario: Scenario = {
     spawnUnit(world, {
       type: 'knight',
       team: 'blue',
-      position: cellPosition(2, 12),
-    });
+      position: cellPosition(2, 12, cellSize),
+    }, cellSize);
     spawnUnit(world, {
       type: 'swordsmen',
       team: 'red',
-      position: cellPosition(3, 12),
-    });
+      position: cellPosition(3, 12, cellSize),
+    }, cellSize);
 
     // Knight, swordsman and crossbowsoldier, each on its own row, ordered
     // the same distance in parallel: exercises per-unit-type MoveSpeed
@@ -99,28 +100,28 @@ export const testScenario: Scenario = {
     const knight = spawnUnit(world, {
       type: 'knight',
       team: 'blue',
-      position: cellPosition(raceStartCol, knightRow),
-    });
+      position: cellPosition(raceStartCol, knightRow, cellSize),
+    }, cellSize);
     knight.moveTarget = {
-      position: cellPositionToVector(raceStartCol + raceDistanceCols, knightRow),
+      position: cellPositionToVector(raceStartCol + raceDistanceCols, knightRow, cellSize),
     };
 
     const swordsman = spawnUnit(world, {
       type: 'swordsmen',
       team: 'blue',
-      position: cellPosition(raceStartCol, swordsmanRow),
-    });
+      position: cellPosition(raceStartCol, swordsmanRow, cellSize),
+    }, cellSize);
     swordsman.moveTarget = {
-      position: cellPositionToVector(raceStartCol + raceDistanceCols, swordsmanRow),
+      position: cellPositionToVector(raceStartCol + raceDistanceCols, swordsmanRow, cellSize),
     };
 
     const crossbowsoldier = spawnUnit(world, {
       type: 'crossbowsoldier',
       team: 'blue',
-      position: cellPosition(raceStartCol, crossbowsoldierRow),
-    });
+      position: cellPosition(raceStartCol, crossbowsoldierRow, cellSize),
+    }, cellSize);
     crossbowsoldier.moveTarget = {
-      position: cellPositionToVector(raceStartCol + raceDistanceCols, crossbowsoldierRow),
+      position: cellPositionToVector(raceStartCol + raceDistanceCols, crossbowsoldierRow, cellSize),
     };
 
     // Two blue-vs-red crossbowsoldier pairs, top-right of the layout and
@@ -131,22 +132,22 @@ export const testScenario: Scenario = {
     spawnUnit(world, {
       type: 'crossbowsoldier',
       team: 'blue',
-      position: cellPosition(56, crossbowRow),
-    });
+      position: cellPosition(56, crossbowRow, cellSize),
+    }, cellSize);
     spawnUnit(world, {
       type: 'crossbowsoldier',
       team: 'red',
-      position: cellPosition(59, crossbowRow),
-    });
+      position: cellPosition(59, crossbowRow, cellSize),
+    }, cellSize);
     spawnUnit(world, {
       type: 'crossbowsoldier',
       team: 'blue',
-      position: cellPosition(56, crossbowRow + 2),
-    });
+      position: cellPosition(56, crossbowRow + 2, cellSize),
+    }, cellSize);
     spawnUnit(world, {
       type: 'crossbowsoldier',
       team: 'red',
-      position: cellPosition(59, crossbowRow + 2),
-    });
+      position: cellPosition(59, crossbowRow + 2, cellSize),
+    }, cellSize);
   },
 };

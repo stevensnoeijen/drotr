@@ -44,7 +44,11 @@ const WAYPOINT_RADIUS = 2;
  * tick once the current leg completes), not a steady per-frame cost across
  * the whole unit roster.
  */
-function remainingWaypoints(entity: Entity, grid: GridLike | undefined): Point[] {
+function remainingWaypoints(
+  entity: Entity,
+  cellSize: number,
+  grid: GridLike | undefined
+): Point[] {
   const points: Point[] = [];
 
   if (entity.moveTarget) {
@@ -53,7 +57,12 @@ function remainingWaypoints(entity: Entity, grid: GridLike | undefined): Point[]
 
   if (entity.pendingMoveOrder) {
     if (entity.moveTarget) {
-      const preview = planMoveOrder(grid, entity.moveTarget.position, entity.pendingMoveOrder.destination);
+      const preview = planMoveOrder(
+        grid,
+        entity.moveTarget.position,
+        entity.pendingMoveOrder.destination,
+        cellSize
+      );
       switch (preview.kind) {
         case 'path':
           points.push(...preview.movePath.waypoints);
@@ -100,9 +109,15 @@ function remainingWaypoints(entity: Entity, grid: GridLike | undefined): Point[]
  * in-flight leg's exact destination together with a preview of the route
  * the pending order will actually produce, so the in-flight step reads as
  * continuing seamlessly into the routed road to the new destination. `grid`
- * is what makes that preview possible — see `remainingWaypoints`.
+ * is what makes that preview possible — see `remainingWaypoints` — and
+ * `cellSize` is the world size of its cells (see `cellSizeOf`).
  */
-export function drawMoveLines(graphics: Graphics, entities: Iterable<Entity>, grid?: GridLike): void {
+export function drawMoveLines(
+  graphics: Graphics,
+  entities: Iterable<Entity>,
+  cellSize: number,
+  grid?: GridLike
+): void {
   graphics.clear();
 
   for (const entity of entities) {
@@ -111,7 +126,7 @@ export function drawMoveLines(graphics: Graphics, entities: Iterable<Entity>, gr
     }
 
     const from = entity.transform.position;
-    const waypoints = remainingWaypoints(entity, grid);
+    const waypoints = remainingWaypoints(entity, cellSize, grid);
 
     if (waypoints.length === 0) {
       continue;

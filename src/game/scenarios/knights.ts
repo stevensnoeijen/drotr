@@ -1,5 +1,6 @@
 import type { ParsedMap } from '~/game/map/load-tiled-map';
 import { claimSpawn } from '~/game/systems/spawn-system';
+import { cellSizeOf } from '~/lib/grid';
 import type { Scenario } from './types';
 
 /** Named spawn points this scenario requires the map to provide. */
@@ -45,7 +46,8 @@ export const knightsScenario: Scenario = {
       return;
     }
 
-    claimSpawn(world, map.spawns, 'red', { team: 'red', units: ['knight'] });
-    claimSpawn(world, map.spawns, 'blue', { team: 'blue', units: ['knight'] });
+    const cellSize = cellSizeOf(map);
+    claimSpawn(world, map.spawns, 'red', { team: 'red', units: ['knight'] }, cellSize);
+    claimSpawn(world, map.spawns, 'blue', { team: 'blue', units: ['knight'] }, cellSize);
   },
 };

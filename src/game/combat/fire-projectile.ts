@@ -2,7 +2,6 @@ import type { With, World } from 'miniplex';
 
 import type { Entity } from '~/game/ecs/entity';
 import { allocateEntityId } from '~/game/data/spawn';
-import { CELL_SIZE } from '~/lib/grid';
 import { quantizeAngle } from '~/lib/math/angle';
 
 /** An entity whose landed swing fires a projectile rather than hitting instantly. */
@@ -34,13 +33,14 @@ const PROJECTILE_COLOR = 0x9b59b6;
  * firing distance: a projectile fired at the very edge of range must still
  * expire at (not fly past) that same boundary if its target manages to
  * sidestep it, mirroring the firer's own reach rather than this one shot's
- * particular aim.
+ * particular aim. `cellSize` converts that range from cells to world units.
  */
 export function fireProjectile(
   world: World<Entity>,
   attacker: RangedAttacker,
   target: With<Entity, 'transform'>,
-  targetId: number
+  targetId: number,
+  cellSize: number
 ): void {
   const dx = target.transform.position.x - attacker.transform.position.x;
   const dy = target.transform.position.y - attacker.transform.position.y;
@@ -68,7 +68,7 @@ export function fireProjectile(
     projectile: {
       sourceTeam: attacker.team,
       targetId,
-      maxRange: attacker.attackRange.value * CELL_SIZE,
+      maxRange: attacker.attackRange.value * cellSize,
       traveled: 0,
     },
     renderable: { shape: 'stripe', color: PROJECTILE_COLOR, size: PROJECTILE_SIZE },

@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import type { Entity } from '~/game/ecs/entity';
 import { createQueries } from '~/game/ecs/world';
 import { NO_CELL, NO_OCCUPANT, OccupancyGrid } from '~/game/navigation/occupancy-grid';
-import { CELL_SIZE } from '~/lib/grid';
+import { DEFAULT_CELL_SIZE } from '~/lib/grid';
 import { BLOCKED_GIVE_UP_SECONDS, createCellOccupancySystem } from './cell-occupancy-system';
 import { createMoveVelocitySystem } from './move-velocity-system';
 
@@ -27,7 +27,7 @@ const gridFrom = (art: string) => {
 
 const DT = 0.1;
 /** A quarter of a cell per tick, so a crossing takes several ticks to watch. */
-const STEP = CELL_SIZE / 4;
+const STEP = DEFAULT_CELL_SIZE / 4;
 const SPEED = STEP / DT;
 
 const OPEN = `
@@ -41,7 +41,7 @@ const OPEN = `
 function setup(art: string = OPEN) {
   const world = new World<Entity>();
   const queries = createQueries(world);
-  const grid = new OccupancyGrid(gridFrom(art));
+  const grid = new OccupancyGrid(gridFrom(art), DEFAULT_CELL_SIZE);
   const occupancy = createCellOccupancySystem(queries, grid);
   const integrate = createMoveVelocitySystem(queries);
 
@@ -279,7 +279,7 @@ describe('createCellOccupancySystem', () => {
       const mover = addUnit(0, 0, { renderable: { shape: 'square', color: 0, size: halfExtent } });
       drive(mover, SPEED, 0);
 
-      const boundary = grid.centreOf(grid.indexOf(0, 0)).x + CELL_SIZE / 2;
+      const boundary = grid.centreOf(grid.indexOf(0, 0)).x + DEFAULT_CELL_SIZE / 2;
       for (let i = 0; i < 10; i++) {
         tick();
         expect(mover.transform.position.x).toBeLessThanOrEqual(boundary - halfExtent);
@@ -315,8 +315,8 @@ describe('createCellOccupancySystem', () => {
       const { addUnit, drive, tick } = setup();
       addUnit(1, 0);
       const mover = addUnit(0, 0, {
-        moveTarget: { position: { x: CELL_SIZE * 4, y: CELL_SIZE / 2 } },
-        movePath: { waypoints: [{ x: CELL_SIZE * 4, y: CELL_SIZE / 2 }], index: 1 },
+        moveTarget: { position: { x: DEFAULT_CELL_SIZE * 4, y: DEFAULT_CELL_SIZE / 2 } },
+        movePath: { waypoints: [{ x: DEFAULT_CELL_SIZE * 4, y: DEFAULT_CELL_SIZE / 2 }], index: 1 },
       });
       drive(mover, SPEED, 0);
 
@@ -334,7 +334,7 @@ describe('createCellOccupancySystem', () => {
       const { addUnit, drive, tick } = setup();
       addUnit(1, 0);
       const mover = addUnit(0, 0, {
-        moveTarget: { position: { x: CELL_SIZE * 4, y: CELL_SIZE / 2 } },
+        moveTarget: { position: { x: DEFAULT_CELL_SIZE * 4, y: DEFAULT_CELL_SIZE / 2 } },
       });
       drive(mover, SPEED, 0);
 

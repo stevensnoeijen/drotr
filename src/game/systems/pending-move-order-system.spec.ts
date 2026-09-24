@@ -4,14 +4,14 @@ import { describe, expect, it } from 'vitest';
 import type { Entity } from '~/game/ecs/entity';
 import { createQueries } from '~/game/ecs/world';
 import { planMovePath } from '~/game/navigation/plan-move-path';
-import { cellPositionToVector } from '~/lib/grid';
+import { DEFAULT_CELL_SIZE, cellPositionToVector } from '~/lib/grid';
 import type { CollisionGrid } from '~/lib/navigation/astar';
 import { createPendingMoveOrderSystem } from './pending-move-order-system';
 
 function setup(entity: Partial<Entity> = {}, grid?: CollisionGrid) {
   const world = new World<Entity>();
   const queries = createQueries(world);
-  const system = createPendingMoveOrderSystem(queries, grid);
+  const system = createPendingMoveOrderSystem(queries, DEFAULT_CELL_SIZE, grid);
 
   const self = world.add({
     transform: { position: { x: 0, y: 0 }, rotation: 0 },
@@ -53,8 +53,8 @@ describe('createPendingMoveOrderSystem', () => {
   });
 
   it('plans and applies a staged routed order using the grid, handing over a movePath', () => {
-    const from = cellPositionToVector(0, 0);
-    const destination = cellPositionToVector(4, 4);
+    const from = cellPositionToVector(0, 0, DEFAULT_CELL_SIZE);
+    const destination = cellPositionToVector(4, 4, DEFAULT_CELL_SIZE);
     const { self, tick } = setup(
       {
         transform: { position: { x: from.x, y: from.y }, rotation: 0 },
@@ -68,7 +68,7 @@ describe('createPendingMoveOrderSystem', () => {
     const expected = planMovePath(openGrid, { x: from.x, y: from.y }, {
       x: destination.x,
       y: destination.y,
-    });
+    }, DEFAULT_CELL_SIZE);
     expect(expected.status).toBe('found');
     expect(self.movePath).toEqual({ waypoints: expected.waypoints, index: 0 });
     expect(self.moveTarget).toBeUndefined();
@@ -76,7 +76,7 @@ describe('createPendingMoveOrderSystem', () => {
   });
 
   it("applies a staged stop order when the destination is the unit's own cell, zeroing velocity and clearing any leftover route", () => {
-    const here = cellPositionToVector(2, 2);
+    const here = cellPositionToVector(2, 2, DEFAULT_CELL_SIZE);
     const { self, tick } = setup(
       {
         transform: { position: { x: here.x, y: here.y }, rotation: 0 },
@@ -134,12 +134,12 @@ describe('createPendingMoveOrderSystem', () => {
     // mirrors a unit mid-transition, whose transform.position at staging
     // time is somewhere between two cells and must not be baked into the
     // eventual route.
-    const staleFrom = cellPositionToVector(0, 0);
-    const arrivalCell = cellPositionToVector(4, 4);
+    const staleFrom = cellPositionToVector(0, 0, DEFAULT_CELL_SIZE);
+    const arrivalCell = cellPositionToVector(4, 4, DEFAULT_CELL_SIZE);
     // Off the diagonal from both candidate start cells, so the two produce
     // genuinely different routes rather than both collapsing to the same
     // single-segment diagonal.
-    const destination = cellPositionToVector(9, 3);
+    const destination = cellPositionToVector(9, 3, DEFAULT_CELL_SIZE);
 
     const { self, tick } = setup(
       {
@@ -165,12 +165,14 @@ describe('createPendingMoveOrderSystem', () => {
     const fromArrival = planMovePath(
       openGrid,
       { x: arrivalCell.x, y: arrivalCell.y },
-      { x: destination.x, y: destination.y }
+      { x: destination.x, y: destination.y },
+      DEFAULT_CELL_SIZE
     );
     const fromStaleStart = planMovePath(
       openGrid,
       { x: staleFrom.x, y: staleFrom.y },
-      { x: destination.x, y: destination.y }
+      { x: destination.x, y: destination.y },
+      DEFAULT_CELL_SIZE
     );
 
     expect(self.movePath).toEqual({ waypoints: fromArrival.waypoints, index: 0 });

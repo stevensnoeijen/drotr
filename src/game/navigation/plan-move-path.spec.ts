@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'vitest';
 
-import { CELL_SIZE } from '~/lib/grid';
+import { DEFAULT_CELL_SIZE } from '~/lib/grid';
 import { planMovePath } from './plan-move-path';
 
 /** World-space centre of cell (`col`, `row`), the placement every unit gets. */
 const centre = (col: number, row: number) => ({
-  x: col * CELL_SIZE + CELL_SIZE / 2,
-  y: row * CELL_SIZE + CELL_SIZE / 2,
+  x: col * DEFAULT_CELL_SIZE + DEFAULT_CELL_SIZE / 2,
+  y: row * DEFAULT_CELL_SIZE + DEFAULT_CELL_SIZE / 2,
 });
 
 /** A collision grid in the exact shape a loaded map exposes. */
@@ -39,7 +39,8 @@ describe('planMovePath', () => {
     const { status, waypoints } = planMovePath(
       wallWithGap,
       centre(0, 0),
-      centre(8, 0)
+      centre(8, 0),
+      DEFAULT_CELL_SIZE
     );
 
     expect(status).toBe('found');
@@ -61,7 +62,8 @@ describe('planMovePath', () => {
     const { waypoints } = planMovePath(
       wallWithGap,
       centre(0, 0),
-      centre(8, 0)
+      centre(8, 0),
+      DEFAULT_CELL_SIZE
     );
 
     expect(waypoints).not.toContainEqual(centre(0, 0));
@@ -71,7 +73,8 @@ describe('planMovePath', () => {
     const { waypoints } = planMovePath(
       wallWithGap,
       { x: 3, y: 5 },
-      { x: 8 * CELL_SIZE + 1, y: 4 * CELL_SIZE + 31 }
+      { x: 8 * DEFAULT_CELL_SIZE + 1, y: 4 * DEFAULT_CELL_SIZE + 31 },
+      DEFAULT_CELL_SIZE
     );
 
     expect(waypoints.at(-1)).toEqual(centre(8, 4));
@@ -81,7 +84,8 @@ describe('planMovePath', () => {
     const { status, waypoints } = planMovePath(
       wallWithGap,
       centre(2, 2),
-      centre(2, 2)
+      centre(2, 2),
+      DEFAULT_CELL_SIZE
     );
 
     expect(status).toBe('found');
@@ -100,11 +104,38 @@ describe('planMovePath', () => {
     const { status, waypoints } = planMovePath(
       divided,
       centre(0, 0),
-      centre(4, 4)
+      centre(4, 4),
+      DEFAULT_CELL_SIZE
     );
 
     expect(status).toBe('unreachable');
     expect(waypoints).toEqual([]);
+  });
+
+  it('converts between world and cells at the grid\'s own cell size', () => {
+    // A 40px-tile map: the same wall-with-gap layout, routed in cells of that
+    // size, must yield the same cells with 40px centres.
+    const cellSize = 40;
+    const at = (col: number, row: number) => ({
+      x: col * cellSize + cellSize / 2,
+      y: row * cellSize + cellSize / 2,
+    });
+
+    const { status, waypoints } = planMovePath(wallWithGap, at(0, 0), at(8, 0), cellSize);
+
+    expect(status).toBe('found');
+    expect(waypoints).toEqual([
+      at(1, 1),
+      at(2, 2),
+      at(3, 3),
+      at(3, 4),
+      at(4, 4),
+      at(5, 4),
+      at(6, 3),
+      at(7, 2),
+      at(8, 1),
+      at(8, 0),
+    ]);
   });
 
   it('walks up to a destination clicked inside a wall', () => {
@@ -119,7 +150,8 @@ describe('planMovePath', () => {
     const { status, waypoints } = planMovePath(
       block,
       centre(0, 0),
-      centre(2, 2)
+      centre(2, 2),
+      DEFAULT_CELL_SIZE
     );
 
     expect(status).toBe('found');

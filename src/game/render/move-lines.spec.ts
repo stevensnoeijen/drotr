@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 
 import type { Entity } from '~/game/ecs/entity';
 import { planMovePath } from '~/game/navigation/plan-move-path';
-import { cellPositionToVector } from '~/lib/grid';
+import { DEFAULT_CELL_SIZE, cellPositionToVector } from '~/lib/grid';
 import type { CollisionGrid } from '~/lib/navigation/astar';
 import { drawMoveLines } from './move-lines';
 
@@ -56,7 +56,7 @@ describe('drawMoveLines', () => {
       { transform: { position: { x: 0, y: 0 }, rotation: 0 } },
     ];
 
-    drawMoveLines(graphics, entities);
+    drawMoveLines(graphics, entities, DEFAULT_CELL_SIZE);
 
     expect(cleared).toBe(true);
   });
@@ -68,7 +68,7 @@ describe('drawMoveLines', () => {
       moveTarget: { position: { x: 64, y: 0 } },
     };
 
-    expect(() => drawMoveLines(graphics, [entity])).not.toThrow();
+    expect(() => drawMoveLines(graphics, [entity], DEFAULT_CELL_SIZE)).not.toThrow();
   });
 
   it('skips an entity whose moveTarget has been cleared', () => {
@@ -78,7 +78,7 @@ describe('drawMoveLines', () => {
       transform: { position: { x: 0, y: 0 }, rotation: 0 },
     };
 
-    drawMoveLines(graphics, [entity]);
+    drawMoveLines(graphics, [entity], DEFAULT_CELL_SIZE);
 
     expect(points).toEqual([]);
   });
@@ -90,7 +90,7 @@ describe('drawMoveLines', () => {
       moveTarget: { position: { x: 64, y: 0 } },
     };
 
-    drawMoveLines(graphics, [entity]);
+    drawMoveLines(graphics, [entity], DEFAULT_CELL_SIZE);
 
     expect(points).toEqual([{ x: 64, y: 0 }]);
   });
@@ -110,7 +110,7 @@ describe('drawMoveLines', () => {
       },
     };
 
-    drawMoveLines(graphics, [entity]);
+    drawMoveLines(graphics, [entity], DEFAULT_CELL_SIZE);
 
     // The unit's own position starts the polyline (a `moveTo`), then the leg
     // it's walking and the two waypoints still ahead of it — each waypoint
@@ -137,7 +137,7 @@ describe('drawMoveLines', () => {
       },
     };
 
-    drawMoveLines(graphics, [entity]);
+    drawMoveLines(graphics, [entity], DEFAULT_CELL_SIZE);
 
     expect(points).toEqual([{ x: 60, y: 40 }]);
   });
@@ -155,7 +155,7 @@ describe('drawMoveLines', () => {
       },
     };
 
-    drawMoveLines(graphics, [entity]);
+    drawMoveLines(graphics, [entity], DEFAULT_CELL_SIZE);
 
     expect(points).toEqual([
       { x: 10, y: 10 },
@@ -166,7 +166,7 @@ describe('drawMoveLines', () => {
   it('skips an entity with no transform', () => {
     const { graphics, points } = trackLineTo();
 
-    drawMoveLines(graphics, [{ moveTarget: { position: { x: 1, y: 2 } } }]);
+    drawMoveLines(graphics, [{ moveTarget: { position: { x: 1, y: 2 } } }], DEFAULT_CELL_SIZE);
 
     expect(points).toEqual([]);
   });
@@ -178,7 +178,7 @@ describe('drawMoveLines', () => {
       pendingMoveOrder: { destination: { x: 100, y: 50 } },
     };
 
-    expect(() => drawMoveLines(graphics, [entity])).not.toThrow();
+    expect(() => drawMoveLines(graphics, [entity], DEFAULT_CELL_SIZE)).not.toThrow();
     expect(points).toEqual([]);
   });
 
@@ -190,7 +190,7 @@ describe('drawMoveLines', () => {
       pendingMoveOrder: { destination: { x: 200, y: 200 } },
     };
 
-    drawMoveLines(graphics, [entity]);
+    drawMoveLines(graphics, [entity], DEFAULT_CELL_SIZE);
 
     // One continuous polyline: the exact in-flight destination, then
     // straight on to the pending destination (no grid to route through).
@@ -208,7 +208,7 @@ describe('drawMoveLines', () => {
       pendingMoveOrder: { destination: { x: 200, y: 200 } },
     };
 
-    drawMoveLines(graphics, [entity]);
+    drawMoveLines(graphics, [entity], DEFAULT_CELL_SIZE);
 
     // Exactly one stroke call — one line, not a separate "committed" vs
     // "pending" one — necessarily in one colour.
@@ -217,8 +217,8 @@ describe('drawMoveLines', () => {
 
   it('previews a routed reroute (with a grid) from the exact in-flight destination, not the pending order alone', () => {
     const { graphics, points } = trackLineTo();
-    const legTarget = cellPositionToVector(2, 2);
-    const destination = cellPositionToVector(9, 3);
+    const legTarget = cellPositionToVector(2, 2, DEFAULT_CELL_SIZE);
+    const destination = cellPositionToVector(9, 3, DEFAULT_CELL_SIZE);
     const entity: Entity = {
       // Deliberately a stale live position: the preview must be planned
       // from `moveTarget.position` (the exact upcoming cell), not this.
@@ -227,12 +227,13 @@ describe('drawMoveLines', () => {
       pendingMoveOrder: { destination: { x: destination.x, y: destination.y } },
     };
 
-    drawMoveLines(graphics, [entity], openGrid);
+    drawMoveLines(graphics, [entity], DEFAULT_CELL_SIZE, openGrid);
 
     const expectedRoute = planMovePath(
       openGrid,
       { x: legTarget.x, y: legTarget.y },
-      { x: destination.x, y: destination.y }
+      { x: destination.x, y: destination.y },
+      DEFAULT_CELL_SIZE
     );
     expect(expectedRoute.status).toBe('found');
 
@@ -255,7 +256,7 @@ describe('drawMoveLines', () => {
       },
     };
 
-    drawMoveLines(graphics, [entity], openGrid);
+    drawMoveLines(graphics, [entity], DEFAULT_CELL_SIZE, openGrid);
 
     expect(points).toEqual([
       { x: 10, y: 10 },

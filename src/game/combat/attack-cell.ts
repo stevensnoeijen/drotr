@@ -11,7 +11,7 @@ export interface Cell {
  *
  * This — not Euclidean distance — is what `attackRange` is measured in. A
  * target one cell diagonally away is one 8-way step (`attackRange` 1 should
- * reach it), but its Euclidean distance is `CELL_SIZE * sqrt(2)`, further
+ * reach it), but its Euclidean distance is `sqrt(2)` cell widths, further
  * than a range-1 Euclidean check would allow.
  */
 export function cellSteps(a: Cell, b: Cell): number {

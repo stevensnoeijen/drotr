@@ -26,10 +26,12 @@ import type { GridLike } from '~/lib/navigation/astar';
  * `grid` is the loaded map's collision data — the same one passed to
  * `createInputSystem` — used to route a staged order around terrain; omit
  * it for a map with no terrain, matching `moveSelectedTo`'s own fallback to
- * a straight line.
+ * a straight line. `cellSize` is the world size of that grid's cells (see
+ * `cellSizeOf`).
  */
 export function createPendingMoveOrderSystem(
   queries: Queries,
+  cellSize: number,
   grid?: GridLike
 ): System {
   return () => {
@@ -42,7 +44,7 @@ export function createPendingMoveOrderSystem(
       delete self.pendingMoveOrder;
       applyMoveOrder(
         self,
-        planMoveOrder(grid, self.transform.position, pending.destination)
+        planMoveOrder(grid, self.transform.position, pending.destination, cellSize)
       );
     }
   };

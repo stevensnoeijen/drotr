@@ -245,7 +245,12 @@ export function createCellOccupancySystem(queries: Queries, grid: OccupancyGrid)
         const destination = waypoints[waypoints.length - 1];
         if (destination) {
           const blockedGrid = grid.asBlockedGridExcluding(occupancy.occupantId);
-          const planned = planMovePath(blockedGrid, transform.position, destination);
+          const planned = planMovePath(
+            blockedGrid,
+            transform.position,
+            destination,
+            grid.cellSize
+          );
           if (planned.status === 'found' && planned.waypoints.length > 0) {
             self.movePath = { waypoints: planned.waypoints, index: 0 };
             // MovePathSystem only hands over a waypoint when there's no

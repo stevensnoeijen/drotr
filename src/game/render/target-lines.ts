@@ -113,7 +113,11 @@ function drawArrowHead(
  * `attackRange` at all (not itself an attacker) still gets a line once both
  * sides are settled: it has no range to check against.
  */
-export function drawTargetLines(graphics: Graphics, entities: Iterable<Entity>): void {
+export function drawTargetLines(
+  graphics: Graphics,
+  entities: Iterable<Entity>,
+  cellSize: number
+): void {
   graphics.clear();
 
   const pool = [...entities];
@@ -127,13 +131,13 @@ export function drawTargetLines(graphics: Graphics, entities: Iterable<Entity>):
       continue;
     }
 
-    if (!isSettled(origin) || !isSettled(targetEntity)) {
+    if (!isSettled(origin, cellSize) || !isSettled(targetEntity, cellSize)) {
       continue;
     }
 
     if (
       origin.attackRange &&
-      cellDistance(origin.transform.position, targetEntity.transform.position) >
+      cellDistance(origin.transform.position, targetEntity.transform.position, cellSize) >
         origin.attackRange.value
     ) {
       continue;

@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import type { Entity } from '~/game/ecs/entity';
 import type { CollisionGrid } from '~/lib/navigation/astar';
 import { applyMoveOrder, planMoveOrder } from './move-order';
+import { DEFAULT_CELL_SIZE } from '~/lib/grid';
 
 const baseEntity = (): Entity => ({
   transform: { position: { x: 0, y: 0 }, rotation: 0 },
@@ -14,7 +15,7 @@ const openGrid: CollisionGrid = { width: 5, height: 5, collision: new Uint8Array
 
 describe('planMoveOrder', () => {
   it('plans a straight-line "target" when no grid is given', () => {
-    const result = planMoveOrder(undefined, { x: 0, y: 0 }, { x: 16, y: 16 });
+    const result = planMoveOrder(undefined, { x: 0, y: 0 }, { x: 16, y: 16 }, DEFAULT_CELL_SIZE);
 
     expect(result).toEqual({
       kind: 'target',
@@ -23,25 +24,30 @@ describe('planMoveOrder', () => {
   });
 
   it('plans a routed "path" through a grid', () => {
-    const result = planMoveOrder(openGrid, { x: 16, y: 16 }, { x: 144, y: 144 });
+    const result = planMoveOrder(openGrid, { x: 16, y: 16 }, { x: 144, y: 144 }, DEFAULT_CELL_SIZE);
 
     expect(result.kind).toBe('path');
   });
 
   it('plans a "stop" when the destination is the cell "from" is already in', () => {
-    const result = planMoveOrder(openGrid, { x: 16, y: 16 }, { x: 16, y: 16 });
+    const result = planMoveOrder(openGrid, { x: 16, y: 16 }, { x: 16, y: 16 }, DEFAULT_CELL_SIZE);
 
     expect(result).toEqual({ kind: 'stop' });
   });
 
   it('plans "none" for an unreachable destination', () => {
-    const result = planMoveOrder(openGrid, { x: 16, y: 16 }, { x: 1600, y: 1600 });
+    const result = planMoveOrder(
+      openGrid,
+      { x: 16, y: 16 },
+      { x: 1600, y: 1600 },
+      DEFAULT_CELL_SIZE
+    );
 
     expect(result).toEqual({ kind: 'none' });
   });
 
   it('plans a route that starts from "from", not some other position', () => {
-    const result = planMoveOrder(openGrid, { x: 16, y: 144 }, { x: 144, y: 80 });
+    const result = planMoveOrder(openGrid, { x: 16, y: 144 }, { x: 144, y: 80 }, DEFAULT_CELL_SIZE);
 
     expect(result.kind).toBe('path');
     if (result.kind === 'path') {

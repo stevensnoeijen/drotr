@@ -7,7 +7,7 @@ import type { System } from '~/game/ecs/system';
 import { cellSteps, findAttackCell, type Cell } from '~/game/combat/attack-cell';
 import { planMoveOrder } from '~/game/navigation/move-order';
 import { NO_OCCUPANT, type OccupancyGrid } from '~/game/navigation/occupancy-grid';
-import { CELL_SIZE, cellCentreCoordinate, isAtCellCentre } from '~/lib/grid';
+import { cellCentreCoordinate, isAtCellCentre } from '~/lib/grid';
 import { quantizeAngle } from '~/lib/math/angle';
 import type { Point } from '~/lib/math/types';
 import {
@@ -38,12 +38,12 @@ import {
 export const PURSUIT_REPATH_INTERVAL = 0.5;
 
 /**
- * How far, in world units, a pursued target may drift from the position its
+ * How far, in grid cells, a pursued target may drift from the position its
  * route was planned toward before that route is worth replanning. One cell:
  * below that, the existing route still ends in the target's own cell, and a
  * fresh search would return essentially the same waypoints.
  */
-export const PURSUIT_REPATH_DISTANCE = CELL_SIZE;
+export const PURSUIT_REPATH_DISTANCE = 1;
 
 /**
  * Drops a pursuit and whatever movement it owned, leaving the caller to
@@ -107,12 +107,12 @@ function aimAt(entity: Entity, x: number, y: number): void {
  * That is the right reading: there is no target left for this unit, nothing
  * to own, and the order cancels itself the moment it completes.
  */
-function comeToRest(entity: Entity): void {
+function comeToRest(entity: Entity, cellSize: number): void {
   delete entity.pursuit;
   delete entity.movePath;
 
   const position = entity.transform!.position;
-  if (isAtCellCentre(position)) {
+  if (isAtCellCentre(position, cellSize)) {
     delete entity.moveTarget;
     if (entity.velocity) {
       entity.velocity.x = 0;
@@ -123,8 +123,8 @@ function comeToRest(entity: Entity): void {
 
   aimAt(
     entity,
-    cellCentreCoordinate(Math.floor(position.x / CELL_SIZE)),
-    cellCentreCoordinate(Math.floor(position.y / CELL_SIZE))
+    cellCentreCoordinate(Math.floor(position.x / cellSize), cellSize),
+    cellCentreCoordinate(Math.floor(position.y / cellSize), cellSize)
   );
 }
 
@@ -237,9 +237,13 @@ function markPursuit(
  * has no notion of reachability. Preferring a reachable target over an
  * unreachable one is a perception change, not a movement one, and is left to
  * a later ticket.
+ *
+ * `cellSize` is the world size of the map's grid cells (see `cellSizeOf`) —
+ * the cells `grid` and `occupancy` are indexed in.
  */
 export function createSeekSystem(
   queries: Queries,
+  cellSize: number,
   grid?: GridLike,
   occupancy?: OccupancyGrid
 ): System {
@@ -289,7 +293,7 @@ export function createSeekSystem(
 
       if (!target || !attackRange) {
         if (pursuit) {
-          comeToRest(self);
+          comeToRest(self, cellSize);
         }
         continue;
       }
@@ -301,7 +305,7 @@ export function createSeekSystem(
       // the meantime is worse than simply stopping.
       if (!other?.transform || (other.health && other.health.current <= 0)) {
         if (pursuit) {
-          comeToRest(self);
+          comeToRest(self, cellSize);
         }
         continue;
       }
@@ -313,10 +317,10 @@ export function createSeekSystem(
       const position = self.transform.position;
       const targetPosition = other.transform.position;
 
-      selfCell.x = Math.floor(position.x / CELL_SIZE);
-      selfCell.y = Math.floor(position.y / CELL_SIZE);
-      targetCell.x = Math.floor(targetPosition.x / CELL_SIZE);
-      targetCell.y = Math.floor(targetPosition.y / CELL_SIZE);
+      selfCell.x = Math.floor(position.x / cellSize);
+      selfCell.y = Math.floor(position.y / cellSize);
+      targetCell.x = Math.floor(targetPosition.x / cellSize);
+      targetCell.y = Math.floor(targetPosition.y / cellSize);
 
       const inReach = cellSteps(selfCell, targetCell) <= attackRange.value;
 
@@ -343,7 +347,7 @@ export function createSeekSystem(
         // of a cell off, which is the whole bug. The position test
         // stays as the other half of the condition, for a unit left standing
         // off-centre by something else (an order it gave up on, say).
-        if (!self.moveTarget && isAtCellCentre(position)) {
+        if (!self.moveTarget && isAtCellCentre(position, cellSize)) {
           clearPursuitRoute(self);
           self.velocity.x = 0;
           self.velocity.y = 0;
@@ -358,13 +362,17 @@ export function createSeekSystem(
           }
         } else {
           markPursuit(self, target.entityId, targetPosition, PURSUIT_REPATH_INTERVAL);
-          aimAt(self, cellCentreCoordinate(selfCell.x), cellCentreCoordinate(selfCell.y));
+          aimAt(
+            self,
+            cellCentreCoordinate(selfCell.x, cellSize),
+            cellCentreCoordinate(selfCell.y, cellSize)
+          );
         }
         continue;
       }
 
-      const destinationX = cellCentreCoordinate(destination.x);
-      const destinationY = cellCentreCoordinate(destination.y);
+      const destinationX = cellCentreCoordinate(destination.x, cellSize);
+      const destinationY = cellCentreCoordinate(destination.y, cellSize);
 
       if (isInSight(selfCell, destination)) {
         // Nothing in the way: walk straight at the cell, no search needed.
@@ -381,14 +389,15 @@ export function createSeekSystem(
         Math.hypot(
           targetPosition.x - pursuit.plannedPosition.x,
           targetPosition.y - pursuit.plannedPosition.y
-        ) > PURSUIT_REPATH_DISTANCE;
+        ) >
+          PURSUIT_REPATH_DISTANCE * cellSize;
       const throttled = pursuit !== undefined && pursuit.sinceReplan < PURSUIT_REPATH_INTERVAL;
 
       if (switchedTarget || ((!self.movePath || drifted) && !throttled)) {
         const planned = planMoveOrder(collisionGrid, position, {
           x: destinationX,
           y: destinationY,
-        });
+        }, cellSize);
 
         delete self.movePath;
         delete self.moveTarget;

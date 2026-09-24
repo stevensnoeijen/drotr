@@ -14,7 +14,8 @@ import { RenderSystem } from '~/game/render/render-system';
 import { visibleWorldRect } from '~/game/render/tile-chunks';
 import { drawTargetLines } from '~/game/render/target-lines';
 import { drawMoveLines } from '~/game/render/move-lines';
-import { NO_CELL, OccupancyGrid } from '~/game/navigation/occupancy-grid';
+import { createMapNavigation } from '~/game/navigation/map-navigation';
+import { NO_CELL } from '~/game/navigation/occupancy-grid';
 import { CameraPanSystem } from '~/game/systems/camera-pan-system';
 import { createCellOccupancySystem } from '~/game/systems/cell-occupancy-system';
 import { createCombatSystem } from '~/game/systems/combat-system';
@@ -29,7 +30,7 @@ import { createPerceptionSystem, runPerceptionScan } from '~/game/systems/percep
 import { createProjectileSystem } from '~/game/systems/projectile-system';
 import { createSeekSystem } from '~/game/systems/seek-system';
 import { createSelectionBoxSystem, SelectionBoxDrag } from '~/game/systems/selection-box-system';
-import { CELL_SIZE, screenToGrid, screenToWorld } from '~/lib/grid';
+import { screenToGrid, screenToWorld } from '~/lib/grid';
 import {
   serializeDebugFlags,
   type DebugFlag,
@@ -40,11 +41,9 @@ import { units } from '~/game/data/units';
 
 /**
  * Draws a light grid overlay over the given canvas size, for `?debug=grid`.
- * `cellSize` should be the loaded map's actual tile size, not
- * {@link CELL_SIZE} (the coarser unit-placement grid) — a map's tiles can be
- * smaller than a unit's placement cell, and drawing lines at the wrong
- * spacing makes the overlay cut through tiles (walls included) instead of
- * outlining them.
+ * `cellSize` should be the loaded map's actual tile size (see `cellSizeOf`)
+ * — drawing lines at any other spacing makes the overlay cut through tiles
+ * (walls included) instead of outlining them.
  */
 function drawGrid(width: number, height: number, cellSize: number): Graphics {
   const graphics = new Graphics();
@@ -220,19 +219,6 @@ export default function GameCanvas({
       const entitiesLayer = new Container();
       entitiesLayer.sortableChildren = true;
 
-      // Reactively mirrors `queries.renderable` into Pixi views: it must be
-      // live before any spawning happens below so every unit — whether
-      // added by the map's spawns or by the scenario's own setup — gets a
-      // view, and every removal cleans its view up.
-      renderSystem = new RenderSystem(
-        queries.renderable,
-        entitiesLayer,
-        debugFlagsRef.current?.has('health') ?? false
-      );
-      syncHealthBarsRef.current = () => {
-        renderSystem?.setHealthBarsVisible(debugFlagsRef.current?.has('health') ?? false);
-      };
-
       // Must also be live before any spawning: clears dangling `Target`
       // references the instant an entity leaves the world, however early
       // that happens to be.
@@ -265,6 +251,31 @@ export default function GameCanvas({
           console.error(`Failed to load map "${mapSource}":`, error);
         }
       }
+      // The unit-placement grid is the map's own tile grid, whatever its
+      // tile size, so units, pathfinding, occupancy and terrain collision
+      // all agree on what a cell is: every system below that converts
+      // between world positions and cells takes `cellSize`, A* routes over
+      // the map's own collision grid, and unit-to-unit occupancy layers
+      // straight over that same grid. No map means straight-line orders and
+      // no occupancy.
+      const { cellSize, navigationGrid, occupancyGrid } = createMapNavigation(map);
+
+      // Reactively mirrors `queries.renderable` into Pixi views: it must be
+      // live before any spawning happens below so every unit — whether
+      // added by the map's spawns or by the scenario's own setup — gets a
+      // view, and every removal cleans its view up. Created only once the
+      // map has loaded, since it lays unit overlays out against the map's
+      // cell size.
+      renderSystem = new RenderSystem(
+        queries.renderable,
+        entitiesLayer,
+        cellSize,
+        debugFlagsRef.current?.has('health') ?? false
+      );
+      syncHealthBarsRef.current = () => {
+        renderSystem?.setHealthBarsVisible(debugFlagsRef.current?.has('health') ?? false);
+      };
+
       // After terrain (units draw over it), before the scenario spawns any
       // (so every unit's view lands in this layer, not directly in
       // `gameViewport`) and before the debug/target/move overlays below
@@ -291,7 +302,7 @@ export default function GameCanvas({
       // Units can spawn already within each other's aggro range; run one
       // scan immediately rather than leaving them untargeted until the
       // periodic system's first interval elapses.
-      runPerceptionScan(world, queries);
+      runPerceptionScan(world, queries, cellSize);
 
       // Restore a saved camera position/zoom now that the map's (clamped)
       // bounds are known. Assigned directly rather than via a pan/zoom
@@ -311,31 +322,6 @@ export default function GameCanvas({
       });
       const mapBounds = map ? { width: map.width, height: map.height } : undefined;
 
-      // The map doubles as the pathfinder's collision grid (same `width`,
-      // `height` and row-major `collision` buffer). Only handed over when
-      // its tiles are the same size as the unit-placement cell the ECS uses
-      // (`CELL_SIZE`), since the world<->cell conversion in
-      // `planMovePath` assumes one grid, not two at different resolutions;
-      // a mismatched map falls back to straight-line orders rather than
-      // routing through cells that don't line up with its terrain.
-      let navigationGrid: ParsedMap | undefined;
-      if (map) {
-        if (map.tileSize === CELL_SIZE) {
-          navigationGrid = map;
-        } else {
-          console.warn(
-            `Map tile size (${map.tileSize}) differs from CELL_SIZE (${CELL_SIZE}); move orders will not be routed around terrain.`
-          );
-        }
-      }
-
-      // Unit-to-unit collision layers straight over the same grid A* routes
-      // on, so a cell index means the same thing to terrain, pathfinding and
-      // occupancy. No navigation grid (no map, or a tile size that doesn't
-      // line up with CELL_SIZE) means no occupancy either — there is no
-      // agreed cell grid to reserve cells in.
-      const occupancyGrid = navigationGrid ? new OccupancyGrid(navigationGrid) : undefined;
-
       const canvas = app.canvas;
       inputSystem = new InputSystem(canvas);
       runner.add(
@@ -343,6 +329,7 @@ export default function GameCanvas({
           inputSystem,
           queries,
           getViewportTransform,
+          cellSize,
           navigationGrid,
           occupancyGrid
         )
@@ -351,7 +338,7 @@ export default function GameCanvas({
       selectionBoxDrag = new SelectionBoxDrag(canvas, selectionOverlay);
       runner.add(createSelectionBoxSystem(selectionBoxDrag, queries, getViewportTransform));
 
-      runner.add(createPerceptionSystem(queries));
+      runner.add(createPerceptionSystem(queries, cellSize));
       // Seek reads the target set above/by the periodic scan; movement
       // integrates the velocity seek just set, both within the same fixed
       // step so a freshly (re)targeted unit starts moving immediately. The
@@ -362,7 +349,7 @@ export default function GameCanvas({
       // can attack from, and which cells are free to stand in is
       // decided by the same claims that keep two move orders from putting two
       // units in one cell.
-      runner.add(createSeekSystem(queries, navigationGrid, occupancyGrid));
+      runner.add(createSeekSystem(queries, cellSize, navigationGrid, occupancyGrid));
       // Runs after SeekSystem, which is also what makes a routed pursuit
       // move within the tick it was planned: SeekSystem sets the
       // MovePath, and these two pick it up immediately below. MovePathSystem
@@ -378,7 +365,7 @@ export default function GameCanvas({
       // finally handed to the unit, once MoveTarget confirms the unit is no
       // longer mid-step — early enough that, for a routed order, MovePathSystem
       // below still steers toward its first waypoint within this same tick.
-      runner.add(createPendingMoveOrderSystem(queries, navigationGrid));
+      runner.add(createPendingMoveOrderSystem(queries, cellSize, navigationGrid));
       runner.add(createMovePathSystem(queries));
       runner.add(createMoveTargetSystem(queries));
       // Between the systems that decide a velocity and the one that acts on
@@ -393,7 +380,7 @@ export default function GameCanvas({
       // `attackRange` this tick swings from where it now stands, and any
       // damage it deals lands before `renderSystem.sync()` runs for the
       // frame, so the health bar redraws in the very same frame.
-      runner.add(createCombatSystem(queries));
+      runner.add(createCombatSystem(queries, cellSize));
       // Right after combat: lands or expires whatever fired projectiles
       // (currently just crossbow bolts) CombatSystem's swings just spawned
       // or that are still in flight from an earlier tick, so a killing hit
@@ -414,7 +401,7 @@ export default function GameCanvas({
         const rect = canvas.getBoundingClientRect();
         const screenPos = { x: event.clientX - rect.left, y: event.clientY - rect.top };
         pointerPosition = { x: event.clientX, y: event.clientY };
-        hoveredCell = screenToGrid(screenPos, getViewportTransform(), mapBounds);
+        hoveredCell = screenToGrid(screenPos, getViewportTransform(), cellSize, mapBounds);
 
         // Track hovered unit for unit-info debug flag (checks all hoverable units, including red team)
         if (debugFlagsRef.current?.has('unit-info')) {
@@ -436,11 +423,7 @@ export default function GameCanvas({
           // `addChildAt(grid, 0)`: a map with tile sprites already occupies
           // index 0+, which buried the grid underneath them and made the
           // overlay invisible on any map with terrain (e.g. "grass").
-          grid = drawGrid(
-            gameViewport.worldWidth,
-            gameViewport.worldHeight,
-            map?.tileSize ?? CELL_SIZE
-          );
+          grid = drawGrid(gameViewport.worldWidth, gameViewport.worldHeight, cellSize);
           gameViewport.addChild(grid);
         }
       };
@@ -473,13 +456,13 @@ export default function GameCanvas({
         renderSystem?.sync();
 
         if (debugFlagsRef.current?.has('targets')) {
-          drawTargetLines(targetLines, queries.combatants);
+          drawTargetLines(targetLines, queries.combatants, cellSize);
         } else {
           targetLines.clear();
         }
 
         if (debugFlagsRef.current?.has('paths')) {
-          drawMoveLines(moveLines, queries.movable, navigationGrid);
+          drawMoveLines(moveLines, queries.movable, cellSize, navigationGrid);
         } else {
           moveLines.clear();
         }

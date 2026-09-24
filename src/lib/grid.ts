@@ -3,35 +3,62 @@ import * as PathFinding from './navigation/astar';
 import type { Point } from './math/types';
 
 /**
- * Matches the map's own tile size — and the original game's raw infantry
- * sprites (`raw/sprites/units/swordsmen.*`, `crossbowsoldier.*`, 32x32) —
- * so the unit-placement grid and the terrain/collision grid are the same
- * grid rather than two grids at different resolutions. Larger unit types
- * (knight, juggernaut, catapult: 64x64 in the raw sprites) still place on
- * this same grid; sizing individual units to their real sprite dimensions
- * is asset-integration work (phase 6), not something this constant does.
+ * Cell size, in world units, used when there is no map to take one from
+ * (the blank map, or a map that failed to load). Also the tile size of the
+ * hand-authored 32px maps, and of the original game's raw infantry sprites
+ * (`raw/sprites/units/swordsmen.*`, `crossbowsoldier.*`, 32x32).
+ *
+ * The unit-placement grid is otherwise always the loaded map's own tile
+ * grid — see {@link cellSizeOf} — so units, pathfinding, occupancy and
+ * terrain collision share one grid rather than two at different
+ * resolutions. Larger unit types (knight, juggernaut, catapult: 64x64 in
+ * the raw sprites) still place on that same grid; sizing individual units
+ * to their real sprite dimensions is asset-integration work (phase 6).
  */
-export const CELL_SIZE = 32;
+export const DEFAULT_CELL_SIZE = 32;
 
-export const toGridPosition = (vector: Vector2): Vector2 => {
-  return Vector2.divides(vector, CELL_SIZE, 'floor');
+/**
+ * The unit-placement cell size for a map: its own tile size, so a cell index
+ * means the same thing to units, A*, occupancy and the terrain's collision
+ * grid (the converted county maps use 40px tiles, the hand-authored ones
+ * 32px). {@link DEFAULT_CELL_SIZE} when there is no map.
+ *
+ * Takes just the one field it reads, rather than a `ParsedMap`, so this
+ * module stays free of any dependency on the game's map loader.
+ */
+export const cellSizeOf = (map?: { tileSize: number }): number => {
+  return map?.tileSize ?? DEFAULT_CELL_SIZE;
 };
 
-export const toWorldPosition = (vector: Vector2): Vector2 => {
+/**
+ * The grid cell a world-space position falls in, on a grid of `cellSize`
+ * world units per cell.
+ *
+ * Every world<->cell helper in this module takes the cell size explicitly
+ * rather than reading a global: the unit-placement grid *is* the loaded
+ * map's tile grid, so its cell size is a per-map value (see
+ * {@link cellSizeOf}), and a helper that silently assumed one fixed size
+ * would put units, paths and collision on different grids on any map whose
+ * tiles are a different size.
+ */
+export const toGridPosition = (vector: Vector2, cellSize: number): Vector2 => {
+  return Vector2.divides(vector, cellSize, 'floor');
+};
+
+/** World-space centre of grid cell `vector`, on a grid of `cellSize` world units per cell. */
+export const toWorldPosition = (vector: Vector2, cellSize: number): Vector2 => {
   return new Vector2(
-    vector.x * CELL_SIZE + CELL_SIZE / 2,
-    vector.y * CELL_SIZE + CELL_SIZE / 2
+    vector.x * cellSize + cellSize / 2,
+    vector.y * cellSize + cellSize / 2
   );
 };
 
 /**
- *
- * @param {number} x
- * @param {number} y
- * @returns {Vector2} centered cell vector
+ * World-space centre of the cell at column `x`, row `y` — {@link toWorldPosition}
+ * for loose coordinates.
  */
-export const cellPositionToVector = (x: number, y: number): Vector2 => {
-  return toWorldPosition(new Vector2(x, y));
+export const cellPositionToVector = (x: number, y: number, cellSize: number): Vector2 => {
+  return toWorldPosition(new Vector2(x, y), cellSize);
 };
 
 /**
@@ -42,9 +69,9 @@ export const cellPositionToVector = (x: number, y: number): Vector2 => {
  * `10` a floor modulo would give, which put negative positions in the wrong
  * cell).
  */
-export const toWorldPositionCellCenter = (vector: Vector2): Vector2 => {
-  const cell = toGridPosition(vector);
-  return toWorldPosition(cell);
+export const toWorldPositionCellCenter = (vector: Vector2, cellSize: number): Vector2 => {
+  const cell = toGridPosition(vector, cellSize);
+  return toWorldPosition(cell, cellSize);
 };
 
 /**
@@ -55,8 +82,8 @@ export const toWorldPositionCellCenter = (vector: Vector2): Vector2 => {
  * movement hot path asks this per axis, per unit, per tick and has no use for
  * the `Vector2` that version allocates.
  */
-export const cellCentreCoordinate = (index: number): number => {
-  return index * CELL_SIZE + CELL_SIZE / 2;
+export const cellCentreCoordinate = (index: number, cellSize: number): number => {
+  return index * cellSize + cellSize / 2;
 };
 
 /**
@@ -87,10 +114,11 @@ export const CELL_CENTRE_TOLERANCE = 1;
  */
 export const isAtCellCentre = (
   point: Point,
+  cellSize: number,
   tolerance: number = CELL_CENTRE_TOLERANCE
 ): boolean => {
-  const centreX = cellCentreCoordinate(Math.floor(point.x / CELL_SIZE));
-  const centreY = cellCentreCoordinate(Math.floor(point.y / CELL_SIZE));
+  const centreX = cellCentreCoordinate(Math.floor(point.x / cellSize), cellSize);
+  const centreY = cellCentreCoordinate(Math.floor(point.y / cellSize), cellSize);
   return Math.abs(point.x - centreX) <= tolerance && Math.abs(point.y - centreY) <= tolerance;
 };
 
@@ -130,8 +158,12 @@ export const screenToWorld = (screen: Point, viewport: ViewportTransform): Vecto
  * the point falls outside `bounds` (or, with no bounds given, outside the
  * non-negative quadrant).
  */
-export const worldToGrid = (world: Vector2, bounds?: GridBounds): Vector2 | undefined => {
-  const cell = toGridPosition(world);
+export const worldToGrid = (
+  world: Vector2,
+  cellSize: number,
+  bounds?: GridBounds
+): Vector2 | undefined => {
+  const cell = toGridPosition(world, cellSize);
   if (cell.x < 0 || cell.y < 0) {
     return undefined;
   }
@@ -150,9 +182,10 @@ export const worldToGrid = (world: Vector2, bounds?: GridBounds): Vector2 | unde
 export const screenToGrid = (
   screen: Point,
   viewport: ViewportTransform,
+  cellSize: number,
   bounds?: GridBounds
 ): Vector2 | undefined => {
-  return worldToGrid(screenToWorld(screen, viewport), bounds);
+  return worldToGrid(screenToWorld(screen, viewport), cellSize, bounds);
 };
 
 export const convertPathfindingPathToPositions = (

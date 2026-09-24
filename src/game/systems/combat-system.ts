@@ -22,12 +22,12 @@ export type AttackerEntity = With<
 /**
  * {@link cellSteps} between the cells two world-space points fall in: how
  * many 8-way cell steps separate them, which is the unit `attackRange` is
- * measured in.
+ * measured in, on a grid of `cellSize` world units per cell.
  */
-export function cellDistance(a: Point, b: Point): number {
+export function cellDistance(a: Point, b: Point, cellSize: number): number {
   return cellSteps(
-    toGridPosition(new Vector2(a.x, a.y)),
-    toGridPosition(new Vector2(b.x, b.y))
+    toGridPosition(new Vector2(a.x, a.y), cellSize),
+    toGridPosition(new Vector2(b.x, b.y), cellSize)
   );
 }
 
@@ -56,7 +56,7 @@ export function cellDistance(a: Point, b: Point): number {
  *   arriving; the check is what makes that a guarantee rather than a
  *   convention.
  */
-export function isSettled(entity: Entity): boolean {
+export function isSettled(entity: Entity, cellSize: number): boolean {
   const occupancy = entity.cellOccupancy;
   if (occupancy && occupancy.reserved !== NO_CELL) {
     return false;
@@ -68,7 +68,7 @@ export function isSettled(entity: Entity): boolean {
   }
 
   const transform = entity.transform;
-  return !transform || isAtCellCentre(transform.position);
+  return !transform || isAtCellCentre(transform.position, cellSize);
 }
 
 /**
@@ -97,7 +97,12 @@ export function isSettled(entity: Entity): boolean {
  * above is exactly what stops a crossbow soldier from firing at a target
  * beyond its `attackRange` (5 cells) in the first place.
  */
-function attack(world: World<Entity>, queries: Queries, self: AttackerEntity): void {
+function attack(
+  world: World<Entity>,
+  queries: Queries,
+  self: AttackerEntity,
+  cellSize: number
+): void {
   const { target } = self;
   if (!target) {
     return;
@@ -114,7 +119,7 @@ function attack(world: World<Entity>, queries: Queries, self: AttackerEntity): v
   // keeps its `target` here (unlike the dead-target case above) — it's still
   // a live, in-range foe, just not settled yet, and the swing is simply
   // deferred to a later tick.
-  if (!isSettled(self) || !isSettled(other)) {
+  if (!isSettled(self, cellSize) || !isSettled(other, cellSize)) {
     return;
   }
 
@@ -122,14 +127,23 @@ function attack(world: World<Entity>, queries: Queries, self: AttackerEntity): v
   // be within `attackRange` 8-way cell steps, diagonal steps counting the
   // same as orthogonal ones. A plain Euclidean check would wrongly
   // reject a target one cell diagonally away at `attackRange` 1, since its
-  // straight-line distance (`CELL_SIZE * sqrt(2)`) exceeds one cell width.
-  if (cellDistance(self.transform.position, other.transform.position) > self.attackRange.value) {
+  // straight-line distance (`cellSize * sqrt(2)`) exceeds one cell width.
+  if (
+    cellDistance(self.transform.position, other.transform.position, cellSize) >
+    self.attackRange.value
+  ) {
     return;
   }
 
   if (self.ranged) {
     // Guarded above: `self.ranged` is defined here, satisfying `RangedAttacker`.
-    fireProjectile(world, self as typeof self & Required<Pick<Entity, 'ranged'>>, other, target.entityId);
+    fireProjectile(
+      world,
+      self as typeof self & Required<Pick<Entity, 'ranged'>>,
+      other,
+      target.entityId,
+      cellSize
+    );
     return;
   }
 
@@ -163,8 +177,11 @@ function attack(world: World<Entity>, queries: Queries, self: AttackerEntity): v
  * Ordering: this must run after movement in the fixed step, so a unit that
  * arrives at `attackRange` this tick can swing from where it now stands
  * rather than from where it was.
+ *
+ * `cellSize` is the world size of the map's grid cells (see `cellSizeOf`),
+ * which ranges and cell-centre checks are measured against.
  */
-export function createCombatSystem(queries: Queries): System {
+export function createCombatSystem(queries: Queries, cellSize: number): System {
   const cooldowns = new WeakMap<Entity, Cooldown>();
 
   return (world: World<Entity>, dt: number) => {
@@ -185,7 +202,9 @@ export function createCombatSystem(queries: Queries): System {
         // `Cooldown` fires its action on elapse and restarts itself, carrying
         // any overshoot into the next interval, so attacks land on an exact
         // schedule instead of drifting by up to `dt` per cycle.
-        cooldown = new Cooldown(self.attackCooldown.duration, () => attack(world, queries, self));
+        cooldown = new Cooldown(self.attackCooldown.duration, () =>
+          attack(world, queries, self, cellSize)
+        );
         cooldowns.set(self, cooldown);
       }
       cooldown.update();

@@ -4,20 +4,20 @@ import { describe, expect, it } from 'vitest';
 import { cellSteps } from '~/game/combat/attack-cell';
 import { createQueries } from '~/game/ecs/world';
 import type { Entity } from '~/game/ecs/entity';
-import { CELL_SIZE, cellCentreCoordinate, isAtCellCentre } from '~/lib/grid';
+import { DEFAULT_CELL_SIZE, cellCentreCoordinate, isAtCellCentre } from '~/lib/grid';
 import { createMovePathSystem } from './move-path-system';
 import { createMoveTargetSystem } from './move-target-system';
 import { createMoveVelocitySystem } from './move-velocity-system';
 import { createSeekSystem } from './seek-system';
 
 const centre = (col: number, row: number) => ({
-  x: cellCentreCoordinate(col),
-  y: cellCentreCoordinate(row),
+  x: cellCentreCoordinate(col, DEFAULT_CELL_SIZE),
+  y: cellCentreCoordinate(row, DEFAULT_CELL_SIZE),
 });
 
 const cellOf = (position: { x: number; y: number }) => ({
-  x: Math.floor(position.x / CELL_SIZE),
-  y: Math.floor(position.y / CELL_SIZE),
+  x: Math.floor(position.x / DEFAULT_CELL_SIZE),
+  y: Math.floor(position.y / DEFAULT_CELL_SIZE),
 });
 
 /**
@@ -33,7 +33,7 @@ describe('seek + move integration', () => {
   function setup(dt: number, range = 1) {
     const world = new World<Entity>();
     const queries = createQueries(world);
-    const seek = createSeekSystem(queries);
+    const seek = createSeekSystem(queries, DEFAULT_CELL_SIZE);
     const movePath = createMovePathSystem(queries);
     const moveTarget = createMoveTargetSystem(queries);
     const move = createMoveVelocitySystem(queries);
@@ -45,7 +45,7 @@ describe('seek + move integration', () => {
     const self = world.add({
       transform: { position: centre(0, 0), rotation: 0 },
       velocity: { x: 0, y: 0 },
-      moveSpeed: { value: 3 * CELL_SIZE },
+      moveSpeed: { value: 3 * DEFAULT_CELL_SIZE },
       attackRange: { value: range },
       target: { entityId: target.id! },
     });
@@ -72,7 +72,7 @@ describe('seek + move integration', () => {
     // The cell immediately west of the target's — the nearest one it can
     // attack from — and exactly on its centre, not merely inside it.
     expect(self.transform.position).toEqual(centre(9, 0));
-    expect(isAtCellCentre(self.transform.position)).toBe(true);
+    expect(isAtCellCentre(self.transform.position, DEFAULT_CELL_SIZE)).toBe(true);
     expect(cellSteps(cellOf(self.transform.position), cellOf(target.transform.position))).toBe(1);
   });
 
@@ -107,7 +107,7 @@ describe('seek + move integration', () => {
       tick();
       const moving = self.velocity.x !== 0 || self.velocity.y !== 0;
       if (!moving) {
-        expect(isAtCellCentre(self.transform.position)).toBe(true);
+        expect(isAtCellCentre(self.transform.position, DEFAULT_CELL_SIZE)).toBe(true);
       }
     }
   });
@@ -123,7 +123,7 @@ describe('seek + move integration', () => {
     }
 
     expect(self.transform.position).toEqual(centre(5, 0));
-    expect(isAtCellCentre(self.transform.position)).toBe(true);
+    expect(isAtCellCentre(self.transform.position, DEFAULT_CELL_SIZE)).toBe(true);
     expect(cellSteps(cellOf(self.transform.position), cellOf(target.transform.position))).toBe(5);
     expect(self.velocity).toEqual({ x: 0, y: 0 });
   });
