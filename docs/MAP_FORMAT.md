@@ -444,7 +444,7 @@ see "Converting `BUILDING.MAP`" below). The script reads
 `COUNTIES/<NAME>.MAP` from the CD data
 (`DROTR_CD_DIR`, defaulting to `.cd/`) and writes
 `public/maps/<name>.tmj`. The raw `.MAP` is never committed, but the
-converted `.tmj` is (so far `fagaras.tmj`). The output is deterministic,
+converted `.tmj` is (so far `fagaras.tmj` and `sibiu.tmj`). The output is deterministic,
 so re-running the script over an up-to-date file changes nothing.
 `src/lib/county-map` does the pure parsing and
 `scripts/county-map/county-map-tiled.ts` builds the Tiled JSON.

@@ -40,4 +40,15 @@ describe('resolveMap', () => {
     expect(buildings?.mapSource).toMatch(/maps\/buildings\.tmj$/);
     expect(buildings?.allowedScenarioIds).toEqual([]);
   });
+
+  it('registers the converted county maps without spawns with an empty scenario allowlist', () => {
+    const counties = maps.filter(
+      (m) => !['test', 'fagaras', 'buildings'].includes(m.id)
+    );
+    expect(counties.length).toBeGreaterThan(0);
+    for (const county of counties) {
+      expect(county.mapSource).toMatch(new RegExp(`maps/${county.id}\\.tmj$`));
+      expect(county.allowedScenarioIds).toEqual([]);
+    }
+  });
 });
