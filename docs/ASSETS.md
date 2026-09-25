@@ -90,8 +90,9 @@ Maps, unlike sprites, are now built from `.cd` directly:
   `public/maps/fagaras.tmj`, `public/maps/sibiu.tmj`,
   `public/maps/brasov.tmj`, `public/maps/rasova.tmj`,
   `public/maps/pitesti.tmj`, `public/maps/hirsova.tmj`,
-  `public/maps/snagov.tmj` and `public/maps/braila.tmj` are converted and
-  committed; the other 4
+  `public/maps/snagov.tmj`, `public/maps/braila.tmj` and
+  `public/maps/giurgiu.tmj` are converted and
+  committed; the other 3
   counties aren't yet. `npm run convert:map -- BUILDING` converts
   `BUILDING.MAP` as-is into `public/maps/buildings.tmj` (committed); its
   buildings aren't yet cut out as individual prefabs.
