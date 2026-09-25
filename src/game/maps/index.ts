@@ -28,6 +28,15 @@ export const maps: readonly MapDefinition[] = [
     allowedScenarioIds: [],
   },
   {
+    id: 'brasov',
+    title: 'Brasov',
+    description:
+      'The Brasov county map, converted from the original .MAP file.',
+    mapSource: `${import.meta.env.BASE_URL}maps/brasov.tmj`,
+    // No spawn points yet, so only `empty` (allowed on every map) applies.
+    allowedScenarioIds: [],
+  },
+  {
     id: 'buildings',
     title: 'Buildings',
     description:
