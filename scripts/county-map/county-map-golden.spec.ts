@@ -309,3 +309,24 @@ describe.skipIf(!tirgoAvailable)('TIRGO.MAP', () => {
     );
   });
 });
+
+const CUERTA_SOURCE = countyMapCdPath('CUERTA');
+const cuertaAvailable = hasCdFile(CUERTA_SOURCE);
+
+describe.skipIf(!cuertaAvailable)('CUERTA.MAP', () => {
+  it('converts to exactly the committed public/maps/cuerta.tmj (catches a stale committed file)', () => {
+    const county = parseCountyMap(readCdFile(CUERTA_SOURCE));
+    const committed = fs.readFileSync(
+      path.join(
+        process.cwd(),
+        'public',
+        'maps',
+        countyTiledMapFileName('CUERTA')
+      ),
+      'utf-8'
+    );
+    expect(serializeTiledMap(buildCountyTiledMap(county)) === committed).toBe(
+      true
+    );
+  });
+});
