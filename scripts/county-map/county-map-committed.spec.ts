@@ -47,9 +47,9 @@ describe('public/maps/fagaras.tmj', () => {
     expect(parsed.collision).toHaveLength(128 * 128);
   });
 
-  it("takes engine collision from the terrain tiles' blocked flags only", () => {
+  it('takes engine collision from the collision layer only', () => {
     const parsed = parseTiledMap(map, tileset);
     const blocked = parsed.collision.reduce((sum, cell) => sum + cell, 0);
-    expect(blocked).toEqual(5152);
+    expect(blocked).toEqual(5188);
   });
 });

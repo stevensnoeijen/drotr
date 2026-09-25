@@ -40,11 +40,12 @@ describe('public/maps/buildings.tmj', () => {
     expect(map.tilesets).toEqual([{ firstgid: 1, source: 'terrain.tsx' }]);
   });
 
-  it('has terrain, a hidden intact, a hidden ruined and an empty spawns layer, back to front', () => {
+  it('has terrain, a hidden intact, a hidden ruined, a hidden collision and an empty spawns layer, back to front', () => {
     expect(map.layers.map((l) => [l.name, l.type, l.visible])).toEqual([
       ['terrain', 'tilelayer', true],
       ['intact', 'tilelayer', false],
       ['ruined', 'tilelayer', false],
+      ['collision', 'tilelayer', false],
       ['spawns', 'objectgroup', true],
     ]);
   });
@@ -66,12 +67,15 @@ describe('public/maps/buildings.tmj', () => {
     expect(parsed.height).toEqual(128);
     expect(parsed.tileSize).toEqual(40);
     expect(parsed.spawns).toEqual([]);
-    // All three are kept; only terrain starts out shown.
+    // All four are kept; only terrain starts out shown.
     expect(parsed.tileLayers).toEqual([
       { name: 'terrain', visible: true, data: tileData('terrain') },
       { name: 'intact', visible: false, data: tileData('intact') },
       { name: 'ruined', visible: false, data: tileData('ruined') },
+      { name: 'collision', visible: false, data: tileData('collision') },
     ]);
     expect(parsed.collision).toHaveLength(128 * 128);
+    // All open: real building collision is not yet derived.
+    expect([...parsed.collision].every((cell) => cell === 0)).toBe(true);
   });
 });

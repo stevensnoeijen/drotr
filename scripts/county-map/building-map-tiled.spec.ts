@@ -79,21 +79,32 @@ describe('buildBuildingsTiledMap', () => {
       height: 128,
       tilewidth: 40,
       tileheight: 40,
-      nextlayerid: 5,
+      nextlayerid: 6,
       nextobjectid: 1,
     });
     expect(map.tilesets).toEqual([{ firstgid: 1, source: 'terrain.tsx' }]);
   });
 
-  it('emits terrain, intact (hidden), ruined (hidden) and spawns, back to front', () => {
+  it('emits terrain, intact (hidden), ruined (hidden), collision (hidden) and spawns, back to front', () => {
     const map = buildBuildingsTiledMap(syntheticBuildingMap());
     expect(map.layers.map((l) => [l.id, l.name, l.type, l.visible])).toEqual([
       [1, 'terrain', 'tilelayer', true],
       [2, 'intact', 'tilelayer', false],
       [3, 'ruined', 'tilelayer', false],
-      [4, 'spawns', 'objectgroup', true],
+      [4, 'collision', 'tilelayer', false],
+      [5, 'spawns', 'objectgroup', true],
     ]);
-    expect(map.layers[3]).toMatchObject({ draworder: 'topdown', objects: [] });
+    expect(map.layers[4]).toMatchObject({ draworder: 'topdown', objects: [] });
+  });
+
+  it('leaves collision all open (gid 0): real building collision is not yet derived', () => {
+    const collision = layer(
+      buildBuildingsTiledMap(syntheticBuildingMap()),
+      'collision'
+    );
+    expect(collision.width).toEqual(128);
+    expect(collision.height).toEqual(128);
+    expect(nonEmpty(collision.data as number[])).toEqual([]);
   });
 
   it('draws every terrain cell row-major, gid = atlas index + 1', () => {
@@ -155,7 +166,7 @@ describe('buildBuildingsTiledMap', () => {
     expect(first.endsWith('}\n')).toBe(true);
   });
 
-  it('passes parseTiledMap, drawing only terrain, with intact and ruined kept hidden', () => {
+  it('passes parseTiledMap, drawing only terrain, with intact, ruined and collision kept hidden', () => {
     const map = buildBuildingsTiledMap(syntheticBuildingMap());
     const parsed = parseTiledMap(map, terrainTileset);
 
@@ -165,12 +176,10 @@ describe('buildBuildingsTiledMap', () => {
       { name: 'terrain', visible: true, data: layer(map, 'terrain').data },
       { name: 'intact', visible: false, data: layer(map, 'intact').data },
       { name: 'ruined', visible: false, data: layer(map, 'ruined').data },
+      { name: 'collision', visible: false, data: layer(map, 'collision').data },
     ]);
 
-    // Collision comes from the terrain tiles' blocked flags alone.
-    const terrain = layer(map, 'terrain').data as number[];
-    expect(Array.from(parsed.collision)).toEqual(
-      terrain.map((gid) => (terrainTileset.blockedTileIds.has(gid - 1) ? 1 : 0))
-    );
+    // All-open: real building collision is not yet derived.
+    expect(Array.from(parsed.collision)).toEqual(new Array(128 * 128).fill(0));
   });
 });

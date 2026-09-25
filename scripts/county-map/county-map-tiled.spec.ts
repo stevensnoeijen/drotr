@@ -15,7 +15,11 @@ import {
 } from '~/lib/county-map';
 import { buildCountyMapBytes, tileSubcells } from '~/test/county-map-fixture';
 
+import { COLLISION_MARKER_TILE_ID } from '~/lib/art/collision-marker';
+
 import { buildCountyTiledMap, serializeTiledMap } from './county-map-tiled';
+
+const COLLISION_MARKER_GID = COLLISION_MARKER_TILE_ID + 1;
 
 const MAPS_DIR = path.join(process.cwd(), 'public', 'maps');
 const terrainTileset = parseTilesetDescription(
@@ -155,21 +159,24 @@ describe('buildCountyTiledMap', () => {
     expect(debug.width).toEqual(128);
     expect(debug.height).toEqual(128);
     expect(debug.data).toEqual(
-      Array.from(collapsed, (blocked) => (blocked ? 1 : 0))
+      Array.from(collapsed, (blocked) => (blocked ? COLLISION_MARKER_GID : 0))
     );
 
     const blocked = (debug.data as number[]).flatMap((gid, i) =>
-      gid === 1 ? [[i % 128, Math.floor(i / 128)]] : []
+      gid === COLLISION_MARKER_GID ? [[i % 128, Math.floor(i / 128)]] : []
     );
-    // Row-major order; the 3-of-4, 2-of-4 and 1-of-4 tiles stay open.
+    // Row-major order; the 3-of-4 and 2-of-4 tiles block too, only the
+    // 1-of-4 tile stays open.
     expect(blocked).toEqual([
       [2, 0],
       [0, 2],
       [3, 3],
+      [4, 4],
+      [5, 5],
     ]);
   });
 
-  it('passes parseTiledMap, which keeps the collision layer hidden and out of engine collision', () => {
+  it('passes parseTiledMap, which draws the collision layer hidden but reads engine collision from it', () => {
     const map = buildCountyTiledMap(syntheticCountyMap());
     const parsed = parseTiledMap(map, terrainTileset);
 
@@ -181,10 +188,10 @@ describe('buildCountyTiledMap', () => {
       { name: 'collision', visible: false, data: layer(map, 'collision').data },
     ]);
 
-    // Collision comes from the terrain tiles' blocked flags alone.
-    const terrain = layer(map, 'terrain').data as number[];
+    // Collision comes from the collision layer's gids alone.
+    const collisionData = layer(map, 'collision').data as number[];
     expect(Array.from(parsed.collision)).toEqual(
-      terrain.map((gid) => (terrainTileset.blockedTileIds.has(gid - 1) ? 1 : 0))
+      collisionData.map((gid) => (gid !== 0 ? 1 : 0))
     );
   });
 });

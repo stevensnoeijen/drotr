@@ -178,11 +178,19 @@ open cleanly in the Tiled editor.
     102, columns 10–14 → indices 1642–1646.
   - Both map to a tileset id via one constant offset,
     `EXTRA_TILE_ID_OFFSET = 96` (e.g. atlas 1578 → id 1482).
+- **Collision marker.** Id **1551**, the last filler slot in row 96,
+  is repurposed as a synthetic tile with no atlas source: a sparse
+  diagonal hazard stripe in opaque red, transparent everywhere else, drawn
+  directly by `drawCollisionMarkerTile` rather than copied from
+  `BATTLE.ART`. It's
+  exported as `COLLISION_MARKER_TILE_ID` (`src/lib/art/collision-marker.ts`,
+  shared by the `scripts/county-map` converters and the engine) and is what
+  every `collision` layer draws at a blocked cell — see "Tile walkability:
+  the `collision` layer" below.
 - **Filler ids.** The tileset is 640×3880 px, 97 rows × 16 columns, 1552
   tile slots. Rows 92–96 hold the extras at their original columns and are
   otherwise unused padding — ids 1472–1481, 1488–1497, 1504–1513,
-  1520–1529, 1536–1545 and 1551 are never referenced and stay fully
-  transparent.
+  1520–1529 and 1536–1545 are never referenced and stay fully transparent.
 - **gid.** Maps reference it with `firstgid = 1` (the hand-made
   `test.tmj` included), so `gid = id + 1`. Index 0 is a real ground tile
   (see above), not a "no tile" sentinel, so it becomes gid 1 like every
@@ -198,53 +206,40 @@ Tiles are fitted to the map's own cell size, so this tileset's 40 px tiles
 fill the test map's 32 px cells. Tiles are drawn in
 16×16-tile chunks, and only chunks inside the camera's view are rendered.
 
-The map's `terrain` tile layer is also its collision source: `loadTiledMap`
-(`src/game/map/load-tiled-map.ts`) blocks every cell whose tile carries
-`blocked` (see below), and every empty cell (gid 0). The same layer is
-drawn and decides where units may walk, so the two can't drift apart.
+Each map carries a dedicated `collision` tile layer, and that layer alone
+is the engine's collision source: `loadTiledMap`
+(`src/game/map/load-tiled-map.ts`) blocks every cell whose `collision`
+gid is non-zero (flip flags ignored), regardless of what the `terrain`
+layer draws there. `terrain` is purely cosmetic — an empty terrain cell no
+longer implies a blocked one, and a `collision` gid doesn't need to
+resolve to any particular tile.
 
-### Tile walkability: the `blocked` property
+### Tile walkability: the `collision` layer
 
-Every tile a unit can't stand on carries one custom property,
-`blocked` (bool, `true`); walkable tiles carry no property at all, since
-Tiled reads a missing bool as `false`. It's written by the exporter from
-`scripts/terrain-tileset/tile-categories.ts`, never by hand.
+Walkability used to be a per-tile property of the `terrain` tileset
+(`blocked`, bool), classified by hand tile-by-tile in
+`scripts/terrain-tileset/tile-categories.ts`. That approach couldn't
+reproduce the original game's actual mask (below), which blocks at
+2×2 subcells per tile rather than per whole tile, so it was replaced with
+a dedicated `collision` layer that each map ships alongside `terrain`. A
+blocked cell there draws the collision-marker tile (`COLLISION_MARKER_TILE_ID`,
+see "Terrain tileset export" above), not gid 1 or any real terrain gid — the
+loader only checks that the gid is non-zero, but the marker's stripes make a
+blocked cell instantly recognisable when the layer is switched on in the
+Tiled editor. For a converted county map
+(`scripts/county-map/county-map-tiled.ts`) that layer is built exactly from
+the original mask (`collapseCollisionMaskPerTile`); `buildings.tmj`
+currently ships an all-open one (real building collision isn't derived
+yet), and the hand-authored `test.tmj` has its collision hand-added to
+match its walls, using the same marker gid.
 
-**Name.** `blocked` marks the exception rather than the rule, the way
-Tiled maps are conventionally annotated for collision — Phaser's
-`setCollisionByProperty({ collides: true })` is the best-known instance,
-and `collides` is the most common name for the same meaning. `blocked`
-says what it means for a unit without implying physics.
-
-**Classification.** `tile-categories.ts` holds a grid laid out exactly
-like the tileset image — one string per tileset row, one character per
-tile — mapping each tile to what it depicts:
-
-| code | category | walkable | what |
-|---|---|---|---|
-| `g` | ground | yes | grass, gravel, stone, dirt, paths, cobbled paving |
-| `o` | open-gate | yes | a gateway with its wooden doors swung open (ids 1440–1445), or smashed out entirely, leaving only splinters (ids 1408–1413) |
-| `G` | closed-gate | no | a gateway with its wooden doors shut |
-| `b` | bridge | yes | an intact bridge deck; the intact drawbridge (ids 1482–1487, 1498–1503) |
-| `k` | rock | no | boulders, rock piles, cliffs, cave mouths, rocky props |
-| `w` | wall | no | stone walls and wall faces, intact |
-| `~` | water | no | rivers, lakes, ponds, moats, rocks standing in water |
-| `r` | rubble | no | damaged or destroyed walls, towers and paving; a gate whose splintered doors still hang in the frame (ids 1360–1365) |
-| `x` | broken-bridge | no | a bridge deck with holes smashed through it; the broken drawbridge (ids 1514–1519, 1530–1535) |
-| `R` | roof | no | tiled and wooden roofs, including tower tops |
-| `t` | tree | no | trees and forest |
-| `.` | filler | no | unused tileset slots, and four solid-black void tiles |
-
-A tile showing several things (a wall strip over grass, a shoreline) gets
-the category of whatever isn't ground. The grid was built by rendering
-contact sheets of the tileset and classifying each tile by eye, then
-checking every tile the counties use against their own impassable mask
-(below). Where the two disagreed the art was re-examined. Five tiles
-still disagree with the majority of their subcells: 735, plain gravel
-that the counties block on half its subcells, and four rock tiles the
-counties mostly leave open — 1053 and 1054 (the edges of a cave hollow,
-25% and 38% blocked), 1388 (a boulder, 41%) and 1389 (gravel with a rock
-at one corner, 26%).
+**Historical disagreement.** For context on why the per-tile property was
+dropped: cross-checking `tile-categories.ts`'s hand classification against
+the original per-cell mask found five tiles that disagreed with the
+majority of their own subcells — 735, plain gravel that the counties
+block on half its subcells, and four rock tiles the counties mostly leave
+open: 1053 and 1054 (the edges of a cave hollow, 25% and 38% blocked),
+1388 (a boulder, 41%) and 1389 (gravel with a rock at one corner, 26%).
 
 **Against the original per-cell mask.** The original game doesn't decide
 passability per tile: each county `.MAP` carries its own impassable mask
@@ -252,8 +247,9 @@ at 2×2 subcells per tile (Section B `hi` bit 2, see
 [`MAP_FORMAT.md`](./MAP_FORMAT.md)). A per-tile flag can't reproduce a
 tile that's blocked on only some of its subcells, or the same tile
 blocked in one place and open in another. A one-off measurement over all
-12 counties (786,432 subcells), taken when the classification was made —
-a research note, not something kept up to date automatically:
+12 counties (786,432 subcells), taken when the tile-based classification
+was still in use — a research note, not something kept up to date
+automatically:
 
 | tile category | subcells | mask blocked, tile walkable | mask open, tile blocked |
 |---|---|---|---|

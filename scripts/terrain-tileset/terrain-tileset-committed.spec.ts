@@ -9,6 +9,7 @@ import { tileRect, ATLAS_TILE_SIZE } from '~/lib/art/atlas';
 import { GOLDEN_TILE_HASHES } from './battle-art-golden-hashes';
 import {
   buildTerrainTilesetXml,
+  COLLISION_MARKER_TILE_ID,
   TERRAIN_TILESET_HEIGHT,
   TERRAIN_TILESET_WIDTH,
 } from './terrain-tileset';
@@ -84,7 +85,6 @@ describe('public/maps/terrain.png', () => {
     ...range(1504, 1513),
     ...range(1520, 1529),
     ...range(1536, 1545),
-    1551,
   ];
 
   it.each(FILLER_IDS)('leaves filler id %d fully transparent', (id) => {
@@ -92,6 +92,22 @@ describe('public/maps/terrain.png', () => {
     for (let i = 3; i < tile.length; i += 4) {
       expect(tile[i]).toEqual(0);
     }
+  });
+
+  it('draws the collision-marker id as stripes on a transparent field', () => {
+    const tile = readTile(png, COLLISION_MARKER_TILE_ID);
+    let sawOpaquePixel = false;
+    let sawTransparentPixel = false;
+    for (let i = 3; i < tile.length; i += 4) {
+      if (tile[i] === 255) {
+        sawOpaquePixel = true;
+      } else {
+        expect(tile[i]).toEqual(0);
+        sawTransparentPixel = true;
+      }
+    }
+    expect(sawOpaquePixel).toEqual(true);
+    expect(sawTransparentPixel).toEqual(true);
   });
 
   const EXTRA_IDS = [

@@ -15,3 +15,7 @@ export {
   tileRows,
   type TileRect,
 } from './atlas';
+export {
+  COLLISION_MARKER_TILE_ID,
+  drawCollisionMarkerTile,
+} from './collision-marker';

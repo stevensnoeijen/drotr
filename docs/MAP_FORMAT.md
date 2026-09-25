@@ -454,27 +454,34 @@ The map is 128×128 tiles of 40 px, matching the tileset, and references
 layers:
 
 - **`terrain`** — Section A, the full ground layer: `gid = tile index + 1`,
-  so index 0 is gid 1 and gid 0 never appears. The engine's collision grid
-  is built from this layer, through the tileset's per-tile `blocked` flags.
+  so index 0 is gid 1 and gid 0 never appears. Purely cosmetic: the
+  engine's collision grid never reads it.
 - **`spawns`** — an empty object layer; spawn points aren't in the `.MAP`
   and are placed by hand.
 - **`collision`** — hidden by default. Section B collapsed to one
-  value per tile (blocked only when all four subcells are; see "Test
-  fixture strategy" below), drawn as the plain ground tile (gid 1) where
-  blocked and left empty (gid 0) where open. It is **for inspection only**:
-  toggle it on (and `terrain` off) to see the original collision data, in
+  value per tile (blocked once 2 or more of its 4 subcells are; see "Test
+  fixture strategy" below), drawn as the collision-marker tile
+  (`COLLISION_MARKER_TILE_ID`, see [`ART_FORMAT.md`](./ART_FORMAT.md),
+  "Terrain tileset export") where blocked and left empty (gid 0) where
+  open. This is the engine's actual
+  collision source (`parseTiledMap` in `src/game/map/load-tiled-map.ts`
+  blocks every cell whose gid here is non-zero); it's hidden purely so it
+  doesn't draw over `terrain` by default, and can still be switched on, in
   the Tiled editor or through the engine's `tile-layers` debug option.
-  Engine collision never reads it; it comes from the layer named `terrain`
-  alone.
 
-The two collision sources don't agree. For `FAGARAS`, the collapsed
-Section B mask blocks **3,315** tiles, while the tileset-derived grid the
-engine actually uses blocks **5,152**; they differ on **1,859 of 16,384
-cells (11.3%)**. Per tile, the number of blocked subcells is 0 for 10,748
-tiles, 1 for 448, 2 for 1,049, 3 for 824 and 4 for 3,315. (Counting only
-bit 2, i.e. leaving the `256`-only subcells open, would give 3,307 blocked
-tiles and 1,867 disagreeing cells instead.) Which source the engine should
-end up using is still open.
+For `FAGARAS` the collapsed Section B mask blocks **5,188** of 16,384
+tiles: every tile with 2 or more of its 4 subcells blocked. Per tile, the
+number of blocked subcells is 0 for 10,748 tiles, 1 for 448, 2 for 1,049,
+3 for 824 and 4 for 3,315 — so the 2-or-more rule blocks the last three
+groups (1,049 + 824 + 3,315 = 5,188), rather than only the all-four group
+(3,315) that an earlier, stricter rule used. Requiring all four left most
+cliff and partial-rock tiles walkable, since they typically mark only two
+or three of their subcells; requiring a majority instead keeps them
+impassable. An even earlier per-tile classification of the `terrain`
+tileset (since removed — see [`ART_FORMAT.md`](./ART_FORMAT.md), "Tile
+walkability") blocked a different **5,152**, which happens to be close to
+the 2-or-more figure but was arrived at independently and no longer
+applies.
 
 ### Converting `BUILDING.MAP`
 
@@ -489,7 +496,7 @@ converts `COUNTIES/BUILDING.MAP` **as-is** into one Tiled map,
 it. Its layers, back to front:
 
 - **`terrain`** — grid 0, the interior view, every cell set (index 0 is
-  gid 1). The engine's collision grid comes from this layer.
+  gid 1). Purely cosmetic: the engine's collision grid never reads it.
 - **`intact`** — grid 1, **hidden**. Empty (gid 0) where the grid is 0.
 - **`ruined`** — grid 2, **hidden**. Empty (gid 0) where the grid is 0.
 
@@ -497,6 +504,11 @@ So by default only the interior view shows. The engine loads both overlays
 but starts them hidden; to see the buildings intact or ruined, toggle
 `intact` or `ruined` on, in the Tiled editor or through the engine's
 `tile-layers` debug option (`?debug=tile-layers`).
+- **`collision`** — hidden, and currently **all open** (every gid 0). Real
+  building collision isn't derived yet — the candidates are the `intact`
+  overlay's footprint or `BUILDING.MAP`'s unread flag grids 3–14 (see
+  "Open questions for later" below) — so a unit can walk straight through
+  a building until a follow-up fills this in.
 - **`spawns`** — an empty object layer (the loader requires one).
 
 In the engine it is the `buildings` map; view it with the `empty`
@@ -568,5 +580,6 @@ does the same with its own synthetic 983,040-byte fixture
 The parser treats a Section B subcell as blocked when `hi != 0`, so a
 subcell carrying only `256` counts (see "`256` is not a third terrain
 class" above). `collapseCollisionMaskPerTile` folds the 2×2 subcells down
-to one value per tile, which is blocked only when **all four** of its
-subcells are.
+to one value per tile, which is blocked when **2 or more** of its
+4 subcells are — a majority rather than all four, so cliffs and other
+partially-solid tiles still block movement.

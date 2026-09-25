@@ -5,12 +5,11 @@ import { buildPcx, greyscalePalette } from '~/test/pcx-fixture';
 import { decodePcx, type PcxImage } from '~/lib/art/pcx';
 import { extractTileRgba, tileRect, ATLAS_TILE_SIZE } from '~/lib/art/atlas';
 import { TEAL_COLOR_KEY } from '~/lib/art/rgba';
-import { BLOCKED_TILE_PROPERTY } from '~/game/map/tile-properties';
-import { isWalkableTile } from './tile-categories';
 import {
   atlasIndexToTileId,
   buildTerrainTilesetImage,
   buildTerrainTilesetXml,
+  COLLISION_MARKER_TILE_ID,
   EXTRA_TILE_ID_OFFSET,
   gidToTileId,
   TERRAIN_TILE_COUNT,
@@ -42,14 +41,17 @@ function isIncludedAtlasIndex(index: number): boolean {
   );
 }
 
-/** All filler tile ids the issue lists: unused padding in rows 92–96. */
+/**
+ * All filler tile ids that stay fully transparent: unused padding in rows
+ * 92–96, excluding {@link COLLISION_MARKER_TILE_ID}, which repurposes one
+ * such slot as the synthetic collision-marker tile.
+ */
 const FILLER_IDS = [
   ...range(1472, 1481),
   ...range(1488, 1497),
   ...range(1504, 1513),
   ...range(1520, 1529),
   ...range(1536, 1545),
-  1551,
 ];
 
 function range(first: number, last: number): number[] {
@@ -182,6 +184,27 @@ describe('buildTerrainTilesetImage', () => {
     expect(nonTransparentIds).toEqual([]);
   });
 
+  it('draws the collision-marker tile as red stripes on a transparent field', () => {
+    const tile = readTile(
+      tilesetImage.rgba,
+      TERRAIN_TILESET_WIDTH,
+      COLLISION_MARKER_TILE_ID
+    );
+    let sawOpaqueStripe = false;
+    let sawTransparentPixel = false;
+    for (let i = 0; i < tile.length; i += 4) {
+      if (tile[i + 3] === 255) {
+        sawOpaqueStripe = true;
+        expect([tile[i], tile[i + 1], tile[i + 2]]).toEqual([220, 20, 20]);
+      } else {
+        expect(tile[i + 3]).toEqual(0); // fully transparent, not merely dark
+        sawTransparentPixel = true;
+      }
+    }
+    expect(sawOpaqueStripe).toEqual(true);
+    expect(sawTransparentPixel).toEqual(true);
+  });
+
   it('never draws a pixel sourced from an excluded atlas tile', () => {
     // The fixture marks every excluded atlas tile (UI rows 92-97, the
     // non-extra columns of rows 98-102, and rows 103+) with a reserved
@@ -229,6 +252,12 @@ describe('atlasIndexToTileId / tileIdToAtlasIndex', () => {
   it.each(FILLER_IDS)('throws for filler id %d', (id) => {
     expect(() => tileIdToAtlasIndex(id)).toThrow(RangeError);
   });
+
+  it('throws for the collision-marker id: it has no atlas source', () => {
+    expect(() => tileIdToAtlasIndex(COLLISION_MARKER_TILE_ID)).toThrow(
+      RangeError
+    );
+  });
 });
 
 describe('gid conversion', () => {
@@ -271,28 +300,10 @@ describe('buildTerrainTilesetXml', () => {
     );
   });
 
-  it('marks exactly the non-walkable tiles with blocked=true, and leaves walkable tiles bare', () => {
+  it('describes no per-tile properties; walkability comes from each map\'s collision layer', () => {
     const doc = new DOMParser().parseFromString(buildTerrainTilesetXml(), 'application/xml');
     expect(doc.querySelector('parsererror')).toBeNull();
-
-    const blockedIds = [...doc.querySelectorAll('tileset > tile')].map((tile) => {
-      const property = tile.querySelector('properties > property');
-      expect(property?.getAttribute('name')).toBe(BLOCKED_TILE_PROPERTY);
-      expect(property?.getAttribute('type')).toBe('bool');
-      expect(property?.getAttribute('value')).toBe('true');
-      return Number(tile.getAttribute('id'));
-    });
-
-    const expected = [];
-    for (let id = 0; id < TERRAIN_TILE_COUNT; id++) {
-      if (!isWalkableTile(id)) expected.push(id);
-    }
-    expect(blockedIds).toEqual(expected);
-    // Spot checks: grass and a drawbridge tile stay bare; water, a wall and
-    // an unused filler slot are blocked.
-    expect(blockedIds).not.toContain(1072);
-    expect(blockedIds).not.toContain(1482);
-    expect(blockedIds).toEqual(expect.arrayContaining([398, 210, 1472]));
+    expect(doc.querySelectorAll('tileset > tile')).toHaveLength(0);
   });
 
   it('is deterministic', () => {

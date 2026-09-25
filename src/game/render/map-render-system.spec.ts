@@ -15,7 +15,6 @@ function terrainTileset(firstgid = 1): MapTileset {
     tileCount: 1552,
     columns: 16,
     imageUrl: TERRAIN_URL,
-    blockedTileIds: new Set(),
   };
 }
 

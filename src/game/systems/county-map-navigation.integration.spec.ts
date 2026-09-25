@@ -115,6 +115,21 @@ describe('navigation on a converted county map (fagaras, 40px tiles)', () => {
     });
   });
 
+  it('has both spawn points on open cells, with a path between them', () => {
+    const cells = map.spawns.map((spawn) =>
+      toGridPosition(new Vector2(spawn.position.x, spawn.position.y), map.tileSize)
+    );
+    expect(cells.length).toBeGreaterThanOrEqual(2);
+
+    for (const cell of cells) {
+      expect(map.collision[cell.y * map.width + cell.x]).toBe(0);
+    }
+
+    const [from, to] = cells;
+    const result = findPath(map, from, to, { smooth: false });
+    expect(result.status).toBe('found');
+  });
+
   it('finds a cross-map route without searching most of the 128x128 grid', () => {
     // A deterministic stand-in for a wall-clock perf budget: the A* open list
     // is a plain array, so cost grows with the nodes a search expands. The
