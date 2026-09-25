@@ -10,7 +10,7 @@
  "tileheight": 40,
  "infinite": false,
  "nextlayerid": 4,
- "nextobjectid": 6,
+ "nextobjectid": 4,
  "compressionlevel": -1,
  "properties": [],
  "tilesets": [
@@ -16464,32 +16464,6 @@
      "width": 0,
      "x": 3500,
      "y": 5060
-    },
-    {
-     "height": 0,
-     "id": 4,
-     "name": "red",
-     "opacity": 1,
-     "point": true,
-     "rotation": 0,
-     "type": "",
-     "visible": true,
-     "width": 0,
-     "x": 2398,
-     "y": 1922
-    },
-    {
-     "height": 0,
-     "id": 5,
-     "name": "blue",
-     "opacity": 1,
-     "point": true,
-     "rotation": 0,
-     "type": "",
-     "visible": true,
-     "width": 0,
-     "x": 4034.66666666667,
-     "y": 4001.33333333333
     }
    ]
   },

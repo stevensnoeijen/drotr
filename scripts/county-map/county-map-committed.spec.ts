@@ -33,7 +33,7 @@ describe('public/maps/fagaras.tmj', () => {
     expect(map.tilesets).toEqual([{ firstgid: 1, source: 'terrain.tsx' }]);
   });
 
-  it('passes parseTiledMap as a 128x128, 40 px map with its 3 edge spawns and the hand-placed red and blue', () => {
+  it('passes parseTiledMap as a 128x128, 40 px map with exactly its 3 generated edge spawns', () => {
     const parsed = parseTiledMap(map, tileset);
     expect(parsed.width).toEqual(128);
     expect(parsed.height).toEqual(128);
@@ -42,8 +42,6 @@ describe('public/maps/fagaras.tmj', () => {
       'edge-1',
       'edge-2',
       'edge-3',
-      'red',
-      'blue',
     ]);
     // collision is kept but hidden, so terrain is the only shown layer.
     expect(
