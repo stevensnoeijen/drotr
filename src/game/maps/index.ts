@@ -108,6 +108,15 @@ export const maps: readonly MapDefinition[] = [
     allowedScenarioIds: [],
   },
   {
+    id: 'ostrov',
+    title: 'Ostrov',
+    description:
+      'The Ostrov county map, converted from the original .MAP file.',
+    mapSource: `${import.meta.env.BASE_URL}maps/ostrov.tmj`,
+    // No spawn points yet, so only `empty` (allowed on every map) applies.
+    allowedScenarioIds: [],
+  },
+  {
     id: 'buildings',
     title: 'Buildings',
     description:

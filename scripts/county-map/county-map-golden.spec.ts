@@ -330,3 +330,24 @@ describe.skipIf(!cuertaAvailable)('CUERTA.MAP', () => {
     );
   });
 });
+
+const OSTROV_SOURCE = countyMapCdPath('OSTROV');
+const ostrovAvailable = hasCdFile(OSTROV_SOURCE);
+
+describe.skipIf(!ostrovAvailable)('OSTROV.MAP', () => {
+  it('converts to exactly the committed public/maps/ostrov.tmj (catches a stale committed file)', () => {
+    const county = parseCountyMap(readCdFile(OSTROV_SOURCE));
+    const committed = fs.readFileSync(
+      path.join(
+        process.cwd(),
+        'public',
+        'maps',
+        countyTiledMapFileName('OSTROV')
+      ),
+      'utf-8'
+    );
+    expect(serializeTiledMap(buildCountyTiledMap(county)) === committed).toBe(
+      true
+    );
+  });
+});

@@ -444,8 +444,24 @@ see "Converting `BUILDING.MAP`" below). The script reads
 `COUNTIES/<NAME>.MAP` from the CD data
 (`DROTR_CD_DIR`, defaulting to `.cd/`) and writes
 `public/maps/<name>.tmj`. The raw `.MAP` is never committed, but the
-converted `.tmj` is (so far `fagaras.tmj`, `sibiu.tmj`, `brasov.tmj`, `rasova.tmj`, `pitesti.tmj`, `hirsova.tmj`, `snagov.tmj`, `braila.tmj`, `giurgiu.tmj`, `tirgo.tmj` and `cuerta.tmj`). The output is deterministic,
+converted `.tmj` is (all 12 counties: `fagaras.tmj`, `sibiu.tmj`, `brasov.tmj`, `rasova.tmj`, `pitesti.tmj`, `hirsova.tmj`, `snagov.tmj`, `braila.tmj`, `giurgiu.tmj`, `tirgo.tmj`, `cuerta.tmj` and `ostrov.tmj`). The output is deterministic,
 so re-running the script over an up-to-date file changes nothing.
+Spawn points placed by hand in an existing county `.tmj` (the converter
+itself only emits an empty `spawns` layer) are carried over into the new
+output rather than discarded; everything else is regenerated. A file last
+saved from the Tiled editor, like `fagaras.tmj`, is therefore rewritten in
+the converter's own formatting, with its spawns intact.
+
+All 12 counties convert in one go with:
+
+```
+npm run convert:maps
+```
+
+which runs the same conversion for each county in turn, reports any
+that fail, and exits non-zero if one did. It doesn't include
+`BUILDING.MAP`.
+
 `src/lib/county-map` does the pure parsing and
 `scripts/county-map/county-map-tiled.ts` builds the Tiled JSON.
 
