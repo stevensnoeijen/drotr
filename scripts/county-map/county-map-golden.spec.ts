@@ -288,3 +288,24 @@ describe.skipIf(!giurgiuAvailable)('GIURGIU.MAP', () => {
     );
   });
 });
+
+const TIRGO_SOURCE = countyMapCdPath('TIRGO');
+const tirgoAvailable = hasCdFile(TIRGO_SOURCE);
+
+describe.skipIf(!tirgoAvailable)('TIRGO.MAP', () => {
+  it('converts to exactly the committed public/maps/tirgo.tmj (catches a stale committed file)', () => {
+    const county = parseCountyMap(readCdFile(TIRGO_SOURCE));
+    const committed = fs.readFileSync(
+      path.join(
+        process.cwd(),
+        'public',
+        'maps',
+        countyTiledMapFileName('TIRGO')
+      ),
+      'utf-8'
+    );
+    expect(serializeTiledMap(buildCountyTiledMap(county)) === committed).toBe(
+      true
+    );
+  });
+});
