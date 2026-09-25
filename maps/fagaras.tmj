@@ -10,7 +10,7 @@
  "tileheight": 40,
  "infinite": false,
  "nextlayerid": 4,
- "nextobjectid": 1,
+ "nextobjectid": 4,
  "compressionlevel": -1,
  "properties": [],
  "tilesets": [
@@ -16418,42 +16418,54 @@
    ]
   },
   {
-   "draworder": "topdown",
    "id": 2,
    "name": "spawns",
+   "type": "objectgroup",
+   "x": 0,
+   "y": 0,
+   "width": 0,
+   "height": 0,
+   "opacity": 1,
+   "visible": true,
+   "draworder": "topdown",
    "objects": [
     {
      "height": 0,
      "id": 1,
-     "name": "red",
-     "opacity": 1,
+     "name": "edge-1",
      "point": true,
      "rotation": 0,
      "type": "",
      "visible": true,
      "width": 0,
-     "x": 2398,
-     "y": 1922
+     "x": 60,
+     "y": 1140
     },
     {
      "height": 0,
      "id": 2,
-     "name": "blue",
-     "opacity": 1,
+     "name": "edge-2",
      "point": true,
      "rotation": 0,
      "type": "",
      "visible": true,
      "width": 0,
-     "x": 4034.66666666667,
-     "y": 4001.33333333333
+     "x": 5060,
+     "y": 1740
+    },
+    {
+     "height": 0,
+     "id": 3,
+     "name": "edge-3",
+     "point": true,
+     "rotation": 0,
+     "type": "",
+     "visible": true,
+     "width": 0,
+     "x": 3500,
+     "y": 5060
     }
-   ],
-   "opacity": 1,
-   "type": "objectgroup",
-   "visible": true,
-   "x": 0,
-   "y": 0
+   ]
   },
   {
    "id": 3,
