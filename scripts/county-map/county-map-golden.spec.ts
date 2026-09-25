@@ -162,3 +162,24 @@ describe.skipIf(!brasovAvailable)('BRASOV.MAP', () => {
     );
   });
 });
+
+const RASOVA_SOURCE = countyMapCdPath('RASOVA');
+const rasovaAvailable = hasCdFile(RASOVA_SOURCE);
+
+describe.skipIf(!rasovaAvailable)('RASOVA.MAP', () => {
+  it('converts to exactly the committed public/maps/rasova.tmj (catches a stale committed file)', () => {
+    const county = parseCountyMap(readCdFile(RASOVA_SOURCE));
+    const committed = fs.readFileSync(
+      path.join(
+        process.cwd(),
+        'public',
+        'maps',
+        countyTiledMapFileName('RASOVA')
+      ),
+      'utf-8'
+    );
+    expect(serializeTiledMap(buildCountyTiledMap(county)) === committed).toBe(
+      true
+    );
+  });
+});
