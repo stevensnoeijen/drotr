@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  findSignposts,
   parseCountyMap,
   SECTION_A_SIZE,
   SECTION_B_SIZE,
@@ -38,8 +39,6 @@ const WATER_TILES = new Set([702, 718, 1302, 1303, 1318, 1319]);
 /** Cliff-ridge tile that carries bit 8 on its top-left subcell only. */
 const CLIFF_RIM_TILE = 784;
 
-/** The signpost-on-a-cairn tile found only on the map border. */
-const SIGNPOST_TILE = 701;
 
 interface Bit256Split {
   /** Tiles whose four subcells all carry bit 8. */
@@ -165,16 +164,6 @@ function splitBit256(map: CountyMap): Bit256Split {
   return split;
 }
 
-function signposts(map: CountyMap): [number, number][] {
-  const found: [number, number][] = [];
-  for (let y = 0; y < SECTION_A_SIZE; y++) {
-    for (let x = 0; x < SECTION_A_SIZE; x++) {
-      if (tileAt(map, x, y) === SIGNPOST_TILE) found.push([x, y]);
-    }
-  }
-  return found;
-}
-
 function onBorder([x, y]: [number, number]): boolean {
   const last = SECTION_A_SIZE - 1;
   return x === 0 || y === 0 || x === last || y === last;
@@ -194,13 +183,13 @@ describe.each(COUNTY_NAMES)('%s.MAP marker-like features', (name) => {
     });
 
     it('has its signposts only on the map border', () => {
-      const found = signposts(map);
+      const found = findSignposts(map);
       expect(found).toEqual(EXPECTED_SIGNPOSTS[name]);
       expect(found.every(onBorder)).toBe(true);
     });
 
     it('blocks the top half of every signpost tile', () => {
-      for (const [x, y] of signposts(map)) {
+      for (const [x, y] of findSignposts(map)) {
         expect(tileSubcells(map, x, y)).toEqual([4, 4, 0, 0]);
       }
     });
