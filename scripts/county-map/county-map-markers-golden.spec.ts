@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  collapseCollisionMaskPerTile,
   findSignposts,
   parseCountyMap,
   SECTION_A_SIZE,
@@ -11,6 +12,7 @@ import {
 } from '~/lib/county-map';
 import { hasCdFile, readCdFile } from '~/test/cd-assets';
 
+import { buildCountyTiledMap, COUNTY_TILE_SIZE } from './county-map-tiled';
 import { COUNTY_NAMES, countyMapCdPath, type CountyName } from './county-names';
 
 /**
@@ -186,6 +188,22 @@ describe.each(COUNTY_NAMES)('%s.MAP marker-like features', (name) => {
       const found = findSignposts(map);
       expect(found).toEqual(EXPECTED_SIGNPOSTS[name]);
       expect(found.every(onBorder)).toBe(true);
+    });
+
+    it('converts every signpost into one edge spawn on a walkable cell of the collision grid', () => {
+      const tiled = buildCountyTiledMap(map);
+      const spawns = tiled.layers.find((layer) => layer.name === 'spawns');
+      if (spawns?.type !== 'objectgroup') throw new Error('no spawns layer');
+      const blocked = collapseCollisionMaskPerTile(map);
+
+      expect(spawns.objects.map((object) => object.name)).toEqual(
+        EXPECTED_SIGNPOSTS[name].map((_, i) => `edge-${i + 1}`)
+      );
+      for (const { x, y } of spawns.objects) {
+        const tx = Math.floor(x / COUNTY_TILE_SIZE);
+        const ty = Math.floor(y / COUNTY_TILE_SIZE);
+        expect(blocked[ty * SECTION_A_SIZE + tx]).toBe(0);
+      }
     });
 
     it('blocks the top half of every signpost tile', () => {

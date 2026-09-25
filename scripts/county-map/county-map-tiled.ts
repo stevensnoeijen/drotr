@@ -2,11 +2,13 @@ import type {
   TiledLayerObjectgroup,
   TiledLayerTilelayer,
   TiledMap,
+  TiledObject,
   TiledTileset,
 } from 'tiled-types';
 
 import {
   collapseCollisionMaskPerTile,
+  findSignposts,
   SECTION_A_SIZE,
   type CountyMap,
 } from '../../src/lib/county-map';
@@ -28,7 +30,9 @@ import {
  * - `terrain`: Section A, one tile per cell, `gid = atlas index + 1`. It's
  *   the whole ground layer (there is no separate decoration layer). Purely
  *   cosmetic: the engine's collision grid never reads it.
- * - `spawns`: an empty object layer, for spawn points to be placed by hand.
+ * - `spawns`: one generated `edge-N` spawn point per map-edge signpost
+ *   ({@link edgeSpawnObjects}). Hand-placed spawns are added afterwards
+ *   and kept across reruns by `withPreviousSpawns`.
  * - `collision`: hidden by default, Section B collapsed to one value per
  *   tile ({@link collapseCollisionMaskPerTile}) — the collision-marker tile
  *   where blocked, empty where open. This is what the engine's collision
@@ -77,8 +81,8 @@ function terrainData(map: CountyMap): number[] {
   return data;
 }
 
-function collisionData(map: CountyMap): number[] {
-  return Array.from(collapseCollisionMaskPerTile(map), (blocked) =>
+function collisionData(collapsed: Uint8Array): number[] {
+  return Array.from(collapsed, (blocked) =>
     blocked ? COLLISION_BLOCKED_GID : 0
   );
 }
@@ -92,11 +96,110 @@ function collisionData(map: CountyMap): number[] {
  * {@link VERBATIM_ATLAS_INDEX_MAX}.
  */
 export function buildCountyTiledMap(map: CountyMap): TiledMap {
-  return buildTerrainTiledMap([
-    tileLayer(1, 'terrain', terrainData(map)),
-    spawnsLayer(2),
-    tileLayer(3, 'collision', collisionData(map), false),
-  ]);
+  const blocked = collapseCollisionMaskPerTile(map);
+  const spawns = edgeSpawnObjects(map, blocked);
+  return {
+    ...buildTerrainTiledMap([
+      tileLayer(1, 'terrain', terrainData(map)),
+      spawnsLayer(2, spawns),
+      tileLayer(3, 'collision', collisionData(blocked), false),
+    ]),
+    nextobjectid: spawns.length + 1,
+  };
+}
+
+/**
+ * Name prefix reserved for spawn points generated from map-edge signposts.
+ * A spawn named `edge-<anything>` is treated as generated: it's rebuilt
+ * from the `.MAP` data on every conversion, so a hand-placed spawn must
+ * not use it.
+ */
+export const EDGE_SPAWN_PREFIX = 'edge-';
+
+/**
+ * How many tiles inward from a signpost {@link edgeSpawnTiles} searches
+ * for a walkable tile before giving up.
+ */
+export const EDGE_SPAWN_SEARCH_RADIUS = 3;
+
+/**
+ * The tile each map-edge signpost's spawn goes on, in signpost scan order
+ * (row-major, see `findSignposts`).
+ *
+ * A signpost's own tile is blocked (its top half is solid), so the spawn
+ * goes on the nearest walkable tile of the collapsed collision grid
+ * (`blocked`, as {@link collapseCollisionMaskPerTile} returns it), stepping
+ * inward, away from the border the signpost sits on: `+x` from the left
+ * edge, `-x` from the right, `+y` from the top, `-y` from the bottom. A
+ * corner signpost (on two borders) steps diagonally, along both axes at
+ * once. The signpost's own tile counts as step 0, in case it is ever
+ * walkable.
+ *
+ * @throws {Error} when no tile within {@link EDGE_SPAWN_SEARCH_RADIUS}
+ * steps is walkable, rather than place a spawn in a blocked cell.
+ */
+export function edgeSpawnTiles(
+  map: CountyMap,
+  blocked: Uint8Array
+): [number, number][] {
+  const last = SECTION_A_SIZE - 1;
+  const inward = (coordinate: number): number =>
+    coordinate === 0 ? 1 : coordinate === last ? -1 : 0;
+
+  return findSignposts(map).map(([x, y]) => {
+    const dx = inward(x);
+    const dy = inward(y);
+    for (let step = 0; step <= EDGE_SPAWN_SEARCH_RADIUS; step++) {
+      const tx = x + dx * step;
+      const ty = y + dy * step;
+      if (blocked[ty * SECTION_A_SIZE + tx] === 0) {
+        return [tx, ty];
+      }
+    }
+    throw new Error(
+      `No walkable tile within ${EDGE_SPAWN_SEARCH_RADIUS} tiles inward of the signpost at (${x}, ${y})`
+    );
+  });
+}
+
+/**
+ * The generated `spawns` objects: one point named `edge-1`, `edge-2`, …
+ * per map-edge signpost, at the centre of its {@link edgeSpawnTiles} tile
+ * in map pixels, with object ids 1..n. No team or colour: which side uses
+ * a spawn is a scenario decision.
+ */
+export function edgeSpawnObjects(
+  map: CountyMap,
+  blocked: Uint8Array
+): TiledObject[] {
+  return edgeSpawnTiles(map, blocked).map(([x, y], i) =>
+    spawnPoint(
+      i + 1,
+      `${EDGE_SPAWN_PREFIX}${i + 1}`,
+      x * COUNTY_TILE_SIZE + COUNTY_TILE_SIZE / 2,
+      y * COUNTY_TILE_SIZE + COUNTY_TILE_SIZE / 2
+    )
+  );
+}
+
+/**
+ * A spawn point object, in the key order (alphabetical) and shape the
+ * Tiled editor writes one in. Tiled omits an empty `properties`, so this
+ * does too.
+ */
+function spawnPoint(id: number, name: string, x: number, y: number): TiledObject {
+  return {
+    height: 0,
+    id,
+    name,
+    point: true,
+    rotation: 0,
+    type: '',
+    visible: true,
+    width: 0,
+    x,
+    y,
+  } as Omit<TiledObject, 'properties'> as TiledObject;
 }
 
 /** A 128×128 tile layer, in the key order Tiled writes. */
@@ -121,10 +224,13 @@ export function tileLayer(
 }
 
 /**
- * The empty `spawns` object layer `parseTiledMap` requires, for spawn
- * points to be placed by hand.
+ * The `spawns` object layer `parseTiledMap` requires, holding `objects`
+ * (none by default).
  */
-export function spawnsLayer(id: number): TiledLayerObjectgroup {
+export function spawnsLayer(
+  id: number,
+  objects: TiledObject[] = []
+): TiledLayerObjectgroup {
   return {
     id,
     name: 'spawns',
@@ -136,7 +242,7 @@ export function spawnsLayer(id: number): TiledLayerObjectgroup {
     opacity: 1,
     visible: true,
     draworder: 'topdown',
-    objects: [],
+    objects,
   };
 }
 

@@ -11,13 +11,18 @@ import {
 import {
   collapseCollisionMaskPerTile,
   parseCountyMap,
+  SIGNPOST_TILE_INDEX,
   type CountyMap,
 } from '~/lib/county-map';
 import { buildCountyMapBytes, tileSubcells } from '~/test/county-map-fixture';
 
 import { COLLISION_MARKER_TILE_ID } from '~/lib/art/collision-marker';
 
-import { buildCountyTiledMap, serializeTiledMap } from './county-map-tiled';
+import {
+  buildCountyTiledMap,
+  edgeSpawnTiles,
+  serializeTiledMap,
+} from './county-map-tiled';
 
 const COLLISION_MARKER_GID = COLLISION_MARKER_TILE_ID + 1;
 
@@ -141,7 +146,7 @@ describe('buildCountyTiledMap', () => {
     expect(() => buildCountyTiledMap(map)).toThrow(/at \(7, 9\).*1471/);
   });
 
-  it('emits an empty spawns layer', () => {
+  it('emits an empty spawns layer for a county without signposts', () => {
     const spawns = buildCountyTiledMap(syntheticCountyMap()).layers[1];
     expect(spawns).toMatchObject({
       type: 'objectgroup',
@@ -193,5 +198,104 @@ describe('buildCountyTiledMap', () => {
     expect(Array.from(parsed.collision)).toEqual(
       collisionData.map((gid) => (gid !== 0 ? 1 : 0))
     );
+  });
+
+  describe('edge spawns from map-edge signposts', () => {
+    /** Signpost tile, with the top half blocked like every real one. */
+    const signpost = (x: number, y: number) => ({
+      tile: { x, y, value: SIGNPOST_TILE_INDEX },
+      collision: tileSubcells(x, y, [4, 4, 0, 0]),
+    });
+    const solid = (x: number, y: number) => tileSubcells(x, y, [4, 4, 4, 4]);
+
+    function signpostCounty(
+      signposts: [number, number][],
+      extraBlocked: [number, number][] = []
+    ): CountyMap {
+      const placed = signposts.map(([x, y]) => signpost(x, y));
+      return parseCountyMap(
+        buildCountyMapBytes({
+          tiles: placed.map((p) => p.tile),
+          collision: [
+            ...placed.flatMap((p) => p.collision),
+            ...extraBlocked.flatMap(([x, y]) => solid(x, y)),
+          ],
+        })
+      );
+    }
+
+    // One signpost per edge plus a corner; the top one has its first
+    // inward tile blocked too, so it steps on to the second.
+    const county = () =>
+      signpostCounty(
+        [
+          [0, 10],
+          [20, 0],
+          [127, 50],
+          [40, 127],
+          [127, 127],
+        ],
+        [[20, 1]]
+      );
+
+    it('steps inward from each edge (diagonally from a corner) to the nearest walkable tile', () => {
+      const map = county();
+      expect(edgeSpawnTiles(map, collapseCollisionMaskPerTile(map))).toEqual([
+        [20, 2],
+        [1, 10],
+        [126, 50],
+        [40, 126],
+        [126, 126],
+      ]);
+    });
+
+    it('emits edge-N point objects at those tile centres, in row-major signpost order', () => {
+      const tiled = buildCountyTiledMap(county());
+      const spawns = tiled.layers[1];
+      if (spawns.type !== 'objectgroup') throw new Error('no spawns layer');
+
+      expect(
+        spawns.objects.map(({ id, name, x, y }) => [id, name, x, y])
+      ).toEqual([
+        [1, 'edge-1', 20 * 40 + 20, 2 * 40 + 20],
+        [2, 'edge-2', 1 * 40 + 20, 10 * 40 + 20],
+        [3, 'edge-3', 126 * 40 + 20, 50 * 40 + 20],
+        [4, 'edge-4', 40 * 40 + 20, 126 * 40 + 20],
+        [5, 'edge-5', 126 * 40 + 20, 126 * 40 + 20],
+      ]);
+      for (const object of spawns.objects) {
+        expect(object).toMatchObject({
+          point: true,
+          type: '',
+          width: 0,
+          height: 0,
+        });
+      }
+      expect(tiled.nextobjectid).toBe(6);
+    });
+
+    it('puts every edge spawn on a walkable cell of the parsed collision grid', () => {
+      const parsed = parseTiledMap(buildCountyTiledMap(county()), terrainTileset);
+      expect(parsed.spawns).toHaveLength(5);
+      for (const { position } of parsed.spawns) {
+        const x = Math.floor(position.x / 40);
+        const y = Math.floor(position.y / 40);
+        expect(parsed.collision[y * 128 + x]).toBe(0);
+      }
+    });
+
+    it('fails when no tile within 3 steps inward is walkable', () => {
+      const map = signpostCounty(
+        [[0, 100]],
+        [
+          [1, 100],
+          [2, 100],
+          [3, 100],
+        ]
+      );
+      expect(() => buildCountyTiledMap(map)).toThrow(
+        /No walkable tile within 3 tiles inward of the signpost at \(0, 100\)/
+      );
+    });
   });
 });

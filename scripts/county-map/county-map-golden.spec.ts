@@ -68,11 +68,11 @@ describe.skipIf(!available)('FAGARAS.MAP', () => {
       ),
       'utf-8'
     );
-    // The committed file's `spawns` layer is hand-placed, not derived from
-    // the source `.MAP` data, so it's spliced in before comparing — the
-    // same carry-over the real converter does on a rerun. Everything else
-    // (terrain, collision) is compared as freshly built, so a stale layer
-    // or stale formatting still fails this test.
+    // Any hand-placed spawns in the committed file aren't derived from the
+    // source `.MAP` data, so they're merged in before comparing — the same
+    // carry-over the real converter does on a rerun. Everything else
+    // (terrain, collision, the generated edge spawns) is compared as
+    // freshly built, so a stale layer or stale formatting still fails.
     const built = withPreviousSpawns(
       buildCountyTiledMap(county),
       JSON.parse(committed) as TiledMap

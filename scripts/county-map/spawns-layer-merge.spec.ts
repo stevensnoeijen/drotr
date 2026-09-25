@@ -1,4 +1,9 @@
-import type { TiledLayerObjectgroup, TiledLayerTilelayer, TiledMap } from 'tiled-types';
+import type {
+  TiledLayerObjectgroup,
+  TiledLayerTilelayer,
+  TiledMap,
+  TiledObject,
+} from 'tiled-types';
 import { describe, expect, it } from 'vitest';
 
 import { withPreviousSpawns } from './spawns-layer-merge';
@@ -53,6 +58,32 @@ function handPlacedSpawnsLayer(id = 2): TiledLayerObjectgroup {
       },
     ],
   };
+}
+
+function point(id: number, name: string, x = 0, y = 0): TiledObject {
+  return {
+    id,
+    name,
+    type: '',
+    x,
+    y,
+    width: 0,
+    height: 0,
+    rotation: 0,
+    visible: true,
+    point: true,
+    properties: [],
+  };
+}
+
+function spawnsWith(objects: TiledObject[]): TiledLayerObjectgroup {
+  return { ...emptySpawnsLayer(), objects };
+}
+
+function spawnObjects(map: TiledMap): TiledObject[] {
+  const spawns = map.layers.find((layer) => layer.name === 'spawns');
+  if (spawns?.type !== 'objectgroup') throw new Error('no spawns layer');
+  return spawns.objects;
 }
 
 function mapWithLayers(layers: TiledMap['layers']): TiledMap {
@@ -115,5 +146,84 @@ describe('withPreviousSpawns', () => {
     const previous = mapWithLayers([terrainLayer(), handPlacedSpawnsLayer()]);
 
     expect(withPreviousSpawns(built, previous)).toBe(built);
+  });
+
+  describe('with generated edge-* spawns', () => {
+    it('rebuilds generated spawns from the fresh map and keeps hand-placed ones after them', () => {
+      const built = {
+        ...mapWithLayers([
+          terrainLayer(),
+          spawnsWith([point(1, 'edge-1', 20, 20), point(2, 'edge-2', 60, 60)]),
+        ]),
+        nextobjectid: 3,
+      };
+      const previous = {
+        ...mapWithLayers([
+          terrainLayer(),
+          spawnsWith([
+            point(1, 'edge-1', 999, 999),
+            point(2, 'edge-2', 999, 999),
+            point(3, 'edge-3', 999, 999),
+            point(7, 'castle', 400, 400),
+          ]),
+        ]),
+        nextobjectid: 8,
+      };
+
+      const merged = withPreviousSpawns(built, previous);
+
+      expect(spawnObjects(merged)).toEqual([
+        point(1, 'edge-1', 20, 20),
+        point(2, 'edge-2', 60, 60),
+        point(7, 'castle', 400, 400),
+      ]);
+      expect(merged.nextobjectid).toBe(8);
+    });
+
+    it('gives a hand-placed spawn whose id clashes with a generated one the next free id', () => {
+      const built = {
+        ...mapWithLayers([
+          terrainLayer(),
+          spawnsWith([point(1, 'edge-1'), point(2, 'edge-2'), point(3, 'edge-3')]),
+        ]),
+        nextobjectid: 4,
+      };
+      const previous = mapWithLayers([
+        terrainLayer(),
+        spawnsWith([point(1, 'red', 100, 200), point(2, 'blue', 300, 400)]),
+      ]);
+
+      const merged = withPreviousSpawns(built, previous);
+
+      expect(spawnObjects(merged)).toEqual([
+        point(1, 'edge-1'),
+        point(2, 'edge-2'),
+        point(3, 'edge-3'),
+        point(4, 'red', 100, 200),
+        point(5, 'blue', 300, 400),
+      ]);
+      const ids = spawnObjects(merged).map((object) => object.id);
+      expect(new Set(ids).size).toBe(ids.length);
+      expect(merged.nextobjectid).toBe(6);
+    });
+
+    it('is stable when rerun over its own output', () => {
+      const built = {
+        ...mapWithLayers([
+          terrainLayer(),
+          spawnsWith([point(1, 'edge-1'), point(2, 'edge-2')]),
+        ]),
+        nextobjectid: 3,
+      };
+      const previous = mapWithLayers([
+        terrainLayer(),
+        spawnsWith([point(1, 'red', 100, 200)]),
+      ]);
+
+      const once = withPreviousSpawns(built, previous);
+      const twice = withPreviousSpawns(built, once);
+
+      expect(twice).toEqual(once);
+    });
   });
 });

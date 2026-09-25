@@ -116,10 +116,10 @@ describe('navigation on a converted county map (fagaras, 40px tiles)', () => {
   });
 
   it('has both spawn points on open cells, with a path between them', () => {
-    const cells = map.spawns.map((spawn) =>
-      toGridPosition(new Vector2(spawn.position.x, spawn.position.y), map.tileSize)
-    );
-    expect(cells.length).toBeGreaterThanOrEqual(2);
+    const cells = ['red', 'blue'].map((id) => {
+      const { position } = map.spawns.find((spawn) => spawn.id === id)!;
+      return toGridPosition(new Vector2(position.x, position.y), map.tileSize);
+    });
 
     for (const cell of cells) {
       expect(map.collision[cell.y * map.width + cell.x]).toBe(0);

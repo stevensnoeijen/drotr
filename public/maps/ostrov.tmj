@@ -10,7 +10,7 @@
  "tileheight": 40,
  "infinite": false,
  "nextlayerid": 4,
- "nextobjectid": 1,
+ "nextobjectid": 3,
  "compressionlevel": -1,
  "properties": [],
  "tilesets": [
@@ -16428,7 +16428,32 @@
    "opacity": 1,
    "visible": true,
    "draworder": "topdown",
-   "objects": []
+   "objects": [
+    {
+     "height": 0,
+     "id": 1,
+     "name": "edge-1",
+     "point": true,
+     "rotation": 0,
+     "type": "",
+     "visible": true,
+     "width": 0,
+     "x": 1860,
+     "y": 60
+    },
+    {
+     "height": 0,
+     "id": 2,
+     "name": "edge-2",
+     "point": true,
+     "rotation": 0,
+     "type": "",
+     "visible": true,
+     "width": 0,
+     "x": 60,
+     "y": 780
+    }
+   ]
   },
   {
    "id": 3,
