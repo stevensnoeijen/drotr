@@ -112,6 +112,27 @@ export function tileAt(map: CountyMap, x: number, y: number): number {
   return map.tiles[y * SECTION_A_SIZE + x];
 }
 
+/**
+ * Section A atlas index of the map-edge signpost: a wooden signpost on a
+ * stone cairn, found 1–6 times per county and only ever on the map border.
+ * See `docs/MAP_FORMAT.md`, "Map-edge signposts (tile 701)".
+ */
+export const SIGNPOST_TILE_INDEX = 701;
+
+/**
+ * Every tile-701 signpost in `map` as `[x, y]` tile coordinates, in scan
+ * order (row-major: by y, then x).
+ */
+export function findSignposts(map: CountyMap): [number, number][] {
+  const found: [number, number][] = [];
+  for (let y = 0; y < SECTION_A_SIZE; y++) {
+    for (let x = 0; x < SECTION_A_SIZE; x++) {
+      if (tileAt(map, x, y) === SIGNPOST_TILE_INDEX) found.push([x, y]);
+    }
+  }
+  return found;
+}
+
 /** The collision bitmask at subcell `(sx, sy)`. */
 export function subcellAt(map: CountyMap, sx: number, sy: number): number {
   return map.collisionMask[sy * SECTION_B_SIZE + sx];

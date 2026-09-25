@@ -32,12 +32,12 @@ describe('public/maps/ostrov.tmj', () => {
     expect(map.tilesets).toEqual([{ firstgid: 1, source: 'terrain.tsx' }]);
   });
 
-  it('passes parseTiledMap as a 128x128, 40 px map with no spawns yet', () => {
+  it('passes parseTiledMap as a 128x128, 40 px map with its 2 generated edge spawns', () => {
     const parsed = parseTiledMap(map, tileset);
     expect(parsed.width).toEqual(128);
     expect(parsed.height).toEqual(128);
     expect(parsed.tileSize).toEqual(40);
-    expect(parsed.spawns).toEqual([]);
+    expect(parsed.spawns.map((spawn) => spawn.id)).toEqual(['edge-1', 'edge-2']);
     // collision is kept but hidden, so terrain is the only shown layer.
     expect(
       parsed.tileLayers.map((layer) => [layer.name, layer.visible])

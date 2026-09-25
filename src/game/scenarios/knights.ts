@@ -1,53 +1,75 @@
 import type { ParsedMap } from '~/game/map/load-tiled-map';
 import { claimSpawn } from '~/game/systems/spawn-system';
 import { cellSizeOf } from '~/lib/grid';
+import { pickDistinct, type RandomSource } from '~/lib/random';
 import type { Scenario } from './types';
 
-/** Named spawn points this scenario requires the map to provide. */
-const REQUIRED_SPAWN_IDS = ['red', 'blue'] as const;
+/** How many spawn points the scenario needs: one per knight. */
+const REQUIRED_SPAWN_COUNT = 2;
 
 /**
- * One blue knight and one red knight, spawned at the map's `red` and `blue`
- * spawn points. The minimal scenario for verifying a real, converted county
- * map loads and renders correctly in the engine: no roster, no
- * randomization, just two units placed where the map says they can go.
+ * Builds the `knights` scenario, drawing its spawn choice from `random`
+ * (`Math.random` by default; tests pass a seeded or scripted source so
+ * the choice is repeatable).
  */
-export const knightsScenario: Scenario = {
-  id: 'knights',
-  title: 'Knights',
-  description:
-    "One blue knight and one red knight, spawned at the map's red and blue spawn points.",
-  validateMap: (map?: ParsedMap) => {
-    if (!map) {
-      return 'The "knights" scenario needs a map with "red" and "blue" spawn points, but no map is selected.';
-    }
+export function createKnightsScenario(
+  random: RandomSource = Math.random
+): Scenario {
+  return {
+    id: 'knights',
+    title: 'Knights',
+    description:
+      'One red knight and one blue knight, each spawned at a different, randomly chosen spawn point of the map.',
+    validateMap: (map?: ParsedMap) => {
+      if (!map) {
+        return `The "knights" scenario needs a map with at least ${REQUIRED_SPAWN_COUNT} spawn points, but no map is selected.`;
+      }
 
-    const spawnIds = new Set(map.spawns.map((spawn) => spawn.id));
-    const missing = REQUIRED_SPAWN_IDS.filter((id) => !spawnIds.has(id));
-    if (missing.length > 0) {
-      return `The "knights" scenario needs the selected map to have ${missing
-        .map((id) => `"${id}"`)
-        .join(' and ')} spawn point${missing.length > 1 ? 's' : ''}, which it does not.`;
-    }
+      if (map.spawns.length < REQUIRED_SPAWN_COUNT) {
+        return `The "knights" scenario needs the selected map to have at least ${REQUIRED_SPAWN_COUNT} spawn points, but it has ${map.spawns.length}.`;
+      }
 
-    return undefined;
-  },
-  setup: (world, map) => {
-    // Guarded defensively even though `validateMap` above is meant to keep
-    // this from ever being called with a map that lacks the spawns it
-    // needs — a caller that skips validation (e.g. a test) should still get
-    // "spawn nothing" rather than an uncaught throw from `claimSpawn`.
-    if (!map) {
-      return;
-    }
+      return undefined;
+    },
+    setup: (world, map) => {
+      // Guarded defensively even though `validateMap` above is meant to keep
+      // this from ever being called with a map that lacks enough spawns — a
+      // caller that skips validation (e.g. a test) should still get "spawn
+      // nothing" rather than a throw.
+      if (!map || map.spawns.length < REQUIRED_SPAWN_COUNT) {
+        return;
+      }
 
-    const spawnIds = new Set(map.spawns.map((spawn) => spawn.id));
-    if (!REQUIRED_SPAWN_IDS.every((id) => spawnIds.has(id))) {
-      return;
-    }
+      const [red, blue] = pickDistinct(
+        map.spawns,
+        REQUIRED_SPAWN_COUNT,
+        random
+      );
+      const cellSize = cellSizeOf(map);
+      // A single-spawn list, so a map that (wrongly) repeats a spawn name
+      // still gets each knight at the exact point picked for it.
+      claimSpawn(
+        world,
+        [red],
+        red.id,
+        { team: 'red', units: ['knight'] },
+        cellSize
+      );
+      claimSpawn(
+        world,
+        [blue],
+        blue.id,
+        { team: 'blue', units: ['knight'] },
+        cellSize
+      );
+    },
+  };
+}
 
-    const cellSize = cellSizeOf(map);
-    claimSpawn(world, map.spawns, 'red', { team: 'red', units: ['knight'] }, cellSize);
-    claimSpawn(world, map.spawns, 'blue', { team: 'blue', units: ['knight'] }, cellSize);
-  },
-};
+/**
+ * One red knight and one blue knight, each on a different spawn point of
+ * the selected map, chosen at random. The minimal scenario for verifying a
+ * real, converted county map loads and renders correctly in the engine: no
+ * roster, just two units placed where the map says they can go.
+ */
+export const knightsScenario: Scenario = createKnightsScenario();

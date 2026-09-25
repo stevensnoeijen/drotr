@@ -3,7 +3,8 @@ import { describe, expect, it } from 'vitest';
 
 import type { Entity } from '~/game/ecs/entity';
 import type { ParsedMap } from '~/game/map/load-tiled-map';
-import { knightsScenario } from './knights';
+import { createSeededRandom } from '~/lib/random';
+import { createKnightsScenario, knightsScenario } from './knights';
 
 /** A minimal map fixture with the given named spawn points. */
 function mapWithSpawns(
@@ -28,52 +29,107 @@ function mapWithSpawns(
   };
 }
 
-function mapWithRedBlueSpawns(): ParsedMap {
-  return mapWithSpawns([
-    { id: 'red', x: 32, y: 32 },
-    { id: 'blue', x: 96, y: 96 },
-  ]);
+/** Four spawns, one per 32px cell along the diagonal. */
+function mapWithFourSpawns(): ParsedMap {
+  return mapWithSpawns(
+    [0, 1, 2, 3].map((i) => ({ id: `edge-${i + 1}`, x: i * 32, y: i * 32 }))
+  );
+}
+
+/** A source that returns `values` in turn. */
+function scripted(...values: number[]): () => number {
+  return () => {
+    const value = values.shift();
+    if (value === undefined) throw new Error('scripted random ran out');
+    return value;
+  };
+}
+
+function knights(world: World<Entity>) {
+  const red = [...world].filter((e) => e.team === 'red');
+  const blue = [...world].filter((e) => e.team === 'blue');
+  return { red, blue };
 }
 
 describe('knightsScenario', () => {
-  it('spawns exactly one red knight and one blue knight at the spawn points', () => {
+  it('spawns exactly one red knight and one blue knight', () => {
     const world = new World<Entity>();
-    const map = mapWithRedBlueSpawns();
 
-    knightsScenario.setup(world, map);
+    createKnightsScenario(createSeededRandom(1)).setup(
+      world,
+      mapWithFourSpawns()
+    );
 
+    const { red, blue } = knights(world);
     expect(world.size).toBe(2);
+    expect(red.map((e) => e.unitType)).toEqual(['knight']);
+    expect(blue.map((e) => e.unitType)).toEqual(['knight']);
+  });
 
-    const red = [...world].filter((e) => e.team === 'red');
-    const blue = [...world].filter((e) => e.team === 'blue');
+  it('places the knights on the randomly drawn spawn points', () => {
+    const world = new World<Entity>();
 
-    expect(red.length).toBe(1);
-    expect(blue.length).toBe(1);
-    expect(red[0].unitType).toBe('knight');
-    expect(blue[0].unitType).toBe('knight');
+    // 0.5 of 4 draws edge-3 (cell 2, 2) for red; then 0.9 of the remaining
+    // 3 draws the last one, edge-4 (cell 3, 3), for blue.
+    createKnightsScenario(scripted(0.5, 0.9)).setup(world, mapWithFourSpawns());
 
-    expect(red[0].transform?.position).toEqual({ x: 48, y: 48 });
+    const { red, blue } = knights(world);
+    expect(red[0].transform?.position).toEqual({ x: 80, y: 80 });
     expect(blue[0].transform?.position).toEqual({ x: 112, y: 112 });
+  });
+
+  it('with a seeded source, always lands the two knights on two distinct map spawn points', () => {
+    const map = mapWithFourSpawns();
+    const spawnCentres = map.spawns.map(({ position }) => ({
+      x: position.x + 16,
+      y: position.y + 16,
+    }));
+
+    for (let seed = 0; seed < 50; seed++) {
+      const world = new World<Entity>();
+      createKnightsScenario(createSeededRandom(seed)).setup(world, map);
+
+      const { red, blue } = knights(world);
+      const redPosition = red[0].transform!.position;
+      const bluePosition = blue[0].transform!.position;
+      expect(spawnCentres).toContainEqual(redPosition);
+      expect(spawnCentres).toContainEqual(bluePosition);
+      expect(redPosition).not.toEqual(bluePosition);
+    }
+  });
+
+  it('makes the same choice for the same seed', () => {
+    const positions = () => {
+      const world = new World<Entity>();
+      createKnightsScenario(createSeededRandom(123)).setup(
+        world,
+        mapWithFourSpawns()
+      );
+      const { red, blue } = knights(world);
+      return [red[0].transform?.position, blue[0].transform?.position];
+    };
+
+    expect(positions()).toEqual(positions());
   });
 
   it("places the knights on the map's own tile grid when its tiles are not 32px", () => {
     const world = new World<Entity>();
     const map = mapWithSpawns(
       [
-        { id: 'red', x: 45, y: 45 },
-        { id: 'blue', x: 125, y: 125 },
+        { id: 'edge-1', x: 45, y: 45 },
+        { id: 'edge-2', x: 125, y: 125 },
       ],
       40
     );
 
-    knightsScenario.setup(world, map);
+    // 0 of 2 draws edge-1 for red, leaving edge-2 for blue.
+    createKnightsScenario(scripted(0, 0)).setup(world, map);
 
-    const red = [...world].find((e) => e.team === 'red');
-    const blue = [...world].find((e) => e.team === 'blue');
+    const { red, blue } = knights(world);
     // Centred in 40px cells (1, 1) and (3, 3), not in the 32px cells those
     // points would fall in.
-    expect(red?.transform?.position).toEqual({ x: 60, y: 60 });
-    expect(blue?.transform?.position).toEqual({ x: 140, y: 140 });
+    expect(red[0].transform?.position).toEqual({ x: 60, y: 60 });
+    expect(blue[0].transform?.position).toEqual({ x: 140, y: 140 });
   });
 
   it('spawns nothing when no map is given', () => {
@@ -84,25 +140,46 @@ describe('knightsScenario', () => {
     expect(world.size).toBe(0);
   });
 
+  it('spawns nothing on a map with fewer than 2 spawn points', () => {
+    const world = new World<Entity>();
+
+    knightsScenario.setup(world, mapWithSpawns([{ id: 'edge-1', x: 0, y: 0 }]));
+
+    expect(world.size).toBe(0);
+  });
+
   describe('validateMap', () => {
-    it('accepts a map with both red and blue spawn points', () => {
-      expect(knightsScenario.validateMap?.(mapWithRedBlueSpawns())).toBeUndefined();
+    it('accepts a map with 2 or more spawn points, whatever their names', () => {
+      expect(
+        knightsScenario.validateMap?.(
+          mapWithSpawns([
+            { id: 'anywhere', x: 0, y: 0 },
+            { id: 'elsewhere', x: 32, y: 32 },
+          ])
+        )
+      ).toBeUndefined();
+      expect(
+        knightsScenario.validateMap?.(mapWithFourSpawns())
+      ).toBeUndefined();
     });
 
     it('rejects no map at all', () => {
-      expect(knightsScenario.validateMap?.(undefined)).toMatch(/no map is selected/);
+      expect(knightsScenario.validateMap?.(undefined)).toMatch(
+        /no map is selected/
+      );
     });
 
-    it('rejects a map missing the blue spawn point', () => {
-      const map = mapWithSpawns([{ id: 'red', x: 32, y: 32 }]);
-      expect(knightsScenario.validateMap?.(map)).toMatch(/"blue"/);
+    it('rejects a map with only 1 spawn point', () => {
+      const map = mapWithSpawns([{ id: 'edge-1', x: 32, y: 32 }]);
+      expect(knightsScenario.validateMap?.(map)).toMatch(
+        /at least 2 spawn points, but it has 1/
+      );
     });
 
-    it('rejects a map missing both spawn points', () => {
-      const map = mapWithSpawns([]);
-      const error = knightsScenario.validateMap?.(map);
-      expect(error).toMatch(/"red"/);
-      expect(error).toMatch(/"blue"/);
+    it('rejects a map with no spawn points', () => {
+      expect(knightsScenario.validateMap?.(mapWithSpawns([]))).toMatch(
+        /at least 2 spawn points, but it has 0/
+      );
     });
   });
 });

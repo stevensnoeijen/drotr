@@ -13,7 +13,7 @@ import {
   type ParsedMap,
 } from '~/game/map/load-tiled-map';
 import { createMapNavigation } from '~/game/navigation/map-navigation';
-import { knightsScenario } from '~/game/scenarios/knights';
+import { createKnightsScenario } from '~/game/scenarios/knights';
 import { toGridPosition } from '~/lib/grid';
 import { Vector2 } from '~/lib/math/vector2';
 import { findPath, hasLineOfSight } from '~/lib/navigation/astar';
@@ -50,7 +50,8 @@ describe('navigation on a converted county map (fagaras, 40px tiles)', () => {
   const map = loadFagaras();
 
   it('uses the 40px tiles as the unit grid, with pathfinding and occupancy enabled', () => {
-    const { cellSize, navigationGrid, occupancyGrid } = createMapNavigation(map);
+    const { cellSize, navigationGrid, occupancyGrid } =
+      createMapNavigation(map);
 
     expect(map.tileSize).toBe(40);
     expect(cellSize).toBe(40);
@@ -59,12 +60,16 @@ describe('navigation on a converted county map (fagaras, 40px tiles)', () => {
   });
 
   it('routes a unit around blocked terrain from one spawn to the other and walks it there', () => {
-    const { cellSize, navigationGrid, occupancyGrid } = createMapNavigation(map);
+    const { cellSize, navigationGrid, occupancyGrid } =
+      createMapNavigation(map);
     const dt = 1 / 60;
     const world = new World<Entity>();
     const queries = createQueries(world);
 
-    knightsScenario.setup(world, map);
+    // Scripted draws put red on edge-2 and blue on edge-3 (see
+    // `pickDistinct`): a pair in the same connected region of the map.
+    const draws = [0.5, 0.9];
+    createKnightsScenario(() => draws.shift()!).setup(world, map);
     const blue = [...world].find((entity) => entity.team === 'blue')!;
     const red = [...world].find((entity) => entity.team === 'red')!;
     // Only the blue knight's walk matters here: the red one would just be an
@@ -78,7 +83,9 @@ describe('navigation on a converted county map (fagaras, 40px tiles)', () => {
 
     // The straight line between the spawns crosses blocked terrain, so
     // arriving at all means the order was routed around it.
-    expect(hasLineOfSight(map, cellOf(blue.transform!.position), cellOf(destination))).toBe(false);
+    expect(
+      hasLineOfSight(map, cellOf(blue.transform!.position), cellOf(destination))
+    ).toBe(false);
 
     const systems = [
       createPendingMoveOrderSystem(queries, cellSize, navigationGrid),
@@ -115,29 +122,44 @@ describe('navigation on a converted county map (fagaras, 40px tiles)', () => {
     });
   });
 
-  it('has both spawn points on open cells, with a path between them', () => {
-    const cells = map.spawns.map((spawn) =>
-      toGridPosition(new Vector2(spawn.position.x, spawn.position.y), map.tileSize)
-    );
-    expect(cells.length).toBeGreaterThanOrEqual(2);
+  /** The tile a spawn point sits on. */
+  const spawnCell = (id: string) => {
+    const { position } = map.spawns.find((spawn) => spawn.id === id)!;
+    return toGridPosition(new Vector2(position.x, position.y), map.tileSize);
+  };
 
-    for (const cell of cells) {
+  it('has exactly the 3 generated edge spawns, each on an open cell', () => {
+    expect(map.spawns.map((spawn) => spawn.id)).toEqual([
+      'edge-1',
+      'edge-2',
+      'edge-3',
+    ]);
+    for (const { id } of map.spawns) {
+      const cell = spawnCell(id);
       expect(map.collision[cell.y * map.width + cell.x]).toBe(0);
     }
+  });
 
-    const [from, to] = cells;
-    const result = findPath(map, from, to, { smooth: false });
-    expect(result.status).toBe('found');
+  // edge-1, on the west border, sits in a region the collision layer walls
+  // off from the rest of the map, so only the other pair is routable.
+  it('routes between edge-2 and edge-3 in both directions', () => {
+    for (const [from, to] of [
+      ['edge-2', 'edge-3'],
+      ['edge-3', 'edge-2'],
+    ]) {
+      const result = findPath(map, spawnCell(from), spawnCell(to), {
+        smooth: false,
+      });
+      expect(result.status).toBe('found');
+    }
   });
 
   it('finds a cross-map route without searching most of the 128x128 grid', () => {
     // A deterministic stand-in for a wall-clock perf budget: the A* open list
     // is a plain array, so cost grows with the nodes a search expands. The
     // spawn-to-spawn route should stay a directed search, not a flood fill.
-    const [from, to] = ['blue', 'red'].map((id) => {
-      const { position } = map.spawns.find((spawn) => spawn.id === id)!;
-      return toGridPosition(new Vector2(position.x, position.y), map.tileSize);
-    });
+    const from = spawnCell('edge-2');
+    const to = spawnCell('edge-3');
 
     const result = findPath(map, from, to, { smooth: false });
 

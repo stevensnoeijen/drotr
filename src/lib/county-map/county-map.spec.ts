@@ -3,6 +3,8 @@ import { describe, expect, it } from 'vitest';
 import { buildCountyMapBytes, tileSubcells } from '~/test/county-map-fixture';
 
 import {
+  findSignposts,
+  SIGNPOST_TILE_INDEX,
   collapseCollisionMaskPerTile,
   COUNTY_MAP_BYTES,
   CountyMapError,
@@ -198,5 +200,32 @@ describe('collapseCollisionMaskPerTile', () => {
 
   it('covers the bottom-right tile', () => {
     expect(collapsedAt([4, 4, 4, 4], 127, 127)).toEqual(1);
+  });
+});
+
+describe('findSignposts', () => {
+  it('finds every tile-701 signpost in row-major scan order', () => {
+    const map = parseCountyMap(
+      buildCountyMapBytes({
+        tiles: [
+          { x: 127, y: 43, value: SIGNPOST_TILE_INDEX },
+          { x: 0, y: 28, value: SIGNPOST_TILE_INDEX },
+          { x: 87, y: 127, value: SIGNPOST_TILE_INDEX },
+          { x: 5, y: 0, value: SIGNPOST_TILE_INDEX },
+          { x: 6, y: 0, value: 702 },
+        ],
+      })
+    );
+
+    expect(findSignposts(map)).toEqual([
+      [5, 0],
+      [0, 28],
+      [127, 43],
+      [87, 127],
+    ]);
+  });
+
+  it('finds none in a county without signposts', () => {
+    expect(findSignposts(parseCountyMap(buildCountyMapBytes()))).toEqual([]);
   });
 });
