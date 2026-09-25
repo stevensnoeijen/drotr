@@ -265,7 +265,7 @@ here. In order of likelihood:
    suggests this yet, and prefab extraction is its own separate piece of work.
 
 **Decision:** rather than wait on any of the above, build spots will be
-**authored by hand**, the same way spawn points are: as objects in each
+**authored by hand**, the same way non-edge spawn points are: as objects in each
 county's Tiled map, added/curated manually per county as that county's
 scenario work needs them. There's no original data to convert them from,
 so this is a deliberate scope call, not a placeholder pending further
@@ -303,8 +303,11 @@ Section B pattern (`4, 4, 0, 0`: top half blocked) is the same everywhere.
 The likeliest reading is that they mark where the county borders a
 neighbour: an entry or exit point for armies arriving from the strategic
 map. (Their surroundings are plain grass, tiles 1382–1387, not road.) That's an inference from where they sit and what they look
-like. No game logic confirms it. They aren't currently converted into the
-Tiled output.
+like. No game logic confirms it.
+
+The converter turns each one into a generated `edge-N` spawn point in the
+Tiled output's `spawns` layer (see "Converting to Tiled" below), so these
+are the natural spawn points for armies entering a county.
 
 ## The search for a separate ground layer — closed
 
@@ -446,11 +449,16 @@ see "Converting `BUILDING.MAP`" below). The script reads
 `public/maps/<name>.tmj`. The raw `.MAP` is never committed, but the
 converted `.tmj` is (all 12 counties: `fagaras.tmj`, `sibiu.tmj`, `brasov.tmj`, `rasova.tmj`, `pitesti.tmj`, `hirsova.tmj`, `snagov.tmj`, `braila.tmj`, `giurgiu.tmj`, `tirgo.tmj`, `cuerta.tmj` and `ostrov.tmj`). The output is deterministic,
 so re-running the script over an up-to-date file changes nothing.
-Spawn points placed by hand in an existing county `.tmj` (the converter
-itself only emits an empty `spawns` layer) are carried over into the new
-output rather than discarded; everything else is regenerated. A file last
-saved from the Tiled editor, like `fagaras.tmj`, is therefore rewritten in
-the converter's own formatting, with its spawns intact.
+The generated `edge-*` spawns are always rebuilt from the `.MAP` data. Any
+other spawn point placed by hand in an existing county `.tmj` is carried
+over into the new output rather than discarded (after the generated ones,
+given a fresh object id if its id clashes with one of theirs); everything
+else is regenerated. A file last saved from the Tiled editor is therefore
+rewritten in the converter's own formatting, with its hand-placed spawns
+intact. Hand edits to any *other* layer are not kept: several committed
+counties (braila, cuerta, giurgiu, hirsova, rasova, sibiu, snagov, tirgo)
+carry a few hand-added blocked cells in `collision`, which a rerun of the
+converter would drop.
 
 All 12 counties convert in one go with:
 
@@ -472,8 +480,19 @@ layers:
 - **`terrain`** — Section A, the full ground layer: `gid = tile index + 1`,
   so index 0 is gid 1 and gid 0 never appears. Purely cosmetic: the
   engine's collision grid never reads it.
-- **`spawns`** — an empty object layer; spawn points aren't in the `.MAP`
-  and are placed by hand.
+- **`spawns`** — one point object per map-edge signpost (tile 701, see
+  "Map-edge signposts" above), named `edge-1`, `edge-2`, … in row-major
+  scan order (by y, then x), with no team or colour: which side uses a
+  spawn is up to the scenario (`claimSpawn`). A signpost's own tile is
+  blocked, so its spawn goes at the centre (`x*40+20, y*40+20`) of the
+  nearest walkable tile of the collapsed collision grid, stepping inward
+  from the border it sits on; a corner signpost steps diagonally, along
+  both axes at once. If none of the 3 tiles inward is walkable, the
+  conversion fails rather than put a spawn in a blocked cell. The
+  `edge-` prefix is reserved for these generated spawns: a hand-placed
+  spawn with that prefix would be treated as generated and replaced on
+  the next conversion. Other spawns (e.g. owner/defender ones, which the
+  `.MAP` doesn't encode) are placed by hand.
 - **`collision`** — hidden by default. Section B collapsed to one
   value per tile (blocked once 2 or more of its 4 subcells are; see "Test
   fixture strategy" below), drawn as the collision-marker tile
