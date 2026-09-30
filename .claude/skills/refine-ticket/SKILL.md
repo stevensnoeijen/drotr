@@ -11,7 +11,7 @@ description that accurately says what will be built and how — agreed with
 the user first, never guessed.
 
 This is a *planning* skill, not an implementation one. Don't write code or
-open branches here — that's `pickup-issue`'s job, and it can run afterward
+open branches here — that's `implement-ticket`'s job, and it can run afterward
 once the ticket is refined.
 
 Also use this skill to **re-refine** an already-refined ticket whose scope
@@ -34,7 +34,7 @@ integer.
 
 Refinement's entire job is resolving ambiguity — grounding real tradeoffs in
 codebase research and judging what's genuinely the user's call. That's the
-same "ambiguous/architectural" case `pickup-issue`'s classification table
+same "ambiguous/architectural" case `implement-ticket`'s fallback classification table
 maps to `opus`, so always use it here too, regardless of how the ticket
 looks before refinement (that's the point — it hasn't been scoped yet, so
 there's nothing to classify from):
@@ -107,7 +107,7 @@ ask what's genuinely the user's call.
 Once agreed, update the issue body (`gh issue edit <number> --body-file
 <tmpfile>`) so it reflects the finalized plan: problem statement, scope
 (in/out), the approach and any decided edge-case handling, and delivery
-shape. This becomes the source of truth a later `pickup-issue` run (by this
+shape. This becomes the source of truth a later `implement-ticket` run (by this
 session or a subagent) implements from — write it so a subagent with no
 other context could pick it up correctly.
 
@@ -119,7 +119,7 @@ Per CLAUDE.md, once a ticket's scope is substantively set (initially or on a
 re-refinement), its Project `Model` and `Effort` custom fields should
 reflect that scope — set them every time this skill finishes, even if it's
 just confirming the existing values are still right. Classify using the
-same table `pickup-issue` step 3 uses, based on the now-finalized plan
+same fallback table `implement-ticket` step 3 uses, based on the now-finalized plan
 rather than the original thin ticket. If the ticket hasn't been picked up
 yet, also move Status to "doing" only if the user says work is starting now
 — otherwise leave Status alone (refining isn't starting the work).
@@ -139,5 +139,5 @@ field.
 ## 9. Report back
 
 Tell the user the issue is refined (or re-refined), link it, note the
-Model/Effort values set and why, and mention that `pickup-issue` can now
+Model/Effort values set and why, and mention that `implement-ticket` can now
 pick it up whenever they're ready — don't start implementation yourself.
