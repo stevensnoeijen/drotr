@@ -42,9 +42,10 @@ import { units } from '~/game/data/units';
 
 /**
  * Draws a light grid overlay over the given canvas size, for `?debug=grid`.
- * `cellSize` should be the loaded map's actual tile size (see `cellSizeOf`)
- * — drawing lines at any other spacing makes the overlay cut through tiles
- * (walls included) instead of outlining them.
+ * `cellSize` should be the loaded map's unit-placement cell size (see
+ * `cellSizeOf`), half its tile size — so the overlay outlines the cells
+ * units move on, with every other line on a tile boundary; any other
+ * spacing would cut through tiles (walls included) instead.
  */
 function drawGrid(width: number, height: number, cellSize: number): Graphics {
   const graphics = new Graphics();

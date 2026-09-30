@@ -95,7 +95,7 @@ export function isSettled(entity: Entity, cellSize: number): boolean {
  * `Projectile` instead (`fireProjectile`), and `ProjectileSystem` is what
  * actually damages the target once that projectile arrives. The range gate
  * above is exactly what stops a crossbow soldier from firing at a target
- * beyond its `attackRange` (5 cells) in the first place.
+ * beyond its `attackRange` (5 tiles, 10 half-tile cells) in the first place.
  */
 function attack(
   world: World<Entity>,

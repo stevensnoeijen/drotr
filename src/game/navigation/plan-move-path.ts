@@ -23,8 +23,9 @@ export interface PlannedMovePath {
  * Turns a world-space move order into the world-space waypoints a unit
  * should walk, by routing through the map's collision grid.
  *
- * `cellSize` is the world size of one of `grid`'s cells — the loaded map's
- * tile size, since the collision grid is the map's own tile grid.
+ * `cellSize` is the world size of one of `grid`'s cells — the half-tile
+ * unit-placement cell (see `cellSizeOf`), since the collision grid is the
+ * map's terrain upsampled onto that grid (see `createMapNavigation`).
  *
  * The whole world<->cell conversion lives here rather than in
  * `~/lib/navigation/astar`, which stays a pure grid algorithm with no notion
