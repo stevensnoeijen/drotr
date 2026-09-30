@@ -136,6 +136,7 @@ vi.mock('~/game/map/load-tiled-map', () => ({
       { name: 'intact', visible: true, data: [0, 2] },
       { name: 'ruined', visible: false, data: [3, 0] },
     ],
+    objectLayers: [{ name: 'spawns', visible: true, objects: [] }],
   }),
 }));
 
@@ -239,7 +240,7 @@ describe('GameCanvas', () => {
       act(() => root.unmount());
     });
 
-    it("reports the loaded map's tile layers, hidden ones included", async () => {
+    it("reports the loaded map's tile layers, hidden ones included, then its object layers", async () => {
       const onTileLayers = vi.fn();
       const root = createRoot(container);
 
@@ -248,9 +249,10 @@ describe('GameCanvas', () => {
       });
 
       expect(onTileLayers).toHaveBeenCalledExactlyOnceWith([
-        { name: 'terrain', visible: true },
-        { name: 'intact', visible: true },
-        { name: 'ruined', visible: false },
+        { name: 'terrain', visible: true, kind: 'tile' },
+        { name: 'intact', visible: true, kind: 'tile' },
+        { name: 'ruined', visible: false, kind: 'tile' },
+        { name: 'spawns', visible: true, kind: 'object' },
       ]);
       act(() => root.unmount());
     });

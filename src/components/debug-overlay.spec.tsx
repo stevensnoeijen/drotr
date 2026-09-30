@@ -3,6 +3,7 @@ import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import DebugOverlay, { type GameStats } from './debug-overlay';
+import type { TileLayerInfo } from '~/game/map/tile-layer-visibility';
 import type { DebugFlag } from '~/game/scenarios';
 
 const STATS: GameStats = { fps: 60, tick: 120, entities: 4 };
@@ -108,10 +109,10 @@ describe('DebugOverlay', () => {
   });
 
   describe('tile-layers', () => {
-    const LAYERS = [
-      { name: 'terrain', visible: true },
-      { name: 'intact', visible: true },
-      { name: 'ruined', visible: false },
+    const LAYERS: TileLayerInfo[] = [
+      { name: 'terrain', visible: true, kind: 'tile' },
+      { name: 'intact', visible: true, kind: 'tile' },
+      { name: 'ruined', visible: false, kind: 'tile' },
     ];
 
     function openMenu() {
@@ -124,7 +125,7 @@ describe('DebugOverlay', () => {
 
     /** The per-layer checkboxes, as `[name, checked]`, or `undefined` if not listed. */
     function listedLayers(): [string, boolean][] | undefined {
-      const list = container.querySelector('ul[aria-label="Tile layers"]');
+      const list = container.querySelector('ul[aria-label="Map layers"]');
       if (!list) {
         return undefined;
       }
@@ -132,6 +133,27 @@ describe('DebugOverlay', () => {
         (c) => [c.parentElement?.textContent?.trim() ?? '', c.checked]
       );
     }
+
+    it('tags object layers, listed after the tile layers', () => {
+      act(() => {
+        root.render(
+          <DebugOverlay
+            stats={STATS}
+            debugFlags={new Set<DebugFlag>(['tile-layers'])}
+            onToggleDebugFlag={() => {}}
+            tileLayers={[...LAYERS, { name: 'constructions', visible: true, kind: 'object' }]}
+            tileLayerVisibility={[true, true, false, true]}
+          />
+        );
+      });
+      openMenu();
+      expect(listedLayers()).toEqual([
+        ['terrain', true],
+        ['intact', true],
+        ['ruined', false],
+        ['constructionsobjects', true],
+      ]);
+    });
 
     it('lists no layers while the option is off', () => {
       act(() => {
@@ -170,7 +192,7 @@ describe('DebugOverlay', () => {
         ['ruined', true],
       ]);
       // Nested inside the option's own entry.
-      const list = container.querySelector('ul[aria-label="Tile layers"]');
+      const list = container.querySelector('ul[aria-label="Map layers"]');
       expect(list?.parentElement?.querySelector('label')?.textContent?.trim()).toBe('tile-layers');
     });
 
@@ -211,7 +233,7 @@ describe('DebugOverlay', () => {
       openMenu();
 
       const ruined = Array.from(
-        container.querySelectorAll<HTMLInputElement>('ul[aria-label="Tile layers"] input')
+        container.querySelectorAll<HTMLInputElement>('ul[aria-label="Map layers"] input')
       ).find((c) => c.parentElement?.textContent?.trim() === 'ruined');
       act(() => {
         ruined?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
@@ -220,7 +242,7 @@ describe('DebugOverlay', () => {
       expect(onToggleTileLayer).toHaveBeenCalledExactlyOnceWith(2);
     });
 
-    it('says so when the map has no tile layers', () => {
+    it('says so when the map has no layers', () => {
       act(() => {
         root.render(
           <DebugOverlay
@@ -233,7 +255,7 @@ describe('DebugOverlay', () => {
       openMenu();
 
       expect(listedLayers()).toEqual([]);
-      expect(container.textContent).toContain('no tile layers');
+      expect(container.textContent).toContain('no map layers');
     });
   });
 });

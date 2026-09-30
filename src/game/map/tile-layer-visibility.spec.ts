@@ -4,6 +4,7 @@ import type { MapTileLayer } from './load-tiled-map';
 import {
   defaultTileLayerVisibility,
   effectiveTileLayerVisibility,
+  mapLayerInfo,
   tileLayerInfo,
   toggleTileLayer,
   type TileLayerInfo,
@@ -11,9 +12,9 @@ import {
 
 /** The `buildings` map's tile layers: only terrain shown, intact and ruined hidden. */
 const BUILDINGS: TileLayerInfo[] = [
-  { name: 'terrain', visible: true },
-  { name: 'intact', visible: false },
-  { name: 'ruined', visible: false },
+  { name: 'terrain', visible: true, kind: 'tile' },
+  { name: 'intact', visible: false, kind: 'tile' },
+  { name: 'ruined', visible: false, kind: 'tile' },
 ];
 
 describe('tileLayerInfo', () => {
@@ -23,8 +24,8 @@ describe('tileLayerInfo', () => {
       { name: 'ruined', visible: false, data: [0, 3] },
     ];
     expect(tileLayerInfo(layers)).toEqual([
-      { name: 'terrain', visible: true },
-      { name: 'ruined', visible: false },
+      { name: 'terrain', visible: true, kind: 'tile' },
+      { name: 'ruined', visible: false, kind: 'tile' },
     ]);
   });
 });
@@ -86,5 +87,45 @@ describe('effectiveTileLayerVisibility', () => {
 
   it("ignores toggles that don't match the layers, e.g. from another map", () => {
     expect(effectiveTileLayerVisibility(BUILDINGS, [false, true], true)).toEqual([true, false, false]);
+  });
+});
+
+describe('object layers', () => {
+  const LAYERS: TileLayerInfo[] = [
+    { name: 'terrain', visible: true, kind: 'tile' },
+    { name: 'collision', visible: false, kind: 'tile' },
+    { name: 'spawns', visible: true, kind: 'object' },
+    { name: 'constructions', visible: true, kind: 'object' },
+  ];
+
+  it('lists tile layers first, then object layers', () => {
+    expect(
+      mapLayerInfo({
+        tileLayers: [
+          { name: 'terrain', visible: true, data: [] },
+          { name: 'collision', visible: false, data: [] },
+        ],
+        objectLayers: [
+          { name: 'spawns', visible: true, objects: [] },
+          { name: 'constructions', visible: true, objects: [] },
+        ],
+      })
+    ).toEqual(LAYERS);
+  });
+
+  it('never shows object layers while the option is off, even with toggles left over', () => {
+    expect(effectiveTileLayerVisibility(LAYERS, undefined, false)).toEqual([true, false, false, false]);
+    expect(effectiveTileLayerVisibility(LAYERS, [true, true, true, true], false)).toEqual([
+      true,
+      false,
+      false,
+      false,
+    ]);
+  });
+
+  it('shows them as the map sets them once the option is on, and toggles them like tile layers', () => {
+    expect(effectiveTileLayerVisibility(LAYERS, undefined, true)).toEqual([true, false, true, true]);
+    const toggled = toggleTileLayer(LAYERS, undefined, 3);
+    expect(effectiveTileLayerVisibility(LAYERS, toggled, true)).toEqual([true, false, true, false]);
   });
 });
