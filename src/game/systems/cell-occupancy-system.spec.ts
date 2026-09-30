@@ -4,8 +4,11 @@ import { describe, expect, it } from 'vitest';
 import type { Entity } from '~/game/ecs/entity';
 import { createQueries } from '~/game/ecs/world';
 import { NO_CELL, NO_OCCUPANT, OccupancyGrid } from '~/game/navigation/occupancy-grid';
-import { DEFAULT_CELL_SIZE } from '~/lib/grid';
-import { BLOCKED_GIVE_UP_SECONDS, createCellOccupancySystem } from './cell-occupancy-system';
+import {
+  BLOCKED_GIVE_UP_SECONDS,
+  createCellOccupancySystem,
+  footprintMargin,
+} from './cell-occupancy-system';
 import { createMoveVelocitySystem } from './move-velocity-system';
 
 /** A collision grid in the exact shape a loaded map exposes. */
@@ -25,9 +28,12 @@ const gridFrom = (art: string) => {
   return { width, height: rows.length, collision };
 };
 
+/** Cell size the per-tick step and half-extents below are written against. */
+const CELL_SIZE = 32;
+
 const DT = 0.1;
 /** A quarter of a cell per tick, so a crossing takes several ticks to watch. */
-const STEP = DEFAULT_CELL_SIZE / 4;
+const STEP = CELL_SIZE / 4;
 const SPEED = STEP / DT;
 
 const OPEN = `
@@ -41,7 +47,7 @@ const OPEN = `
 function setup(art: string = OPEN) {
   const world = new World<Entity>();
   const queries = createQueries(world);
-  const grid = new OccupancyGrid(gridFrom(art), DEFAULT_CELL_SIZE);
+  const grid = new OccupancyGrid(gridFrom(art), CELL_SIZE);
   const occupancy = createCellOccupancySystem(queries, grid);
   const integrate = createMoveVelocitySystem(queries);
 
@@ -279,7 +285,7 @@ describe('createCellOccupancySystem', () => {
       const mover = addUnit(0, 0, { renderable: { shape: 'square', color: 0, size: halfExtent } });
       drive(mover, SPEED, 0);
 
-      const boundary = grid.centreOf(grid.indexOf(0, 0)).x + DEFAULT_CELL_SIZE / 2;
+      const boundary = grid.centreOf(grid.indexOf(0, 0)).x + CELL_SIZE / 2;
       for (let i = 0; i < 10; i++) {
         tick();
         expect(mover.transform.position.x).toBeLessThanOrEqual(boundary - halfExtent);
@@ -288,6 +294,26 @@ describe('createCellOccupancySystem', () => {
       // And it actually closed the gap down to that limit rather than
       // stopping arbitrarily early.
       expect(mover.transform.position.x).toBeGreaterThan(boundary - halfExtent - STEP);
+    });
+
+    it('lets a unit drawn wider than its cell walk up next to an occupied cell', () => {
+      // The lookahead is capped at the one-cell footprint, so a large
+      // rendered size doesn't make the unit look past the cell it's
+      // entering and get refused by the unit standing beyond it.
+      const { grid, addUnit, drive, tick, cellOf } = setup();
+      addUnit(2, 0);
+      const mover = addUnit(0, 0, {
+        renderable: { shape: 'circle', color: 0, size: CELL_SIZE * 1.25 },
+      });
+      drive(mover, SPEED, 0);
+
+      for (let i = 0; i < 10; i++) {
+        tick();
+      }
+
+      expect(cellOf(mover)).toBe(grid.indexOf(1, 0));
+      expect(mover.transform.position.x).toBe(grid.centreOf(grid.indexOf(1, 0)).x);
+      expect(footprintMargin(CELL_SIZE)).toBe(13);
     });
 
     it('sets off again the moment the cell ahead clears', () => {
@@ -315,8 +341,8 @@ describe('createCellOccupancySystem', () => {
       const { addUnit, drive, tick } = setup();
       addUnit(1, 0);
       const mover = addUnit(0, 0, {
-        moveTarget: { position: { x: DEFAULT_CELL_SIZE * 4, y: DEFAULT_CELL_SIZE / 2 } },
-        movePath: { waypoints: [{ x: DEFAULT_CELL_SIZE * 4, y: DEFAULT_CELL_SIZE / 2 }], index: 1 },
+        moveTarget: { position: { x: CELL_SIZE * 4, y: CELL_SIZE / 2 } },
+        movePath: { waypoints: [{ x: CELL_SIZE * 4, y: CELL_SIZE / 2 }], index: 1 },
       });
       drive(mover, SPEED, 0);
 
@@ -334,7 +360,7 @@ describe('createCellOccupancySystem', () => {
       const { addUnit, drive, tick } = setup();
       addUnit(1, 0);
       const mover = addUnit(0, 0, {
-        moveTarget: { position: { x: DEFAULT_CELL_SIZE * 4, y: DEFAULT_CELL_SIZE / 2 } },
+        moveTarget: { position: { x: CELL_SIZE * 4, y: CELL_SIZE / 2 } },
       });
       drive(mover, SPEED, 0);
 
