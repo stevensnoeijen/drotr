@@ -6,23 +6,25 @@ import type { Scenario } from './types';
 
 /**
  * Unit types spawned per side, and how many of each. Originally this
- * scenario spawned 250 swordsmen per side; mixing in crossbow soldiers (ranged, so every one of them keeps a
- * projectile alive for the length of an engagement) exercises differing
- * aggro ranges and the ranged-projectile path that an all-swordsmen roster
- * never touched. Hundreds of concurrent projectiles are
- * meaningfully more expensive per unit than melee, so the per-side total was
- * lowered from 250 to 180 (60 of each of swordsmen, knights and crossbow
- * soldiers) to stay inside the measured
- * frame-budget headroom — see the `test` map's open area against the
- * 33ms-per-frame budget a stable 30fps needs, with headroom left for
- * PixiJS's own per-unit draw/health-bar cost, which a headless simulation
- * can't include. The split is even across the three types so no team's
- * composition is skewed toward one archetype. Knights are left out until
- * they get a 2x2 multi-cell footprint (#232), which drops the total to 120
- * per side; put them back then.
+ * scenario spawned 250 swordsmen per side; mixing in crossbow soldiers
+ * (ranged, so every one of them keeps a projectile alive for the length of
+ * an engagement) exercises differing aggro ranges and the ranged-projectile
+ * path that an all-swordsmen roster never touched. Hundreds of concurrent
+ * projectiles are meaningfully more expensive per unit than melee, so the
+ * per-side total was lowered from 250 to 180 (60 each of swordsmen, knights
+ * and crossbow soldiers) to stay inside the measured frame-budget headroom —
+ * see the `test` map's open area against the 33ms-per-frame budget a stable
+ * 30fps needs, with headroom left for PixiJS's own per-unit
+ * draw/health-bar cost, which a headless simulation can't include.
+ *
+ * Knights are left out until they get a 2x2 multi-cell footprint (#232).
+ * Their 60 went to swordsmen rather than crossbow soldiers, so the total
+ * stays at 180 without adding projectile load beyond what was measured.
+ * Split it back to 60 of each type then, so neither team's composition is
+ * skewed toward one archetype.
  */
 const UNIT_COUNTS: Record<Exclude<UnitType, 'knight'>, number> = {
-  swordsmen: 60,
+  swordsmen: 120,
   crossbowsoldier: 60,
 };
 
