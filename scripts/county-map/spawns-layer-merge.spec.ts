@@ -207,6 +207,31 @@ describe('withPreviousSpawns', () => {
       expect(merged.nextobjectid).toBe(6);
     });
 
+    it('gives a hand-placed spawn whose id clashes with an object on another layer the next free id', () => {
+      const sites = {
+        ...emptySpawnsLayer(3),
+        name: 'building-sites',
+        objects: [point(2, 'castle-1'), point(3, 'castle-2')],
+      };
+      const built = {
+        ...mapWithLayers([terrainLayer(), spawnsWith([point(1, 'edge-1')]), sites]),
+        nextobjectid: 4,
+      };
+      const previous = mapWithLayers([
+        terrainLayer(),
+        spawnsWith([point(2, 'red', 100, 200)]),
+      ]);
+
+      const merged = withPreviousSpawns(built, previous);
+
+      expect(spawnObjects(merged)).toEqual([
+        point(1, 'edge-1'),
+        point(4, 'red', 100, 200),
+      ]);
+      expect(merged.layers[2]).toBe(sites);
+      expect(merged.nextobjectid).toBe(5);
+    });
+
     it('is stable when rerun over its own output', () => {
       const built = {
         ...mapWithLayers([

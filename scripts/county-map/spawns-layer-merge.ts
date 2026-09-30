@@ -11,8 +11,8 @@ import { EDGE_SPAWN_PREFIX } from './county-map-tiled';
  *   always come from the freshly built map; any in `previous` are dropped,
  *   since they are rebuilt from the source `.MAP` data.
  * - Every other spawn in `previous` is hand-placed and kept as-is, after
- *   the generated ones. One whose id clashes with a generated spawn's is
- *   given the next free id instead.
+ *   the generated ones. One whose id clashes with a freshly built object's
+ *   (on any object layer) is given the next free id instead.
  * - `nextobjectid` ends up past every object id in use, and never below
  *   either map's own `nextobjectid`.
  *
@@ -35,13 +35,14 @@ export function withPreviousSpawns(
     (object) => !isGeneratedSpawn(object)
   );
 
-  const usedIds = new Set(generated.map((object) => object.id));
+  // Ids of every freshly built object, on any object layer (the generated
+  // spawns, but also e.g. building sites), are taken.
+  const builtIds = map.layers.flatMap((layer) =>
+    layer.type === 'objectgroup' ? layer.objects.map((object) => object.id) : []
+  );
+  const usedIds = new Set(builtIds);
   let nextId =
-    Math.max(
-      0,
-      ...generated.map((object) => object.id),
-      ...handPlaced.map((object) => object.id)
-    ) + 1;
+    Math.max(0, ...builtIds, ...handPlaced.map((object) => object.id)) + 1;
   const kept = handPlaced.map((object) => {
     const id = usedIds.has(object.id) ? nextId++ : object.id;
     usedIds.add(id);
