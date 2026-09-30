@@ -51,18 +51,15 @@ describe('testScenario', () => {
     expect([...world].some((e) => e.team === 'red')).toBe(true);
   });
 
-  it('starts the adjacent swordsmen pair and the knight duel within melee range', () => {
+  it('starts the adjacent swordsmen pair within melee range', () => {
     const melee = duels(setup()).filter(({ blue }) => blue.unitType !== 'crossbowsoldier');
     const inRange = melee.filter(({ blue, distance }) => distance <= blue.attackRange!.value);
 
-    expect(inRange.map(({ blue }) => blue.unitType).sort()).toEqual(['knight', 'swordsmen']);
+    expect(inRange.map(({ blue }) => blue.unitType).sort()).toEqual(['swordsmen']);
   });
 
-  it('places the knight duel diagonally, so the full-tile knight does not cover its foe', () => {
-    const { red, blue } = duels(setup()).find(({ blue }) => blue.unitType === 'knight')!;
-
-    expect(Math.abs(red.transform!.position.x - blue.transform!.position.x)).toBe(cellSize);
-    expect(Math.abs(red.transform!.position.y - blue.transform!.position.y)).toBe(cellSize);
+  it('spawns no knights until they get a multi-cell footprint', () => {
+    expect([...setup()].some((e) => e.unitType === 'knight')).toBe(false);
   });
 
   it('starts the separated swordsmen pair outside melee range but inside aggro range', () => {

@@ -57,7 +57,7 @@ describe('testBigFightScenario', () => {
     const unitTypesSeen = new Set<string>();
     const positions = new Set<string>();
     for (const entity of world) {
-      expect(['swordsmen', 'knight', 'crossbowsoldier']).toContain(entity.unitType);
+      expect(['swordsmen', 'crossbowsoldier']).toContain(entity.unitType);
       expect(entity.attackRange).toBeDefined();
       expect(entity.damage).toBeDefined();
       expect(entity.attackCooldown).toBeDefined();
@@ -70,7 +70,7 @@ describe('testBigFightScenario', () => {
     }
 
     // Confirms this is actually a mixed roster, not accidentally all one type.
-    expect(unitTypesSeen).toEqual(new Set(['swordsmen', 'knight', 'crossbowsoldier']));
+    expect(unitTypesSeen).toEqual(new Set(['swordsmen', 'crossbowsoldier']));
   });
 
   it('spawns each team with the same unit-type composition', () => {
@@ -84,7 +84,7 @@ describe('testBigFightScenario', () => {
       countByTeamAndType.set(key, (countByTeamAndType.get(key) ?? 0) + 1);
     }
 
-    for (const unitType of ['swordsmen', 'knight', 'crossbowsoldier']) {
+    for (const unitType of ['swordsmen', 'crossbowsoldier']) {
       const blueCount = countByTeamAndType.get(`blue:${unitType}`);
       const redCount = countByTeamAndType.get(`red:${unitType}`);
       expect(blueCount).toBeGreaterThan(0);
@@ -115,7 +115,7 @@ describe('testBigFightScenario', () => {
     }
   });
 
-  it('puts at most one unit on each tile, so a knight drawn a full tile starts clear of its neighbours', () => {
+  it('puts at most one unit on each tile', () => {
     const world = new World<Entity>();
     const map = mapWithWallColumn(300, 2, 150);
 

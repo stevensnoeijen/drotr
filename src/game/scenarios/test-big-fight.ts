@@ -6,22 +6,23 @@ import type { Scenario } from './types';
 
 /**
  * Unit types spawned per side, and how many of each. Originally this
- * scenario spawned 250 swordsmen per side; mixing in knights (faster, higher
- * aggro range) and crossbow soldiers (ranged, so every one of them keeps a
+ * scenario spawned 250 swordsmen per side; mixing in crossbow soldiers (ranged, so every one of them keeps a
  * projectile alive for the length of an engagement) exercises differing
- * move speeds, differing aggro ranges and the ranged-projectile path that an
- * all-swordsmen roster never touched. Hundreds of concurrent projectiles are
+ * aggro ranges and the ranged-projectile path that an all-swordsmen roster
+ * never touched. Hundreds of concurrent projectiles are
  * meaningfully more expensive per unit than melee, so the per-side total was
- * lowered from 250 to 180 (60 of each type) to stay inside the measured
+ * lowered from 250 to 180 (60 of each of swordsmen, knights and crossbow
+ * soldiers) to stay inside the measured
  * frame-budget headroom — see the `test` map's open area against the
  * 33ms-per-frame budget a stable 30fps needs, with headroom left for
  * PixiJS's own per-unit draw/health-bar cost, which a headless simulation
  * can't include. The split is even across the three types so no team's
- * composition is skewed toward one archetype.
+ * composition is skewed toward one archetype. Knights are left out until
+ * they get a 2x2 multi-cell footprint (#232), which drops the total to 120
+ * per side; put them back then.
  */
-const UNIT_COUNTS: Record<UnitType, number> = {
+const UNIT_COUNTS: Record<Exclude<UnitType, 'knight'>, number> = {
   swordsmen: 60,
-  knight: 60,
   crossbowsoldier: 60,
 };
 
@@ -29,8 +30,7 @@ const UNITS_PER_TEAM = Object.values(UNIT_COUNTS).reduce((sum, count) => sum + c
 
 /**
  * The per-team unit roster as a flat list of unit types, one entry per unit
- * to spawn, in a fixed order (all swordsmen, then all knights, then all
- * crossbow soldiers). Both teams spawn this same roster, so the scenario
+ * to spawn, in a fixed order (all swordsmen, then all crossbow soldiers). Both teams spawn this same roster, so the scenario
  * stays a symmetrical stress test rather than a matchup between rosters.
  */
 const TEAM_ROSTER: UnitType[] = (Object.entries(UNIT_COUNTS) as [UnitType, number][]).flatMap(
@@ -73,7 +73,7 @@ function shuffle<T>(items: T[]): T[] {
 
 /**
  * `UNITS_PER_TEAM` units per side (see `UNIT_COUNTS` for the mix of
- * swordsmen, knights and crossbow soldiers), scattered randomly over every
+ * swordsmen and crossbow soldiers), scattered randomly over every
  * walkable tile of whichever map is loaded (no two units sharing a tile),
  * rather than two facing blocks — so combat isn't just a single front line
  * of a few dozen units trading blows while the rest queue up behind it.
@@ -84,11 +84,10 @@ function shuffle<T>(items: T[]): T[] {
  * movement/collision (cell occupancy) and the combat system's
  * targeting/cooldowns/damage all running concurrently, under load, than a
  * single collision line. A mixed roster additionally stresses differing
- * move speeds, differing aggro ranges and the ranged-projectile path, which
- * an all-swordsmen roster never touched. Scattering one unit per *tile*
+ * aggro ranges and the ranged-projectile path, which an all-swordsmen roster
+ * never touched. Scattering one unit per *tile*
  * rather than per half-tile movement cell keeps the load-tested density
- * unchanged and gives a knight — drawn a full tile, but occupying a single
- * cell — room to spawn without overlapping a neighbour; each unit starts in
+ * unchanged; each unit starts in
  * the half-tile cell at its tile's centre, the same way a map spawn point
  * resolves. Prefixed `test-`: it exists to stress-test the engine, not to
  * demonstrate a real gameplay setup.
@@ -96,7 +95,7 @@ function shuffle<T>(items: T[]): T[] {
 export const testBigFightScenario: Scenario = {
   id: 'test-big-fight',
   title: 'Test: Big Fight',
-  description: `${UNITS_PER_TEAM} vs ${UNITS_PER_TEAM} units (a mix of swordsmen, knights and crossbow soldiers) scattered randomly across the map, to exercise the engine under load.`,
+  description: `${UNITS_PER_TEAM} vs ${UNITS_PER_TEAM} units (a mix of swordsmen and crossbow soldiers) scattered randomly across the map, to exercise the engine under load.`,
   setup: (world, map) => {
     const totalUnits = UNITS_PER_TEAM * 2;
     const cellSize = cellSizeOf(map);
