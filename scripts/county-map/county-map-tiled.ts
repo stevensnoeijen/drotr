@@ -41,7 +41,7 @@ import {
  *   `src/game/map/load-tiled-map.ts`); it's hidden only so it doesn't
  *   normally show up drawn over the terrain, and can still be switched on
  *   in the Tiled editor or through the engine's `tile-layers` debug option.
- * - `building-sites`: one point per place a bridge, tower or castle can be
+ * - `constructions`: one point per place a bridge, tower or castle can be
  *   built, from `DRACULA.EXE` ({@link buildingSiteObjects}). The engine
  *   doesn't read it yet.
  */
@@ -111,17 +111,17 @@ export function buildCountyTiledMap(
       tileLayer(1, 'terrain', terrainData(map)),
       spawnsLayer(2, spawns),
       tileLayer(3, 'collision', collisionData(blocked), false),
-      objectLayer(4, BUILDING_SITES_LAYER_NAME, buildingSites),
+      objectLayer(4, CONSTRUCTIONS_LAYER_NAME, buildingSites),
     ]),
     nextobjectid: spawns.length + buildingSites.length + 1,
   };
 }
 
 /** Name of the object layer holding a county's building sites. */
-export const BUILDING_SITES_LAYER_NAME = 'building-sites';
+export const CONSTRUCTIONS_LAYER_NAME = 'constructions';
 
 /**
- * The `building-sites` objects, with object ids from `firstId` on: one
+ * The `constructions` objects, with object ids from `firstId` on: one
  * point per site, named `<category>-<n>` (numbered per category, in
  * `sites` order) and with the category as its Tiled class (`type`). The
  * point sits at the centre of the site's first level, in map pixels.

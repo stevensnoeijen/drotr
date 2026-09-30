@@ -444,7 +444,7 @@ by **footprint overlap**, taken in upgrade order. Grouping by centre isn't
 enough, because near the map edge the big levels are pushed inward and
 their centres drift. Bridge entries are grouped by their shared top-left
 corner, and towers are one site each. The county converter writes the
-result into each county's `building-sites` layer (see "Converting to
+result into each county's `constructions` layer (see "Converting to
 Tiled" below).
 
 A bridge site is **one crossing with an upgrade chain**, like a castle
@@ -650,7 +650,7 @@ layers:
   blocks every cell whose gid here is non-zero); it's hidden purely so it
   doesn't draw over `terrain` by default, and can still be switched on, in
   the Tiled editor or through the engine's `tile-layers` debug option.
-- **`building-sites`** — one point object per place a building can stand,
+- **`constructions`** — one point object per place a building can stand,
   from `DRACULA.EXE` (see "Building sites: extracting them from
   `DRACULA.EXE`" above). Each point's Tiled class (`type`) is its category
   (`bridge`, `tower` or `castle`), and it's named `<category>-<n>`. It sits

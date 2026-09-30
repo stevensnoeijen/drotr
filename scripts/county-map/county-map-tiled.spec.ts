@@ -21,7 +21,7 @@ import { COLLISION_MARKER_TILE_ID } from '~/lib/art/collision-marker';
 import type { BuildingSite } from '../dracula-exe';
 
 import {
-  BUILDING_SITES_LAYER_NAME,
+  CONSTRUCTIONS_LAYER_NAME,
   buildCountyTiledMap,
   buildingSiteObjects,
   edgeSpawnTiles,
@@ -124,7 +124,7 @@ describe('buildCountyTiledMap', () => {
       [1, 'terrain', 'tilelayer', true],
       [2, 'spawns', 'objectgroup', true],
       [3, 'collision', 'tilelayer', false],
-      [4, 'building-sites', 'objectgroup', true],
+      [4, 'constructions', 'objectgroup', true],
     ]);
   });
 
@@ -359,13 +359,13 @@ describe('building sites', () => {
     ]);
   });
 
-  it('adds them as a building-sites layer, numbered after the edge spawns', () => {
+  it('adds them as a constructions layer, numbered after the edge spawns', () => {
     const county = parseCountyMap(
       buildCountyMapBytes({ tiles: [{ x: 0, y: 40, value: SIGNPOST_TILE_INDEX }] })
     );
     const map = buildCountyTiledMap(county, [castle, tower]);
-    const layer = map.layers.find((l) => l.name === BUILDING_SITES_LAYER_NAME);
-    if (layer?.type !== 'objectgroup') throw new Error('no building-sites layer');
+    const layer = map.layers.find((l) => l.name === CONSTRUCTIONS_LAYER_NAME);
+    if (layer?.type !== 'objectgroup') throw new Error('no constructions layer');
 
     expect(layer.objects.map((object) => [object.id, object.name])).toEqual([
       [2, 'castle-1'],

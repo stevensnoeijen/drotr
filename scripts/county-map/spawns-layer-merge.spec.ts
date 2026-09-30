@@ -210,7 +210,7 @@ describe('withPreviousSpawns', () => {
     it('gives a hand-placed spawn whose id clashes with an object on another layer the next free id', () => {
       const sites = {
         ...emptySpawnsLayer(3),
-        name: 'building-sites',
+        name: 'constructions',
         objects: [point(2, 'castle-1'), point(3, 'castle-2')],
       };
       const built = {
