@@ -5,7 +5,7 @@ import type { Team } from '~/game/ecs/components';
 import { CELLS_PER_TILE, tilesToCells, toWorldPositionCellCenter } from '~/lib/grid';
 import { Vector2 } from '~/lib/math/vector2';
 import type { Point } from '~/lib/math/types';
-import { units, type UnitDefinition, type UnitType } from './units';
+import { unitSizeInTiles, units, type UnitDefinition, type UnitType } from './units';
 
 /** Per-team fill colour for a unit's shape, used by the (view-only) renderer. */
 const TEAM_COLOR: Record<Team, number> = {
@@ -15,17 +15,14 @@ const TEAM_COLOR: Record<Team, number> = {
 
 /**
  * How much smaller, in world units, a unit shape's rendered radius/half-extent
- * is than half of the grid cell it's centered in, so the shape fits inside
- * the cell with a small margin on every side — 13px in a 32px cell, 17px in
- * a 40px one. Its selection marks and health bar
- * (see `render-system.ts`, `health-bar.ts`) are positioned against the
- * cell's own edges rather than this shape size, so they stay pinned to
- * the cell regardless of how big the shape is. This is
- * placeholder-primitive sizing (one size for every type); real unit
- * sprites vary (32x32 to 64x64) and per-type sizing is asset-integration
- * work (phase 6), not this constant.
+ * is than half of its unit-type size (see `unitSizeInTiles`), so neighbouring
+ * units stay visually distinct: on a 40px-tile map an infantry unit (half a
+ * tile) is drawn 16px across, a knight (a full tile) 36px — close to the
+ * visible extent of their original sprites. Its selection marks and health
+ * bar (see `render-system.ts`, `health-bar.ts`) are laid out against the
+ * full unit-type size (`renderable.extent`), not this shape size.
  */
-const UNIT_MARGIN = 3;
+const UNIT_MARGIN = 2;
 
 /**
  * Map tiles per second a fired projectile (currently just the crossbow
@@ -86,8 +83,11 @@ export interface SpawnUnitOptions {
  * `cellSize` is the world size of that grid's cells — a fraction of the
  * loaded map's tile size (see `cellSizeOf`). Unit data is authored in map
  * tiles, and this is the one place it's converted: movement and projectile
- * speed to world units per second, and attack/aggro range to cells (see
- * {@link attackRangeInCells}), which the systems then read as-is.
+ * speed to world units per second, attack/aggro range to cells (see
+ * {@link attackRangeInCells}), which the systems then read as-is, and the
+ * unit-type size (see `unitSizeInTiles`) to the drawn shape's size and the
+ * box its overlays are laid out against. However big it is drawn, the unit
+ * occupies the single cell it is centred in.
  */
 export function spawnUnit(
   world: World<Entity>,
@@ -96,6 +96,8 @@ export function spawnUnit(
 ): Entity {
   const definition = units[type];
   const tileSize = cellSize * CELLS_PER_TILE;
+  const sizeInTiles = unitSizeInTiles(definition);
+  const extent = (Math.max(sizeInTiles.width, sizeInTiles.height) * tileSize) / 2;
   const cellCenter = toWorldPositionCellCenter(new Vector2(position.x, position.y), cellSize);
 
   const entity: Entity = {
@@ -104,7 +106,8 @@ export function spawnUnit(
     renderable: {
       shape: definition.shape,
       color: TEAM_COLOR[team],
-      size: tileSize / 2 - UNIT_MARGIN,
+      size: extent - UNIT_MARGIN,
+      extent,
     },
     team,
     unitType: type,

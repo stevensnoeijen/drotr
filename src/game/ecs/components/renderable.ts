@@ -8,6 +8,13 @@ export interface Renderable {
   /** Radius (circle) or half-extent (square) in world units. */
   size: number;
   /**
+   * Half-extent, in world units, of the box a unit's selection marks and
+   * health bar are laid out against: its unit-type size (see `spawnUnit`),
+   * of which `size` is the drawn shape inside a small margin. Falls back to
+   * `size` when absent.
+   */
+  extent?: number;
+  /**
    * Set by {@link file://../../render/render-system.ts} when something about
    * this entity's view is stale (e.g. its health bar no longer matches
    * `health.current`) and needs a redraw on the next `sync()`. Systems never

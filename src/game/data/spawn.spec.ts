@@ -15,6 +15,7 @@ import { DEFAULT_CELL_SIZE } from '~/lib/grid';
  */
 const STATS_FREE_DEFINITION: UnitDefinition = {
   type: 'knight',
+  size: { width: 1, height: 1 },
   shape: 'circle',
   health: 12,
 };
@@ -265,7 +266,23 @@ describe('spawnUnit', () => {
       );
     });
 
-    it('sizes the unit shape to fit inside a cell of that size', () => {
+    it.each([
+      ['swordsmen', 20],
+      ['crossbowsoldier', 20],
+      ['knight', 40],
+    ] as const)('sizes a %s from its unit-type size in tiles: %ipx across', (type, pixels) => {
+      const world = new World<Entity>();
+
+      const unit = spawnUnit(world, { type, team: 'blue', position: { x: 0, y: 0 } }, cellSize);
+
+      // Overlays span the full unit-type box; the shape sits inside it with
+      // a small margin so neighbours stay distinct.
+      expect(unit.renderable!.extent).toBe(pixels / 2);
+      expect(unit.renderable!.size).toBeLessThan(pixels / 2);
+      expect(unit.renderable!.size).toBeGreaterThan(pixels / 2 - 4);
+    });
+
+    it('scales unit sizes with the tile size, on a 32px-tile map as on a 40px one', () => {
       const world = new World<Entity>();
 
       const small = spawnUnit(
@@ -279,9 +296,21 @@ describe('spawnUnit', () => {
         cellSize
       );
 
-      expect(small.renderable?.size).toBe(13);
-      expect(large.renderable?.size).toBe(17);
-      expect(large.renderable!.size).toBeLessThan(tileSize / 2);
+      expect(small.renderable!.extent).toBe(16);
+      expect(large.renderable!.extent).toBe(20);
+      expect(large.renderable!.size - small.renderable!.size).toBe(4);
+    });
+
+    it('draws a knight two cells wide although it occupies one cell', () => {
+      const world = new World<Entity>();
+
+      const knight = spawnUnit(
+        world,
+        { type: 'knight', team: 'blue', position: { x: 0, y: 0 } },
+        cellSize
+      );
+
+      expect(knight.renderable!.extent! * 2).toBe(2 * cellSize);
     });
   });
 });

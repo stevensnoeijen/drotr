@@ -41,7 +41,7 @@ describe('death + render cleanup integration', () => {
     const world = new World<Entity>();
     const queries = createQueries(world);
     const parent = new Container();
-    const renderSystem = new RenderSystem(queries.renderable, parent, DEFAULT_CELL_SIZE);
+    const renderSystem = new RenderSystem(queries.renderable, parent);
     new DeathCleanupSystem(world);
 
     const blue = spawnUnit(

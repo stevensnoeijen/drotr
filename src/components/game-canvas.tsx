@@ -303,13 +303,10 @@ export default function GameCanvas({
       // Reactively mirrors `queries.renderable` into Pixi views: it must be
       // live before any spawning happens below so every unit — whether
       // added by the map's spawns or by the scenario's own setup — gets a
-      // view, and every removal cleans its view up. Created only once the
-      // map has loaded, since it lays unit overlays out against the map's
-      // cell size.
+      // view, and every removal cleans its view up.
       renderSystem = new RenderSystem(
         queries.renderable,
         entitiesLayer,
-        cellSize,
         debugFlagsRef.current?.has('health') ?? false
       );
       syncHealthBarsRef.current = () => {
