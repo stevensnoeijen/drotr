@@ -29,6 +29,7 @@ function mapWithWallColumn(width: number, height: number, wallCol: number): Pars
       imageUrl: '',
     },
     tileLayers: [],
+    objectLayers: [],
   };
 }
 

@@ -23,6 +23,7 @@ function mapWithSpawn(): ParsedMap {
       imageUrl: '',
     },
     tileLayers: [],
+    objectLayers: [],
   };
 }
 

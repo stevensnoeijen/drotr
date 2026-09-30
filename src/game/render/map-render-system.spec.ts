@@ -30,6 +30,7 @@ function makeMap(overrides: Partial<ParsedMap> & { width: number; height: number
     spawns: [],
     tileset: terrainTileset(),
     tileLayers: [],
+    objectLayers: [],
     ...overrides,
   };
 }

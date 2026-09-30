@@ -85,6 +85,52 @@ function withLayers(...extra: TiledLayer[]): TiledMap {
 }
 
 describe('parseTiledMap', () => {
+  it('collects every object layer, spawns included, with each object and its properties', () => {
+    const constructions = {
+      ...fixtureMap.layers.find((layer) => layer.name === 'spawns')!,
+      name: 'constructions',
+      visible: false,
+      objects: [
+        {
+          id: 9,
+          name: 'castle-1',
+          type: 'castle',
+          x: 80,
+          y: 120,
+          width: 0,
+          height: 0,
+          rotation: 0,
+          visible: true,
+          point: true,
+          properties: [
+            { name: 'footprint:1', type: 'string', value: '1,2,3,4' },
+            { name: 'levels', type: 'string', value: '1' },
+          ],
+        },
+      ],
+    } as TiledLayer;
+
+    const { objectLayers } = parseTiledMap(withLayers(constructions), terrainTileset);
+
+    expect(objectLayers.map((layer) => [layer.name, layer.visible])).toEqual([
+      ['constructions', false],
+      ['spawns', true],
+    ]);
+    expect(objectLayers[0].objects).toEqual([
+      {
+        name: 'castle-1',
+        type: 'castle',
+        x: 80,
+        y: 120,
+        width: 0,
+        height: 0,
+        point: true,
+        properties: { 'footprint:1': '1,2,3,4', levels: '1' },
+      },
+    ]);
+    expect(objectLayers[1].objects.map((object) => object.name)).toEqual(['spawn-1', 'spawn-2']);
+  });
+
   it('parses the committed test map to the expected dimensions and spawn list', () => {
     const result = parseTiledMap(fixtureMap, terrainTileset);
 
