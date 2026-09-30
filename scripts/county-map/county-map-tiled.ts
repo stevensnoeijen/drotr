@@ -12,6 +12,7 @@ import {
   SECTION_A_SIZE,
   type CountyMap,
 } from '../../src/lib/county-map';
+import type { BuildingSite } from '../dracula-exe';
 import {
   atlasIndexToTileId,
   COLLISION_MARKER_TILE_ID,
@@ -40,6 +41,9 @@ import {
  *   `src/game/map/load-tiled-map.ts`); it's hidden only so it doesn't
  *   normally show up drawn over the terrain, and can still be switched on
  *   in the Tiled editor or through the engine's `tile-layers` debug option.
+ * - `building-sites`: one point per place a bridge, tower or castle can be
+ *   built, from `DRACULA.EXE` ({@link buildingSiteObjects}). The engine
+ *   doesn't read it yet.
  */
 
 /** Tile size of the `terrain` tileset, in pixels. */
@@ -95,17 +99,79 @@ function collisionData(collapsed: Uint8Array): number[] {
  * @throws {RangeError} for a tile index above
  * {@link VERBATIM_ATLAS_INDEX_MAX}.
  */
-export function buildCountyTiledMap(map: CountyMap): TiledMap {
+export function buildCountyTiledMap(
+  map: CountyMap,
+  sites: readonly BuildingSite[] = []
+): TiledMap {
   const blocked = collapseCollisionMaskPerTile(map);
   const spawns = edgeSpawnObjects(map, blocked);
+  const buildingSites = buildingSiteObjects(sites, spawns.length + 1);
   return {
     ...buildTerrainTiledMap([
       tileLayer(1, 'terrain', terrainData(map)),
       spawnsLayer(2, spawns),
       tileLayer(3, 'collision', collisionData(blocked), false),
+      objectLayer(4, BUILDING_SITES_LAYER_NAME, buildingSites),
     ]),
-    nextobjectid: spawns.length + 1,
+    nextobjectid: spawns.length + buildingSites.length + 1,
   };
+}
+
+/** Name of the object layer holding a county's building sites. */
+export const BUILDING_SITES_LAYER_NAME = 'building-sites';
+
+/**
+ * The `building-sites` objects, with object ids from `firstId` on: one
+ * point per site, named `<category>-<n>` (numbered per category, in
+ * `sites` order) and with the category as its Tiled class (`type`). The
+ * point sits at the centre of the site's first level, in map pixels.
+ *
+ * Properties, in the alphabetical order Tiled writes them:
+ *
+ * - `footprint:<level>`, one per level: the tiles that level occupies, as
+ *   `x,y,width,height`.
+ * - `levels`: every level the site can hold, comma-separated, in upgrade
+ *   order.
+ * - `orientation` (bridges only): `vertical` or `horizontal`.
+ */
+export function buildingSiteObjects(
+  sites: readonly BuildingSite[],
+  firstId = 1
+): TiledObject[] {
+  const counts = new Map<string, number>();
+  return sites.map((site, i) => {
+    const n = (counts.get(site.category) ?? 0) + 1;
+    counts.set(site.category, n);
+    const { x, y, width, height } = site.levels[0].footprint;
+    const properties: TiledObject['properties'] = [
+      ...site.levels.map(({ level, footprint: f }) => ({
+        name: `footprint:${level}`,
+        type: 'string' as const,
+        value: `${f.x},${f.y},${f.width},${f.height}`,
+      })),
+      {
+        name: 'levels',
+        type: 'string' as const,
+        value: site.levels.map(({ level }) => level).join(','),
+      },
+      ...(site.orientation
+        ? [{ name: 'orientation', type: 'string' as const, value: site.orientation }]
+        : []),
+    ].sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
+    return {
+      height: 0,
+      id: firstId + i,
+      name: `${site.category}-${n}`,
+      point: true,
+      properties,
+      rotation: 0,
+      type: site.category,
+      visible: true,
+      width: 0,
+      x: (x + width / 2) * COUNTY_TILE_SIZE,
+      y: (y + height / 2) * COUNTY_TILE_SIZE,
+    } as TiledObject;
+  });
 }
 
 /**
@@ -231,9 +297,18 @@ export function spawnsLayer(
   id: number,
   objects: TiledObject[] = []
 ): TiledLayerObjectgroup {
+  return objectLayer(id, 'spawns', objects);
+}
+
+/** An object layer called `name`, holding `objects`, in the key order Tiled writes. */
+export function objectLayer(
+  id: number,
+  name: string,
+  objects: TiledObject[] = []
+): TiledLayerObjectgroup {
   return {
     id,
-    name: 'spawns',
+    name,
     type: 'objectgroup',
     x: 0,
     y: 0,

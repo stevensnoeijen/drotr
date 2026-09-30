@@ -18,8 +18,12 @@ import { buildCountyMapBytes, tileSubcells } from '~/test/county-map-fixture';
 
 import { COLLISION_MARKER_TILE_ID } from '~/lib/art/collision-marker';
 
+import type { BuildingSite } from '../dracula-exe';
+
 import {
+  BUILDING_SITES_LAYER_NAME,
   buildCountyTiledMap,
+  buildingSiteObjects,
   edgeSpawnTiles,
   serializeTiledMap,
 } from './county-map-tiled';
@@ -112,7 +116,7 @@ describe('buildCountyTiledMap', () => {
       height: 128,
       tilewidth: 40,
       tileheight: 40,
-      nextlayerid: 4,
+      nextlayerid: 5,
       nextobjectid: 1,
     });
     expect(map.tilesets).toEqual([{ firstgid: 1, source: 'terrain.tsx' }]);
@@ -120,6 +124,7 @@ describe('buildCountyTiledMap', () => {
       [1, 'terrain', 'tilelayer', true],
       [2, 'spawns', 'objectgroup', true],
       [3, 'collision', 'tilelayer', false],
+      [4, 'building-sites', 'objectgroup', true],
     ]);
   });
 
@@ -297,5 +302,77 @@ describe('buildCountyTiledMap', () => {
         /No walkable tile within 3 tiles inward of the signpost at \(0, 100\)/
       );
     });
+  });
+});
+
+describe('building sites', () => {
+  const castle: BuildingSite = {
+    category: 'castle',
+    levels: [
+      { level: '1', type: 2, slot: 0, footprint: { x: 10, y: 20, width: 11, height: 11 } },
+      { level: '2', type: 2, slot: 1, footprint: { x: 8, y: 18, width: 15, height: 15 } },
+    ],
+  };
+  const bridge: BuildingSite = {
+    category: 'bridge',
+    orientation: 'vertical',
+    levels: [
+      { level: 'wood', type: 0, slot: 1, footprint: { x: 5, y: 6, width: 1, height: 4 } },
+      { level: 'stone', type: 0, slot: 8, footprint: { x: 5, y: 6, width: 2, height: 4 } },
+    ],
+  };
+  const tower: BuildingSite = {
+    category: 'tower',
+    levels: [{ level: 'grass', type: 1, slot: 0, footprint: { x: 0, y: 0, width: 2, height: 3 } }],
+  };
+
+  it('emits one point per site at the centre of its first level, classed by category', () => {
+    const [castleObject, bridgeObject, towerObject, secondCastle] = buildingSiteObjects(
+      [castle, bridge, tower, castle],
+      7
+    );
+    expect(castleObject).toMatchObject({
+      id: 7,
+      name: 'castle-1',
+      type: 'castle',
+      point: true,
+      x: 15.5 * 40,
+      y: 25.5 * 40,
+    });
+    expect(bridgeObject).toMatchObject({ id: 8, name: 'bridge-1', x: 5.5 * 40, y: 8 * 40 });
+    expect(towerObject).toMatchObject({ id: 9, name: 'tower-1', x: 40, y: 1.5 * 40 });
+    expect(secondCastle).toMatchObject({ id: 10, name: 'castle-2' });
+  });
+
+  it('lists every level and its footprint as alphabetically ordered properties', () => {
+    const [castleObject, bridgeObject] = buildingSiteObjects([castle, bridge]);
+    expect(castleObject.properties).toEqual([
+      { name: 'footprint:1', type: 'string', value: '10,20,11,11' },
+      { name: 'footprint:2', type: 'string', value: '8,18,15,15' },
+      { name: 'levels', type: 'string', value: '1,2' },
+    ]);
+    expect(bridgeObject.properties).toEqual([
+      { name: 'footprint:stone', type: 'string', value: '5,6,2,4' },
+      { name: 'footprint:wood', type: 'string', value: '5,6,1,4' },
+      { name: 'levels', type: 'string', value: 'wood,stone' },
+      { name: 'orientation', type: 'string', value: 'vertical' },
+    ]);
+  });
+
+  it('adds them as a building-sites layer, numbered after the edge spawns', () => {
+    const county = parseCountyMap(
+      buildCountyMapBytes({ tiles: [{ x: 0, y: 40, value: SIGNPOST_TILE_INDEX }] })
+    );
+    const map = buildCountyTiledMap(county, [castle, tower]);
+    const layer = map.layers.find((l) => l.name === BUILDING_SITES_LAYER_NAME);
+    if (layer?.type !== 'objectgroup') throw new Error('no building-sites layer');
+
+    expect(layer.objects.map((object) => [object.id, object.name])).toEqual([
+      [2, 'castle-1'],
+      [3, 'tower-1'],
+    ]);
+    expect(map.nextobjectid).toBe(4);
+    // The engine ignores the layer: it still parses as before.
+    expect(parseTiledMap(map, terrainTileset).spawns.map((s) => s.id)).toEqual(['edge-1']);
   });
 });

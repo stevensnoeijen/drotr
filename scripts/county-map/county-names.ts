@@ -47,3 +47,10 @@ export const BUILDING_MAP_CD_PATH = 'COUNTIES/BUILDING.MAP';
 
 /** File name of `BUILDING.MAP`'s converted Tiled map, under `public/maps/`. */
 export const BUILDINGS_TILED_MAP_FILE_NAME = 'buildings.tmj';
+
+/**
+ * The game executable, relative to the CD data directory. County
+ * conversions read their building sites from it (see
+ * `src/lib/dracula-exe`).
+ */
+export const DRACULA_EXE_CD_PATH = 'DRACULA.EXE';

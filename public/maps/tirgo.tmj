@@ -9,8 +9,8 @@
  "tilewidth": 40,
  "tileheight": 40,
  "infinite": false,
- "nextlayerid": 4,
- "nextobjectid": 5,
+ "nextlayerid": 5,
+ "nextobjectid": 40,
  "compressionlevel": -1,
  "properties": [],
  "tilesets": [
@@ -32874,6 +32874,985 @@
     1552,
     1552,
     1552
+   ]
+  },
+  {
+   "id": 4,
+   "name": "building-sites",
+   "type": "objectgroup",
+   "x": 0,
+   "y": 0,
+   "width": 0,
+   "height": 0,
+   "opacity": 1,
+   "visible": true,
+   "draworder": "topdown",
+   "objects": [
+    {
+     "height": 0,
+     "id": 5,
+     "name": "bridge-1",
+     "point": true,
+     "properties": [
+      {
+       "name": "footprint:stone",
+       "type": "string",
+       "value": "46,101,2,6"
+      },
+      {
+       "name": "footprint:stone-wide",
+       "type": "string",
+       "value": "46,101,3,6"
+      },
+      {
+       "name": "levels",
+       "type": "string",
+       "value": "stone,stone-wide"
+      },
+      {
+       "name": "orientation",
+       "type": "string",
+       "value": "vertical"
+      }
+     ],
+     "rotation": 0,
+     "type": "bridge",
+     "visible": true,
+     "width": 0,
+     "x": 1880,
+     "y": 4160
+    },
+    {
+     "height": 0,
+     "id": 6,
+     "name": "bridge-2",
+     "point": true,
+     "properties": [
+      {
+       "name": "footprint:stone",
+       "type": "string",
+       "value": "57,108,2,6"
+      },
+      {
+       "name": "footprint:stone-wide",
+       "type": "string",
+       "value": "57,108,3,6"
+      },
+      {
+       "name": "levels",
+       "type": "string",
+       "value": "stone,stone-wide"
+      },
+      {
+       "name": "orientation",
+       "type": "string",
+       "value": "vertical"
+      }
+     ],
+     "rotation": 0,
+     "type": "bridge",
+     "visible": true,
+     "width": 0,
+     "x": 2320,
+     "y": 4440
+    },
+    {
+     "height": 0,
+     "id": 7,
+     "name": "bridge-3",
+     "point": true,
+     "properties": [
+      {
+       "name": "footprint:stone",
+       "type": "string",
+       "value": "84,114,2,6"
+      },
+      {
+       "name": "footprint:stone-wide",
+       "type": "string",
+       "value": "84,114,3,6"
+      },
+      {
+       "name": "levels",
+       "type": "string",
+       "value": "stone,stone-wide"
+      },
+      {
+       "name": "orientation",
+       "type": "string",
+       "value": "vertical"
+      }
+     ],
+     "rotation": 0,
+     "type": "bridge",
+     "visible": true,
+     "width": 0,
+     "x": 3400,
+     "y": 4680
+    },
+    {
+     "height": 0,
+     "id": 8,
+     "name": "bridge-4",
+     "point": true,
+     "properties": [
+      {
+       "name": "footprint:stone-wide",
+       "type": "string",
+       "value": "36,98,3,7"
+      },
+      {
+       "name": "levels",
+       "type": "string",
+       "value": "stone-wide"
+      },
+      {
+       "name": "orientation",
+       "type": "string",
+       "value": "vertical"
+      }
+     ],
+     "rotation": 0,
+     "type": "bridge",
+     "visible": true,
+     "width": 0,
+     "x": 1500,
+     "y": 4060
+    },
+    {
+     "height": 0,
+     "id": 9,
+     "name": "bridge-5",
+     "point": true,
+     "properties": [
+      {
+       "name": "footprint:stone-wide",
+       "type": "string",
+       "value": "27,99,3,8"
+      },
+      {
+       "name": "levels",
+       "type": "string",
+       "value": "stone-wide"
+      },
+      {
+       "name": "orientation",
+       "type": "string",
+       "value": "vertical"
+      }
+     ],
+     "rotation": 0,
+     "type": "bridge",
+     "visible": true,
+     "width": 0,
+     "x": 1140,
+     "y": 4120
+    },
+    {
+     "height": 0,
+     "id": 10,
+     "name": "bridge-6",
+     "point": true,
+     "properties": [
+      {
+       "name": "footprint:stone-wide",
+       "type": "string",
+       "value": "87,124,9,3"
+      },
+      {
+       "name": "levels",
+       "type": "string",
+       "value": "stone-wide"
+      },
+      {
+       "name": "orientation",
+       "type": "string",
+       "value": "horizontal"
+      }
+     ],
+     "rotation": 0,
+     "type": "bridge",
+     "visible": true,
+     "width": 0,
+     "x": 3660,
+     "y": 5020
+    },
+    {
+     "height": 0,
+     "id": 11,
+     "name": "tower-1",
+     "point": true,
+     "properties": [
+      {
+       "name": "footprint:grass",
+       "type": "string",
+       "value": "55,121,2,3"
+      },
+      {
+       "name": "levels",
+       "type": "string",
+       "value": "grass"
+      }
+     ],
+     "rotation": 0,
+     "type": "tower",
+     "visible": true,
+     "width": 0,
+     "x": 2240,
+     "y": 4900
+    },
+    {
+     "height": 0,
+     "id": 12,
+     "name": "tower-2",
+     "point": true,
+     "properties": [
+      {
+       "name": "footprint:grass",
+       "type": "string",
+       "value": "28,108,2,3"
+      },
+      {
+       "name": "levels",
+       "type": "string",
+       "value": "grass"
+      }
+     ],
+     "rotation": 0,
+     "type": "tower",
+     "visible": true,
+     "width": 0,
+     "x": 1160,
+     "y": 4380
+    },
+    {
+     "height": 0,
+     "id": 13,
+     "name": "tower-3",
+     "point": true,
+     "properties": [
+      {
+       "name": "footprint:grass",
+       "type": "string",
+       "value": "30,95,2,3"
+      },
+      {
+       "name": "levels",
+       "type": "string",
+       "value": "grass"
+      }
+     ],
+     "rotation": 0,
+     "type": "tower",
+     "visible": true,
+     "width": 0,
+     "x": 1240,
+     "y": 3860
+    },
+    {
+     "height": 0,
+     "id": 14,
+     "name": "tower-4",
+     "point": true,
+     "properties": [
+      {
+       "name": "footprint:grass",
+       "type": "string",
+       "value": "38,94,2,3"
+      },
+      {
+       "name": "levels",
+       "type": "string",
+       "value": "grass"
+      }
+     ],
+     "rotation": 0,
+     "type": "tower",
+     "visible": true,
+     "width": 0,
+     "x": 1560,
+     "y": 3820
+    },
+    {
+     "height": 0,
+     "id": 15,
+     "name": "tower-5",
+     "point": true,
+     "properties": [
+      {
+       "name": "footprint:grass",
+       "type": "string",
+       "value": "37,107,2,3"
+      },
+      {
+       "name": "levels",
+       "type": "string",
+       "value": "grass"
+      }
+     ],
+     "rotation": 0,
+     "type": "tower",
+     "visible": true,
+     "width": 0,
+     "x": 1520,
+     "y": 4340
+    },
+    {
+     "height": 0,
+     "id": 16,
+     "name": "tower-6",
+     "point": true,
+     "properties": [
+      {
+       "name": "footprint:grass",
+       "type": "string",
+       "value": "45,109,2,3"
+      },
+      {
+       "name": "levels",
+       "type": "string",
+       "value": "grass"
+      }
+     ],
+     "rotation": 0,
+     "type": "tower",
+     "visible": true,
+     "width": 0,
+     "x": 1840,
+     "y": 4420
+    },
+    {
+     "height": 0,
+     "id": 17,
+     "name": "tower-7",
+     "point": true,
+     "properties": [
+      {
+       "name": "footprint:grass",
+       "type": "string",
+       "value": "49,97,2,3"
+      },
+      {
+       "name": "levels",
+       "type": "string",
+       "value": "grass"
+      }
+     ],
+     "rotation": 0,
+     "type": "tower",
+     "visible": true,
+     "width": 0,
+     "x": 2000,
+     "y": 3940
+    },
+    {
+     "height": 0,
+     "id": 18,
+     "name": "tower-8",
+     "point": true,
+     "properties": [
+      {
+       "name": "footprint:grass",
+       "type": "string",
+       "value": "61,104,2,3"
+      },
+      {
+       "name": "levels",
+       "type": "string",
+       "value": "grass"
+      }
+     ],
+     "rotation": 0,
+     "type": "tower",
+     "visible": true,
+     "width": 0,
+     "x": 2480,
+     "y": 4220
+    },
+    {
+     "height": 0,
+     "id": 19,
+     "name": "tower-9",
+     "point": true,
+     "properties": [
+      {
+       "name": "footprint:grass",
+       "type": "string",
+       "value": "59,115,2,3"
+      },
+      {
+       "name": "levels",
+       "type": "string",
+       "value": "grass"
+      }
+     ],
+     "rotation": 0,
+     "type": "tower",
+     "visible": true,
+     "width": 0,
+     "x": 2400,
+     "y": 4660
+    },
+    {
+     "height": 0,
+     "id": 20,
+     "name": "tower-10",
+     "point": true,
+     "properties": [
+      {
+       "name": "footprint:grass",
+       "type": "string",
+       "value": "83,110,2,3"
+      },
+      {
+       "name": "levels",
+       "type": "string",
+       "value": "grass"
+      }
+     ],
+     "rotation": 0,
+     "type": "tower",
+     "visible": true,
+     "width": 0,
+     "x": 3360,
+     "y": 4460
+    },
+    {
+     "height": 0,
+     "id": 21,
+     "name": "tower-11",
+     "point": true,
+     "properties": [
+      {
+       "name": "footprint:grass",
+       "type": "string",
+       "value": "84,123,2,3"
+      },
+      {
+       "name": "levels",
+       "type": "string",
+       "value": "grass"
+      }
+     ],
+     "rotation": 0,
+     "type": "tower",
+     "visible": true,
+     "width": 0,
+     "x": 3400,
+     "y": 4980
+    },
+    {
+     "height": 0,
+     "id": 22,
+     "name": "tower-12",
+     "point": true,
+     "properties": [
+      {
+       "name": "footprint:grass",
+       "type": "string",
+       "value": "55,19,2,3"
+      },
+      {
+       "name": "levels",
+       "type": "string",
+       "value": "grass"
+      }
+     ],
+     "rotation": 0,
+     "type": "tower",
+     "visible": true,
+     "width": 0,
+     "x": 2240,
+     "y": 820
+    },
+    {
+     "height": 0,
+     "id": 23,
+     "name": "tower-13",
+     "point": true,
+     "properties": [
+      {
+       "name": "footprint:grass",
+       "type": "string",
+       "value": "36,5,2,3"
+      },
+      {
+       "name": "levels",
+       "type": "string",
+       "value": "grass"
+      }
+     ],
+     "rotation": 0,
+     "type": "tower",
+     "visible": true,
+     "width": 0,
+     "x": 1480,
+     "y": 260
+    },
+    {
+     "height": 0,
+     "id": 24,
+     "name": "tower-14",
+     "point": true,
+     "properties": [
+      {
+       "name": "footprint:grass",
+       "type": "string",
+       "value": "62,15,2,3"
+      },
+      {
+       "name": "levels",
+       "type": "string",
+       "value": "grass"
+      }
+     ],
+     "rotation": 0,
+     "type": "tower",
+     "visible": true,
+     "width": 0,
+     "x": 2520,
+     "y": 660
+    },
+    {
+     "height": 0,
+     "id": 25,
+     "name": "tower-15",
+     "point": true,
+     "properties": [
+      {
+       "name": "footprint:grass",
+       "type": "string",
+       "value": "48,22,2,3"
+      },
+      {
+       "name": "levels",
+       "type": "string",
+       "value": "grass"
+      }
+     ],
+     "rotation": 0,
+     "type": "tower",
+     "visible": true,
+     "width": 0,
+     "x": 1960,
+     "y": 940
+    },
+    {
+     "height": 0,
+     "id": 26,
+     "name": "tower-16",
+     "point": true,
+     "properties": [
+      {
+       "name": "footprint:grass",
+       "type": "string",
+       "value": "29,67,2,3"
+      },
+      {
+       "name": "levels",
+       "type": "string",
+       "value": "grass"
+      }
+     ],
+     "rotation": 0,
+     "type": "tower",
+     "visible": true,
+     "width": 0,
+     "x": 1200,
+     "y": 2740
+    },
+    {
+     "height": 0,
+     "id": 27,
+     "name": "tower-17",
+     "point": true,
+     "properties": [
+      {
+       "name": "footprint:grass",
+       "type": "string",
+       "value": "34,67,2,3"
+      },
+      {
+       "name": "levels",
+       "type": "string",
+       "value": "grass"
+      }
+     ],
+     "rotation": 0,
+     "type": "tower",
+     "visible": true,
+     "width": 0,
+     "x": 1400,
+     "y": 2740
+    },
+    {
+     "height": 0,
+     "id": 28,
+     "name": "tower-18",
+     "point": true,
+     "properties": [
+      {
+       "name": "footprint:grass",
+       "type": "string",
+       "value": "19,47,2,3"
+      },
+      {
+       "name": "levels",
+       "type": "string",
+       "value": "grass"
+      }
+     ],
+     "rotation": 0,
+     "type": "tower",
+     "visible": true,
+     "width": 0,
+     "x": 800,
+     "y": 1940
+    },
+    {
+     "height": 0,
+     "id": 29,
+     "name": "tower-19",
+     "point": true,
+     "properties": [
+      {
+       "name": "footprint:grass",
+       "type": "string",
+       "value": "44,42,2,3"
+      },
+      {
+       "name": "levels",
+       "type": "string",
+       "value": "grass"
+      }
+     ],
+     "rotation": 0,
+     "type": "tower",
+     "visible": true,
+     "width": 0,
+     "x": 1800,
+     "y": 1740
+    },
+    {
+     "height": 0,
+     "id": 30,
+     "name": "tower-20",
+     "point": true,
+     "properties": [
+      {
+       "name": "footprint:grass",
+       "type": "string",
+       "value": "107,7,2,3"
+      },
+      {
+       "name": "levels",
+       "type": "string",
+       "value": "grass"
+      }
+     ],
+     "rotation": 0,
+     "type": "tower",
+     "visible": true,
+     "width": 0,
+     "x": 4320,
+     "y": 340
+    },
+    {
+     "height": 0,
+     "id": 31,
+     "name": "tower-21",
+     "point": true,
+     "properties": [
+      {
+       "name": "footprint:grass",
+       "type": "string",
+       "value": "100,29,2,3"
+      },
+      {
+       "name": "levels",
+       "type": "string",
+       "value": "grass"
+      }
+     ],
+     "rotation": 0,
+     "type": "tower",
+     "visible": true,
+     "width": 0,
+     "x": 4040,
+     "y": 1220
+    },
+    {
+     "height": 0,
+     "id": 32,
+     "name": "tower-22",
+     "point": true,
+     "properties": [
+      {
+       "name": "footprint:grass",
+       "type": "string",
+       "value": "120,33,2,3"
+      },
+      {
+       "name": "levels",
+       "type": "string",
+       "value": "grass"
+      }
+     ],
+     "rotation": 0,
+     "type": "tower",
+     "visible": true,
+     "width": 0,
+     "x": 4840,
+     "y": 1380
+    },
+    {
+     "height": 0,
+     "id": 33,
+     "name": "tower-23",
+     "point": true,
+     "properties": [
+      {
+       "name": "footprint:rock-2",
+       "type": "string",
+       "value": "13,81,2,3"
+      },
+      {
+       "name": "levels",
+       "type": "string",
+       "value": "rock-2"
+      }
+     ],
+     "rotation": 0,
+     "type": "tower",
+     "visible": true,
+     "width": 0,
+     "x": 560,
+     "y": 3300
+    },
+    {
+     "height": 0,
+     "id": 34,
+     "name": "castle-1",
+     "point": true,
+     "properties": [
+      {
+       "name": "footprint:1",
+       "type": "string",
+       "value": "81,64,11,11"
+      },
+      {
+       "name": "footprint:2",
+       "type": "string",
+       "value": "80,63,15,15"
+      },
+      {
+       "name": "footprint:3",
+       "type": "string",
+       "value": "78,61,18,19"
+      },
+      {
+       "name": "footprint:4",
+       "type": "string",
+       "value": "77,60,21,21"
+      },
+      {
+       "name": "footprint:5-moated",
+       "type": "string",
+       "value": "75,58,30,29"
+      },
+      {
+       "name": "footprint:5-unmoated",
+       "type": "string",
+       "value": "73,56,31,27"
+      },
+      {
+       "name": "footprint:6-moated",
+       "type": "string",
+       "value": "70,53,39,34"
+      },
+      {
+       "name": "footprint:6-unmoated",
+       "type": "string",
+       "value": "67,50,41,40"
+      },
+      {
+       "name": "footprint:7-moated",
+       "type": "string",
+       "value": "64,47,49,48"
+      },
+      {
+       "name": "levels",
+       "type": "string",
+       "value": "1,2,3,4,5-unmoated,6-unmoated,5-moated,6-moated,7-moated"
+      }
+     ],
+     "rotation": 0,
+     "type": "castle",
+     "visible": true,
+     "width": 0,
+     "x": 3460,
+     "y": 2780
+    },
+    {
+     "height": 0,
+     "id": 35,
+     "name": "castle-2",
+     "point": true,
+     "properties": [
+      {
+       "name": "footprint:1",
+       "type": "string",
+       "value": "16,21,11,11"
+      },
+      {
+       "name": "footprint:2",
+       "type": "string",
+       "value": "12,21,15,15"
+      },
+      {
+       "name": "footprint:3",
+       "type": "string",
+       "value": "9,21,18,19"
+      },
+      {
+       "name": "footprint:4",
+       "type": "string",
+       "value": "6,21,21,21"
+      },
+      {
+       "name": "levels",
+       "type": "string",
+       "value": "1,2,3,4"
+      }
+     ],
+     "rotation": 0,
+     "type": "castle",
+     "visible": true,
+     "width": 0,
+     "x": 860,
+     "y": 1060
+    },
+    {
+     "height": 0,
+     "id": 36,
+     "name": "castle-3",
+     "point": true,
+     "properties": [
+      {
+       "name": "footprint:1",
+       "type": "string",
+       "value": "26,74,11,11"
+      },
+      {
+       "name": "footprint:2",
+       "type": "string",
+       "value": "25,73,15,15"
+      },
+      {
+       "name": "footprint:3",
+       "type": "string",
+       "value": "25,73,18,19"
+      },
+      {
+       "name": "levels",
+       "type": "string",
+       "value": "1,2,3"
+      }
+     ],
+     "rotation": 0,
+     "type": "castle",
+     "visible": true,
+     "width": 0,
+     "x": 1260,
+     "y": 3180
+    },
+    {
+     "height": 0,
+     "id": 37,
+     "name": "castle-4",
+     "point": true,
+     "properties": [
+      {
+       "name": "footprint:1",
+       "type": "string",
+       "value": "111,1,11,11"
+      },
+      {
+       "name": "footprint:2",
+       "type": "string",
+       "value": "111,1,15,15"
+      },
+      {
+       "name": "footprint:3",
+       "type": "string",
+       "value": "109,1,18,19"
+      },
+      {
+       "name": "levels",
+       "type": "string",
+       "value": "1,2,3"
+      }
+     ],
+     "rotation": 0,
+     "type": "castle",
+     "visible": true,
+     "width": 0,
+     "x": 4660,
+     "y": 260
+    },
+    {
+     "height": 0,
+     "id": 38,
+     "name": "castle-5",
+     "point": true,
+     "properties": [
+      {
+       "name": "footprint:1",
+       "type": "string",
+       "value": "24,114,11,11"
+      },
+      {
+       "name": "footprint:2",
+       "type": "string",
+       "value": "23,110,15,15"
+      },
+      {
+       "name": "levels",
+       "type": "string",
+       "value": "1,2"
+      }
+     ],
+     "rotation": 0,
+     "type": "castle",
+     "visible": true,
+     "width": 0,
+     "x": 1180,
+     "y": 4780
+    },
+    {
+     "height": 0,
+     "id": 39,
+     "name": "castle-6",
+     "point": true,
+     "properties": [
+      {
+       "name": "footprint:1",
+       "type": "string",
+       "value": "59,22,11,11"
+      },
+      {
+       "name": "levels",
+       "type": "string",
+       "value": "1"
+      }
+     ],
+     "rotation": 0,
+     "type": "castle",
+     "visible": true,
+     "width": 0,
+     "x": 2580,
+     "y": 1100
+    }
    ]
   }
  ]

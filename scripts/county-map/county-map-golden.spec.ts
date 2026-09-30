@@ -12,15 +12,32 @@ import {
   SECTION_A_OFFSET,
   SECTION_B_OFFSET,
 } from '~/lib/county-map';
+import { parseBuildingSites, type BuildingSite } from '../dracula-exe';
 import { hasCdFile, readCdFile } from '~/test/cd-assets';
 
 import { COLLISION_MARKER_TILE_ID } from '~/lib/art/collision-marker';
 
 import { buildCountyTiledMap, serializeTiledMap } from './county-map-tiled';
-import { countyMapCdPath, countyTiledMapFileName } from './county-names';
+import {
+  countyMapCdPath,
+  countyTiledMapFileName,
+  DRACULA_EXE_CD_PATH,
+  type CountyName,
+} from './county-names';
 import { withPreviousSpawns } from './spawns-layer-merge';
 
 const COLLISION_MARKER_GID = COLLISION_MARKER_TILE_ID + 1;
+
+/**
+ * The converter also reads each county's building sites from the game
+ * executable, so the byte-for-byte comparisons need it too.
+ */
+const exeAvailable = hasCdFile(DRACULA_EXE_CD_PATH);
+let buildingSites: Record<CountyName, BuildingSite[]> | undefined;
+function sitesOf(name: CountyName): BuildingSite[] {
+  buildingSites ??= parseBuildingSites(readCdFile(DRACULA_EXE_CD_PATH));
+  return buildingSites[name];
+}
 
 /**
  * Golden tests against the real `COUNTIES/FAGARAS.MAP`.
@@ -58,7 +75,7 @@ describe.skipIf(!available)('FAGARAS.MAP', () => {
   const bytes = available ? readCdFile(SOURCE) : (undefined as never);
   const county = available ? parseCountyMap(bytes) : (undefined as never);
 
-  it('converts to exactly the committed public/maps/fagaras.tmj (catches a stale committed file)', () => {
+  it.skipIf(!exeAvailable)('converts to exactly the committed public/maps/fagaras.tmj (catches a stale committed file)', () => {
     const committed = fs.readFileSync(
       path.join(
         process.cwd(),
@@ -74,7 +91,7 @@ describe.skipIf(!available)('FAGARAS.MAP', () => {
     // (terrain, collision, the generated edge spawns) is compared as
     // freshly built, so a stale layer or stale formatting still fails.
     const built = withPreviousSpawns(
-      buildCountyTiledMap(county),
+      buildCountyTiledMap(county, sitesOf('FAGARAS')),
       JSON.parse(committed) as TiledMap
     );
     // A plain string compare rather than `toEqual`: a diff of two ~270 KB
@@ -125,7 +142,7 @@ const SIBIU_SOURCE = countyMapCdPath('SIBIU');
 const sibiuAvailable = hasCdFile(SIBIU_SOURCE);
 
 describe.skipIf(!sibiuAvailable)('SIBIU.MAP', () => {
-  it('converts to exactly the committed public/maps/sibiu.tmj (catches a stale committed file)', () => {
+  it.skipIf(!exeAvailable)('converts to exactly the committed public/maps/sibiu.tmj (catches a stale committed file)', () => {
     const county = parseCountyMap(readCdFile(SIBIU_SOURCE));
     const committed = fs.readFileSync(
       path.join(
@@ -136,7 +153,7 @@ describe.skipIf(!sibiuAvailable)('SIBIU.MAP', () => {
       ),
       'utf-8'
     );
-    expect(serializeTiledMap(buildCountyTiledMap(county)) === committed).toBe(
+    expect(serializeTiledMap(buildCountyTiledMap(county, sitesOf('SIBIU'))) === committed).toBe(
       true
     );
   });
@@ -146,7 +163,7 @@ const BRASOV_SOURCE = countyMapCdPath('BRASOV');
 const brasovAvailable = hasCdFile(BRASOV_SOURCE);
 
 describe.skipIf(!brasovAvailable)('BRASOV.MAP', () => {
-  it('converts to exactly the committed public/maps/brasov.tmj (catches a stale committed file)', () => {
+  it.skipIf(!exeAvailable)('converts to exactly the committed public/maps/brasov.tmj (catches a stale committed file)', () => {
     const county = parseCountyMap(readCdFile(BRASOV_SOURCE));
     const committed = fs.readFileSync(
       path.join(
@@ -157,7 +174,7 @@ describe.skipIf(!brasovAvailable)('BRASOV.MAP', () => {
       ),
       'utf-8'
     );
-    expect(serializeTiledMap(buildCountyTiledMap(county)) === committed).toBe(
+    expect(serializeTiledMap(buildCountyTiledMap(county, sitesOf('BRASOV'))) === committed).toBe(
       true
     );
   });
@@ -167,7 +184,7 @@ const RASOVA_SOURCE = countyMapCdPath('RASOVA');
 const rasovaAvailable = hasCdFile(RASOVA_SOURCE);
 
 describe.skipIf(!rasovaAvailable)('RASOVA.MAP', () => {
-  it('converts to exactly the committed public/maps/rasova.tmj (catches a stale committed file)', () => {
+  it.skipIf(!exeAvailable)('converts to exactly the committed public/maps/rasova.tmj (catches a stale committed file)', () => {
     const county = parseCountyMap(readCdFile(RASOVA_SOURCE));
     const committed = fs.readFileSync(
       path.join(
@@ -178,7 +195,7 @@ describe.skipIf(!rasovaAvailable)('RASOVA.MAP', () => {
       ),
       'utf-8'
     );
-    expect(serializeTiledMap(buildCountyTiledMap(county)) === committed).toBe(
+    expect(serializeTiledMap(buildCountyTiledMap(county, sitesOf('RASOVA'))) === committed).toBe(
       true
     );
   });
@@ -188,7 +205,7 @@ const PITESTI_SOURCE = countyMapCdPath('PITESTI');
 const pitestiAvailable = hasCdFile(PITESTI_SOURCE);
 
 describe.skipIf(!pitestiAvailable)('PITESTI.MAP', () => {
-  it('converts to exactly the committed public/maps/pitesti.tmj (catches a stale committed file)', () => {
+  it.skipIf(!exeAvailable)('converts to exactly the committed public/maps/pitesti.tmj (catches a stale committed file)', () => {
     const county = parseCountyMap(readCdFile(PITESTI_SOURCE));
     const committed = fs.readFileSync(
       path.join(
@@ -199,7 +216,7 @@ describe.skipIf(!pitestiAvailable)('PITESTI.MAP', () => {
       ),
       'utf-8'
     );
-    expect(serializeTiledMap(buildCountyTiledMap(county)) === committed).toBe(
+    expect(serializeTiledMap(buildCountyTiledMap(county, sitesOf('PITESTI'))) === committed).toBe(
       true
     );
   });
@@ -209,7 +226,7 @@ const HIRSOVA_SOURCE = countyMapCdPath('HIRSOVA');
 const hirsovaAvailable = hasCdFile(HIRSOVA_SOURCE);
 
 describe.skipIf(!hirsovaAvailable)('HIRSOVA.MAP', () => {
-  it('converts to exactly the committed public/maps/hirsova.tmj (catches a stale committed file)', () => {
+  it.skipIf(!exeAvailable)('converts to exactly the committed public/maps/hirsova.tmj (catches a stale committed file)', () => {
     const county = parseCountyMap(readCdFile(HIRSOVA_SOURCE));
     const committed = fs.readFileSync(
       path.join(
@@ -220,7 +237,7 @@ describe.skipIf(!hirsovaAvailable)('HIRSOVA.MAP', () => {
       ),
       'utf-8'
     );
-    expect(serializeTiledMap(buildCountyTiledMap(county)) === committed).toBe(
+    expect(serializeTiledMap(buildCountyTiledMap(county, sitesOf('HIRSOVA'))) === committed).toBe(
       true
     );
   });
@@ -230,7 +247,7 @@ const SNAGOV_SOURCE = countyMapCdPath('SNAGOV');
 const snagovAvailable = hasCdFile(SNAGOV_SOURCE);
 
 describe.skipIf(!snagovAvailable)('SNAGOV.MAP', () => {
-  it('converts to exactly the committed public/maps/snagov.tmj (catches a stale committed file)', () => {
+  it.skipIf(!exeAvailable)('converts to exactly the committed public/maps/snagov.tmj (catches a stale committed file)', () => {
     const county = parseCountyMap(readCdFile(SNAGOV_SOURCE));
     const committed = fs.readFileSync(
       path.join(
@@ -241,7 +258,7 @@ describe.skipIf(!snagovAvailable)('SNAGOV.MAP', () => {
       ),
       'utf-8'
     );
-    expect(serializeTiledMap(buildCountyTiledMap(county)) === committed).toBe(
+    expect(serializeTiledMap(buildCountyTiledMap(county, sitesOf('SNAGOV'))) === committed).toBe(
       true
     );
   });
@@ -251,7 +268,7 @@ const BRAILA_SOURCE = countyMapCdPath('BRAILA');
 const brailaAvailable = hasCdFile(BRAILA_SOURCE);
 
 describe.skipIf(!brailaAvailable)('BRAILA.MAP', () => {
-  it('converts to exactly the committed public/maps/braila.tmj (catches a stale committed file)', () => {
+  it.skipIf(!exeAvailable)('converts to exactly the committed public/maps/braila.tmj (catches a stale committed file)', () => {
     const county = parseCountyMap(readCdFile(BRAILA_SOURCE));
     const committed = fs.readFileSync(
       path.join(
@@ -262,7 +279,7 @@ describe.skipIf(!brailaAvailable)('BRAILA.MAP', () => {
       ),
       'utf-8'
     );
-    expect(serializeTiledMap(buildCountyTiledMap(county)) === committed).toBe(
+    expect(serializeTiledMap(buildCountyTiledMap(county, sitesOf('BRAILA'))) === committed).toBe(
       true
     );
   });
@@ -272,7 +289,7 @@ const GIURGIU_SOURCE = countyMapCdPath('GIURGIU');
 const giurgiuAvailable = hasCdFile(GIURGIU_SOURCE);
 
 describe.skipIf(!giurgiuAvailable)('GIURGIU.MAP', () => {
-  it('converts to exactly the committed public/maps/giurgiu.tmj (catches a stale committed file)', () => {
+  it.skipIf(!exeAvailable)('converts to exactly the committed public/maps/giurgiu.tmj (catches a stale committed file)', () => {
     const county = parseCountyMap(readCdFile(GIURGIU_SOURCE));
     const committed = fs.readFileSync(
       path.join(
@@ -283,7 +300,7 @@ describe.skipIf(!giurgiuAvailable)('GIURGIU.MAP', () => {
       ),
       'utf-8'
     );
-    expect(serializeTiledMap(buildCountyTiledMap(county)) === committed).toBe(
+    expect(serializeTiledMap(buildCountyTiledMap(county, sitesOf('GIURGIU'))) === committed).toBe(
       true
     );
   });
@@ -293,7 +310,7 @@ const TIRGO_SOURCE = countyMapCdPath('TIRGO');
 const tirgoAvailable = hasCdFile(TIRGO_SOURCE);
 
 describe.skipIf(!tirgoAvailable)('TIRGO.MAP', () => {
-  it('converts to exactly the committed public/maps/tirgo.tmj (catches a stale committed file)', () => {
+  it.skipIf(!exeAvailable)('converts to exactly the committed public/maps/tirgo.tmj (catches a stale committed file)', () => {
     const county = parseCountyMap(readCdFile(TIRGO_SOURCE));
     const committed = fs.readFileSync(
       path.join(
@@ -304,7 +321,7 @@ describe.skipIf(!tirgoAvailable)('TIRGO.MAP', () => {
       ),
       'utf-8'
     );
-    expect(serializeTiledMap(buildCountyTiledMap(county)) === committed).toBe(
+    expect(serializeTiledMap(buildCountyTiledMap(county, sitesOf('TIRGO'))) === committed).toBe(
       true
     );
   });
@@ -314,7 +331,7 @@ const CUERTA_SOURCE = countyMapCdPath('CUERTA');
 const cuertaAvailable = hasCdFile(CUERTA_SOURCE);
 
 describe.skipIf(!cuertaAvailable)('CUERTA.MAP', () => {
-  it('converts to exactly the committed public/maps/cuerta.tmj (catches a stale committed file)', () => {
+  it.skipIf(!exeAvailable)('converts to exactly the committed public/maps/cuerta.tmj (catches a stale committed file)', () => {
     const county = parseCountyMap(readCdFile(CUERTA_SOURCE));
     const committed = fs.readFileSync(
       path.join(
@@ -325,7 +342,7 @@ describe.skipIf(!cuertaAvailable)('CUERTA.MAP', () => {
       ),
       'utf-8'
     );
-    expect(serializeTiledMap(buildCountyTiledMap(county)) === committed).toBe(
+    expect(serializeTiledMap(buildCountyTiledMap(county, sitesOf('CUERTA'))) === committed).toBe(
       true
     );
   });
@@ -335,7 +352,7 @@ const OSTROV_SOURCE = countyMapCdPath('OSTROV');
 const ostrovAvailable = hasCdFile(OSTROV_SOURCE);
 
 describe.skipIf(!ostrovAvailable)('OSTROV.MAP', () => {
-  it('converts to exactly the committed public/maps/ostrov.tmj (catches a stale committed file)', () => {
+  it.skipIf(!exeAvailable)('converts to exactly the committed public/maps/ostrov.tmj (catches a stale committed file)', () => {
     const county = parseCountyMap(readCdFile(OSTROV_SOURCE));
     const committed = fs.readFileSync(
       path.join(
@@ -346,7 +363,7 @@ describe.skipIf(!ostrovAvailable)('OSTROV.MAP', () => {
       ),
       'utf-8'
     );
-    expect(serializeTiledMap(buildCountyTiledMap(county)) === committed).toBe(
+    expect(serializeTiledMap(buildCountyTiledMap(county, sitesOf('OSTROV'))) === committed).toBe(
       true
     );
   });

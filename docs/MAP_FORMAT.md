@@ -434,19 +434,27 @@ slightly darker tiles, maybe a different bank style or a ruined state. A
 bridge site is the top-left of its footprint on the near bank, and the
 footprint spans the water.
 
-### Extracting (manual, until the parser lands)
+### Extracting
 
-```python
-d = open('.cd/DRACULA.EXE', 'rb').read()
-off = lambda va: va - 0x46a000 + 0x68c00
-N, X, Y = off(0x470900), off(0x4710e0), off(0x47fd20)
-for county in range(12):
-    for type_ in range(4):
-        for slot in range(42):
-            n = d[N + (county * 4 + type_) * 42 + slot]
-            base = ((county * 4 + type_) * 42 + slot) * 30
-            sites = [(d[X + base + k], d[Y + base + k]) for k in range(n)]
-```
+`scripts/dracula-exe` reads the tables: `parseBuildingSites` takes the
+executable's bytes and returns every county's sites, keyed by county name.
+It finds the tables through the PE section table (`parsePe`, `readVa`), not
+through fixed file offsets. Castle entries are grouped into physical sites
+by **footprint overlap**, taken in upgrade order. Grouping by centre isn't
+enough, because near the map edge the big levels are pushed inward and
+their centres drift. Bridge entries are grouped by their shared top-left
+corner, and towers are one site each. The county converter writes the
+result into each county's `building-sites` layer (see "Converting to
+Tiled" below).
+
+A bridge site is **one crossing with an upgrade chain**, like a castle
+site: its slots share the same top-left corner and orientation, and go
+from wood (1 wide) to stone (2 wide) to wide stone (3 wide).
+
+For another build of the executable (another language edition, say), check
+that the VAs in `BUILDING_SITE_TABLE_VAS` still point at the tables. The
+building-object initialiser listed under "Addresses" is where to look them
+up again.
 
 ## The search for a separate ground layer — closed
 
@@ -583,8 +591,8 @@ npm run convert:map -- FAGARAS
 
 The name is case-insensitive (`BUILDING` converts `BUILDING.MAP` instead;
 see "Converting `BUILDING.MAP`" below). The script reads
-`COUNTIES/<NAME>.MAP` from the CD data
-(`DROTR_CD_DIR`, defaulting to `.cd/`) and writes
+`COUNTIES/<NAME>.MAP` and `DRACULA.EXE` (for the building sites) from the CD
+data (`DROTR_CD_DIR`, defaulting to `.cd/`) and writes
 `public/maps/<name>.tmj`. The raw `.MAP` is never committed, but the
 converted `.tmj` is (all 12 counties: `fagaras.tmj`, `sibiu.tmj`, `brasov.tmj`, `rasova.tmj`, `pitesti.tmj`, `hirsova.tmj`, `snagov.tmj`, `braila.tmj`, `giurgiu.tmj`, `tirgo.tmj`, `cuerta.tmj` and `ostrov.tmj`). The output is deterministic,
 so re-running the script over an up-to-date file changes nothing.
@@ -613,7 +621,7 @@ that fail, and exits non-zero if one did. It doesn't include
 `scripts/county-map/county-map-tiled.ts` builds the Tiled JSON.
 
 The map is 128×128 tiles of 40 px, matching the tileset, and references
-`terrain.tsx` as its only (external) tileset, at `firstgid` 1. It has three
+`terrain.tsx` as its only (external) tileset, at `firstgid` 1. It has four
 layers:
 
 - **`terrain`** — Section A, the full ground layer: `gid = tile index + 1`,
@@ -642,6 +650,21 @@ layers:
   blocks every cell whose gid here is non-zero); it's hidden purely so it
   doesn't draw over `terrain` by default, and can still be switched on, in
   the Tiled editor or through the engine's `tile-layers` debug option.
+- **`building-sites`** — one point object per place a building can stand,
+  from `DRACULA.EXE` (see "Building sites: extracting them from
+  `DRACULA.EXE`" above). Each point's Tiled class (`type`) is its category
+  (`bridge`, `tower` or `castle`), and it's named `<category>-<n>`. It sits
+  at the centre of the site's first level. Its properties are:
+  - `levels`: every level the site can hold, comma-separated, in upgrade
+    order. Castles use `1`–`4`, then `5-unmoated`, `6-unmoated`,
+    `5-moated`, `6-moated`, `7-moated`, or `rock-1`–`rock-3` on rock
+    ground. Bridges use `wood`, `stone` and `stone-wide`. Towers use
+    `grass`, `rock-1` and `rock-2`.
+  - `footprint:<level>`: the tiles that level occupies, as
+    `x,y,width,height`.
+  - `orientation` (bridges only): `vertical` or `horizontal`.
+
+  The engine doesn't read this layer yet.
 
 For `FAGARAS` the collapsed Section B mask blocks **5,188** of 16,384
 tiles: every tile with 2 or more of its 4 subcells blocked. Per tile, the

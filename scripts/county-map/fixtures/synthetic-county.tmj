@@ -9,7 +9,7 @@
  "tilewidth": 40,
  "tileheight": 40,
  "infinite": false,
- "nextlayerid": 4,
+ "nextlayerid": 5,
  "nextobjectid": 1,
  "compressionlevel": -1,
  "properties": [],
@@ -32826,6 +32826,19 @@
     0,
     0
    ]
+  },
+  {
+   "id": 4,
+   "name": "building-sites",
+   "type": "objectgroup",
+   "x": 0,
+   "y": 0,
+   "width": 0,
+   "height": 0,
+   "opacity": 1,
+   "visible": true,
+   "draworder": "topdown",
+   "objects": []
   }
  ]
 }
