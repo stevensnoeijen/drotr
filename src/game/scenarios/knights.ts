@@ -4,6 +4,14 @@ import { cellSizeOf } from '~/lib/grid';
 import { pickDistinct, type RandomSource } from '~/lib/random';
 import type { Scenario } from './types';
 
+/**
+ * Not registered in `./index`'s `scenarios` list, so it's unreachable via
+ * `?scenario=knights` for now: the knight is drawn a full tile wide while
+ * occupying a single half-tile movement cell, which looks wrong until it
+ * gets a proper 2x2 multi-cell footprint (#232). This file and its spec stay
+ * in the codebase so the scenario is ready to re-register once that lands.
+ */
+
 /** How many spawn points the scenario needs: one per knight. */
 const REQUIRED_SPAWN_COUNT = 2;
 
