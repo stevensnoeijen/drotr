@@ -21,8 +21,8 @@ describe('claimSpawn', () => {
     }, DEFAULT_CELL_SIZE);
 
     expect(world.size).toBe(1);
-    // (10, 20) is centered in the [0, 32) cell on both axes: (16, 16).
-    expect(unit.transform?.position).toEqual({ x: 16, y: 16 });
+    // (10, 20) is centred in the 16px cell spanning [0, 16) x [16, 32): (8, 24).
+    expect(unit.transform?.position).toEqual({ x: 8, y: 24 });
     expect(unit.team).toBe('blue');
     expect(unit.unitType).toBe('swordsmen');
     expect(unit.renderable?.shape).toBe('square');
@@ -48,7 +48,7 @@ describe('claimSpawn', () => {
     // duplicate positions — they don't stack on top of each other.
     const xs = claimed.map((e) => e.transform?.position.x);
     expect(new Set(xs).size).toBe(3);
-    expect(claimed.every((e) => e.transform?.position.y === 16)).toBe(true);
+    expect(claimed.every((e) => e.transform?.position.y === 24)).toBe(true);
   });
 
   it('lets different spawns be claimed for different teams', () => {

@@ -3,7 +3,6 @@ import { describe, expect, it } from 'vitest';
 
 import type { Entity } from '~/game/ecs/entity';
 import { createQueries } from '~/game/ecs/world';
-import { DEFAULT_CELL_SIZE } from '~/lib/grid';
 import { Vector2 } from '~/lib/math/vector2';
 import {
   attackSelectedTarget,
@@ -15,6 +14,9 @@ import {
   InputSystem,
   CLICK_MOVE_THRESHOLD,
 } from './input-system';
+
+/** Cell size the literal world coordinates below are written against. */
+const CELL_SIZE = 32;
 
 function addUnit(world: World<Entity>, x: number, y: number, size = 20) {
   return world.add({
@@ -205,7 +207,7 @@ describe('moveSelectedTo', () => {
     const queries = createQueries(world);
     const unit = addTeamUnit(world, 'blue', true);
 
-    moveSelectedTo(queries, new Vector2(300, 400), DEFAULT_CELL_SIZE);
+    moveSelectedTo(queries, new Vector2(300, 400), CELL_SIZE);
 
     expect(unit.moveTarget).toEqual({ position: { x: 304, y: 400 } });
   });
@@ -215,7 +217,7 @@ describe('moveSelectedTo', () => {
     const queries = createQueries(world);
     addTeamUnit(world, 'blue', false);
 
-    moveSelectedTo(queries, new Vector2(300, 400), DEFAULT_CELL_SIZE);
+    moveSelectedTo(queries, new Vector2(300, 400), CELL_SIZE);
 
     expect([...queries.selected]).toHaveLength(0);
   });
@@ -225,7 +227,7 @@ describe('moveSelectedTo', () => {
     const queries = createQueries(world);
     const redUnit = addTeamUnit(world, 'red', true);
 
-    moveSelectedTo(queries, new Vector2(300, 400), DEFAULT_CELL_SIZE);
+    moveSelectedTo(queries, new Vector2(300, 400), CELL_SIZE);
 
     expect(redUnit.moveTarget).toBeUndefined();
   });
@@ -236,7 +238,7 @@ describe('moveSelectedTo', () => {
     const a = addTeamUnit(world, 'blue', true);
     const b = addTeamUnit(world, 'blue', true);
 
-    moveSelectedTo(queries, new Vector2(50, 60), DEFAULT_CELL_SIZE);
+    moveSelectedTo(queries, new Vector2(50, 60), CELL_SIZE);
 
     expect(a.moveTarget).toEqual({ position: { x: 48, y: 48 } });
     expect(b.moveTarget).toEqual({ position: { x: 48, y: 48 } });
@@ -248,7 +250,7 @@ describe('moveSelectedTo', () => {
     const blueUnit = addTeamUnit(world, 'blue', true);
     const redUnit = addTeamUnit(world, 'red', true);
 
-    moveSelectedTo(queries, new Vector2(10, 20), DEFAULT_CELL_SIZE);
+    moveSelectedTo(queries, new Vector2(10, 20), CELL_SIZE);
 
     expect(blueUnit.moveTarget).toEqual({ position: { x: 16, y: 16 } });
     expect(redUnit.moveTarget).toBeUndefined();
@@ -259,13 +261,13 @@ describe('moveSelectedTo', () => {
     const queries = createQueries(world);
     const unit = addTeamUnit(world, 'blue', true);
 
-    moveSelectedTo(queries, new Vector2(300, 400), DEFAULT_CELL_SIZE);
+    moveSelectedTo(queries, new Vector2(300, 400), CELL_SIZE);
     expect(unit.moveTarget).toEqual({ position: { x: 304, y: 400 } });
 
     // The unit hasn't arrived (MoveTargetSystem never ran), so it's still
     // mid-transition: a new order here must not redirect it immediately —
     // that would change its direction mid-cell, which is disallowed.
-    moveSelectedTo(queries, new Vector2(10, 20), DEFAULT_CELL_SIZE);
+    moveSelectedTo(queries, new Vector2(10, 20), CELL_SIZE);
 
     expect(unit.moveTarget).toEqual({ position: { x: 304, y: 400 } });
     // Only the destination is staged — not a route planned from the unit's
@@ -279,12 +281,12 @@ describe('moveSelectedTo', () => {
     const queries = createQueries(world);
     const unit = addTeamUnit(world, 'blue', true);
 
-    moveSelectedTo(queries, new Vector2(300, 400), DEFAULT_CELL_SIZE);
+    moveSelectedTo(queries, new Vector2(300, 400), CELL_SIZE);
     // Simulate arrival: MoveTargetSystem clears MoveTarget once the unit
     // reaches it.
     delete unit.moveTarget;
 
-    moveSelectedTo(queries, new Vector2(10, 20), DEFAULT_CELL_SIZE);
+    moveSelectedTo(queries, new Vector2(10, 20), CELL_SIZE);
 
     expect(unit.moveTarget).toEqual({ position: { x: 16, y: 16 } });
     expect(unit.pendingMoveOrder).toBeUndefined();
@@ -309,8 +311,8 @@ describe('moveSelectedTo', () => {
     };
 
     const centre = (col: number, row: number) => ({
-      x: col * DEFAULT_CELL_SIZE + DEFAULT_CELL_SIZE / 2,
-      y: row * DEFAULT_CELL_SIZE + DEFAULT_CELL_SIZE / 2,
+      x: col * CELL_SIZE + CELL_SIZE / 2,
+      y: row * CELL_SIZE + CELL_SIZE / 2,
     });
 
     const wallWithGap = gridFrom(`
@@ -330,7 +332,7 @@ describe('moveSelectedTo', () => {
       moveSelectedTo(
         queries,
         new Vector2(centre(8, 0).x, centre(8, 0).y),
-        DEFAULT_CELL_SIZE,
+        CELL_SIZE,
         wallWithGap
       );
 
@@ -364,7 +366,7 @@ describe('moveSelectedTo', () => {
       moveSelectedTo(
         queries,
         new Vector2(centre(8, 4).x, centre(8, 4).y),
-        DEFAULT_CELL_SIZE,
+        CELL_SIZE,
         wallWithGap
       );
 
@@ -398,7 +400,7 @@ describe('moveSelectedTo', () => {
       moveSelectedTo(
         queries,
         new Vector2(centre(4, 4).x, centre(4, 4).y),
-        DEFAULT_CELL_SIZE,
+        CELL_SIZE,
         divided
       );
 
@@ -416,7 +418,7 @@ describe('moveSelectedTo', () => {
       moveSelectedTo(
         queries,
         new Vector2(centre(8, 0).x, centre(8, 0).y),
-        DEFAULT_CELL_SIZE,
+        CELL_SIZE,
         wallWithGap
       );
 
@@ -439,10 +441,10 @@ describe('moveSelectedTo', () => {
       moveSelectedTo(
         queries,
         new Vector2(centre(8, 0).x, centre(8, 0).y),
-        DEFAULT_CELL_SIZE,
+        CELL_SIZE,
         wallWithGap
       );
-      moveSelectedTo(queries, new Vector2(10, 20), DEFAULT_CELL_SIZE);
+      moveSelectedTo(queries, new Vector2(10, 20), CELL_SIZE);
 
       expect(unit.movePath).toBeUndefined();
       expect(unit.moveTarget).toEqual({ position: { x: 16, y: 16 } });
@@ -457,7 +459,7 @@ describe('moveSelectedTo', () => {
       moveSelectedTo(
         queries,
         new Vector2(centre(8, 0).x, centre(8, 0).y),
-        DEFAULT_CELL_SIZE,
+        CELL_SIZE,
         wallWithGap
       );
 
@@ -662,7 +664,7 @@ describe('attackSelectedTarget', () => {
     const unit = addTeamUnit(world, 'blue', true);
     const enemy = addCombatant(world, 'red', 500, 500, 9);
 
-    moveSelectedTo(queries, new Vector2(300, 400), DEFAULT_CELL_SIZE);
+    moveSelectedTo(queries, new Vector2(300, 400), CELL_SIZE);
     expect(unit.moveTarget).toBeDefined();
 
     attackSelectedTarget(queries, enemy);
@@ -723,7 +725,7 @@ describe('createInputSystem right-click handling', () => {
     const queries = createQueries(world);
     const canvas = makeCanvas();
     const input = new InputSystem(canvas);
-    const system = createInputSystem(input, queries, () => viewport, DEFAULT_CELL_SIZE);
+    const system = createInputSystem(input, queries, () => viewport, CELL_SIZE);
     const rightClick = (x: number, y: number) => {
       canvas.dispatchEvent(
         new MouseEvent('contextmenu', { clientX: x, clientY: y, cancelable: true })

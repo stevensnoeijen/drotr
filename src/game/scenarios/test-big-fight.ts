@@ -1,7 +1,7 @@
-import { cellPosition, spawnUnit } from '~/game/data/spawn';
+import { spawnUnit } from '~/game/data/spawn';
 import type { UnitType } from '~/game/data/units';
 import type { ParsedMap } from '~/game/map/load-tiled-map';
-import { cellSizeOf } from '~/lib/grid';
+import { CELLS_PER_TILE, cellSizeOf } from '~/lib/grid';
 import type { Scenario } from './types';
 
 /**
@@ -38,15 +38,15 @@ const TEAM_ROSTER: UnitType[] = (Object.entries(UNIT_COUNTS) as [UnitType, numbe
 );
 
 /**
- * Fallback grid used when no map loaded (or the blank map is selected), so
- * the scenario still has somewhere to scatter units — and so its unit test
- * doesn't need a real `ParsedMap` fixture. Large enough, with no collision
- * data, to hold `UNITS_PER_TEAM * 2` unique cells comfortably.
+ * Fallback tile grid used when no map loaded (or the blank map is selected),
+ * so the scenario still has somewhere to scatter units — and so its unit
+ * test doesn't need a real `ParsedMap` fixture. Large enough, with no
+ * collision data, to hold `UNITS_PER_TEAM * 2` unique tiles comfortably.
  */
 const FALLBACK_GRID = { width: 64, height: 64 };
 
-/** All grid cells not blocked by terrain (or, with no map, the whole fallback grid). */
-function walkableCells(map: ParsedMap | undefined): { col: number; row: number }[] {
+/** All map tiles not blocked by terrain (or, with no map, the whole fallback grid). */
+function walkableTiles(map: ParsedMap | undefined): { col: number; row: number }[] {
   const { width, height } = map ?? FALLBACK_GRID;
   const cells: { col: number; row: number }[] = [];
 
@@ -74,7 +74,7 @@ function shuffle<T>(items: T[]): T[] {
 /**
  * `UNITS_PER_TEAM` units per side (see `UNIT_COUNTS` for the mix of
  * swordsmen, knights and crossbow soldiers), scattered randomly over every
- * walkable cell of whichever map is loaded (no two units sharing a cell),
+ * walkable tile of whichever map is loaded (no two units sharing a tile),
  * rather than two facing blocks — so combat isn't just a single front line
  * of a few dozen units trading blows while the rest queue up behind it.
  * Scattered placement means most units start outside every other unit's
@@ -85,10 +85,12 @@ function shuffle<T>(items: T[]): T[] {
  * targeting/cooldowns/damage all running concurrently, under load, than a
  * single collision line. A mixed roster additionally stresses differing
  * move speeds, differing aggro ranges and the ranged-projectile path, which
- * an all-swordsmen roster never touched. Knights currently have no
- * multi-cell footprint, so, like every other unit here, they're placed as
- * single-cell occupants — a deliberate simplification until that capability
- * exists. Prefixed `test-`: it exists to stress-test the engine, not to
+ * an all-swordsmen roster never touched. Scattering one unit per *tile*
+ * rather than per half-tile movement cell keeps the load-tested density
+ * unchanged and gives a knight — drawn a full tile, but occupying a single
+ * cell — room to spawn without overlapping a neighbour; each unit starts in
+ * the half-tile cell at its tile's centre, the same way a map spawn point
+ * resolves. Prefixed `test-`: it exists to stress-test the engine, not to
  * demonstrate a real gameplay setup.
  */
 export const testBigFightScenario: Scenario = {
@@ -98,23 +100,24 @@ export const testBigFightScenario: Scenario = {
   setup: (world, map) => {
     const totalUnits = UNITS_PER_TEAM * 2;
     const cellSize = cellSizeOf(map);
-    const cells = shuffle(walkableCells(map));
+    const tileSize = cellSize * CELLS_PER_TILE;
+    const tiles = shuffle(walkableTiles(map));
 
-    if (cells.length < totalUnits) {
+    if (tiles.length < totalUnits) {
       throw new Error(
-        `test-big-fight needs ${totalUnits} walkable cells to scatter units onto, but only ${cells.length} are available`
+        `test-big-fight needs ${totalUnits} walkable tiles to scatter units onto, but only ${tiles.length} are available`
       );
     }
 
     for (let i = 0; i < totalUnits; i++) {
-      const { col, row } = cells[i];
+      const { col, row } = tiles[i];
       const team = i < UNITS_PER_TEAM ? 'blue' : 'red';
       const rosterIndex = i % UNITS_PER_TEAM;
 
       spawnUnit(world, {
         type: TEAM_ROSTER[rosterIndex],
         team,
-        position: cellPosition(col, row, cellSize),
+        position: { x: (col + 0.5) * tileSize, y: (row + 0.5) * tileSize },
       }, cellSize);
     }
   },

@@ -92,17 +92,17 @@ describe('testBigFightScenario', () => {
     }
   });
 
-  it('throws when the map has fewer walkable cells than units to place', () => {
+  it('throws when the map has fewer walkable tiles than units to place', () => {
     const world = new World<Entity>();
-    // Only 4 walkable cells (2x2), nowhere near enough for both teams.
+    // Only 4 walkable tiles (2x2), nowhere near enough for both teams.
     const map = mapWithWallColumn(2, 2, -1);
 
-    expect(() => testBigFightScenario.setup(world, map)).toThrow(/walkable cells/);
+    expect(() => testBigFightScenario.setup(world, map)).toThrow(/walkable tiles/);
   });
 
-  it('never places a unit on a blocked (wall) cell', () => {
+  it('never places a unit on a blocked (wall) tile', () => {
     const world = new World<Entity>();
-    // Wide enough (600 walkable cols x 2 rows minus the wall column) to fit
+    // Wide enough (300 cols x 2 rows minus the wall column) to fit
     // all of this scenario's units while still leaving a wall for every unit
     // to avoid.
     const map = mapWithWallColumn(300, 2, 150);
@@ -112,6 +112,21 @@ describe('testBigFightScenario', () => {
     for (const entity of world) {
       const col = entity.transform!.position.x / map.tileSize;
       expect(Math.floor(col)).not.toBe(150);
+    }
+  });
+
+  it('puts at most one unit on each tile, so a knight drawn a full tile starts clear of its neighbours', () => {
+    const world = new World<Entity>();
+    const map = mapWithWallColumn(300, 2, 150);
+
+    testBigFightScenario.setup(world, map);
+
+    const tiles = new Set<string>();
+    for (const entity of world) {
+      const { x, y } = entity.transform!.position;
+      const key = `${Math.floor(x / map.tileSize)},${Math.floor(y / map.tileSize)}`;
+      expect(tiles.has(key)).toBe(false);
+      tiles.add(key);
     }
   });
 });

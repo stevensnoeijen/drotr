@@ -34,10 +34,14 @@ export interface UnitDefinition {
   defence?: number;
   stamina?: number;
   speed?: number;
-  /** Movement speed in grid cells per second — see {@link file://../ecs/types.ts#MoveSpeed}. */
+  /** Movement speed in map tiles per second, converted to world units by `spawnUnit`. */
   movementSpeed?: number;
+  /**
+   * Attack reach. In map tiles for a projectile unit; for melee, `1` means
+   * "an adjacent movement cell". Converted by `attackRangeInCells`.
+   */
   range?: number;
-  /** Detection/aggro range in grid cells — see {@link file://../ecs/types.ts#AggroRange}. */
+  /** Detection/aggro range in map tiles, converted to cells by `spawnUnit`. */
   aggroRange?: number;
   /**
    * Whether this unit type fights with a fired projectile rather than
@@ -53,7 +57,7 @@ export interface UnitDefinition {
 export const units: Record<UnitType, UnitDefinition> = {
   swordsmen: swordsmenData as UnitDefinition,
   // Mounted, so faster than the infantry (swordsmen and crossbowsoldier both
-  // move at 2 cells/sec) and hits harder, but has less health — an elite
+  // move at 2 tiles/sec) and hits harder, but has less health — an elite
   // cavalry unit that closes distance fast and trades blows decisively
   // rather than grinding.
   knight: knightData as UnitDefinition,

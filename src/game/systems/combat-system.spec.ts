@@ -648,12 +648,13 @@ describe('attackers query', () => {
 });
 
 describe('cell geometry at a cell size other than the default', () => {
-  // A 40px-tile map: range and "settled" are judged in that map's own cells.
+  // A 40px cell: range and "settled" are judged in cells of whatever size
+  // the grid uses.
   const cellSize = 40;
 
   it('counts cell steps between the 40px cells two points fall in', () => {
-    // 79px apart along x: two 32px cells, but only one 40px cell.
-    expect(cellDistance({ x: 1, y: 1 }, { x: 80, y: 1 }, DEFAULT_CELL_SIZE)).toBe(2);
+    // 78px apart along x: two 32px cells, but only one 40px cell.
+    expect(cellDistance({ x: 1, y: 1 }, { x: 79, y: 1 }, 32)).toBe(2);
     expect(cellDistance({ x: 1, y: 1 }, { x: 79, y: 1 }, cellSize)).toBe(1);
   });
 

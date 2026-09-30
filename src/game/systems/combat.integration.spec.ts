@@ -10,7 +10,7 @@ import { markDirtyOnHealthChange } from '~/game/render/health-bar';
 import { DEFAULT_FIXED_STEP } from '~/game/game-loop';
 import { DEFAULT_CELL_SIZE } from '~/lib/grid';
 import { createCellOccupancySystem } from './cell-occupancy-system';
-import { createCombatSystem } from './combat-system';
+import { cellDistance, createCombatSystem } from './combat-system';
 import { createMovePathSystem } from './move-path-system';
 import { createMoveTargetSystem } from './move-target-system';
 import { createMoveVelocitySystem } from './move-velocity-system';
@@ -49,7 +49,7 @@ describe('perception + seek + move + combat integration', () => {
     const occupancy = new OccupancyGrid(grid, DEFAULT_CELL_SIZE);
 
     // Four cells apart: outside swordsmen's 1-cell attack range, inside
-    // their 5-cell aggro range.
+    // their 5-tile (10-cell) aggro range.
     const blue = spawnUnit(
       world,
       { type: 'swordsmen', team: 'blue', position: cellPosition(2, 0, DEFAULT_CELL_SIZE) },
@@ -99,15 +99,20 @@ describe('perception + seek + move + combat integration', () => {
     expect(red.target).toEqual({ entityId: blue.id });
     expect(blue.health).toEqual({ current: 15, max: 15 });
 
-    // Six seconds: ~0.75s to close 3 cells at 2 cells/s each, then five
-    // 1s-cooldown swings of 3 damage to take 15 HP off.
+    // Six seconds: well under a second to close 3 cells at 2 tiles (4
+    // cells)/s each, then five 1s-cooldown swings of 3 damage to take 15 HP
+    // off.
     for (let i = 0; i < 360; i++) {
       tick();
     }
 
-    // Parked exactly at the 1-cell attack range, not overlapping and not
-    // stalled out of reach.
-    expect(distance(blue, red)).toBeCloseTo(DEFAULT_CELL_SIZE, 6);
+    // Parked exactly at the 1-cell attack range — in adjacent cells, which
+    // may be diagonal ones since range is counted in 8-way steps — not
+    // overlapping and not stalled out of reach.
+    expect(
+      cellDistance(blue.transform!.position, red.transform!.position, DEFAULT_CELL_SIZE)
+    ).toBe(1);
+    expect(distance(blue, red)).toBeLessThanOrEqual(DEFAULT_CELL_SIZE * Math.SQRT2 + 1e-6);
     expect(blue.velocity).toEqual({ x: 0, y: 0 });
 
     // Both swing on the same schedule, but the blow that lands first kills:

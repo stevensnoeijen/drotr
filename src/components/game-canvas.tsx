@@ -291,12 +291,12 @@ export default function GameCanvas({
         );
       }
 
-      // The unit-placement grid is the map's own tile grid, whatever its
-      // tile size, so units, pathfinding, occupancy and terrain collision
-      // all agree on what a cell is: every system below that converts
-      // between world positions and cells takes `cellSize`, A* routes over
-      // the map's own collision grid, and unit-to-unit occupancy layers
-      // straight over that same grid. No map means straight-line orders and
+      // The unit-placement grid is half the map's tile size, so units,
+      // pathfinding, occupancy and terrain collision all agree on what a
+      // cell is: every system below that converts between world positions
+      // and cells takes `cellSize`, A* routes over the map's collision
+      // upsampled onto that grid, and unit-to-unit occupancy layers
+      // straight over the same grid. No map means straight-line orders and
       // no occupancy.
       const { cellSize, navigationGrid, occupancyGrid } = createMapNavigation(map);
 
@@ -360,7 +360,9 @@ export default function GameCanvas({
         y: gameViewport.y,
         scale: gameViewport.scale.x,
       });
-      const mapBounds = map ? { width: map.width, height: map.height } : undefined;
+      const mapBounds = navigationGrid
+        ? { width: navigationGrid.width, height: navigationGrid.height }
+        : undefined;
 
       const canvas = app.canvas;
       inputSystem = new InputSystem(canvas);
