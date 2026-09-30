@@ -1,5 +1,6 @@
 import { Vector2 } from './math/vector2';
 import * as PathFinding from './navigation/astar';
+import type { CollisionGrid } from './navigation/astar';
 import type { Point } from './math/types';
 
 /**
@@ -28,6 +29,37 @@ export const DEFAULT_CELL_SIZE = 32;
  */
 export const cellSizeOf = (map?: { tileSize: number }): number => {
   return map?.tileSize ?? DEFAULT_CELL_SIZE;
+};
+
+/**
+ * How many unit-placement cells span one map tile along each axis. Unit data
+ * (movement speed, attack and aggro range, sprite size) is authored in map
+ * tiles; {@link tilesToCells} is the conversion to this finer grid.
+ */
+export const CELLS_PER_TILE = 2;
+
+/** A tile-authored length expressed in unit-placement cells. */
+export const tilesToCells = (tiles: number): number => tiles * CELLS_PER_TILE;
+
+/**
+ * Upsamples a per-tile collision grid to the unit-placement grid: every
+ * blocked tile blocks each of its `CELLS_PER_TILE x CELLS_PER_TILE` cells,
+ * and an open tile leaves them all open.
+ */
+export const upsampleCollision = (
+  grid: CollisionGrid,
+  factor: number = CELLS_PER_TILE
+): CollisionGrid => {
+  const width = grid.width * factor;
+  const height = grid.height * factor;
+  const collision = new Uint8Array(width * height);
+  for (let row = 0; row < height; row++) {
+    const tileRow = Math.floor(row / factor) * grid.width;
+    for (let col = 0; col < width; col++) {
+      collision[row * width + col] = grid.collision[tileRow + Math.floor(col / factor)];
+    }
+  }
+  return { width, height, collision };
 };
 
 /**

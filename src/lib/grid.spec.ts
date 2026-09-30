@@ -16,6 +16,9 @@ import {
   cellCentreCoordinate,
   isAtCellCentre,
   type ViewportTransform,
+  CELLS_PER_TILE,
+  tilesToCells,
+  upsampleCollision,
 } from './grid';
 
 describe('toWorldPositionCellCenter', () => {
@@ -233,5 +236,38 @@ describe('a cell size other than the default', () => {
       y: 0,
     });
     expect(screenToGrid({ x: 160, y: 0 }, viewport, cellSize, bounds)).toBeUndefined();
+  });
+});
+
+describe('tilesToCells', () => {
+  it('converts tile-authored lengths to half-tile cells', () => {
+    expect(CELLS_PER_TILE).toBe(2);
+    expect(tilesToCells(1)).toBe(2);
+    expect(tilesToCells(5)).toBe(10);
+    expect(tilesToCells(0.5)).toBe(1);
+  });
+});
+
+describe('upsampleCollision', () => {
+  it('makes each blocked tile block its 2x2 sub-cells', () => {
+    // 3x2 tiles: only the middle tile of the top row is blocked.
+    const tiles = { width: 3, height: 2, collision: Uint8Array.from([0, 1, 0, 0, 0, 0]) };
+
+    const cells = upsampleCollision(tiles);
+
+    expect(cells.width).toBe(6);
+    expect(cells.height).toBe(4);
+    // prettier-ignore
+    expect([...cells.collision]).toEqual([
+      0, 0, 1, 1, 0, 0,
+      0, 0, 1, 1, 0, 0,
+      0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0,
+    ]);
+  });
+
+  it('keeps an all-open grid open', () => {
+    const cells = upsampleCollision({ width: 2, height: 2, collision: new Uint8Array(4) });
+    expect(cells.collision.every((value) => value === 0)).toBe(true);
   });
 });
