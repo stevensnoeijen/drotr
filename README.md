@@ -39,7 +39,7 @@ They can also be toggled live from the in-game "Debug" menu.
 
 Current debug options are:
 
-- `grid`, shows the map's tile grid
+- `grid`, shows the half-tile grid units move on
 - `health`, always shows every unit's health bar
 - `unit-info`, shows a tooltip with the stats of the hovered unit
 - `targets`, draws a line from each unit to its attack target

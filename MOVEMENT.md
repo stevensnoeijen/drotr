@@ -20,14 +20,20 @@ Combat and perception are left out to keep the focus on movement.
 A unit on a map with no terrain gets a `MoveTarget` and no `MovePath` — there
 is nothing to route around, so the straight-line path is the path.
 
-A **cell** is always one of the loaded map's own tiles: the cell size is the
-map's tile size (`cellSizeOf` in `src/lib/grid.ts` — 32 px for the
-hand-authored maps, 40 px for the converted county maps, 32 px with no map).
-Units are placed on, routed through and collide in the same grid the
-terrain's collision is authored in, so nothing is resampled between grids of
-different resolutions; `createMapNavigation`
-(`src/game/navigation/map-navigation.ts`) sets up pathfinding and occupancy
-for any tile size.
+A **cell** is half of one of the loaded map's tiles on each axis: the cell
+size is half the map's tile size (`cellSizeOf` in `src/lib/grid.ts` — 16 px
+on the hand-authored 32 px maps, 20 px on the converted 40 px county maps,
+16 px with no map), so an infantry unit gets a cell of its own. Units are
+placed on, routed through and collide in this grid; `createMapNavigation`
+(`src/game/navigation/map-navigation.ts`) upsamples the terrain's per-tile
+collision onto it once (a blocked tile blocks its 2x2 cells) and sets up
+pathfinding and occupancy for any tile size. Every unit occupies exactly one
+cell, even a knight that is drawn a full tile wide.
+
+Unit data (`movementSpeed`, `range`, `aggroRange`, `size`) is authored in
+tiles and converted in one place, `spawnUnit` (`src/game/data/spawn.ts`), so
+a unit covers the same world distance whatever the cell size; a melee
+`range` of 1 means an adjacent cell.
 
 ## Issuing an order
 
