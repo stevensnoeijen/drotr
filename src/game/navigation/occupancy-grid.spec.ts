@@ -223,7 +223,120 @@ describe('OccupancyGrid', () => {
     });
   });
 
-  describe('asBlockedGridExcluding', () => {
+  describe('blocks (multi-cell footprints)', () => {
+  it('lists every cell of a rectangle anchored at a given cell', () => {
+    const grid = open();
+
+    expect(grid.blockCells(grid.indexOf(1, 1), { width: 2, height: 2 })).toEqual([
+      grid.indexOf(1, 1),
+      grid.indexOf(2, 1),
+      grid.indexOf(1, 2),
+      grid.indexOf(2, 2),
+    ]);
+    expect(grid.blockCells(grid.indexOf(1, 1), { width: 1, height: 2 })).toEqual([
+      grid.indexOf(1, 1),
+      grid.indexOf(1, 2),
+    ]);
+  });
+
+  it('refuses a block that would fall off the grid', () => {
+    const grid = open();
+
+    expect(grid.blockCells(grid.indexOf(4, 4), { width: 2, height: 2 })).toBeUndefined();
+  });
+
+  it('reserves every cell of a 2x2 block atomically', () => {
+    const grid = open();
+    const anchor = grid.indexOf(1, 1);
+
+    expect(grid.reserveBlock(anchor, { width: 2, height: 2 }, 1)).toBe(true);
+
+    for (const cell of [grid.indexOf(1, 1), grid.indexOf(2, 1), grid.indexOf(1, 2), grid.indexOf(2, 2)]) {
+      expect(grid.occupantAt(cell)).toBe(1);
+    }
+  });
+
+  it('leaves the whole grid unchanged when a 2x2 claim hits one occupied cell', () => {
+    const grid = open();
+    const anchor = grid.indexOf(1, 1);
+    // One of the four cells the block would need is already someone else's.
+    grid.reserve(grid.indexOf(2, 2), 9);
+
+    expect(grid.reserveBlock(anchor, { width: 2, height: 2 }, 1)).toBe(false);
+
+    for (const cell of [grid.indexOf(1, 1), grid.indexOf(2, 1), grid.indexOf(1, 2)]) {
+      expect(grid.occupantAt(cell)).toBe(NO_OCCUPANT);
+    }
+    expect(grid.occupantAt(grid.indexOf(2, 2))).toBe(9);
+  });
+
+  it('never reserves a block that would fall off the grid', () => {
+    const grid = open();
+
+    expect(grid.reserveBlock(grid.indexOf(4, 4), { width: 2, height: 2 }, 1)).toBe(false);
+  });
+
+  it('releases exactly the cells a block holds, and nothing another unit holds', () => {
+    const grid = open();
+    const size = { width: 2, height: 2 };
+    grid.reserveBlock(grid.indexOf(1, 1), size, 1);
+    grid.reserve(grid.indexOf(3, 1), 9);
+
+    grid.releaseBlock(grid.indexOf(1, 1), size, 1);
+
+    for (const cell of [grid.indexOf(1, 1), grid.indexOf(2, 1), grid.indexOf(1, 2), grid.indexOf(2, 2)]) {
+      expect(grid.occupantAt(cell)).toBe(NO_OCCUPANT);
+    }
+    expect(grid.occupantAt(grid.indexOf(3, 1))).toBe(9);
+  });
+
+  it('keeps cells shared with the block being kept when releasing', () => {
+    const grid = open();
+    const size = { width: 2, height: 2 };
+    grid.reserveBlock(grid.indexOf(1, 1), size, 1);
+    // Stepping one cell right: the new block overlaps two of the old one's cells.
+    grid.reserveBlock(grid.indexOf(2, 1), size, 1);
+
+    grid.releaseBlock(grid.indexOf(1, 1), size, 1, grid.indexOf(2, 1));
+
+    // Cells only the old block held are freed...
+    expect(grid.occupantAt(grid.indexOf(1, 1))).toBe(NO_OCCUPANT);
+    expect(grid.occupantAt(grid.indexOf(1, 2))).toBe(NO_OCCUPANT);
+    // ...but the two shared with the kept (new) block stay held.
+    expect(grid.occupantAt(grid.indexOf(2, 1))).toBe(1);
+    expect(grid.occupantAt(grid.indexOf(2, 2))).toBe(1);
+  });
+
+  it('a block is only available while every one of its cells is', () => {
+    const grid = open();
+    grid.reserve(grid.indexOf(2, 2), 9);
+
+    expect(grid.isBlockAvailableFor(grid.indexOf(1, 1), { width: 2, height: 2 }, 1)).toBe(false);
+    expect(grid.isBlockAvailableFor(grid.indexOf(3, 1), { width: 2, height: 2 }, 1)).toBe(true);
+  });
+
+  it('treats a block already held entirely by the same occupant as available', () => {
+    const grid = open();
+    const size = { width: 2, height: 2 };
+    grid.reserveBlock(grid.indexOf(1, 1), size, 1);
+
+    expect(grid.isBlockAvailableFor(grid.indexOf(1, 1), size, 1)).toBe(true);
+    expect(grid.reserveBlock(grid.indexOf(1, 1), size, 1)).toBe(true);
+  });
+});
+
+describe('asBlockedGridExcluding', () => {
+  it('blocks every cell of another occupant\'s multi-cell footprint', () => {
+    const grid = open();
+    grid.reserveBlock(grid.indexOf(2, 2), { width: 2, height: 2 }, 7);
+
+    const snapshot = grid.asBlockedGridExcluding(1);
+
+    for (const cell of [grid.indexOf(2, 2), grid.indexOf(3, 2), grid.indexOf(2, 3), grid.indexOf(3, 3)]) {
+      expect(snapshot.collision[cell]).toBe(1);
+    }
+  });
+
     it('blocks a cell held by another occupant', () => {
       const grid = open();
       const other = grid.indexOf(2, 2);
@@ -351,5 +464,39 @@ describe('findNearestAvailableCell', () => {
 
   it('returns NO_CELL for an off-grid request', () => {
     expect(findNearestAvailableCell(grid(), NO_CELL, 1)).toBe(NO_CELL);
+  });
+
+  describe('with a multi-cell footprint', () => {
+    const size = { width: 2, height: 2 };
+
+    it('returns the requested anchor when its whole block is free', () => {
+      const occupancy = grid();
+      const wanted = occupancy.indexOf(1, 1);
+
+      expect(findNearestAvailableCell(occupancy, wanted, 1, undefined, undefined, size)).toBe(
+        wanted
+      );
+    });
+
+    it('rejects an anchor whose block only partly overlaps an occupied cell', () => {
+      const occupancy = grid();
+      const wanted = occupancy.indexOf(1, 1);
+      // Blocks the bottom-right cell of the 2x2 block anchored at (1, 1).
+      occupancy.reserve(occupancy.indexOf(2, 2), 9);
+
+      const found = findNearestAvailableCell(occupancy, wanted, 1, undefined, undefined, size);
+
+      expect(found).not.toBe(wanted);
+      expect(occupancy.isBlockAvailableFor(found, size, 1)).toBe(true);
+    });
+
+    it('never offers an anchor whose block would fall off the grid', () => {
+      const occupancy = grid();
+      const corner = occupancy.indexOf(4, 4);
+
+      const found = findNearestAvailableCell(occupancy, corner, 1, undefined, undefined, size);
+
+      expect(occupancy.blockCells(found, size)).toBeDefined();
+    });
   });
 });

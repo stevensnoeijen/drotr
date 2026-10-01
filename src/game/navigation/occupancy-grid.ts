@@ -10,6 +10,19 @@ export const NO_OCCUPANT = 0;
 export const NO_CELL = -1;
 
 /**
+ * A rectangular footprint's size, in cells — structurally the same shape as
+ * `Footprint` (`~/game/ecs/components`), but this module stays free of any
+ * ECS dependency: it only ever needs the two numbers.
+ */
+export interface BlockSize {
+  width: number;
+  height: number;
+}
+
+/** The size every occupancy check defaults to: a single cell. */
+export const SINGLE_CELL: BlockSize = { width: 1, height: 1 };
+
+/**
  * How far out {@link findNearestAvailableCell} rings before giving up, in
  * cells. Matches the pathfinder's own `nearestSearchRadius` default, so a
  * blocked destination relocates over the same neighbourhood whether it was
@@ -183,6 +196,88 @@ export class OccupancyGrid {
   }
 
   /**
+   * Row-major indices of the `size.width` x `size.height` block anchored
+   * (top-left) at `anchor`, or `undefined` when any of it falls off the
+   * grid. `size` defaults to a single cell, so passing it in reduces to
+   * `[anchor]`.
+   */
+  public blockCells(anchor: number, size: BlockSize = SINGLE_CELL): number[] | undefined {
+    if (anchor === NO_CELL) {
+      return undefined;
+    }
+    const col = anchor % this.width;
+    const row = Math.floor(anchor / this.width);
+    const cells: number[] = [];
+    for (let dy = 0; dy < size.height; dy++) {
+      for (let dx = 0; dx < size.width; dx++) {
+        const index = this.indexOf(col + dx, row + dy);
+        if (index === NO_CELL) {
+          return undefined;
+        }
+        cells.push(index);
+      }
+    }
+    return cells;
+  }
+
+  /**
+   * {@link isAvailableFor} for a whole block: on the map, walkable, and
+   * free or already held by `occupantId`, cell by cell. The cells a moving
+   * unit already holds pass trivially, so for a block one step ahead of
+   * where it stands this checks exactly the leading cells it would move
+   * into.
+   */
+  public isBlockAvailableFor(anchor: number, size: BlockSize, occupantId: number): boolean {
+    const cells = this.blockCells(anchor, size);
+    return cells !== undefined && cells.every((index) => this.isAvailableFor(index, occupantId));
+  }
+
+  /**
+   * Claims a whole block for `occupantId`, **atomically**: either every
+   * cell of it is reserved, or — when any single one is unavailable —
+   * none of them are. There is no partial claim that leaves stray cells
+   * held after a failed reservation.
+   */
+  public reserveBlock(anchor: number, size: BlockSize, occupantId: number): boolean {
+    if (!this.isBlockAvailableFor(anchor, size, occupantId)) {
+      return false;
+    }
+    for (const index of this.blockCells(anchor, size)!) {
+      this.occupants[index] = occupantId;
+    }
+    return true;
+  }
+
+  /**
+   * Drops `occupantId`'s claim on every cell of the block anchored at
+   * `anchor`, except any that also lie in the block anchored at `keep` —
+   * the block a unit still stands in or is moving into, which may overlap
+   * the one it's letting go of. A cell held by someone else is left alone,
+   * exactly as {@link release} already guards per cell.
+   */
+  public releaseBlock(
+    anchor: number,
+    size: BlockSize,
+    occupantId: number,
+    keep: number = NO_CELL
+  ): void {
+    if (anchor === NO_CELL) {
+      return;
+    }
+    const kept = new Set(this.blockCells(keep, size) ?? []);
+    const col = anchor % this.width;
+    const row = Math.floor(anchor / this.width);
+    for (let dy = 0; dy < size.height; dy++) {
+      for (let dx = 0; dx < size.width; dx++) {
+        const index = this.indexOf(col + dx, row + dy);
+        if (!kept.has(index)) {
+          this.release(index, occupantId);
+        }
+      }
+    }
+  }
+
+  /**
    * A one-off snapshot grid for re-routing a specific blocked unit: terrain
    * blocking is carried over unchanged, and every cell currently held by
    * some *other* occupant is blocked too, so `planMovePath` can route a
@@ -221,20 +316,30 @@ export class OccupancyGrid {
  * `taken` is what lets one batch of orders (a group right-click) hand every
  * unit a *distinct* destination: cells assigned earlier in the batch are
  * reserved on paper before anyone has walked anywhere.
+ *
+ * With a `size` larger than one cell, `from` and the result are anchor
+ * (top-left) cells of a `size`-cell block, and every cell of the block at a
+ * candidate anchor must qualify — the nearest origin whose *whole*
+ * rectangle is free, not merely the nearest free single cell.
  */
 export function findNearestAvailableCell(
   grid: OccupancyGrid,
   from: number,
   occupantId: number,
   taken: ReadonlySet<number> = new Set(),
-  maxRadius = DEFAULT_SEARCH_RADIUS
+  maxRadius = DEFAULT_SEARCH_RADIUS,
+  size: BlockSize = SINGLE_CELL
 ): number {
   if (from === NO_CELL) {
     return NO_CELL;
   }
 
-  const isFree = (index: number) =>
-    index !== NO_CELL && !taken.has(index) && grid.isAvailableFor(index, occupantId);
+  const isFree = (index: number) => {
+    if (index === NO_CELL || !grid.isBlockAvailableFor(index, size, occupantId)) {
+      return false;
+    }
+    return grid.blockCells(index, size)!.every((cell) => !taken.has(cell));
+  };
 
   if (isFree(from)) {
     return from;
