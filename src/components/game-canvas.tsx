@@ -42,9 +42,10 @@ import { units } from '~/game/data/units';
 
 /**
  * Draws a light grid overlay over the given canvas size, for `?debug=grid`.
- * `cellSize` should be the loaded map's actual tile size (see `cellSizeOf`)
- * — drawing lines at any other spacing makes the overlay cut through tiles
- * (walls included) instead of outlining them.
+ * `cellSize` should be the loaded map's unit-placement cell size (see
+ * `cellSizeOf`), half its tile size — so the overlay outlines the cells
+ * units move on, with every other line on a tile boundary; any other
+ * spacing would cut through tiles (walls included) instead.
  */
 function drawGrid(width: number, height: number, cellSize: number): Graphics {
   const graphics = new Graphics();
@@ -291,25 +292,22 @@ export default function GameCanvas({
         );
       }
 
-      // The unit-placement grid is the map's own tile grid, whatever its
-      // tile size, so units, pathfinding, occupancy and terrain collision
-      // all agree on what a cell is: every system below that converts
-      // between world positions and cells takes `cellSize`, A* routes over
-      // the map's own collision grid, and unit-to-unit occupancy layers
-      // straight over that same grid. No map means straight-line orders and
+      // The unit-placement grid is half the map's tile size, so units,
+      // pathfinding, occupancy and terrain collision all agree on what a
+      // cell is: every system below that converts between world positions
+      // and cells takes `cellSize`, A* routes over the map's collision
+      // upsampled onto that grid, and unit-to-unit occupancy layers
+      // straight over the same grid. No map means straight-line orders and
       // no occupancy.
       const { cellSize, navigationGrid, occupancyGrid } = createMapNavigation(map);
 
       // Reactively mirrors `queries.renderable` into Pixi views: it must be
       // live before any spawning happens below so every unit — whether
       // added by the map's spawns or by the scenario's own setup — gets a
-      // view, and every removal cleans its view up. Created only once the
-      // map has loaded, since it lays unit overlays out against the map's
-      // cell size.
+      // view, and every removal cleans its view up.
       renderSystem = new RenderSystem(
         queries.renderable,
         entitiesLayer,
-        cellSize,
         debugFlagsRef.current?.has('health') ?? false
       );
       syncHealthBarsRef.current = () => {
@@ -360,7 +358,9 @@ export default function GameCanvas({
         y: gameViewport.y,
         scale: gameViewport.scale.x,
       });
-      const mapBounds = map ? { width: map.width, height: map.height } : undefined;
+      const mapBounds = navigationGrid
+        ? { width: navigationGrid.width, height: navigationGrid.height }
+        : undefined;
 
       const canvas = app.canvas;
       inputSystem = new InputSystem(canvas);

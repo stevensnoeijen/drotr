@@ -15,6 +15,7 @@ import { DEFAULT_CELL_SIZE } from '~/lib/grid';
  */
 const STATS_FREE_DEFINITION: UnitDefinition = {
   type: 'knight',
+  size: { width: 1, height: 1 },
   shape: 'circle',
   health: 12,
 };
@@ -26,11 +27,11 @@ describe('spawnUnit', () => {
     const unit = spawnUnit(world, {
       type: 'knight',
       team: 'red',
-      // Falls inside the [0, 32) cell on both axes, which centers on (16, 16).
+      // Falls inside the 16px cell spanning [0, 16) x [16, 32), centred on (8, 24).
       position: { x: 10, y: 20 },
     }, DEFAULT_CELL_SIZE);
 
-    expect(unit.transform?.position).toEqual({ x: 16, y: 16 });
+    expect(unit.transform?.position).toEqual({ x: 8, y: 24 });
     expect(unit.renderable?.shape).toBe('circle');
     expect(unit.team).toBe('red');
     expect(unit.unitType).toBe('knight');
@@ -57,7 +58,7 @@ describe('spawnUnit', () => {
     expect([...queries.selectable]).toEqual([blue]);
   });
 
-  it('sets attackRange from the unit definition\'s range, in grid cells', () => {
+  it('keeps a melee unit\'s range of 1 as one adjacent grid cell', () => {
     const world = new World<Entity>();
 
     const unit = spawnUnit(world, {
@@ -140,7 +141,7 @@ describe('spawnUnit', () => {
     });
   });
 
-  it('sets aggroRange from the unit definition\'s aggroRange, in grid cells', () => {
+  it('converts the unit definition\'s tile-authored aggroRange to grid cells', () => {
     const world = new World<Entity>();
 
     const unit = spawnUnit(world, {
@@ -149,7 +150,8 @@ describe('spawnUnit', () => {
       position: { x: 0, y: 0 },
     }, DEFAULT_CELL_SIZE);
 
-    expect(unit.aggroRange).toEqual({ value: 5 });
+    // 5 tiles, at two cells per tile.
+    expect(unit.aggroRange).toEqual({ value: 10 });
   });
 
   it('sets damage and attackCooldown from the unit definition\'s combat stats', () => {
@@ -176,12 +178,25 @@ describe('spawnUnit', () => {
     );
 
     expect(knight.attackRange).toEqual({ value: 1 });
-    expect(knight.aggroRange).toEqual({ value: 8 });
+    expect(knight.aggroRange).toEqual({ value: 16 });
     expect(knight.damage).toEqual({ value: 8 });
     expect(knight.attackCooldown).toEqual({ duration: 1 });
     expect(knight.moveSpeed).toBeDefined();
     expect(knight.ranged).toBeUndefined();
     expect([...queries.attackers]).toEqual([knight]);
+  });
+
+  it('converts a ranged unit\'s tile-authored range to grid cells', () => {
+    const world = new World<Entity>();
+
+    const unit = spawnUnit(world, {
+      type: 'crossbowsoldier',
+      team: 'blue',
+      position: { x: 0, y: 0 },
+    }, DEFAULT_CELL_SIZE);
+
+    // 5 tiles, at two cells per tile.
+    expect(unit.attackRange).toEqual({ value: 10 });
   });
 
   it('marks a crossbowsoldier as a ranged attacker, and spawns no extra entity for it', () => {
@@ -204,28 +219,29 @@ describe('spawnUnit', () => {
     const unit = spawnUnit(world, { type: 'knight', team: 'blue', position }, DEFAULT_CELL_SIZE);
     position.x = 999;
 
-    expect(unit.transform?.position.x).toBe(16);
+    expect(unit.transform?.position.x).toBe(8);
   });
 
   describe('on a map whose cells are not the default size', () => {
-    // The unit grid is the loaded map's own tile grid, so a 40px-tile map
-    // places, sizes and speeds units in 40px cells.
-    const cellSize = 40;
+    // A 40px-tile map places units in half-tile, 20px cells, and sizes and
+    // speeds them from its 40px tiles.
+    const tileSize = 40;
+    const cellSize = tileSize / 2;
 
     it('snaps to the centre of a cell of that size', () => {
       const world = new World<Entity>();
 
       const unit = spawnUnit(
         world,
-        // Inside the [40, 80) x [0, 40) cell, centred on (60, 20).
+        // Inside the [40, 60) x [20, 40) cell, centred on (50, 30).
         { type: 'knight', team: 'blue', position: { x: 41, y: 39 } },
         cellSize
       );
 
-      expect(unit.transform?.position).toEqual({ x: 60, y: 20 });
+      expect(unit.transform?.position).toEqual({ x: 50, y: 30 });
     });
 
-    it('converts cell-based movement and projectile speeds to world units at that size', () => {
+    it('converts tile-based movement and projectile speeds to world units at that tile size', () => {
       const world = new World<Entity>();
 
       const knight = spawnUnit(
@@ -244,13 +260,29 @@ describe('spawnUnit', () => {
         DEFAULT_CELL_SIZE
       );
 
-      expect(knight.moveSpeed).toEqual({ value: units.knight.movementSpeed! * cellSize });
+      expect(knight.moveSpeed).toEqual({ value: units.knight.movementSpeed! * tileSize });
       expect(crossbow.ranged!.projectileSpeed / cellSize).toBe(
         defaultCrossbow.ranged!.projectileSpeed / DEFAULT_CELL_SIZE
       );
     });
 
-    it('sizes the unit shape to fit inside a cell of that size', () => {
+    it.each([
+      ['swordsmen', 20],
+      ['crossbowsoldier', 20],
+      ['knight', 40],
+    ] as const)('sizes a %s from its unit-type size in tiles: %ipx across', (type, pixels) => {
+      const world = new World<Entity>();
+
+      const unit = spawnUnit(world, { type, team: 'blue', position: { x: 0, y: 0 } }, cellSize);
+
+      // Overlays span the full unit-type box; the shape sits inside it with
+      // a small margin so neighbours stay distinct.
+      expect(unit.renderable!.extent).toBe(pixels / 2);
+      expect(unit.renderable!.size).toBeLessThan(pixels / 2);
+      expect(unit.renderable!.size).toBeGreaterThan(pixels / 2 - 4);
+    });
+
+    it('scales unit sizes with the tile size, on a 32px-tile map as on a 40px one', () => {
       const world = new World<Entity>();
 
       const small = spawnUnit(
@@ -264,9 +296,21 @@ describe('spawnUnit', () => {
         cellSize
       );
 
-      expect(small.renderable?.size).toBe(13);
-      expect(large.renderable?.size).toBe(17);
-      expect(large.renderable!.size).toBeLessThan(cellSize / 2);
+      expect(small.renderable!.extent).toBe(16);
+      expect(large.renderable!.extent).toBe(20);
+      expect(large.renderable!.size - small.renderable!.size).toBe(4);
+    });
+
+    it('draws a knight two cells wide although it occupies one cell', () => {
+      const world = new World<Entity>();
+
+      const knight = spawnUnit(
+        world,
+        { type: 'knight', team: 'blue', position: { x: 0, y: 0 } },
+        cellSize
+      );
+
+      expect(knight.renderable!.extent! * 2).toBe(2 * cellSize);
     });
   });
 });

@@ -73,7 +73,7 @@ describe('planMovePath', () => {
     const { waypoints } = planMovePath(
       wallWithGap,
       { x: 3, y: 5 },
-      { x: 8 * DEFAULT_CELL_SIZE + 1, y: 4 * DEFAULT_CELL_SIZE + 31 },
+      { x: 8 * DEFAULT_CELL_SIZE + 1, y: 5 * DEFAULT_CELL_SIZE - 1 },
       DEFAULT_CELL_SIZE
     );
 

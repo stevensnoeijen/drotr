@@ -1,5 +1,6 @@
 {
   "type": "crossbowsoldier",
+  "size": { "width": 0.5, "height": 0.5 },
   "shape": "triangle",
   "health": 10,
   "attackDamage": 2,

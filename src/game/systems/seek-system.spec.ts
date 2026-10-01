@@ -4,12 +4,15 @@ import { describe, expect, it } from 'vitest';
 import { createQueries } from '~/game/ecs/world';
 import type { Entity } from '~/game/ecs/entity';
 import { OccupancyGrid } from '~/game/navigation/occupancy-grid';
-import { DEFAULT_CELL_SIZE, cellCentreCoordinate } from '~/lib/grid';
+import { cellCentreCoordinate } from '~/lib/grid';
 import { createSeekSystem, PURSUIT_REPATH_INTERVAL } from './seek-system';
 
+/** Cell size the literal world coordinates below are written against. */
+const CELL_SIZE = 32;
+
 const centre = (col: number, row: number) => ({
-  x: cellCentreCoordinate(col, DEFAULT_CELL_SIZE),
-  y: cellCentreCoordinate(row, DEFAULT_CELL_SIZE),
+  x: cellCentreCoordinate(col, CELL_SIZE),
+  y: cellCentreCoordinate(row, CELL_SIZE),
 });
 
 /** A collision grid in the exact shape a loaded map exposes. */
@@ -39,7 +42,7 @@ describe('createSeekSystem', () => {
     function setup(targetCell = centre(10, 0), range = 1, selfCell = centre(0, 0)) {
       const world = new World<Entity>();
       const queries = createQueries(world);
-      const system = createSeekSystem(queries, DEFAULT_CELL_SIZE);
+      const system = createSeekSystem(queries, CELL_SIZE);
 
       const target = world.add({
         id: 1,
@@ -190,8 +193,8 @@ describe('createSeekSystem', () => {
     function setup() {
       const world = new World<Entity>();
       const queries = createQueries(world);
-      const occupancy = new OccupancyGrid(openGround, DEFAULT_CELL_SIZE);
-      const system = createSeekSystem(queries, DEFAULT_CELL_SIZE, openGround, occupancy);
+      const occupancy = new OccupancyGrid(openGround, CELL_SIZE);
+      const system = createSeekSystem(queries, CELL_SIZE, openGround, occupancy);
 
       const target = world.add({
         id: 1,
@@ -201,7 +204,7 @@ describe('createSeekSystem', () => {
         id: 2,
         transform: { position: { ...centre(0, 0) }, rotation: 0 },
         velocity: { x: 0, y: 0 },
-        moveSpeed: { value: DEFAULT_CELL_SIZE },
+        moveSpeed: { value: CELL_SIZE },
         attackRange: { value: 1 },
         target: { entityId: target.id! },
       });
@@ -288,7 +291,7 @@ describe('createSeekSystem', () => {
     function setup(grid: ReturnType<typeof gridFrom> | undefined, selfCell = centre(0, 0)) {
       const world = new World<Entity>();
       const queries = createQueries(world);
-      const system = createSeekSystem(queries, DEFAULT_CELL_SIZE, grid);
+      const system = createSeekSystem(queries, CELL_SIZE, grid);
 
       const enemy = world.add({
         id: 1,
@@ -300,7 +303,7 @@ describe('createSeekSystem', () => {
         id: 2,
         transform: { position: { ...selfCell }, rotation: 0 },
         velocity: { x: 0, y: 0 },
-        moveSpeed: { value: DEFAULT_CELL_SIZE },
+        moveSpeed: { value: CELL_SIZE },
         attackRange: { value: 1 },
         team: 'blue' as const,
         health: { current: 10, max: 10 },

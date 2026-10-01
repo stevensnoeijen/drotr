@@ -2,10 +2,10 @@ import type { World } from 'miniplex';
 
 import type { Entity } from '~/game/ecs/entity';
 import type { Team } from '~/game/ecs/components';
-import { toWorldPositionCellCenter } from '~/lib/grid';
+import { CELLS_PER_TILE, tilesToCells, toWorldPositionCellCenter } from '~/lib/grid';
 import { Vector2 } from '~/lib/math/vector2';
 import type { Point } from '~/lib/math/types';
-import { units, type UnitType } from './units';
+import { unitSizeInTiles, units, type UnitDefinition, type UnitType } from './units';
 
 /** Per-team fill colour for a unit's shape, used by the (view-only) renderer. */
 const TEAM_COLOR: Record<Team, number> = {
@@ -15,25 +15,36 @@ const TEAM_COLOR: Record<Team, number> = {
 
 /**
  * How much smaller, in world units, a unit shape's rendered radius/half-extent
- * is than half of the grid cell it's centered in, so the shape fits inside
- * the cell with a small margin on every side — 13px in a 32px cell, 17px in
- * a 40px one. Its selection marks and health bar
- * (see `render-system.ts`, `health-bar.ts`) are positioned against the
- * cell's own edges rather than this shape size, so they stay pinned to
- * the cell regardless of how big the shape is. This is
- * placeholder-primitive sizing (one size for every type); real unit
- * sprites vary (32x32 to 64x64) and per-type sizing is asset-integration
- * work (phase 6), not this constant.
+ * is than half of its unit-type size (see `unitSizeInTiles`), so neighbouring
+ * units stay visually distinct: on a 40px-tile map an infantry unit (half a
+ * tile) is drawn 16px across, a knight (a full tile) 36px — close to the
+ * visible extent of their original sprites. Its selection marks and health
+ * bar (see `render-system.ts`, `health-bar.ts`) are laid out against the
+ * full unit-type size (`renderable.extent`), not this shape size.
  */
-const UNIT_MARGIN = 3;
+const UNIT_MARGIN = 2;
 
 /**
- * Grid cells per second a fired projectile (currently just the crossbow
+ * Map tiles per second a fired projectile (currently just the crossbow
  * soldier's bolt) travels. Fast enough to visibly cross the map as a
  * "shot" rather than a crawl, while still taking a handful of ticks to reach
  * `attackRange` so the travel actually reads on screen.
  */
-const PROJECTILE_SPEED_CELLS = 10;
+const PROJECTILE_SPEED_TILES = 10;
+
+/**
+ * A unit type's attack range in unit-placement cells. Ranged attacks are
+ * authored in map tiles and scale with the grid, so a crossbow soldier
+ * shoots from the same world distance however finely tiles are subdivided.
+ * Melee is the exception: its `range` means "adjacent movement cell", so it
+ * stays as authored.
+ */
+export function attackRangeInCells(definition: UnitDefinition): number | undefined {
+  if (definition.range === undefined) {
+    return undefined;
+  }
+  return definition.projectile ? tilesToCells(definition.range) : definition.range;
+}
 
 /** Auto-incrementing counter for entity IDs (for debugging/identification). */
 let nextEntityId = 1;
@@ -69,9 +80,14 @@ export interface SpawnUnitOptions {
  * caller computed its placement — renders centered in a cell rather than
  * wherever it happened to land.
  *
- * `cellSize` is the world size of that grid's cells — the loaded map's tile
- * size (see `cellSizeOf`). Unit data is authored in cells (movement speed in
- * cells per second), so it's also what turns that into world units.
+ * `cellSize` is the world size of that grid's cells — a fraction of the
+ * loaded map's tile size (see `cellSizeOf`). Unit data is authored in map
+ * tiles, and this is the one place it's converted: movement and projectile
+ * speed to world units per second, attack/aggro range to cells (see
+ * {@link attackRangeInCells}), which the systems then read as-is, and the
+ * unit-type size (see `unitSizeInTiles`) to the drawn shape's size and the
+ * box its overlays are laid out against. However big it is drawn, the unit
+ * occupies the single cell it is centred in.
  */
 export function spawnUnit(
   world: World<Entity>,
@@ -79,6 +95,9 @@ export function spawnUnit(
   cellSize: number
 ): Entity {
   const definition = units[type];
+  const tileSize = cellSize * CELLS_PER_TILE;
+  const sizeInTiles = unitSizeInTiles(definition);
+  const extent = (Math.max(sizeInTiles.width, sizeInTiles.height) * tileSize) / 2;
   const cellCenter = toWorldPositionCellCenter(new Vector2(position.x, position.y), cellSize);
 
   const entity: Entity = {
@@ -87,7 +106,8 @@ export function spawnUnit(
     renderable: {
       shape: definition.shape,
       color: TEAM_COLOR[team],
-      size: cellSize / 2 - UNIT_MARGIN,
+      size: extent - UNIT_MARGIN,
+      extent,
     },
     team,
     unitType: type,
@@ -100,11 +120,12 @@ export function spawnUnit(
   // or land an attack (CombatSystem, which needs all three of
   // `attackRange`, `damage` and `attackCooldown` to schedule one); it can
   // still be targeted and killed by others via `queries.combatants`.
-  if (definition.range !== undefined) {
-    entity.attackRange = { value: definition.range };
+  const attackRange = attackRangeInCells(definition);
+  if (attackRange !== undefined) {
+    entity.attackRange = { value: attackRange };
   }
   if (definition.aggroRange !== undefined) {
-    entity.aggroRange = { value: definition.aggroRange };
+    entity.aggroRange = { value: tilesToCells(definition.aggroRange) };
   }
   if (definition.attackDamage !== undefined) {
     entity.damage = { value: definition.attackDamage };
@@ -113,13 +134,13 @@ export function spawnUnit(
     entity.attackCooldown = { duration: definition.attackCooldown };
   }
   if (definition.movementSpeed !== undefined) {
-    entity.moveSpeed = { value: definition.movementSpeed * cellSize };
+    entity.moveSpeed = { value: definition.movementSpeed * tileSize };
   }
   // Marks this unit type's attacks as fired projectiles rather than instant
   // melee damage — read by `CombatSystem` to fire a travelling `Projectile`
   // (`fireProjectile`) instead of applying damage directly.
   if (definition.projectile) {
-    entity.ranged = { projectileSpeed: PROJECTILE_SPEED_CELLS * cellSize };
+    entity.ranged = { projectileSpeed: PROJECTILE_SPEED_TILES * tileSize };
   }
   // Only the player's own (blue) units can be click-selected; red is the
   // opposing side and has no `selectable` component at all — a query for

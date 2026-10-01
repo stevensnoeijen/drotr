@@ -41,22 +41,30 @@ function loadFagaras(): ParsedMap {
 
 /**
  * End-to-end coverage for a real county map, whose 40px tiles differ from
- * the default 32px cell size: a move order is routed by A* over the map's
- * own collision grid and walked through the same systems, in the same
- * order, `game-canvas.tsx` wires — never entering a tile the tileset marks
- * `blocked`.
+ * the default 32px tile size: a move order is routed by A* over the map's
+ * collision upsampled onto 20px half-tile cells and walked through the same
+ * systems, in the same order, `game-canvas.tsx` wires — never entering a
+ * cell of a tile the tileset marks `blocked`.
  */
 describe('navigation on a converted county map (fagaras, 40px tiles)', () => {
   const map = loadFagaras();
 
-  it('uses the 40px tiles as the unit grid, with pathfinding and occupancy enabled', () => {
+  it('moves units on 20px half-tile cells, with pathfinding and occupancy enabled', () => {
     const { cellSize, navigationGrid, occupancyGrid } =
       createMapNavigation(map);
 
     expect(map.tileSize).toBe(40);
-    expect(cellSize).toBe(40);
-    expect(navigationGrid).toBe(map);
-    expect(occupancyGrid?.cellSize).toBe(40);
+    expect(cellSize).toBe(20);
+    expect(navigationGrid).toMatchObject({ width: map.width * 2, height: map.height * 2 });
+    expect(occupancyGrid?.cellSize).toBe(20);
+  });
+
+  it('resolves every spawn point to an open cell on the half-tile grid', () => {
+    const { cellSize, occupancyGrid } = createMapNavigation(map);
+    for (const { position } of map.spawns) {
+      const cell = toGridPosition(new Vector2(position.x, position.y), cellSize);
+      expect(occupancyGrid!.isTerrainBlocked(occupancyGrid!.indexOf(cell.x, cell.y))).toBe(false);
+    }
   });
 
   it('routes a unit around blocked terrain from one spawn to the other and walks it there', () => {
@@ -84,7 +92,7 @@ describe('navigation on a converted county map (fagaras, 40px tiles)', () => {
     // The straight line between the spawns crosses blocked terrain, so
     // arriving at all means the order was routed around it.
     expect(
-      hasLineOfSight(map, cellOf(blue.transform!.position), cellOf(destination))
+      hasLineOfSight(navigationGrid!, cellOf(blue.transform!.position), cellOf(destination))
     ).toBe(false);
 
     const systems = [
@@ -114,7 +122,7 @@ describe('navigation on a converted county map (fagaras, 40px tiles)', () => {
 
     expect(blue.movePath).toBeUndefined();
     expect(blue.moveTarget).toBeUndefined();
-    // Resting on the centre of the destination's 40px cell.
+    // Resting on the centre of the destination's 20px cell.
     const destinationCell = cellOf(destination);
     expect(blue.transform!.position).toEqual({
       x: destinationCell.x * cellSize + cellSize / 2,

@@ -1,33 +1,63 @@
 import { Vector2 } from './math/vector2';
 import * as PathFinding from './navigation/astar';
+import type { CollisionGrid } from './navigation/astar';
 import type { Point } from './math/types';
 
 /**
- * Cell size, in world units, used when there is no map to take one from
+ * Tile size, in world units, assumed when there is no map to take one from
  * (the blank map, or a map that failed to load). Also the tile size of the
  * hand-authored 32px maps, and of the original game's raw infantry sprites
  * (`raw/sprites/units/swordsmen.*`, `crossbowsoldier.*`, 32x32).
- *
- * The unit-placement grid is otherwise always the loaded map's own tile
- * grid — see {@link cellSizeOf} — so units, pathfinding, occupancy and
- * terrain collision share one grid rather than two at different
- * resolutions. Larger unit types (knight, juggernaut, catapult: 64x64 in
- * the raw sprites) still place on that same grid; sizing individual units
- * to their real sprite dimensions is asset-integration work (phase 6).
  */
-export const DEFAULT_CELL_SIZE = 32;
+export const DEFAULT_TILE_SIZE = 32;
 
 /**
- * The unit-placement cell size for a map: its own tile size, so a cell index
- * means the same thing to units, A*, occupancy and the terrain's collision
- * grid (the converted county maps use 40px tiles, the hand-authored ones
- * 32px). {@link DEFAULT_CELL_SIZE} when there is no map.
+ * How many unit-placement cells span one map tile along each axis. Unit data
+ * (movement speed, attack and aggro range, sprite size) is authored in map
+ * tiles; {@link tilesToCells} is the conversion to this finer grid.
+ */
+export const CELLS_PER_TILE = 2;
+
+/** A tile-authored length expressed in unit-placement cells. */
+export const tilesToCells = (tiles: number): number => tiles * CELLS_PER_TILE;
+
+/**
+ * Upsamples a per-tile collision grid to the unit-placement grid: every
+ * blocked tile blocks each of its `CELLS_PER_TILE x CELLS_PER_TILE` cells,
+ * and an open tile leaves them all open.
+ */
+export const upsampleCollision = (
+  grid: CollisionGrid,
+  factor: number = CELLS_PER_TILE
+): CollisionGrid => {
+  const width = grid.width * factor;
+  const height = grid.height * factor;
+  const collision = new Uint8Array(width * height);
+  for (let row = 0; row < height; row++) {
+    const tileRow = Math.floor(row / factor) * grid.width;
+    for (let col = 0; col < width; col++) {
+      collision[row * width + col] = grid.collision[tileRow + Math.floor(col / factor)];
+    }
+  }
+  return { width, height, collision };
+};
+
+/** Cell size, in world units, used when there is no map: half of {@link DEFAULT_TILE_SIZE}. */
+export const DEFAULT_CELL_SIZE = DEFAULT_TILE_SIZE / CELLS_PER_TILE;
+
+/**
+ * The unit-placement cell size for a map: its tile size divided by
+ * {@link CELLS_PER_TILE}, so an infantry-sized unit gets a cell of its own
+ * (20px cells on the 40px county maps, 16px on the 32px hand-authored ones).
+ * Units, A*, occupancy, spawning and move orders all run on this grid; the
+ * terrain's per-tile collision is upsampled onto it (see
+ * {@link upsampleCollision}). {@link DEFAULT_CELL_SIZE} when there is no map.
  *
  * Takes just the one field it reads, rather than a `ParsedMap`, so this
  * module stays free of any dependency on the game's map loader.
  */
 export const cellSizeOf = (map?: { tileSize: number }): number => {
-  return map?.tileSize ?? DEFAULT_CELL_SIZE;
+  return (map?.tileSize ?? DEFAULT_TILE_SIZE) / CELLS_PER_TILE;
 };
 
 /**
@@ -35,11 +65,11 @@ export const cellSizeOf = (map?: { tileSize: number }): number => {
  * world units per cell.
  *
  * Every world<->cell helper in this module takes the cell size explicitly
- * rather than reading a global: the unit-placement grid *is* the loaded
- * map's tile grid, so its cell size is a per-map value (see
- * {@link cellSizeOf}), and a helper that silently assumed one fixed size
- * would put units, paths and collision on different grids on any map whose
- * tiles are a different size.
+ * rather than reading a global: the unit-placement cell is derived from the
+ * loaded map's tile size, so it is a per-map value (see {@link cellSizeOf}),
+ * and a helper that silently assumed one fixed size would put units, paths
+ * and collision on different grids on any map whose tiles are a different
+ * size.
  */
 export const toGridPosition = (vector: Vector2, cellSize: number): Vector2 => {
   return Vector2.divides(vector, cellSize, 'floor');

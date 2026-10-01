@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import swordsmenData from './units/swordsmen.json';
 import crossbowsoldierData from './units/crossbowsoldier.json';
 import knightData from './units/knight.json';
+import { roundUpToHalfTiles, unitSizeInTiles, units } from './units';
 
 describe('Unit definitions', () => {
   it('swordsmen JSON has complete, non-zero combat stats', () => {
@@ -92,5 +93,48 @@ describe('Unit definitions', () => {
     expect(unit.movementSpeed).toBeGreaterThan(0);
     expect(unit.range).toBeDefined();
     expect(unit.range).toBeGreaterThan(0);
+  });
+});
+
+describe('roundUpToHalfTiles', () => {
+  it('keeps whole half-tiles as they are', () => {
+    expect(roundUpToHalfTiles(0.5)).toBe(0.5);
+    expect(roundUpToHalfTiles(1)).toBe(1);
+    expect(roundUpToHalfTiles(1.5)).toBe(1.5);
+  });
+
+  it('rounds anything in between up to the next half-tile', () => {
+    // The measured idle sprite extents on 40px tiles: swordsmen 17x19,
+    // crossbowsoldier 15x17, knight 35x37.
+    expect(roundUpToHalfTiles(19 / 40)).toBe(0.5);
+    expect(roundUpToHalfTiles(17 / 40)).toBe(0.5);
+    expect(roundUpToHalfTiles(37 / 40)).toBe(1);
+    expect(roundUpToHalfTiles(0.51)).toBe(1);
+  });
+
+  it('never rounds a unit below one half-tile', () => {
+    expect(roundUpToHalfTiles(0.1)).toBe(0.5);
+    expect(roundUpToHalfTiles(0)).toBe(0.5);
+  });
+
+  it('is not tipped over a half-tile by float noise', () => {
+    expect(roundUpToHalfTiles(0.1 + 0.2 + 0.2)).toBe(0.5);
+  });
+});
+
+describe('unitSizeInTiles', () => {
+  it.each([
+    ['swordsmen', 0.5],
+    ['crossbowsoldier', 0.5],
+    ['knight', 1],
+  ] as const)('sizes a %s at %s x %s tiles', (type, tiles) => {
+    expect(unitSizeInTiles(units[type])).toEqual({ width: tiles, height: tiles });
+  });
+
+  it('rounds each axis up independently', () => {
+    expect(unitSizeInTiles({ size: { width: 0.4, height: 0.9 } })).toEqual({
+      width: 0.5,
+      height: 1,
+    });
   });
 });

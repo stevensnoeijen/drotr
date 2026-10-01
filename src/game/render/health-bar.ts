@@ -69,12 +69,13 @@ export interface HealthBarView {
 
 /**
  * Builds a health bar as a child `Container` positioned so its own bottom
- * edge sits flush with `extent` (the bottom edge of the unit's grid cell —
- * pass {@link file://./render-system.ts#CELL_HALF_EXTENT}, not the shape's
- * own render size, so the bar stays pinned to the cell regardless of the
- * shape's size), with a background `Graphics` bordered by a 1px black
- * outline and a colour-coded fill `Graphics` on top. The bar is drawn as
- * wide as `extent * 2` (the cell's full width) rather than a fixed size.
+ * edge sits flush with `extent` (the bottom edge of the unit's box — pass
+ * {@link file://./render-system.ts#overlayExtent}, its unit-type size
+ * rather than the slightly smaller drawn shape), with a background
+ * `Graphics` bordered by a 1px black outline and a colour-coded fill
+ * `Graphics` on top. The bar is drawn as wide as `extent * 2` (the unit's
+ * full width) rather than a fixed size, so a knight's bar spans its full
+ * tile and an infantry unit's its half-tile.
  * The border is drawn with `pixelLine: true` and `alignment: 0` (fully
  * outside the rect) so it stays a crisp, constant 1 screen-pixel line at
  * every camera zoom level instead of scaling — and shrinking to invisible,

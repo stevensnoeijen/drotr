@@ -42,8 +42,8 @@ export class OccupancyGrid {
   public readonly height: number;
 
   /**
-   * World size of one cell — the map's tile size, since this grid *is* the
-   * map's tile grid. Read by anything that turns a cell index back into a
+   * World size of one cell — the half-tile unit-placement cell (see
+   * `cellSizeOf`), matching the upsampled collision grid it layers over. Read by anything that turns a cell index back into a
    * world position, or plans a route over {@link asBlockedGridExcluding}.
    */
   public readonly cellSize: number;

@@ -35,6 +35,22 @@ export const BLOCKED_GIVE_UP_SECONDS = 2;
 export const REROUTE_AFTER_SECONDS = 0.5;
 
 /**
+ * Clearance, in world units, kept between a unit's footprint and the edge
+ * of the cell it occupies. Leaves a unit enough slack to finish a step onto
+ * its cell's centre without the lookahead spilling into the next cell.
+ */
+const FOOTPRINT_CLEARANCE = 3;
+
+/**
+ * The largest half-extent the occupancy lookahead honours: half a cell, less
+ * {@link FOOTPRINT_CLEARANCE}. Every unit occupies exactly one cell, whatever
+ * size it is drawn at.
+ */
+export function footprintMargin(cellSize: number): number {
+  return cellSize / 2 - FOOTPRINT_CLEARANCE;
+}
+
+/**
  * Unit-to-unit collision, enforced as cell occupancy over the map's terrain
  * collision grid (see {@link OccupancyGrid}).
  *
@@ -177,7 +193,14 @@ export function createCellOccupancySystem(queries: Queries, grid: OccupancyGrid)
       // instead, the cell the unit is denied is the one it would need to
       // start visibly encroaching on, so it simply never gets that close:
       // no approach-and-bounce, because there is nothing to correct.
-      const margin = self.renderable?.size ?? 0;
+      //
+      // Capped at the unit's one-cell footprint ({@link footprintMargin}): a
+      // unit drawn wider than its cell (a knight is drawn a full tile but
+      // reserves a single half-tile cell) would otherwise look past the
+      // cell it is walking into and be refused by whatever stands in the
+      // cell beyond it — never reaching, and so never settling on, a cell
+      // right next to an occupied one.
+      const margin = Math.min(self.renderable?.size ?? 0, footprintMargin(grid.cellSize));
 
       // Where this tick's step, extended by that margin, would put the
       // unit — its own cell when it isn't going anywhere. Asked by
