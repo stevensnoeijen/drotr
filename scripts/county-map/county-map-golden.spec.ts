@@ -131,7 +131,7 @@ describe.skipIf(!available)('FAGARAS.MAP', () => {
     const debug = map.layers.find(
       (layer): layer is TiledLayerTilelayer => layer.name === 'collision'
     );
-    const drawn = (debug?.data as number[]).filter(
+    const drawn = ((debug?.data ?? []) as number[]).filter(
       (gid) => gid === COLLISION_MARKER_GID
     );
     expect(drawn).toHaveLength(5188);
