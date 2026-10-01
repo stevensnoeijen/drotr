@@ -10,7 +10,8 @@ import knightData from './units/knight.json';
  * so `unitType` stays stable once real sprites replace these primitives in
  * the asset-integration phase.
  */
-export type UnitType = 'swordsmen' | 'knight' | 'crossbowsoldier';
+export const UNIT_TYPES = ['swordsmen', 'knight', 'crossbowsoldier'] as const;
+export type UnitType = (typeof UNIT_TYPES)[number];
 
 /**
  * Static, per-type unit data. Core fields (type, shape, health) are present
@@ -90,7 +91,9 @@ export function roundUpToHalfTiles(tiles: number): number {
 }
 
 /** A unit type's drawn size in tiles, rounded up to whole half-tiles. */
-export function unitSizeInTiles(definition: Pick<UnitDefinition, 'size'>): TileSize {
+export function unitSizeInTiles(
+  definition: Pick<UnitDefinition, 'size'>
+): TileSize {
   return {
     width: roundUpToHalfTiles(definition.size.width),
     height: roundUpToHalfTiles(definition.size.height),

@@ -1,5 +1,5 @@
-import type { UnitType } from '~/game/data/units';
-import type { Team } from '~/game/ecs/components/team';
+import { UNIT_TYPES, type UnitType } from '~/game/data/units';
+import { TEAMS } from '~/game/ecs/components/team';
 
 /**
  * Sprite animation-key contract, shared by the sprite pipeline (which emits
@@ -9,17 +9,8 @@ import type { Team } from '~/game/ecs/components/team';
  * `swordsmen.red.move.nw_01` (see {@link frameName}).
  */
 
-export const UNIT_TYPES = [
-  'swordsmen',
-  'knight',
-  'crossbowsoldier',
-] as const satisfies readonly UnitType[];
 /** `neutral` is used by units that are not team-coloured (e.g. siege units). */
-export const ANIMATION_TEAMS = [
-  'blue',
-  'red',
-  'neutral',
-] as const satisfies readonly (Team | 'neutral')[];
+export const ANIMATION_TEAMS = [...TEAMS, 'neutral'] as const;
 export const UNIT_ACTIONS = ['idle', 'move', 'attack', 'dead'] as const;
 /** Compass abbreviations: n = north, ne = northeast, and so on. */
 export const DIRECTIONS = ['n', 'ne', 'e', 'se', 's', 'sw', 'w', 'nw'] as const;

@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
+import { UNIT_TYPES } from '~/game/data/units';
 import {
   ANIMATION_TEAMS,
   DIRECTIONS,
   UNIT_ACTIONS,
-  UNIT_TYPES,
   animationKey,
   frameName,
   parseAnimationKey,
