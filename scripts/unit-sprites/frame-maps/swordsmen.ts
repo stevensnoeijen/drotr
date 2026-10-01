@@ -68,12 +68,13 @@ const BLUE_DEAD_ROWS: Record<Direction, number> = {
 
 /**
  * Idle has no frames of its own; it reuses one move frame per direction
- * (1-based). Chosen by eye from the move contact sheet: frame 3 is the
- * passing pose (feet together) with the sword lowered in every direction
- * for both teams, and is the narrowest silhouette facing east and west.
- * The dump's frame 7 is also a passing pose but has the sword raised over
- * the shoulder facing north and northwest. Committed explicitly so a
- * future pick can differ per team or direction.
+ * (1-based). Chosen by eye on the contact sheet
+ * (`#/game?case=unit-sprites`): frame 3 is the passing pose (feet together)
+ * with the sword held close to the body in every direction for both teams,
+ * and is the narrowest silhouette facing east and west. The dump's frame 7
+ * is also a passing pose, but the sword swings out over the shoulder
+ * facing north and northwest. Committed explicitly so a future pick can
+ * differ per team or direction.
  */
 export const IDLE_PICK = {
   red: { n: 3, ne: 3, e: 3, se: 3, s: 3, sw: 3, w: 3, nw: 3 },

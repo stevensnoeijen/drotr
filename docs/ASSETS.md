@@ -138,6 +138,10 @@ the teal key becomes alpha and nothing else is changed. `idle` has no
 frames of its own and reuses one explicitly chosen move frame per team and
 direction.
 
+`#/game?case=unit-sprites&unit=<unit>` is a contact sheet of a packed unit:
+every team × action × direction at one scale with a live preview;
+`&compare=1` shows the old palette sheet's frames underneath.
+
 The swordsmen map was bootstrapped by template-matching
 `raw/sprites/units` against the decoded atlas (every frame matched exactly
 one position), then normalised to atlas column order, which fixed the
