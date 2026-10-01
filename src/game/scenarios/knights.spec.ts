@@ -26,6 +26,7 @@ function mapWithSpawns(
       imageUrl: '',
     },
     tileLayers: [],
+    objectLayers: [],
   };
 }
 

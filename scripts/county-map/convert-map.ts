@@ -10,6 +10,7 @@ import type { TiledMap } from 'tiled-types';
 
 import { parseBuildingMap } from '../../src/lib/building-map';
 import { parseCountyMap } from '../../src/lib/county-map';
+import { parseBuildingSites } from '../dracula-exe';
 import { cdPath, hasCdFile, readCdFile } from '../../src/test/cd-assets';
 
 import { buildBuildingsTiledMap } from './building-map-tiled';
@@ -21,6 +22,7 @@ import {
   COUNTY_NAMES,
   countyMapCdPath,
   countyTiledMapFileName,
+  DRACULA_EXE_CD_PATH,
   isCountyName,
 } from './county-names';
 import { withPreviousSpawns } from './spawns-layer-merge';
@@ -31,6 +33,8 @@ const OUTPUT_DIR = path.join(process.cwd(), 'public', 'maps');
 interface Conversion {
   /** Source file, relative to the CD data directory. */
   readonly source: string;
+  /** Other CD files the conversion reads, relative to the CD data directory. */
+  readonly alsoReads: readonly string[];
   /** Output file name, under `public/maps/`. */
   readonly fileName: string;
   readonly convert: (bytes: Uint8Array) => TiledMap;
@@ -56,6 +60,7 @@ function conversionFor(name: string): Conversion | undefined {
   if (name === BUILDING_MAP_NAME) {
     return {
       source: BUILDING_MAP_CD_PATH,
+      alsoReads: [],
       fileName: BUILDINGS_TILED_MAP_FILE_NAME,
       convert: (bytes) => buildBuildingsTiledMap(parseBuildingMap(bytes)),
     };
@@ -63,8 +68,13 @@ function conversionFor(name: string): Conversion | undefined {
   if (isCountyName(name)) {
     return {
       source: countyMapCdPath(name),
+      alsoReads: [DRACULA_EXE_CD_PATH],
       fileName: countyTiledMapFileName(name),
-      convert: (bytes) => buildCountyTiledMap(parseCountyMap(bytes)),
+      convert: (bytes) =>
+        buildCountyTiledMap(
+          parseCountyMap(bytes),
+          parseBuildingSites(readCdFile(DRACULA_EXE_CD_PATH))[name]
+        ),
     };
   }
   return undefined;
@@ -82,10 +92,11 @@ export function convertMap(name: string): boolean {
     return fail(`Unknown map "${name}". Expected one of: ${VALID_NAMES}.`);
   }
 
-  const { source, fileName, convert } = conversion;
-  if (!hasCdFile(source)) {
+  const { source, alsoReads, fileName, convert } = conversion;
+  const missing = [source, ...alsoReads].find((file) => !hasCdFile(file));
+  if (missing) {
     return fail(
-      `Cannot find ${cdPath(source)}.\n` +
+      `Cannot find ${cdPath(missing)}.\n` +
         'The CD data is not committed to this repository; ' +
         'place a local copy under .cd/ (or point DROTR_CD_DIR at it) before running this script.'
     );

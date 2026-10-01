@@ -2,6 +2,8 @@ import { Assets, Container, Rectangle, Sprite, Texture, type TextureSource } fro
 
 import type { MapTileset, ParsedMap } from '~/game/map/load-tiled-map';
 import { decodeGid, resolveGid, tileFrame } from '~/game/map/tile-gid';
+
+import { buildObjectLayerContainer } from './map-object-layers';
 import {
   chunkCells,
   chunkRangesEqual,
@@ -96,6 +98,10 @@ export interface MapRenderSystemOptions {
  * shown or hidden ({@link setLayerVisibility}) without rebuilding anything.
  * A layer hidden in the map starts out built but invisible. Visibility is
  * display only; it never touches the map's collision.
+ *
+ * Every object layer (`spawns`, `constructions`, ...) is also drawn, over
+ * the tiles, as a debug view (see `./map-object-layers`). Those start out
+ * hidden whatever the map says, since the game never shows them.
  */
 export class MapRenderSystem {
   /** Terrain root; add it beneath everything else in the world. */
@@ -109,6 +115,8 @@ export class MapRenderSystem {
    * in every chunk, in chunk order.
    */
   private layerContainers: Container[][] = [];
+  /** Per object layer (same order as `map.objectLayers`), its container. */
+  private objectLayerContainers: Container[] = [];
   private lastRange: ChunkRange | undefined;
 
   constructor(private readonly options: MapRenderSystemOptions) {
@@ -136,8 +144,9 @@ export class MapRenderSystem {
   }
 
   /**
-   * Shows or hides each tile layer, by index into `map.tileLayers`. A
-   * missing entry leaves that layer as it is.
+   * Shows or hides each layer, by index into `map.tileLayers` followed by
+   * `map.objectLayers` (the order `mapLayerInfo` lists them in). A missing
+   * entry leaves that layer as it is.
    */
   public setLayerVisibility(visibility: readonly boolean[]): void {
     this.layerContainers.forEach((containers, layer) => {
@@ -146,6 +155,13 @@ export class MapRenderSystem {
         return;
       }
       for (const container of containers) {
+        container.visible = visible;
+      }
+    });
+    const tileLayerCount = this.layerContainers.length;
+    this.objectLayerContainers.forEach((container, layer) => {
+      const visible = visibility[tileLayerCount + layer];
+      if (visible !== undefined) {
         container.visible = visible;
       }
     });
@@ -164,6 +180,10 @@ export class MapRenderSystem {
     }
     this.chunks = [];
     this.layerContainers = [];
+    for (const container of this.objectLayerContainers) {
+      container.destroy({ children: true });
+    }
+    this.objectLayerContainers = [];
     this.lastRange = undefined;
   }
 
@@ -177,6 +197,13 @@ export class MapRenderSystem {
         this.container.addChild(chunk);
       }
     }
+    // After every chunk, so the object layers draw over all the tiles.
+    const { objectLayers = [], tileSize } = this.options.map;
+    this.objectLayerContainers = objectLayers.map((layer) => {
+      const container = buildObjectLayerContainer(layer, tileSize);
+      this.container.addChild(container);
+      return container;
+    });
   }
 
   /**

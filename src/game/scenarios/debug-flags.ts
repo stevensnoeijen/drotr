@@ -1,6 +1,8 @@
 /**
  * Debug overlays a scenario can be loaded with, via `?debug=grid,health,unit-info`.
- * `tile-layers` offers a show/hide toggle per map tile layer in the debug menu.
+ * `tile-layers` offers a show/hide toggle per map layer in the debug menu: every
+ * tile layer, and every object layer (spawns, constructions, ...), which only
+ * ever draws while this option is on.
  */
 export type DebugFlag = 'grid' | 'health' | 'unit-info' | 'targets' | 'paths' | 'tile-layers';
 

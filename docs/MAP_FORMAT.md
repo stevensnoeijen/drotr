@@ -251,26 +251,11 @@ hypotheses — bits in Section B's `hi`, or marker tiles in Section A — were
 tested directly and don't hold. A cell is walkable or blocked, and
 that's all a county file says about it.
 
-What this leaves open is **where** the build spots live, and this CD
-can't answer that. It holds no game executable (only `ART/`, `AUDIO/`,
-`CINEMA/` and `COUNTIES/`), so the remaining sources can't be checked from
-here. In order of likelihood:
-
-1. Hard-coded per county in the original executable, alongside the other
-   scenario setup the `.MAP` files also leave out (unit spawns, for one).
-2. Derived at runtime from terrain (e.g. any open grass area large enough
-   for a prefab's footprint), with no per-map data at all.
-3. `BUILDING.MAP`'s flag grids (3–14), if one of their flag regions turns
-   out to be a per-county placement table rather than a per-prefab mask. Nothing
-   suggests this yet, and prefab extraction is its own separate piece of work.
-
-**Decision:** rather than wait on any of the above, build spots will be
-**authored by hand**, the same way non-edge spawn points are: as objects in each
-county's Tiled map, added/curated manually per county as that county's
-scenario work needs them. There's no original data to convert them from,
-so this is a deliberate scope call, not a placeholder pending further
-research — it can be revisited if `BUILDING.MAP` prefab work (a separate
-ticket) or another source later turns up real per-county placement data.
+The build spots live in the game executable instead. `DRACULA.EXE` is on
+the full CD, and it carries a per-county site table. See "Building sites:
+extracting them from `DRACULA.EXE`" below. (An earlier revision of this
+section decided to author build spots by hand because the executable was
+not available. That decision is superseded.)
 
 The evidence is pinned by golden tests across all 12 counties, in
 `scripts/county-map/county-map-markers-golden.spec.ts` (skipped without
@@ -308,6 +293,168 @@ like. No game logic confirms it.
 The converter turns each one into a generated `edge-N` spawn point in the
 Tiled output's `spawns` layer (see "Converting to Tiled" below), so these
 are the natural spawn points for armies entering a county.
+
+## Building sites: extracting them from `DRACULA.EXE`
+
+Where a bridge, tower or castle can be built in each county is hard-coded
+in the game executable, `DRACULA.EXE` (PE32, 611,328 bytes on the English
+CD). It isn't in any `.MAP` file. The tables are statically initialised
+data in the `.data` section. Nothing is compressed or encrypted.
+
+### Addresses
+
+All addresses below are virtual addresses (VA) in the English build.
+`.data` starts at VA `0x46a000` and file offset `0x68c00`, so:
+
+```
+file_offset = va - 0x46a000 + 0x68c00
+```
+
+Read the section table (`objdump -h DRACULA.EXE`) instead of trusting
+these constants. A different language edition or patch level is a
+different build and can move them. The code that reads the tables is a
+more stable anchor. The building-object initialiser (English build at
+`0x40f1b0`) contains all of them:
+
+```
+mov bl, [esi + 0x4710e0]      ; site x
+mov bl, [esi + 0x47fd20]      ; site y
+mov bl, [esi + eax*2 + 0x46b1a0]  ; prefab rect x0   (eax*2 = type*42)
+...                 0x46b248  ; prefab rect y0
+...                 0x46b2f0  ; prefab rect x1
+...                 0x46b398  ; prefab rect y1
+```
+
+and the site-count table (`0x470900`) is read next to them in the
+council-map code (e.g. `0x4258ee`).
+
+### Site tables
+
+| VA | file offset (EN) | layout | content |
+|---|---|---|---|
+| `0x470900` | `0x6f500` | `u8[12][4][42]` | number of sites `n` for `(county, type, slot)` |
+| `0x4710e0` | `0x6fce0` | `u8[12][4][42][30]` | site x, entries `0..n-1` used |
+| `0x47fd20` | `0x7e920` | `u8[12][4][42][30]` | site y, entries `0..n-1` used |
+
+The index into the x/y tables is `k + 30 * (slot + 42 * (type + 4 * county))`.
+In every county, the site count always equals the number of non-zero
+entries in that slot.
+
+- **county**: `0..11` is **alphabetical `.MAP` file order**: `BRAILA`,
+  `BRASOV`, `CUERTA`, `FAGARAS`, `GIURGIU`, `HIRSOVA`, `OSTROV`,
+  `PITESTI`, `RASOVA`, `SIBIU`, `SNAGOV`, `TIRGO`. This was established by
+  scoring every county/map pair on terrain fit. The decisive test: in
+  this order, **all** bridge sites in all 12 counties sit on a
+  rocky-shoreline tile (934/935/936/1439) with water no more than 2 tiles
+  away. No other assignment does. The EXE's display-name list uses a
+  different order (Ostrov last), so don't use it for this.
+- **type**: `0` bridge, `1` tower, `2` fortification, `3` stronghold. This
+  is the order the game's own messages list them in. The engine merges
+  `2` and `3` into one **castle** category (see levels below).
+- **x, y**: tile coordinates on the county's 128×128 grid (the same grid
+  as Section A and the Tiled map). A site is the **top-left corner of the
+  building's footprint**, not its centre.
+
+### Prefab footprints
+
+Four `u8[4][42]` tables, indexed `type * 42 + slot`, give each
+`(type, slot)` prefab's source rectangle in `BUILDING.MAP`'s grids
+(`x0, y0` inclusive, `x1, y1` exclusive):
+
+| VA | file offset (EN) | field |
+|---|---|---|
+| `0x46b1a0` | `0x69da0` | x0 |
+| `0x46b248` | `0x69e48` | y0 |
+| `0x46b2f0` | `0x69ef0` | x1 |
+| `0x46b398` | `0x69f98` | y1 |
+
+So a building's **footprint** (the space it needs) is
+`(x1 - x0) × (y1 - y0)` tiles. The rectangle is also where to cut its art
+out of `BUILDING.MAP`. That's future work, and nothing here depends on it.
+
+#### Castles (types 2 + 3)
+
+| level | type/slot | size | ground | notes |
+|---|---|---|---|---|
+| 1 | fort 0 | 11×11 | grass | |
+| 2 | fort 1 | 15×15 | grass | |
+| 3 | fort 2 | 18×19 | grass | |
+| 4 | strong 0 | 21×21 | grass | |
+| 5a | strong 1 | 31×27 | grass | unmoated branch |
+| 6a | strong 2 | 41×40 | grass | unmoated branch |
+| 5b | strong 3 | 30×29 | grass | moated branch |
+| 6b | strong 4 | 39×34 | grass | moated branch |
+| 7b | strong 5 | 49×48 | grass | moated branch |
+| rock | fort 3 / 4 / 5 | 14×15 / 18×17 / 21×21 | rock | castles on rock ground |
+
+That's 9 castle levels plus 3 rock-ground alternatives, one per compound
+in `buildings.tmj`. Across all counties, castle footprints lie on ≥96%
+grass-coloured tiles and the rock variants on 100% rock. Only `GIURGIU`
+places rock castles (fort 3 and 4). Fort 5 is never placed.
+
+One physical castle site is listed once per level, each entry with that
+level's own top-left, and all of them centred on the same point (e.g.
+`BRASOV`: every level centres on about (84.5, 26.5)). To get physical
+sites, group entries by footprint centre (±5 tiles). A site then lists a
+**prefix of the upgrade chain**: `F0 → F1 → F2 → S0`, then either
+unmoated `S1 → S2` or moated `S3 → S4 → S5`. That prefix is also the
+highest level the site can reach. Observed sets range from `F0` alone
+(27 sites) to all nine levels (4 sites).
+
+#### Towers (type 1)
+
+Slots 0–2, each 2×3 tiles. Slot 0 sites are on grass. Slots 1 and 2 sit
+on rock (about 99%). These are ground variants, not upgrade levels.
+
+#### Bridges (type 0)
+
+All 42 slots are used. Each is a bridge of a given **material**, **orientation**
+(vertical or horizontal), **width** and **length**. Every family comes in
+both orientations. Material comes from the average
+colour of the prefab's tiles: brown is wood, grey is stone. Wood bridges
+are always 1 tile wide, so only one small unit can cross. Stone bridges
+are 2 or 3 tiles wide.
+
+| slots | material | orientation | width | lengths |
+|---|---|---|---|---|
+| 0–2 | wood | vertical | 1 | 3, 4, 5 |
+| 3–6 | wood | vertical | 1 | 2, 3, 4, 5 |
+| 7–10 | stone | vertical | 2 | 3, 4, 5, 6 |
+| 11–16 | stone | vertical | 3 | 4, 5, 6, 7, 8, 11 |
+| 17–19 | stone (alt. art) | vertical | 2 | 3, 5, 6 |
+| 20–25 | wood | horizontal | 1 | 3, 5, 5, 3, 5, 5 |
+| 26–29 | stone | horizontal | 2 | 3, 4, 5, 6 |
+| 30–37 | stone | horizontal | 3 | 4, 5, 6, 7, 8, 9, 10, 11 |
+| 38–40 | stone (alt. art) | horizontal | 2 | 3, 4, 6 |
+| 41 | stone (alt. art) | horizontal | 3 | 4 |
+
+Not yet explained: why wood has two runs per orientation (slots 0–2 vs
+3–6, and 20–25), and what the "alt. art" stone runs are for. They use
+slightly darker tiles, maybe a different bank style or a ruined state. A
+bridge site is the top-left of its footprint on the near bank, and the
+footprint spans the water.
+
+### Extracting
+
+`scripts/dracula-exe` reads the tables: `parseBuildingSites` takes the
+executable's bytes and returns every county's sites, keyed by county name.
+It finds the tables through the PE section table (`parsePe`, `readVa`), not
+through fixed file offsets. Castle entries are grouped into physical sites
+by **footprint overlap**, taken in upgrade order. Grouping by centre isn't
+enough, because near the map edge the big levels are pushed inward and
+their centres drift. Bridge entries are grouped by their shared top-left
+corner, and towers are one site each. The county converter writes the
+result into each county's `constructions` layer (see "Converting to
+Tiled" below).
+
+A bridge site is **one crossing with an upgrade chain**, like a castle
+site: its slots share the same top-left corner and orientation, and go
+from wood (1 wide) to stone (2 wide) to wide stone (3 wide).
+
+For another build of the executable (another language edition, say), check
+that the VAs in `BUILDING_SITE_TABLE_VAS` still point at the tables. The
+building-object initialiser listed under "Addresses" is where to look them
+up again.
 
 ## The search for a separate ground layer — closed
 
@@ -444,8 +591,8 @@ npm run convert:map -- FAGARAS
 
 The name is case-insensitive (`BUILDING` converts `BUILDING.MAP` instead;
 see "Converting `BUILDING.MAP`" below). The script reads
-`COUNTIES/<NAME>.MAP` from the CD data
-(`DROTR_CD_DIR`, defaulting to `.cd/`) and writes
+`COUNTIES/<NAME>.MAP` and `DRACULA.EXE` (for the building sites) from the CD
+data (`DROTR_CD_DIR`, defaulting to `.cd/`) and writes
 `public/maps/<name>.tmj`. The raw `.MAP` is never committed, but the
 converted `.tmj` is (all 12 counties: `fagaras.tmj`, `sibiu.tmj`, `brasov.tmj`, `rasova.tmj`, `pitesti.tmj`, `hirsova.tmj`, `snagov.tmj`, `braila.tmj`, `giurgiu.tmj`, `tirgo.tmj`, `cuerta.tmj` and `ostrov.tmj`). The output is deterministic,
 so re-running the script over an up-to-date file changes nothing.
@@ -474,7 +621,7 @@ that fail, and exits non-zero if one did. It doesn't include
 `scripts/county-map/county-map-tiled.ts` builds the Tiled JSON.
 
 The map is 128×128 tiles of 40 px, matching the tileset, and references
-`terrain.tsx` as its only (external) tileset, at `firstgid` 1. It has three
+`terrain.tsx` as its only (external) tileset, at `firstgid` 1. It has four
 layers:
 
 - **`terrain`** — Section A, the full ground layer: `gid = tile index + 1`,
@@ -503,6 +650,21 @@ layers:
   blocks every cell whose gid here is non-zero); it's hidden purely so it
   doesn't draw over `terrain` by default, and can still be switched on, in
   the Tiled editor or through the engine's `tile-layers` debug option.
+- **`constructions`** — one point object per place a building can stand,
+  from `DRACULA.EXE` (see "Building sites: extracting them from
+  `DRACULA.EXE`" above). Each point's Tiled class (`type`) is its category
+  (`bridge`, `tower` or `castle`), and it's named `<category>-<n>`. It sits
+  at the centre of the site's first level. Its properties are:
+  - `levels`: every level the site can hold, comma-separated, in upgrade
+    order. Castles use `1`–`4`, then `5-unmoated`, `6-unmoated`,
+    `5-moated`, `6-moated`, `7-moated`, or `rock-1`–`rock-3` on rock
+    ground. Bridges use `wood`, `stone` and `stone-wide`. Towers use
+    `grass`, `rock-1` and `rock-2`.
+  - `footprint:<level>`: the tiles that level occupies, as
+    `x,y,width,height`.
+  - `orientation` (bridges only): `vertical` or `horizontal`.
+
+  The engine doesn't read this layer yet.
 
 For `FAGARAS` the collapsed Section B mask blocks **5,188** of 16,384
 tiles: every tile with 2 or more of its 4 subcells blocked. Per tile, the
@@ -564,12 +726,8 @@ scenario, which spawns nothing and is allowed on every map
   building's placement *into* a county map is recorded anywhere. It isn't
   in the county file itself: no county contains any prefab building tile
   (see "Buildable locations" above).
-- **Where build spots come from.** They aren't in the county files (see
-  "Buildable locations: not encoded in the county files" above). The
-  remaining candidates are the original executable (not on this CD),
-  runtime derivation from terrain, or `BUILDING.MAP`'s flag grids — but the
-  decision made there is to hand-author build spots in the Tiled maps
-  rather than wait on one of those being confirmed.
+- Bridge slot details (see "Bridges" above): why wood bridges come in two
+  runs per direction, and what the darker "alt. art" stone runs are.
 - What the Section B `hi` bits *other than* bit 2 mean, including what
   bit 8 (`256`) marks on the water blobs and cliff-rim subcells it occurs
   on. `BUILDING.MAP`
@@ -580,8 +738,9 @@ scenario, which spawns nothing and is allowed on every map
 
 Resolved since: Section B's cell order (column-major, same as Section A),
 whether a separate ground layer exists elsewhere on the CD (it does not),
-and whether county files carry buildable-location markers (they do not) —
-all covered in their sections above.
+whether county files carry buildable-location markers (they do not), and
+where build spots come from (`DRACULA.EXE`) — all covered in their
+sections above.
 
 ## Test fixture strategy
 

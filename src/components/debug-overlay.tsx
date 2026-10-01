@@ -55,13 +55,13 @@ export interface DebugOverlayProps {
   /** Called when a flag is clicked in the dropdown, to flip it on/off. */
   onToggleDebugFlag: (flag: DebugFlag) => void;
   /**
-   * The current map's tile layers, back to front, listed under the
-   * `tile-layers` flag while it's on.
+   * The current map's layers, listed under the `tile-layers` flag while
+   * it's on: its tile layers back to front, then its object layers.
    */
   tileLayers?: readonly TileLayerInfo[];
   /** Whether each of {@link tileLayers} is currently shown, by index. */
   tileLayerVisibility?: readonly boolean[];
-  /** Called when a tile layer is clicked, with its index, to show/hide it. */
+  /** Called when a layer is clicked, with its index, to show/hide it. */
   onToggleTileLayer?: (index: number) => void;
   className?: string;
 }
@@ -129,9 +129,9 @@ export default function DebugOverlay({
                   {flag}
                 </label>
                 {flag === 'tile-layers' && debugFlags.has(flag) && (
-                  <ul aria-label="Tile layers" className="ml-5 list-none border-l border-green-400/30 pl-1">
+                  <ul aria-label="Map layers" className="ml-5 list-none border-l border-green-400/30 pl-1">
                     {tileLayers.length === 0 && (
-                      <li className="px-2 py-1 text-green-400/60">no tile layers</li>
+                      <li className="px-2 py-1 text-green-400/60">no map layers</li>
                     )}
                     {tileLayers.map((layer, index) => (
                       <li key={index}>
@@ -142,6 +142,7 @@ export default function DebugOverlay({
                             onChange={() => onToggleTileLayer?.(index)}
                           />
                           {layer.name}
+                          {layer.kind === 'object' && <span className="text-green-400/60">objects</span>}
                         </label>
                       </li>
                     ))}

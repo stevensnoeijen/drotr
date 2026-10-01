@@ -45,6 +45,29 @@ export interface MapTileLayer {
   data: readonly number[];
 }
 
+/** One object of a map object layer, in map pixels. */
+export interface MapObject {
+  name: string;
+  /** The object's Tiled class (`type`), e.g. `castle`; empty if unset. */
+  type: string;
+  x: number;
+  y: number;
+  /** 0 for a point. */
+  width: number;
+  height: number;
+  point: boolean;
+  /** The object's custom properties, by name, values as Tiled stores them. */
+  properties: Readonly<Record<string, string | number | boolean>>;
+}
+
+/** One top-level object layer of a map, e.g. `spawns` or `constructions`. */
+export interface MapObjectLayer {
+  name: string;
+  /** Tiled's `visible` flag (absent counts as visible). */
+  visible: boolean;
+  objects: MapObject[];
+}
+
 export interface ParsedMap {
   width: number;
   height: number;
@@ -66,6 +89,12 @@ export interface ParsedMap {
    * dedicated `collision` layer, not from anything drawn here.
    */
   tileLayers: MapTileLayer[];
+  /**
+   * Every top-level object layer, in map order, the `spawns` layer
+   * included. Display only (the debug layer view): spawns are read from
+   * {@link spawns}, and nothing else in the engine reads these.
+   */
+  objectLayers: MapObjectLayer[];
 }
 
 /** Thrown for any map that fails validation, with a human-readable reason. */
@@ -127,6 +156,31 @@ function parseCollision(layer: TiledLayerTilelayer, map: TiledMap): Uint8Array {
   return collision;
 }
 
+/** Collects every top-level object layer, in map order. */
+function collectObjectLayers(map: TiledMap): MapObjectLayer[] {
+  return map.layers
+    .filter((layer): layer is TiledLayerObjectgroup => layer.type === 'objectgroup')
+    .map((layer) => ({
+      name: layer.name,
+      visible: layer.visible !== false,
+      objects: layer.objects.map((object) => ({
+        name: object.name,
+        type: object.type ?? '',
+        x: object.x,
+        y: object.y,
+        width: object.width ?? 0,
+        height: object.height ?? 0,
+        point: object.point === true,
+        properties: Object.fromEntries(
+          (object.properties ?? []).map((property) => [
+            property.name,
+            property.value as string | number | boolean,
+          ])
+        ),
+      })),
+    }));
+}
+
 /**
  * Collects every top-level tile layer, hidden ones included, in the order
  * Tiled draws them: back to front.
@@ -181,6 +235,7 @@ export function parseTiledMap(map: TiledMap, tileset: MapTileset): ParsedMap {
   const collision = parseCollision(collisionLayer, map);
   const spawns = parseSpawns(spawnsLayer);
   const tileLayers = collectTileLayers(map);
+  const objectLayers = collectObjectLayers(map);
 
   return {
     width: map.width,
@@ -190,6 +245,7 @@ export function parseTiledMap(map: TiledMap, tileset: MapTileset): ParsedMap {
     spawns,
     tileset,
     tileLayers,
+    objectLayers,
   };
 }
 

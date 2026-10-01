@@ -8,7 +8,7 @@ import { findEntityById, queries, world } from '~/game/ecs/world';
 import type { Entity } from '~/game/ecs/entity';
 import type { MapDefinition } from '~/game/maps';
 import { loadTiledMap, type ParsedMap } from '~/game/map/load-tiled-map';
-import { tileLayerInfo, type TileLayerInfo } from '~/game/map/tile-layer-visibility';
+import { mapLayerInfo, type TileLayerInfo } from '~/game/map/tile-layer-visibility';
 import { applyViewportBounds, createGameViewport } from '~/game/render/create-game-viewport';
 import { createMapRenderSystem, type MapRenderSystem } from '~/game/render/map-render-system';
 import { RenderSystem } from '~/game/render/render-system';
@@ -288,7 +288,7 @@ export default function GameCanvas({
       }
       if (!cancelled) {
         onTileLayersRef.current?.(
-          mapRenderSystem && map ? tileLayerInfo(map.tileLayers) : []
+          mapRenderSystem && map ? mapLayerInfo(map) : []
         );
       }
 

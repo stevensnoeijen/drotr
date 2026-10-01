@@ -30,6 +30,7 @@ function makeMap(overrides: Partial<ParsedMap> & { width: number; height: number
     spawns: [],
     tileset: terrainTileset(),
     tileLayers: [],
+    objectLayers: [],
     ...overrides,
   };
 }
@@ -275,5 +276,44 @@ describe('MapRenderSystem', () => {
       expect(chunkShown).toEqual([true, false, false, false]);
       expect(layerVisibility(system)).toEqual([true, true, true]);
     });
+  });
+});
+
+describe('object layers', () => {
+  function withObjectLayers() {
+    const map = makeMap({
+      width: 20,
+      height: 20,
+      tileLayers: [layer(new Array(400).fill(1), true, 'terrain')],
+      objectLayers: [
+        { name: 'spawns', visible: true, objects: [] },
+        { name: 'constructions', visible: true, objects: [] },
+      ],
+    });
+    return new MapRenderSystem({
+      map,
+      tileTextures: new TileTextureCache(map.tileset, terrainSource()),
+      chunkSize: 16,
+    });
+  }
+
+  function objectLayers(system: MapRenderSystem): Container[] {
+    return (system.container.children as Container[]).filter((child) =>
+      ['spawns', 'constructions'].includes(child.label)
+    );
+  }
+
+  it('draws each object layer over every chunk, starting out hidden', () => {
+    const system = withObjectLayers();
+    const labels = system.container.children.map((child) => child.label);
+    expect(labels.slice(-2)).toEqual(['spawns', 'constructions']);
+    expect(objectLayers(system).map((container) => container.visible)).toEqual([false, false]);
+  });
+
+  it('addresses object layers after the tile layers', () => {
+    const system = withObjectLayers();
+    system.setLayerVisibility([true, false, true]);
+    expect(objectLayers(system).map((container) => container.visible)).toEqual([false, true]);
+    expect(layerVisibility(system)).toEqual([true]);
   });
 });
