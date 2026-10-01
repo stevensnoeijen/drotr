@@ -168,4 +168,82 @@ describe('createProjectileSystem', () => {
     expect(queries.projectiles.size).toBe(0);
     expect(hitTarget.health!.current).toBeLessThan(10);
   });
+
+  describe('moving targets', () => {
+    // Walking speed: 2 tiles/s of 40 world units.
+    const WALK = 80;
+
+    function run(
+      moveTarget: (target: Entity) => void,
+      options: { targetX: number; targetY: number; maxRange?: number; vx?: number }
+    ) {
+      const world = new World<Entity>();
+      const queries = createQueries(world);
+      const system = createProjectileSystem(queries);
+      const target = makeTarget(world, options.targetX);
+      target.transform!.position.y = options.targetY;
+      makeProjectile(world, {
+        targetId: target.id!,
+        maxRange: options.maxRange,
+        vx: options.vx,
+      });
+      for (let i = 0; i < 600 && queries.projectiles.size > 0; i++) {
+        moveTarget(target);
+        system(world, DT);
+      }
+      return { target, queries };
+    }
+
+    it('hits a target moving perpendicular to the shot, dealing damage once', () => {
+      const { target, queries } = run(
+        (t) => {
+          t.transform!.position.y += WALK * DT;
+        },
+        { targetX: 200, targetY: 0, maxRange: 300 }
+      );
+      expect(target.health!.current).toBe(6);
+      expect(queries.projectiles.size).toBe(0);
+    });
+
+    it('hits a target moving directly away at walking speed', () => {
+      const { target, queries } = run(
+        (t) => {
+          t.transform!.position.x += WALK * DT;
+        },
+        { targetX: 200, targetY: 0, maxRange: 600 }
+      );
+      expect(target.health!.current).toBe(6);
+      expect(queries.projectiles.size).toBe(0);
+    });
+
+    it('points the projectile at the target as it re-aims', () => {
+      const world = new World<Entity>();
+      const queries = createQueries(world);
+      const system = createProjectileSystem(queries);
+      const target = makeTarget(world, 0);
+      target.transform!.position.y = -200;
+      const bolt = makeProjectile(world, { targetId: target.id! });
+      system(world, DT);
+      expect(bolt.velocity!.x).toBeCloseTo(0);
+      expect(bolt.velocity!.y).toBeCloseTo(-SPEED);
+    });
+
+    it('deals no damage to anyone when the target dies mid-flight', () => {
+      const world = new World<Entity>();
+      const queries = createQueries(world);
+      const system = createProjectileSystem(queries);
+      const target = makeTarget(world, 200);
+      const bystander = makeTarget(world, 100);
+      makeProjectile(world, { targetId: target.id! });
+
+      system(world, DT);
+      world.remove(target);
+      for (let i = 0; i < 60; i++) {
+        system(world, DT);
+      }
+
+      expect(bystander.health!.current).toBe(10);
+      expect(queries.projectiles.size).toBe(0);
+    });
+  });
 });

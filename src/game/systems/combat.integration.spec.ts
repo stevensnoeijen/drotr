@@ -14,6 +14,7 @@ import { cellDistance, createCombatSystem } from './combat-system';
 import { createMovePathSystem } from './move-path-system';
 import { createMoveTargetSystem } from './move-target-system';
 import { createMoveVelocitySystem } from './move-velocity-system';
+import { createProjectileSystem } from './projectile-system';
 import { createPerceptionSystem, runPerceptionScan } from './perception-system';
 import { createSeekSystem } from './seek-system';
 
@@ -120,6 +121,47 @@ describe('perception + seek + move + combat integration', () => {
     // so the fight ends 3 damage short of mutual destruction.
     expect(red.health!.current).toBe(0);
     expect(blue.health!.current).toBe(3);
+  });
+
+  it('lets a crossbow soldier drain the health of a walking swordsman', () => {
+    const { world, queries, blue, red, tick } = setup();
+    // Only the shooter and walker matter here; drop the default duellists.
+    world.remove(blue);
+    world.remove(red);
+    const projectile = createProjectileSystem(queries);
+    const shooter = spawnUnit(
+      world,
+      { type: 'crossbowsoldier', team: 'blue', position: cellPosition(2, 2, DEFAULT_CELL_SIZE) },
+      DEFAULT_CELL_SIZE
+    );
+    const walker = spawnUnit(
+      world,
+      { type: 'swordsmen', team: 'red', position: cellPosition(6, 2, DEFAULT_CELL_SIZE) },
+      DEFAULT_CELL_SIZE
+    );
+    shooter.target = { entityId: walker.id! };
+
+    // A player-style move order, which outranks auto-seeking: the swordsman
+    // walks away from the shooter through the real movement systems.
+    const startX = walker.transform!.position.x;
+    walker.moveTarget = {
+      position: { x: startX + 8 * DEFAULT_CELL_SIZE, y: walker.transform!.position.y },
+    };
+
+    let sawWalking = false;
+    let firedWhileWalking = false;
+    for (let i = 0; i < 300; i++) {
+      tick();
+      projectile(world, DT);
+      const walking = walker.velocity!.x !== 0 || walker.velocity!.y !== 0;
+      sawWalking ||= walking;
+      firedWhileWalking ||= walking && queries.projectiles.size > 0;
+    }
+
+    expect(sawWalking).toBe(true);
+    expect(firedWhileWalking).toBe(true);
+    expect(walker.transform!.position.x).toBeGreaterThan(startX);
+    expect(walker.health!.current).toBeLessThan(walker.health!.max);
   });
 
   it('drains HP gradually rather than all at once, and never below zero', () => {
