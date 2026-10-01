@@ -1,6 +1,7 @@
 import { Graphics } from 'pixi.js';
 
 import type { Entity } from '~/game/ecs/entity';
+import { footprintOf } from '~/game/navigation/footprint';
 import { planMoveOrder } from '~/game/navigation/move-order';
 import type { GridLike } from '~/lib/navigation/astar';
 import type { Point } from '~/lib/math/types';
@@ -61,7 +62,8 @@ function remainingWaypoints(
         grid,
         entity.moveTarget.position,
         entity.pendingMoveOrder.destination,
-        cellSize
+        cellSize,
+        footprintOf(entity)
       );
       switch (preview.kind) {
         case 'path':

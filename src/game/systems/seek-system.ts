@@ -1,13 +1,20 @@
 import type { World } from 'miniplex';
 
+import type { Footprint } from '~/game/ecs/components';
 import type { Entity } from '~/game/ecs/entity';
 import type { Queries } from '~/game/ecs/world';
 import { findEntityById } from '~/game/ecs/world';
 import type { System } from '~/game/ecs/system';
-import { cellSteps, findAttackCell, type Cell } from '~/game/combat/attack-cell';
+import { findAttackCell, type Cell } from '~/game/combat/attack-cell';
+import {
+  anchorCellAt,
+  footprintCentre,
+  footprintGap,
+  footprintOf,
+  isAtFootprintCentre,
+} from '~/game/navigation/footprint';
 import { planMoveOrder } from '~/game/navigation/move-order';
 import { NO_OCCUPANT, type OccupancyGrid } from '~/game/navigation/occupancy-grid';
-import { cellCentreCoordinate, isAtCellCentre } from '~/lib/grid';
 import { quantizeAngle } from '~/lib/math/angle';
 import type { Point } from '~/lib/math/types';
 import {
@@ -112,7 +119,8 @@ function comeToRest(entity: Entity, cellSize: number): void {
   delete entity.movePath;
 
   const position = entity.transform!.position;
-  if (isAtCellCentre(position, cellSize)) {
+  const size = footprintOf(entity);
+  if (isAtFootprintCentre(position, size, cellSize)) {
     delete entity.moveTarget;
     if (entity.velocity) {
       entity.velocity.x = 0;
@@ -121,11 +129,9 @@ function comeToRest(entity: Entity, cellSize: number): void {
     return;
   }
 
-  aimAt(
-    entity,
-    cellCentreCoordinate(Math.floor(position.x / cellSize), cellSize),
-    cellCentreCoordinate(Math.floor(position.y / cellSize), cellSize)
-  );
+  const anchor = anchorCellAt(position.x, position.y, size, cellSize);
+  const centre = footprintCentre(anchor.x, anchor.y, size, cellSize);
+  aimAt(entity, centre.x, centre.y);
 }
 
 /**
@@ -255,26 +261,35 @@ export function createSeekSystem(
   const selfCell: Cell = { x: 0, y: 0 };
   const targetCell: Cell = { x: 0, y: 0 };
 
-  // Which unit `isAvailable` is answering for. Hoisted out of the loop so the
-  // predicate handed to `findAttackCell` can be a single closure allocated
-  // once, instead of one per unit per tick.
+  // Which unit, and how large a block, `isAvailable` is answering for.
+  // Hoisted out of the loop so the predicate handed to `findAttackCell` can
+  // be a single closure allocated once, instead of one per unit per tick.
   let occupantId = NO_OCCUPANT;
+  let selfSize: Footprint = { width: 1, height: 1 };
 
   /**
-   * Whether a unit could stand in a cell: unoccupied (by anyone but itself)
-   * and walkable. Unit claims come from the occupancy grid when there is one;
-   * failing that, terrain alone; failing that (no map data at all), anywhere.
+   * Whether a unit's whole footprint could stand with its anchor at (`col`,
+   * `row`): every cell of its `selfSize`-cell block unoccupied (by anyone
+   * but itself) and walkable. Unit claims come from the occupancy grid when
+   * there is one; failing that, terrain alone; failing that (no map data at
+   * all), anywhere. Reduces to a single-cell check for a 1x1 unit.
    */
   const isAvailable = (col: number, row: number): boolean => {
     if (occupancy) {
-      return occupancy.isAvailableFor(occupancy.indexOf(col, row), occupantId);
+      return occupancy.isBlockAvailableFor(occupancy.indexOf(col, row), selfSize, occupantId);
     }
     if (collisionGrid) {
       const { width, height, collision } = collisionGrid;
-      if (col < 0 || row < 0 || col >= width || row >= height) {
-        return false;
+      for (let dy = 0; dy < selfSize.height; dy++) {
+        for (let dx = 0; dx < selfSize.width; dx++) {
+          const c = col + dx;
+          const r = row + dy;
+          if (c < 0 || r < 0 || c >= width || r >= height || collision[r * width + c] !== 0) {
+            return false;
+          }
+        }
       }
-      return collision[row * width + col] === 0;
+      return true;
     }
     return true;
   };
@@ -316,27 +331,38 @@ export function createSeekSystem(
 
       const position = self.transform.position;
       const targetPosition = other.transform.position;
+      const targetSize = footprintOf(other);
+      selfSize = footprintOf(self);
 
-      selfCell.x = Math.floor(position.x / cellSize);
-      selfCell.y = Math.floor(position.y / cellSize);
-      targetCell.x = Math.floor(targetPosition.x / cellSize);
-      targetCell.y = Math.floor(targetPosition.y / cellSize);
+      // `selfCell`/`targetCell` are each unit's footprint *anchor* (top-left
+      // cell of its block), not just the cell its centre point falls in —
+      // for a multi-cell unit those differ, since its position sits on the
+      // block's centre (a cell corner for an even footprint), not a single
+      // cell's. Reduces to the plain `floor(position / cellSize)` for a 1x1
+      // unit, since its anchor shift is zero.
+      const selfAnchor = anchorCellAt(position.x, position.y, selfSize, cellSize);
+      const targetAnchor = anchorCellAt(targetPosition.x, targetPosition.y, targetSize, cellSize);
+      selfCell.x = selfAnchor.x;
+      selfCell.y = selfAnchor.y;
+      targetCell.x = targetAnchor.x;
+      targetCell.y = targetAnchor.y;
 
-      const inReach = cellSteps(selfCell, targetCell) <= attackRange.value;
+      const inReach = footprintGap(selfCell, selfSize, targetCell, targetSize) <= attackRange.value;
 
-      // Where this unit should be standing. Its own cell when the target is
+      // Where this unit should be standing. Its own anchor when the target is
       // already in reach from it (nothing to close), and otherwise the
-      // nearest cell that does reach — falling back to standing still when
-      // every such cell is taken.
+      // nearest anchor whose whole footprint does reach — falling back to
+      // standing still when every such anchor is taken.
       occupantId = self.cellOccupancy?.occupantId ?? NO_OCCUPANT;
       const destination = inReach
         ? selfCell
-        : (findAttackCell(selfCell, targetCell, attackRange.value, isAvailable) ?? selfCell);
+        : (findAttackCell(selfCell, targetCell, attackRange.value, isAvailable, selfSize, targetSize) ??
+          selfCell);
 
       if (destination.x === selfCell.x && destination.y === selfCell.y) {
-        // Nowhere left to walk. Come to rest on this cell's *centre* — never
-        // wherever the unit happens to stand — so a fight only ever starts
-        // from a cell a unit is properly standing in.
+        // Nowhere left to walk. Come to rest on this footprint's *centre* —
+        // never wherever the unit happens to stand — so a fight only ever
+        // starts from a block a unit is properly standing in.
         delete self.movePath;
 
         // "Arrived" is the movement pipeline's own verdict — `MoveTarget`
@@ -347,7 +373,7 @@ export function createSeekSystem(
         // of a cell off, which is the whole bug. The position test
         // stays as the other half of the condition, for a unit left standing
         // off-centre by something else (an order it gave up on, say).
-        if (!self.moveTarget && isAtCellCentre(position, cellSize)) {
+        if (!self.moveTarget && isAtFootprintCentre(position, selfSize, cellSize)) {
           clearPursuitRoute(self);
           self.velocity.x = 0;
           self.velocity.y = 0;
@@ -362,17 +388,21 @@ export function createSeekSystem(
           }
         } else {
           markPursuit(self, target.entityId, targetPosition, PURSUIT_REPATH_INTERVAL);
-          aimAt(
-            self,
-            cellCentreCoordinate(selfCell.x, cellSize),
-            cellCentreCoordinate(selfCell.y, cellSize)
-          );
+          const centre = footprintCentre(selfCell.x, selfCell.y, selfSize, cellSize);
+          aimAt(self, centre.x, centre.y);
         }
         continue;
       }
 
-      const destinationX = cellCentreCoordinate(destination.x, cellSize);
-      const destinationY = cellCentreCoordinate(destination.y, cellSize);
+      // `destination` is this unit's own anchor, so its centre is this
+      // unit's footprint centre — a cell centre for a 1x1 unit, the shared
+      // corner of a knight's 2x2 block.
+      const { x: destinationX, y: destinationY } = footprintCentre(
+        destination.x,
+        destination.y,
+        selfSize,
+        cellSize
+      );
 
       if (isInSight(selfCell, destination)) {
         // Nothing in the way: walk straight at the cell, no search needed.
@@ -394,10 +424,13 @@ export function createSeekSystem(
       const throttled = pursuit !== undefined && pursuit.sinceReplan < PURSUIT_REPATH_INTERVAL;
 
       if (switchedTarget || ((!self.movePath || drifted) && !throttled)) {
-        const planned = planMoveOrder(collisionGrid, position, {
-          x: destinationX,
-          y: destinationY,
-        }, cellSize);
+        const planned = planMoveOrder(
+          collisionGrid,
+          position,
+          { x: destinationX, y: destinationY },
+          cellSize,
+          selfSize
+        );
 
         delete self.movePath;
         delete self.moveTarget;

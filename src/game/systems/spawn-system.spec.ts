@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 
 import type { Entity } from '~/game/ecs/entity';
 import type { SpawnPoint } from '~/game/map/load-tiled-map';
+import { anchorCellAt, footprintOf } from '~/game/navigation/footprint';
 import { claimSpawn } from './spawn-system';
 import { DEFAULT_CELL_SIZE } from '~/lib/grid';
 
@@ -44,11 +45,28 @@ describe('claimSpawn', () => {
     ]);
     expect(claimed.every((e) => e.team === 'red')).toBe(true);
 
-    // Every unit sits in the spawn's y-cell, spread apart along x with no
-    // duplicate positions — they don't stack on top of each other.
+    // Spread apart along x with no duplicate positions, and — footprints
+    // included — no two units sharing a cell: the knight's 2x2 block is
+    // given two cells' worth of the row rather than packed as tightly as
+    // its 1x1 neighbours (see `layoutOffsets`).
     const xs = claimed.map((e) => e.transform?.position.x);
     expect(new Set(xs).size).toBe(3);
-    expect(claimed.every((e) => e.transform?.position.y === 24)).toBe(true);
+
+    const cells = claimed.flatMap((entity) => {
+      const size = footprintOf(entity);
+      const { x, y } = entity.transform!.position;
+      const anchor = anchorCellAt(x, y, size, DEFAULT_CELL_SIZE);
+      const held: string[] = [];
+      for (let dy = 0; dy < size.height; dy++) {
+        for (let dx = 0; dx < size.width; dx++) {
+          held.push(`${anchor.x + dx},${anchor.y + dy}`);
+        }
+      }
+      return held;
+    });
+    expect(new Set(cells).size).toBe(cells.length);
+    // 1 (swordsmen) + 4 (knight's 2x2 block) + 1 (crossbowsoldier).
+    expect(cells).toHaveLength(6);
   });
 
   it('lets different spawns be claimed for different teams', () => {

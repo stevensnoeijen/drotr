@@ -5,6 +5,7 @@ import { World } from 'miniplex';
 import type { TiledMap } from 'tiled-types';
 import { describe, expect, it } from 'vitest';
 
+import { spawnUnit } from '~/game/data/spawn';
 import type { Entity } from '~/game/ecs/entity';
 import { createQueries } from '~/game/ecs/world';
 import {
@@ -13,10 +14,10 @@ import {
   type ParsedMap,
 } from '~/game/map/load-tiled-map';
 import { createMapNavigation } from '~/game/navigation/map-navigation';
-import { createKnightsScenario } from '~/game/scenarios/knights';
 import { toGridPosition } from '~/lib/grid';
 import { Vector2 } from '~/lib/math/vector2';
 import { findPath, hasLineOfSight } from '~/lib/navigation/astar';
+import { pickDistinct } from '~/lib/random';
 import { createCellOccupancySystem } from './cell-occupancy-system';
 import { moveSelectedTo } from './input-system';
 import { createMovePathSystem } from './move-path-system';
@@ -74,13 +75,28 @@ describe('navigation on a converted county map (fagaras, 40px tiles)', () => {
     const world = new World<Entity>();
     const queries = createQueries(world);
 
+    // A 1x1 unit (swordsmen), not the knight: this test is about the
+    // general real-map routing/occupancy infrastructure, not multi-cell
+    // footprints — a dedicated footprint test covers the knight's 2x2 block
+    // on terrain built to exercise it, rather than wherever a cross-map A*
+    // route on this particular map happens to pinch narrower than two cells
+    // wide (out of scope here; see "Wide units and A*" in MOVEMENT.md).
+    //
     // Scripted draws put red on edge-2 and blue on edge-3 (see
     // `pickDistinct`): a pair in the same connected region of the map.
     const draws = [0.5, 0.9];
-    createKnightsScenario(() => draws.shift()!).setup(world, map);
-    const blue = [...world].find((entity) => entity.team === 'blue')!;
-    const red = [...world].find((entity) => entity.team === 'red')!;
-    // Only the blue knight's walk matters here: the red one would just be an
+    const [redSpawn, blueSpawn] = pickDistinct(map.spawns, 2, () => draws.shift()!);
+    const blue = spawnUnit(
+      world,
+      { type: 'swordsmen', team: 'blue', position: blueSpawn.position },
+      cellSize
+    );
+    const red = spawnUnit(
+      world,
+      { type: 'swordsmen', team: 'red', position: redSpawn.position },
+      cellSize
+    );
+    // Only the blue unit's walk matters here: the red one would just be an
     // obstacle sitting on the destination.
     const destination = { ...red.transform!.position };
     world.remove(red);

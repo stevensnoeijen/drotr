@@ -2,10 +2,10 @@ import type { World } from 'miniplex';
 
 import type { Entity } from '~/game/ecs/entity';
 import type { Team } from '~/game/ecs/components';
-import { CELLS_PER_TILE, tilesToCells, toWorldPositionCellCenter } from '~/lib/grid';
-import { Vector2 } from '~/lib/math/vector2';
+import { snapToFootprint } from '~/game/navigation/footprint';
+import { CELLS_PER_TILE, tilesToCells } from '~/lib/grid';
 import type { Point } from '~/lib/math/types';
-import { unitSizeInTiles, units, type UnitDefinition, type UnitType } from './units';
+import { footprintOf, units, type UnitDefinition, type UnitType } from './units';
 
 /** Per-team fill colour for a unit's shape, used by the (view-only) renderer. */
 const TEAM_COLOR: Record<Team, number> = {
@@ -15,12 +15,13 @@ const TEAM_COLOR: Record<Team, number> = {
 
 /**
  * How much smaller, in world units, a unit shape's rendered radius/half-extent
- * is than half of its unit-type size (see `unitSizeInTiles`), so neighbouring
- * units stay visually distinct: on a 40px-tile map an infantry unit (half a
- * tile) is drawn 16px across, a knight (a full tile) 36px — close to the
- * visible extent of their original sprites. Its selection marks and health
- * bar (see `render-system.ts`, `health-bar.ts`) are laid out against the
- * full unit-type size (`renderable.extent`), not this shape size.
+ * is than half of its footprint's world size (see `footprintOf`), so
+ * neighbouring units stay visually distinct: on a 40px-tile map an infantry
+ * unit (a single 20px cell) is drawn 16px across, a knight (its 2x2 block,
+ * 40px) 36px — close to the visible extent of their original sprites. Its
+ * selection marks and health bar (see `render-system.ts`, `health-bar.ts`)
+ * are laid out against the full footprint box (`renderable.extent`), not
+ * this shape size.
  */
 const UNIT_MARGIN = 2;
 
@@ -75,19 +76,23 @@ export interface SpawnUnitOptions {
  * per-type data ({@link units}) with the caller's placement into the ECS
  * component contract the renderer and future systems read.
  *
- * `position` is snapped to the center of whichever grid cell it falls in
- * (see {@link toWorldPositionCellCenter}), so every unit — however its
- * caller computed its placement — renders centered in a cell rather than
- * wherever it happened to land.
+ * `position` is snapped to the centre of the block of cells the unit
+ * occupies there (see `snapToFootprint`) — a cell centre for a 1x1 unit, and
+ * the shared corner of its 2x2 block for a knight — so every unit, however
+ * its caller computed its placement, rests exactly on its footprint rather
+ * than wherever it happened to land. A stationary multi-cell unit always
+ * fills whole cells; it is never centred on one cell with the rest of its
+ * block hanging off it.
  *
  * `cellSize` is the world size of that grid's cells — a fraction of the
  * loaded map's tile size (see `cellSizeOf`). Unit data is authored in map
  * tiles, and this is the one place it's converted: movement and projectile
  * speed to world units per second, attack/aggro range to cells (see
- * {@link attackRangeInCells}), which the systems then read as-is, and the
- * unit-type size (see `unitSizeInTiles`) to the drawn shape's size and the
- * box its overlays are laid out against. However big it is drawn, the unit
- * occupies the single cell it is centred in.
+ * {@link attackRangeInCells}), and the unit's footprint (see `footprintOf`
+ * in `./units`) to the drawn shape's size and the box its overlays are laid
+ * out against — so the rendered box always matches the cells the unit
+ * actually reserves (`CellOccupancySystem`), making multi-cell occupancy
+ * visible and debuggable rather than a one-cell dot.
  */
 export function spawnUnit(
   world: World<Entity>,
@@ -96,9 +101,9 @@ export function spawnUnit(
 ): Entity {
   const definition = units[type];
   const tileSize = cellSize * CELLS_PER_TILE;
-  const sizeInTiles = unitSizeInTiles(definition);
-  const extent = (Math.max(sizeInTiles.width, sizeInTiles.height) * tileSize) / 2;
-  const cellCenter = toWorldPositionCellCenter(new Vector2(position.x, position.y), cellSize);
+  const footprint = footprintOf(definition);
+  const extent = (Math.max(footprint.width, footprint.height) * cellSize) / 2;
+  const cellCenter = snapToFootprint(position, footprint, cellSize);
 
   const entity: Entity = {
     id: nextEntityId++,
@@ -115,6 +120,9 @@ export function spawnUnit(
     hoverable: true,
     velocity: { x: 0, y: 0 },
   };
+  if (footprint.width > 1 || footprint.height > 1) {
+    entity.footprint = footprint;
+  }
   // A unit type whose definition carries no combat stats gets none of the
   // components below and simply can't acquire a target (PerceptionSystem),
   // or land an attack (CombatSystem, which needs all three of

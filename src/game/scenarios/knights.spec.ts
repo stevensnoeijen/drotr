@@ -30,10 +30,10 @@ function mapWithSpawns(
   };
 }
 
-/** Four spawns, one per 32px tile along the diagonal, at each tile's top-left corner. */
+/** Four spawns, one per 32px tile along the diagonal, at each tile's centre like a real map's. */
 function mapWithFourSpawns(): ParsedMap {
   return mapWithSpawns(
-    [0, 1, 2, 3].map((i) => ({ id: `edge-${i + 1}`, x: i * 32, y: i * 32 }))
+    [0, 1, 2, 3].map((i) => ({ id: `edge-${i + 1}`, x: i * 32 + 16, y: i * 32 + 16 }))
   );
 }
 
@@ -71,21 +71,21 @@ describe('knightsScenario', () => {
     const world = new World<Entity>();
 
     // 0.5 of 4 draws edge-3 (tile 2, 2) for red; then 0.9 of the remaining
-    // 3 draws the last one, edge-4 (tile 3, 3), for blue. Each lands in the
-    // 16px half-tile cell at its spawn tile's top-left corner.
+    // 3 draws the last one, edge-4 (tile 3, 3), for blue. Each knight's 2x2
+    // block of 16px cells covers its spawn tile exactly, centred on it.
     createKnightsScenario(scripted(0.5, 0.9)).setup(world, mapWithFourSpawns());
 
     const { red, blue } = knights(world);
-    expect(red[0].transform?.position).toEqual({ x: 72, y: 72 });
-    expect(blue[0].transform?.position).toEqual({ x: 104, y: 104 });
+    expect(red[0].transform?.position).toEqual({ x: 80, y: 80 });
+    expect(blue[0].transform?.position).toEqual({ x: 112, y: 112 });
   });
 
   it('with a seeded source, always lands the two knights on two distinct map spawn points', () => {
     const map = mapWithFourSpawns();
-    const spawnCentres = map.spawns.map(({ position }) => ({
-      x: position.x + 8,
-      y: position.y + 8,
-    }));
+    // Map spawn points sit at tile centres, which a knight's 2x2 block of
+    // half-tile cells covers exactly — so the block's own resting centre is
+    // the spawn point itself, with no further offset to add.
+    const spawnCentres = map.spawns.map(({ position }) => ({ ...position }));
 
     for (let seed = 0; seed < 50; seed++) {
       const world = new World<Entity>();
@@ -128,10 +128,10 @@ describe('knightsScenario', () => {
     createKnightsScenario(scripted(0, 0)).setup(world, map);
 
     const { red, blue } = knights(world);
-    // Centred in the 20px half-tile cells (2, 2) and (6, 6), not in the
-    // 16px cells a 32px-tile map would put those points in.
-    expect(red[0].transform?.position).toEqual({ x: 50, y: 50 });
-    expect(blue[0].transform?.position).toEqual({ x: 130, y: 130 });
+    // On the corners at the middle of 2x2 blocks of 20px cells — (40, 40)
+    // and (120, 120) — not the 16px cells a 32px-tile map would use.
+    expect(red[0].transform?.position).toEqual({ x: 40, y: 40 });
+    expect(blue[0].transform?.position).toEqual({ x: 120, y: 120 });
   });
 
   it('spawns nothing when no map is given', () => {

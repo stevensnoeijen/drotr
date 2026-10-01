@@ -1,8 +1,10 @@
 import type { World } from 'miniplex';
 
+import type { Footprint } from '~/game/ecs/components';
 import type { Entity } from '~/game/ecs/entity';
 import type { Queries } from '~/game/ecs/world';
 import type { System } from '~/game/ecs/system';
+import { anchorCellAt, footprintOf } from '~/game/navigation/footprint';
 import { NO_CELL, type OccupancyGrid } from '~/game/navigation/occupancy-grid';
 import { planMovePath } from '~/game/navigation/plan-move-path';
 
@@ -42,13 +44,23 @@ export const REROUTE_AFTER_SECONDS = 0.5;
 const FOOTPRINT_CLEARANCE = 3;
 
 /**
- * The largest half-extent the occupancy lookahead honours: half a cell, less
- * {@link FOOTPRINT_CLEARANCE}. Every unit occupies exactly one cell, whatever
- * size it is drawn at.
+ * The largest half-extent the lookahead of a 1x1 unit honours: half a cell,
+ * less {@link FOOTPRINT_CLEARANCE}, however big the unit is drawn. A
+ * multi-cell unit (a 2x2 knight) looks ahead from its own block's edges
+ * instead — see `leadingBlockAt` inside {@link createCellOccupancySystem} —
+ * since its drawn size already matches the cells it actually holds.
  */
 export function footprintMargin(cellSize: number): number {
   return cellSize / 2 - FOOTPRINT_CLEARANCE;
 }
+
+/**
+ * How far inside its block's edge, in world units, a multi-cell unit's
+ * leading-edge lookahead sits: enough to absorb floating-point noise in a
+ * step that lands exactly on a block centre (`MoveTargetSystem` clamps the
+ * final step to do just that), and far smaller than any step a unit takes.
+ */
+const BLOCK_LEAD_EPSILON = 0.5;
 
 /**
  * Unit-to-unit collision, enforced as cell occupancy over the map's terrain
@@ -116,6 +128,52 @@ export function footprintMargin(cellSize: number): number {
  * attacker jammed in a corridor moving again rather than stranding it.
  */
 export function createCellOccupancySystem(queries: Queries, grid: OccupancyGrid): System {
+  /**
+   * Anchor of the `size`-cell block a unit resting (or about to rest) at
+   * world position (`x`, `y`) holds — the same anchor `footprintOf`'s
+   * geometry (`anchorCellAt`) resolves it to. Reduces to `grid.indexAtWorld`
+   * for a 1x1 unit, since a single cell has no shift to apply.
+   */
+  const anchorIndexAt = (x: number, y: number, size: Footprint): number => {
+    const anchor = anchorCellAt(x, y, size, grid.cellSize);
+    return grid.indexOf(anchor.x, anchor.y);
+  };
+
+  /**
+   * Anchor of the block a `size`-cell unit needs to hold once it has moved
+   * to (`x`, `y`) heading along (`vx`, `vy`) — the leading-edge lookahead a
+   * multi-cell unit checks before each step: the two cells its block moves
+   * into for a straight step, three for a diagonal one. On each axis the
+   * unit is actually moving along, this is the block whose leading edge
+   * contains the unit's own leading edge (`half` a block-width/height ahead
+   * of its own centre, less {@link BLOCK_LEAD_EPSILON}); an axis it isn't
+   * moving along keeps the block it's already resting on.
+   */
+  const leadingBlockAt = (
+    x: number,
+    y: number,
+    vx: number,
+    vy: number,
+    size: Footprint
+  ): number => {
+    const halfX = (size.width * grid.cellSize) / 2 - BLOCK_LEAD_EPSILON;
+    const halfY = (size.height * grid.cellSize) / 2 - BLOCK_LEAD_EPSILON;
+    const resting = anchorCellAt(x, y, size, grid.cellSize);
+    const axis = (coordinate: number, velocity: number, rest: number, half: number, span: number) => {
+      if (velocity > 0) {
+        return Math.floor((coordinate + half) / grid.cellSize) - (span - 1);
+      }
+      if (velocity < 0) {
+        return Math.floor((coordinate - half) / grid.cellSize);
+      }
+      return rest;
+    };
+    return grid.indexOf(
+      axis(x, vx, resting.x, halfX, size.width),
+      axis(y, vy, resting.y, halfY, size.height)
+    );
+  };
+
   return (_world: World<Entity>, dt: number) => {
     // `queries.movable`, not the broader `queries.moving`: this system's
     // whole job is grid-cell collision between navigable units, and
@@ -131,18 +189,25 @@ export function createCellOccupancySystem(queries: Queries, grid: OccupancyGrid)
     // hit or expire, and it leaks for the rest of the match.
     for (const self of queries.movable) {
       const { transform, velocity } = self;
+      // Cells per side of this unit's block. `cell` and `reserved` below are
+      // the block's anchor (top-left) cells, and every claim, release and
+      // availability check below covers the whole block at once — which
+      // reduces exactly to the single-cell behaviour this system always had
+      // when `size` is 1x1 (every unit but the knight).
+      const size = footprintOf(self);
+      const isSingleCell = size.width === 1 && size.height === 1;
 
       if (self.health && self.health.current <= 0) {
         const dead = self.cellOccupancy;
         if (dead) {
-          grid.release(dead.cell, dead.occupantId);
-          grid.release(dead.reserved, dead.occupantId);
+          grid.releaseBlock(dead.cell, size, dead.occupantId);
+          grid.releaseBlock(dead.reserved, size, dead.occupantId);
           delete self.cellOccupancy;
         }
         continue;
       }
 
-      const current = grid.indexAt(transform.position);
+      const current = anchorIndexAt(transform.position.x, transform.position.y, size);
 
       let occupancy = self.cellOccupancy;
       if (!occupancy) {
@@ -159,22 +224,24 @@ export function createCellOccupancySystem(queries: Queries, grid: OccupancyGrid)
       if (occupancy.cell !== current) {
         if (current === occupancy.reserved) {
           // Arrived: the destination was already reserved on the way in, so
-          // all that's left is to stop straddling the origin cell.
-          grid.release(occupancy.cell, occupancy.occupantId);
+          // all that's left is to stop straddling the origin block — keeping
+          // any cells the two blocks share rather than releasing and
+          // immediately re-granting them.
+          grid.releaseBlock(occupancy.cell, size, occupancy.occupantId, current);
           occupancy.cell = current;
           occupancy.reserved = NO_CELL;
         } else {
           // Somewhere unexpected — a unit seen for the first time, or one
           // repositioned by something other than integration. Drop whatever
           // it held and claim where it actually is. The claim can be refused
-          // (two units spawned into one cell); the unit is still tracked, it
-          // just doesn't own the cell it shares, and `release` will never let
-          // it evict the unit that does.
-          grid.release(occupancy.cell, occupancy.occupantId);
-          grid.release(occupancy.reserved, occupancy.occupantId);
+          // (two units spawned onto overlapping footprints); the unit is
+          // still tracked, it just doesn't own the cells it shares, and
+          // `releaseBlock` will never let it evict whoever does.
+          grid.releaseBlock(occupancy.cell, size, occupancy.occupantId);
+          grid.releaseBlock(occupancy.reserved, size, occupancy.occupantId);
           occupancy.reserved = NO_CELL;
           occupancy.cell = current;
-          grid.reserve(current, occupancy.occupantId);
+          grid.reserveBlock(current, size, occupancy.occupantId);
         }
       }
 
@@ -194,32 +261,45 @@ export function createCellOccupancySystem(queries: Queries, grid: OccupancyGrid)
       // start visibly encroaching on, so it simply never gets that close:
       // no approach-and-bounce, because there is nothing to correct.
       //
-      // Capped at the unit's one-cell footprint ({@link footprintMargin}): a
-      // unit drawn wider than its cell (a knight is drawn a full tile but
-      // reserves a single half-tile cell) would otherwise look past the
-      // cell it is walking into and be refused by whatever stands in the
-      // cell beyond it — never reaching, and so never settling on, a cell
-      // right next to an occupied one.
+      // Capped at half a cell ({@link footprintMargin}): a 1x1 unit drawn
+      // wider than its cell would otherwise look past the cell it is
+      // walking into and be refused by whatever stands in the cell beyond
+      // it — never reaching, and so never settling on, a cell right next to
+      // an occupied one. Only applies to a 1x1 unit: a multi-cell unit's
+      // drawn size already matches the cells it holds (see the Rendering
+      // section of the ticket that introduced multi-cell footprints), so its
+      // lookahead is its own block's leading edge instead (`leadingBlockAt`).
       const margin = Math.min(self.renderable?.size ?? 0, footprintMargin(grid.cellSize));
 
-      // Where this tick's step, extended by that margin, would put the
-      // unit — its own cell when it isn't going anywhere. Asked by
-      // coordinate rather than by point so the lookahead costs no
-      // allocation per unit per tick.
-      const next = moving
-        ? grid.indexAtWorld(
-            transform.position.x + (velocity.x / speed) * (speed * dt + margin),
-            transform.position.y + (velocity.y / speed) * (speed * dt + margin)
-          )
-        : occupancy.cell;
+      // Where this tick's step would put the unit's leading edge — its own
+      // block when it isn't going anywhere. A 1x1 unit looks ahead by a
+      // single point, extended by `margin`; a multi-cell unit looks ahead
+      // from its own block's edges (`leadingBlockAt`), which checks exactly
+      // the leading cells its block would newly cover: two for a straight
+      // step, three for a diagonal one.
+      const next = !moving
+        ? occupancy.cell
+        : isSingleCell
+          ? grid.indexAtWorld(
+              transform.position.x + (velocity.x / speed) * (speed * dt + margin),
+              transform.position.y + (velocity.y / speed) * (speed * dt + margin)
+            )
+          : leadingBlockAt(
+              transform.position.x + velocity.x * dt,
+              transform.position.y + velocity.y * dt,
+              velocity.x,
+              velocity.y,
+              size
+            );
 
-      // A unit standing in `cell` occupies exactly that one cell; the second
-      // claim is only legitimate while it is actually committed to crossing.
-      // So a unit that stopped, turned back, or was redirected hands its
-      // reservation straight back rather than pinning a cell it will never
-      // enter.
+      // A unit standing in `cell` occupies exactly that one block; the
+      // second claim is only legitimate while it is actually committed to
+      // crossing. So a unit that stopped, turned back, or was redirected
+      // hands its reservation straight back rather than pinning a block it
+      // will never enter — keeping any cells still shared with the block it
+      // currently stands in.
       if (next !== occupancy.reserved && occupancy.reserved !== NO_CELL) {
-        grid.release(occupancy.reserved, occupancy.occupantId);
+        grid.releaseBlock(occupancy.reserved, size, occupancy.occupantId, occupancy.cell);
         occupancy.reserved = NO_CELL;
       }
 
@@ -243,8 +323,11 @@ export function createCellOccupancySystem(queries: Queries, grid: OccupancyGrid)
         continue;
       }
 
-      if (grid.isAvailableFor(next, occupancy.occupantId)) {
-        grid.reserve(next, occupancy.occupantId);
+      // For a multi-cell block the cells it already holds pass trivially
+      // (`isAvailableFor`/`isBlockAvailableFor` both treat a cell the same
+      // occupant already holds as free), so this reserves exactly the
+      // leading edge the block would newly need.
+      if (grid.reserveBlock(next, size, occupancy.occupantId)) {
         occupancy.reserved = next;
         occupancy.blockedFor = 0;
         occupancy.rerouted = false;
@@ -272,7 +355,8 @@ export function createCellOccupancySystem(queries: Queries, grid: OccupancyGrid)
             blockedGrid,
             transform.position,
             destination,
-            grid.cellSize
+            grid.cellSize,
+            size
           );
           if (planned.status === 'found' && planned.waypoints.length > 0) {
             self.movePath = { waypoints: planned.waypoints, index: 0 };

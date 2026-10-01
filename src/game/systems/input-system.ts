@@ -5,6 +5,12 @@ import type { Team } from '~/game/ecs/components';
 import type { Entity } from '~/game/ecs/entity';
 import type { Queries } from '~/game/ecs/world';
 import type { System } from '~/game/ecs/system';
+import {
+  anchorCellAt,
+  footprintCentre,
+  footprintOf,
+  snapToFootprint,
+} from '~/game/navigation/footprint';
 import { applyMoveOrder, planMoveOrder } from '~/game/navigation/move-order';
 import {
   findNearestAvailableCell,
@@ -12,7 +18,7 @@ import {
   NO_OCCUPANT,
   type OccupancyGrid,
 } from '~/game/navigation/occupancy-grid';
-import { screenToWorld, toWorldPositionCellCenter, type ViewportTransform } from '~/lib/grid';
+import { screenToWorld, type ViewportTransform } from '~/lib/grid';
 import { Vector2 } from '~/lib/math/vector2';
 import type { GridLike } from '~/lib/navigation/astar';
 import type { Point } from '~/lib/math/types';
@@ -299,8 +305,10 @@ export function selectAt(
  *
  * Without a grid — a map with no terrain at all — the order stays what it
  * was before pathfinding existed: a single straight-line `MoveTarget` to the
- * clicked cell's centre (see {@link toWorldPositionCellCenter}). There is no
- * terrain to route around, so there is nothing for A* to add.
+ * centre of the footprint-sized block the clicked point falls in (see
+ * `snapToFootprint`) — a cell centre for a 1x1 unit, a cell corner for a
+ * knight's 2x2 block. There is no terrain to route around, so there is
+ * nothing for A* to add.
  *
  * Either way an accepted order replaces the previous one outright, so a
  * second right-click never leaves a stale route behind for the unit to
@@ -334,7 +342,6 @@ export function moveSelectedTo(
     return;
   }
 
-  const clicked = toWorldPositionCellCenter(worldPosition, cellSize);
   /** Destination cells already handed out within this one order. */
   const assigned = new Set<number>();
 
@@ -343,13 +350,21 @@ export function moveSelectedTo(
       continue;
     }
 
-    let destination: Point = { x: clicked.x, y: clicked.y };
+    // Snapped to the centre of the block this unit would occupy there — a
+    // cell centre for a 1x1 unit, the corner shared by a knight's 2x2
+    // block — never `(cell + 0.5) * cellSize`, which would be wrong for an
+    // even-sized footprint.
+    const size = footprintOf(entity);
+    let destination: Point = snapToFootprint(worldPosition, size, cellSize);
     if (occupancy) {
+      const anchor = anchorCellAt(destination.x, destination.y, size, cellSize);
       const cell = findNearestAvailableCell(
         occupancy,
-        occupancy.indexAt(destination),
+        occupancy.indexOf(anchor.x, anchor.y),
         entity.cellOccupancy?.occupantId ?? NO_OCCUPANT,
-        assigned
+        assigned,
+        undefined,
+        size
       );
       if (cell === NO_CELL) {
         // Nowhere within the search radius for this unit to stand. Refusing
@@ -357,8 +372,12 @@ export function moveSelectedTo(
         // from on arrival.
         continue;
       }
-      assigned.add(cell);
-      destination = occupancy.centreOf(cell);
+      for (const taken of occupancy.blockCells(cell, size)!) {
+        assigned.add(taken);
+      }
+      const col = cell % occupancy.width;
+      const row = Math.floor(cell / occupancy.width);
+      destination = footprintCentre(col, row, size, cellSize);
     }
 
     if (entity.moveTarget) {
@@ -379,7 +398,7 @@ export function moveSelectedTo(
     }
 
     delete entity.pendingMoveOrder;
-    const result = planMoveOrder(grid, entity.transform.position, destination, cellSize);
+    const result = planMoveOrder(grid, entity.transform.position, destination, cellSize, size);
     applyMoveOrder(entity, result);
   }
 }

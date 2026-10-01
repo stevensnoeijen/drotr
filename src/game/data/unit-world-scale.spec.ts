@@ -99,6 +99,13 @@ describe('unit world scale on a 40px-tile map', () => {
     const x = self.transform!.position.x;
 
     const enemy = spawn('swordsmen', 'red', x + tiles * TILE);
+    // Pins the enemy exactly `tiles` away on the same row as `self`: a
+    // knight rests on its 2x2 block's centre (a cell corner), a swordsman
+    // on a plain cell centre, so letting each spawn snap independently can
+    // leave a half-cell y (and x) drift between them that this exact-range
+    // boundary check isn't meant to exercise.
+    enemy.transform!.position.x = x + tiles * TILE;
+    enemy.transform!.position.y = self.transform!.position.y;
     runPerceptionScan(world, queries, cellSize);
     expect(self.target?.entityId).toBe(enemy.id);
 
