@@ -138,6 +138,11 @@ function attack(
     return;
   }
 
+  // The swing is taken from here on (melee hit or projectile fired): flag it
+  // so the renderer can show an attack animation, restarting any swing that
+  // is still in progress.
+  self.attackSwing = { elapsed: 0 };
+
   if (self.ranged) {
     // Guarded above: `self.ranged` is defined here, satisfying `RangedAttacker`.
     fireProjectile(
@@ -154,6 +159,18 @@ function attack(
   // (`health.current <= 0`), and letting it run negative would make a
   // health-bar fraction and any future overkill accounting meaningless.
   other.health.current = Math.max(0, other.health.current - self.damage.value);
+}
+
+/**
+ * Longest an {@link AttackSwing} stays flagged: a swing is a short visual
+ * beat, not the whole cooldown, so a slow attacker does not look like it is
+ * swinging constantly.
+ */
+export const MAX_SWING_SECONDS = 0.5;
+
+/** How long `self`'s swing stays flagged; never longer than its cooldown. */
+function swingDuration(self: AttackerEntity): number {
+  return Math.min(MAX_SWING_SECONDS, self.attackCooldown.duration);
 }
 
 /**
@@ -198,6 +215,15 @@ export function createCombatSystem(queries: Queries, cellSize: number): System {
       // means nothing can fire on its behalf between death and cleanup.
       if (self.health.current <= 0) {
         continue;
+      }
+
+      // Age the swing flag first, so a swing taken by this tick's cooldown
+      // elapse below starts again from zero rather than being aged at once.
+      if (self.attackSwing) {
+        self.attackSwing.elapsed += dt;
+        if (self.attackSwing.elapsed >= swingDuration(self)) {
+          delete self.attackSwing;
+        }
       }
 
       let cooldown = cooldowns.get(self);

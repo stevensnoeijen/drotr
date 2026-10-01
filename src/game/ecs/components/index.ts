@@ -1,6 +1,7 @@
 export type { AggroRange } from '~/game/ecs/components/aggro-range';
 export type { AttackCooldown } from '~/game/ecs/components/attack-cooldown';
 export type { AttackRange } from '~/game/ecs/components/attack-range';
+export type { AttackSwing } from '~/game/ecs/components/attack-swing';
 export type { CellOccupancy } from '~/game/ecs/components/cell-occupancy';
 export type { Damage } from '~/game/ecs/components/damage';
 export type { Dead } from '~/game/ecs/components/dead';
