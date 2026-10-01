@@ -1,4 +1,4 @@
-import type { Shape } from '~/game/ecs/components';
+import type { Footprint, Shape } from '~/game/ecs/components';
 import { CELLS_PER_TILE } from '~/lib/grid';
 import swordsmenData from './units/swordsmen.json';
 import crossbowsoldierData from './units/crossbowsoldier.json';
@@ -29,13 +29,28 @@ export interface TileSize {
 export interface UnitDefinition {
   type: UnitType;
   /**
-   * How big the unit is drawn, in map tiles — taken from the typical visible
+   * The unit's visible extent in map tiles, as measured from the typical
    * extent of the original sprite's idle and move frames, and rounded up to
    * whole half-tiles by {@link unitSizeInTiles}. Authored in tiles rather
-   * than pixels so it scales with the map's tile size. It only sizes the
-   * drawn unit: every unit still occupies a single movement cell.
+   * than pixels so it scales with the map's tile size. Descriptive only —
+   * `spawnUnit` sizes the drawn shape and overlays from {@link footprint}
+   * instead (cells convert to world units more directly than tiles do), so
+   * keeping this consistent with `footprint` (the knight's `size` of one
+   * tile matches its 2x2 cells exactly) is an authoring convention, not
+   * something this capability enforces for itself.
    */
   size: TileSize;
+  /**
+   * How many unit-placement cells this unit occupies, as a `width` x
+   * `height` rectangle — axis-aligned and fixed, not rotated with facing.
+   * Optional, defaulting to one cell (`footprintOf`'s default) so every
+   * unit JSON that doesn't set it stays valid and unchanged. The knight is
+   * the only unit type that sets it so far: a 2x2 block of half-tile cells,
+   * matching its full-tile `size`. This is what `spawnUnit` reserves on the
+   * occupancy grid *and* sizes the drawn shape from, so the rendered box
+   * always matches the cells the unit actually holds.
+   */
+  footprint?: Footprint;
   shape: Shape;
   health: number;
   attackDamage?: number;
@@ -79,6 +94,19 @@ export const units: Record<UnitType, UnitDefinition> = {
   crossbowsoldier: crossbowsoldierData as UnitDefinition,
 };
 
+/** Every unit not given an explicit `footprint` occupies exactly one cell. */
+const DEFAULT_FOOTPRINT: Footprint = { width: 1, height: 1 };
+
+/**
+ * A unit type's footprint, in unit-placement cells: {@link DEFAULT_FOOTPRINT}
+ * unless its definition says otherwise. The single accessor every call site
+ * reads a definition's footprint through, so none of them repeats the
+ * `?? { width: 1, height: 1 }` default itself.
+ */
+export function footprintOf(definition: Pick<UnitDefinition, 'footprint'>): Footprint {
+  return definition.footprint ?? DEFAULT_FOOTPRINT;
+}
+
 /**
  * Rounds a tile length up to a whole number of half-tiles (one movement cell
  * each), and never below one: a unit is always at least a cell in size.
@@ -90,7 +118,11 @@ export function roundUpToHalfTiles(tiles: number): number {
   return Math.max(1, cells) / CELLS_PER_TILE;
 }
 
-/** A unit type's drawn size in tiles, rounded up to whole half-tiles. */
+/**
+ * A unit type's visible size in tiles, rounded up to whole half-tiles —
+ * descriptive (see {@link UnitDefinition.size}), not read by `spawnUnit` for
+ * the drawn shape itself, which sizes from {@link footprintOf} instead.
+ */
 export function unitSizeInTiles(
   definition: Pick<UnitDefinition, 'size'>
 ): TileSize {
