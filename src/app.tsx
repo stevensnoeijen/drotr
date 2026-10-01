@@ -2,6 +2,7 @@ import { HashRouter, Route, Routes } from 'react-router';
 
 import Home from '~/views/home';
 import Game from '~/views/game';
+import UnitPreview from '~/views/unit-preview';
 
 // Hash-based routing: the URL contract for test cases is
 // `#/game?case=<id>&map=<name>&debug=<flags>`, so a case can be bookmarked
@@ -12,6 +13,7 @@ export default function App() {
       <Routes>
         <Route index element={<Home />} />
         <Route path="/game" element={<Game />} />
+        <Route path="/unit-preview" element={<UnitPreview />} />
       </Routes>
     </HashRouter>
   );

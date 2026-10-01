@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router';
+import { Link, useSearchParams } from 'react-router';
 import {
   AnimatedSprite,
   Application,
@@ -23,11 +23,12 @@ import {
   animationSpeed,
   atlasUnits,
   resolveSelection,
+  selectionFromParams,
   type AnimationSelection,
-} from './unit-animation-options';
+} from './unit-preview-options';
 
 /**
- * Unit animation player (`?case=unit-animations`): plays one animation of
+ * Unit preview page (`#/unit-preview`): plays one animation of
  * the shared unit atlas through Pixi, at the manifest's fps and anchor, so
  * it looks the way it will in the game. The frame bounds and anchor are
  * drawn on top so any frame-to-frame jitter stands out. Units are found
@@ -129,14 +130,24 @@ interface Playback {
   playing: boolean;
 }
 
-export default function UnitAnimations({
-  initial,
-}: {
-  initial: Partial<AnimationSelection>;
-}) {
+/**
+ * The selection can be preset with `?unit=&team=&action=&direction=&loop=`;
+ * it's read on mount and whenever the query changes.
+ */
+export default function UnitPreview() {
+  const [searchParams] = useSearchParams();
   const state = useUnitAtlas();
-  const [requested, setRequested] =
-    useState<Partial<AnimationSelection>>(initial);
+  const [requested, setRequested] = useState<Partial<AnimationSelection>>(() =>
+    selectionFromParams(searchParams)
+  );
+  // The page stays mounted when only the query changes (e.g. following
+  // another preset link), so re-read it then, while rendering.
+  const query = searchParams.toString();
+  const [prevQuery, setPrevQuery] = useState(query);
+  if (prevQuery !== query) {
+    setPrevQuery(query);
+    setRequested(selectionFromParams(searchParams));
+  }
   const ready = state.status === 'ready' ? state : undefined;
   const selection = ready
     ? resolveSelection(ready.units, ready.manifests, requested)
@@ -251,7 +262,7 @@ export default function UnitAnimations({
         <Link to="/" className="text-sm text-neutral-400 hover:text-white">
           ← Home
         </Link>
-        <h1 className="text-lg">Unit animations</h1>
+        <h1 className="text-lg">Unit preview</h1>
       </div>
       {state.status === 'loading' && <p>Loading…</p>}
       {state.status === 'error' && (

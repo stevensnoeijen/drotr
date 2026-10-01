@@ -15,4 +15,18 @@ describe('App', () => {
 
     expect(container.textContent).toContain('Dracula: Reign of Terror');
   });
+
+  it('links the home page to the unit preview page', () => {
+    const container = document.createElement('div');
+    document.body.appendChild(container);
+
+    act(() => {
+      createRoot(container).render(<App />);
+    });
+
+    const link = [...container.querySelectorAll('a')].find(
+      (a) => a.textContent === 'Unit preview'
+    );
+    expect(link?.getAttribute('href')).toBe('#/unit-preview');
+  });
 });

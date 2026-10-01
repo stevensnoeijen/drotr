@@ -6,8 +6,6 @@ import DebugOverlay, { type GameStats } from '~/components/debug-overlay';
 import UnitInfoTooltip from '~/components/unit-info-tooltip';
 import Atlas from '~/views/atlas';
 import UnitSprites from '~/views/unit-sprites';
-import UnitAnimations from '~/views/unit-animations';
-import { selectionFromParams } from '~/views/unit-animation-options';
 import { resolveMap } from '~/game/maps';
 import {
   effectiveTileLayerVisibility,
@@ -40,9 +38,6 @@ const ASSET_CASES: Record<
       unit={searchParams.get('unit') ?? undefined}
       compare={searchParams.get('compare') === '1'}
     />
-  ),
-  'unit-animations': (searchParams) => (
-    <UnitAnimations initial={selectionFromParams(searchParams)} />
   ),
 };
 

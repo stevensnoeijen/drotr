@@ -137,6 +137,18 @@ export default function Home() {
           Launch
         </Link>
       )}
+
+      <section className="flex flex-col items-center gap-2">
+        <h2 className="text-sm font-semibold text-neutral-400">
+          Developer tools
+        </h2>
+        <Link
+          to="/unit-preview"
+          className="rounded bg-neutral-700 px-4 py-2 text-sm font-semibold text-white hover:bg-neutral-600"
+        >
+          Unit preview
+        </Link>
+      </section>
     </div>
   );
 }

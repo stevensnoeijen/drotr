@@ -146,7 +146,7 @@ direction.
 every team × action × direction at one scale with a live preview;
 `&compare=1` shows the old palette sheet's frames underneath.
 
-`#/game?case=unit-animations` plays one animation of the shared atlas
+`#/unit-preview` (linked from the home page under "Developer tools") plays one animation of the shared atlas
 through Pixi at the manifest's fps and anchor, as the game will, with the
 frame bounds (magenta) and anchor (cyan) drawn on top so jitter shows. It
 lists every unit that has animations in the atlas, so a newly packed unit
@@ -154,7 +154,7 @@ appears without code changes, and offers only the teams and actions its
 manifest declares, all 8 directions, a loop toggle (off: play once and hold
 the last frame), play/pause and frame stepping, with the current frame
 index and name. The selection can be preset in the URL, e.g.
-`&unit=swordsmen&team=red&action=attack&direction=se&loop=0`.
+`#/unit-preview?unit=swordsmen&team=red&action=attack&direction=se&loop=0`.
 
 The swordsmen map was bootstrapped by template-matching
 `raw/sprites/units` against the decoded atlas (every frame matched exactly

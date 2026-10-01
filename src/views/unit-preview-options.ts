@@ -10,7 +10,7 @@ import {
 import type { UnitManifest } from '~/game/render/sprites/unit-manifest';
 
 /**
- * Option logic for the unit animation player (`?case=unit-animations`),
+ * Option logic for the unit preview page (`#/unit-preview`),
  * kept apart from the Pixi rendering so it can be tested on its own.
  */
 

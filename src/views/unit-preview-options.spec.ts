@@ -8,7 +8,7 @@ import {
   atlasUnits,
   resolveSelection,
   selectionFromParams,
-} from './unit-animation-options';
+} from './unit-preview-options';
 
 const swordsmen: UnitManifest = {
   frameSize: [32, 32],
