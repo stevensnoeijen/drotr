@@ -6,4 +6,5 @@
  * unrepresentable. Any code that decides friend-or-foe can exhaustively switch
  * on this without a fallthrough case.
  */
-export type Team = 'blue' | 'red';
+export const TEAMS = ['blue', 'red'] as const;
+export type Team = (typeof TEAMS)[number];
