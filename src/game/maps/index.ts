@@ -17,9 +17,7 @@ export const maps: readonly MapDefinition[] = [
     description:
       'The Fagaras county map, converted from the original .MAP file.',
     mapSource: `${import.meta.env.BASE_URL}maps/fagaras.tmj`,
-    // Its only scenario, `knights`, is disabled until the knight gets a 2x2
-    // multi-cell footprint (#232); re-allow it here then.
-    allowedScenarioIds: [],
+    allowedScenarioIds: ['knights'],
   },
   {
     id: 'sibiu',

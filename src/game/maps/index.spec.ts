@@ -41,6 +41,11 @@ describe('resolveMap', () => {
     expect(buildings?.allowedScenarioIds).toEqual([]);
   });
 
+  it('allows only the knights scenario on fagaras, the one county map with spawn points', () => {
+    const fagaras = maps.find((m) => m.id === 'fagaras');
+    expect(fagaras?.allowedScenarioIds).toEqual(['knights']);
+  });
+
   it('registers the converted county maps without spawns with an empty scenario allowlist', () => {
     const counties = maps.filter(
       (m) => !['test', 'fagaras', 'buildings'].includes(m.id)

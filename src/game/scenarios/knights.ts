@@ -4,14 +4,6 @@ import { cellSizeOf } from '~/lib/grid';
 import { pickDistinct, type RandomSource } from '~/lib/random';
 import type { Scenario } from './types';
 
-/**
- * Not registered in `./index`'s `scenarios` list, so it's unreachable via
- * `?scenario=knights` for now: the knight is drawn a full tile wide while
- * occupying a single half-tile movement cell, which looks wrong until it
- * gets a proper 2x2 multi-cell footprint (#232). This file and its spec stay
- * in the codebase so the scenario is ready to re-register once that lands.
- */
-
 /** How many spawn points the scenario needs: one per knight. */
 const REQUIRED_SPAWN_COUNT = 2;
 
@@ -78,6 +70,8 @@ export function createKnightsScenario(
  * One red knight and one blue knight, each on a different spawn point of
  * the selected map, chosen at random. The minimal scenario for verifying a
  * real, converted county map loads and renders correctly in the engine: no
- * roster, just two units placed where the map says they can go.
+ * roster, just two units placed where the map says they can go. Map spawn
+ * points sit at tile centres, so each knight's 2x2 block of cells covers its
+ * spawn tile exactly, resting on the shared corner at the tile's middle.
  */
 export const knightsScenario: Scenario = createKnightsScenario();
