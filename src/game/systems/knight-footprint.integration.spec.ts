@@ -40,10 +40,13 @@ describe('knight 2x2 footprint', () => {
     resetEntityIdCounter();
   });
 
-  function setup(width = 12, height = 8) {
+  function setup(width = 12, height = 8, blocked: readonly { x: number; y: number }[] = []) {
     const world = new World<Entity>();
     const queries = createQueries(world);
     const terrain = { width, height, collision: new Uint8Array(width * height) };
+    for (const { x, y } of blocked) {
+      terrain.collision[y * width + x] = 1;
+    }
     const grid = new OccupancyGrid(terrain, CELL);
     const systems = [
       createMovePathSystem(queries),
@@ -94,6 +97,31 @@ describe('knight 2x2 footprint', () => {
       x: (2 + 0.5) * CELL,
       y: (2 + 0.5) * CELL,
     });
+  });
+
+  it('is refused and holds nothing when one cell of its block is terrain-blocked', () => {
+    // Blocks the bottom-right cell of the 2x2 block anchored at (2, 2).
+    const { tick, spawnAt, held } = setup(12, 8, [{ x: 3, y: 3 }]);
+    const knight = spawnAt('knight', 'blue', 2, 2);
+
+    tick();
+
+    expect(held(knight)).toEqual([]);
+  });
+
+  it('is refused and holds nothing when one cell of its block is already held by another unit', () => {
+    const { tick, spawnAt, held } = setup();
+    // Occupies the bottom-right cell of the 2x2 block the knight will try
+    // to claim at (2, 2).
+    const blocker = spawnAt('swordsmen', 'red', 3, 3);
+    const knight = spawnAt('knight', 'blue', 2, 2);
+
+    tick();
+
+    expect(held(knight)).toEqual([]);
+    // The claim is atomic — refused outright, never partial — so the
+    // blocker keeps the one cell it actually holds.
+    expect(held(blocker)).toEqual([{ x: 3, y: 3 }]);
   });
 
   it('takes the two leading cells when stepping, and holds exactly its new block on arrival', () => {
