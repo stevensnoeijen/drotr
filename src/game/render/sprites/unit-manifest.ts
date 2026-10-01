@@ -13,7 +13,8 @@ import {
  * `animation-key.ts`.
  *
  * ```jsonc
- * { "frameSize": [32, 32], "anchor": [0.5, 0.75],
+ * { "atlas": "/assets/units.json",
+ *   "frameSize": [32, 32], "anchor": [0.5, 0.75],
  *   "teams": ["blue", "red"],            // or ["neutral"] for siege units
  *   "actions": {
  *     "idle":   { "frames": 1,  "fps": 0,  "loop": false },
@@ -46,6 +47,8 @@ export interface ActionManifest {
 }
 
 export interface UnitManifest {
+  /** Public URL path of the spritesheet holding this unit's frames, e.g. {@link UNIT_ATLAS_PATH}. */
+  atlas?: string;
   /** Frame width and height in pixels. */
   frameSize: [number, number];
   /** Normalised [x, y] anchor within the frame. */
@@ -60,13 +63,12 @@ export function unitManifestPath(unit: UnitType): string {
 }
 
 /**
- * Public URL path of a unit's Pixi spritesheet JSON, next to its manifest.
- * The sheet's `animations` are keyed by `AnimationKey` and its image is
- * `<unit>.png` in the same directory.
+ * Public URL path of the one Pixi spritesheet JSON every unit's frames are
+ * packed into (image: `units.png` beside it). Its `animations` are keyed by
+ * `AnimationKey`, which already starts with the unit type, so units share
+ * it without colliding.
  */
-export function unitSpritesheetPath(unit: UnitType): string {
-  return `/assets/units/${unit}.sheet.json`;
-}
+export const UNIT_ATLAS_PATH = '/assets/units.json';
 
 const isRecord = (v: unknown): v is Record<string, unknown> =>
   typeof v === 'object' && v !== null && !Array.isArray(v);
@@ -118,7 +120,10 @@ export function validateUnitManifest(value: unknown): string[] {
   const errors: string[] = [];
   if (!isRecord(value)) return ['manifest must be an object'];
 
-  const { frameSize, anchor, teams, actions } = value;
+  const { atlas, frameSize, anchor, teams, actions } = value;
+  if (atlas !== undefined && (typeof atlas !== 'string' || atlas === '')) {
+    errors.push('atlas must be a non-empty string');
+  }
   if (
     !Array.isArray(frameSize) ||
     frameSize.length !== 2 ||

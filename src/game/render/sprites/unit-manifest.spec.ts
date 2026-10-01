@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   parseUnitManifest,
   unitManifestPath,
-  unitSpritesheetPath,
+  UNIT_ATLAS_PATH,
   validateUnitManifest,
 } from './unit-manifest';
 
@@ -102,9 +102,22 @@ describe('validateUnitManifest', () => {
     expect(unitManifestPath('knight')).toBe('/assets/units/knight.json');
   });
 
-  it('puts the spritesheet next to the manifest', () => {
-    expect(unitSpritesheetPath('knight')).toBe(
-      '/assets/units/knight.sheet.json'
+  it('keeps every unit in one shared atlas', () => {
+    expect(UNIT_ATLAS_PATH).toBe('/assets/units.json');
+  });
+
+  it('accepts a manifest pointing at the atlas and rejects an empty atlas', () => {
+    const base = {
+      frameSize: [32, 32],
+      anchor: [0.5, 0.5],
+      teams: ['red'],
+      actions: { idle: { frames: 1, fps: 0, loop: false } },
+    };
+    expect(validateUnitManifest({ ...base, atlas: UNIT_ATLAS_PATH })).toEqual(
+      []
     );
+    expect(validateUnitManifest({ ...base, atlas: '' })).toEqual([
+      'atlas must be a non-empty string',
+    ]);
   });
 });

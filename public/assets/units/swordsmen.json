@@ -1,4 +1,5 @@
 {
+  "atlas": "/assets/units.json",
   "frameSize": [
     32,
     32

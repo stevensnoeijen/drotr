@@ -2,9 +2,12 @@ import { PNG } from 'pngjs';
 import { describe, expect, it } from 'vitest';
 
 import type { PcxImage } from '../../src/lib/art/pcx';
-import { validateUnitManifest } from '../../src/game/render/sprites/unit-manifest';
+import {
+  UNIT_ATLAS_PATH,
+  validateUnitManifest,
+} from '../../src/game/render/sprites/unit-manifest';
 import { frameBlock, pickFrames, type UnitFrameMap } from './frame-map';
-import { encodeRgbaPng, FRAME_PADDING, packUnitSprites } from './unit-sprites';
+import { encodeRgbaPng, FRAME_PADDING, packUnitAtlas } from './unit-sprites';
 
 /**
  * A synthetic 8×16 atlas of 2×2 frames: palette 0 is the teal key, and
@@ -58,8 +61,8 @@ function syntheticMap(): UnitFrameMap {
   };
 }
 
-describe('packUnitSprites', () => {
-  const packed = packUnitSprites(syntheticImage(), syntheticMap());
+describe('packUnitAtlas', () => {
+  const packed = packUnitAtlas(syntheticImage(), [syntheticMap()]);
 
   it('names every frame after its animation key, in playback order', () => {
     expect(packed.sheet.animations['swordsmen.red.move.e']).toEqual([
@@ -102,8 +105,10 @@ describe('packUnitSprites', () => {
   });
 
   it('emits a manifest that validates against the contract', () => {
-    expect(validateUnitManifest(packed.manifest)).toEqual([]);
-    expect(packed.manifest).toEqual({
+    expect(Object.keys(packed.manifests)).toEqual(['swordsmen']);
+    expect(validateUnitManifest(packed.manifests.swordsmen)).toEqual([]);
+    expect(packed.manifests.swordsmen).toEqual({
+      atlas: UNIT_ATLAS_PATH,
       frameSize: [2, 2],
       anchor: [0.5, 0.5],
       teams: ['red'],
@@ -123,20 +128,64 @@ describe('packUnitSprites', () => {
         red: { ...map.teams.red, dead: frameBlock(0, rows(4), 2, [2, 4]) },
       },
     };
-    expect(() => packUnitSprites(syntheticImage(), bad)).toThrow(/frame size/);
+    expect(() => packUnitAtlas(syntheticImage(), [bad])).toThrow(/frame size/);
   });
 
   it('rejects an action without playback settings', () => {
     const map = syntheticMap();
     expect(() =>
-      packUnitSprites(syntheticImage(), { ...map, playback: {} })
+      packUnitAtlas(syntheticImage(), [{ ...map, playback: {} }])
     ).toThrow(/playback/);
+  });
+});
+
+describe('packUnitAtlas with several units', () => {
+  /** A second unit whose frames sit lower in the synthetic atlas. */
+  function knightMap(): UnitFrameMap {
+    const move = frameBlock(0, rows(8), 2, [2, 2]);
+    return {
+      unit: 'knight',
+      anchor: [0.5, 0.5],
+      playback: { move: { fps: 10, loop: true } },
+      teams: { blue: { move } },
+    };
+  }
+
+  it('packs every unit into one sheet without key collisions', () => {
+    const packed = packUnitAtlas(syntheticImage(), [
+      syntheticMap(),
+      knightMap(),
+    ]);
+    expect(Object.keys(packed.manifests).sort()).toEqual([
+      'knight',
+      'swordsmen',
+    ]);
+    expect(packed.sheet.animations['knight.blue.move.n']).toEqual([
+      'knight.blue.move.n_01',
+      'knight.blue.move.n_02',
+    ]);
+    expect(packed.sheet.animations['swordsmen.red.move.n']).toHaveLength(3);
+    // Swordsmen move + dead rows, then one knight move row.
+    expect(packed.height).toBe(3 * 2 + 2 * FRAME_PADDING);
+  });
+
+  it('does not depend on the order the frame maps are given in', () => {
+    const a = packUnitAtlas(syntheticImage(), [syntheticMap(), knightMap()]);
+    const b = packUnitAtlas(syntheticImage(), [knightMap(), syntheticMap()]);
+    expect(b.sheet).toEqual(a.sheet);
+    expect(encodeRgbaPng(b).equals(encodeRgbaPng(a))).toBe(true);
+  });
+
+  it('rejects two frame maps for the same unit', () => {
+    expect(() =>
+      packUnitAtlas(syntheticImage(), [syntheticMap(), syntheticMap()])
+    ).toThrow(/more than one/);
   });
 });
 
 describe('encodeRgbaPng', () => {
   it('writes an RGBA PNG (colour type 6) that round-trips', () => {
-    const packed = packUnitSprites(syntheticImage(), syntheticMap());
+    const packed = packUnitAtlas(syntheticImage(), [syntheticMap()]);
     const bytes = encodeRgbaPng(packed);
     expect(bytes.subarray(1, 4).toString('latin1')).toBe('PNG');
     expect(bytes[25]).toBe(6);

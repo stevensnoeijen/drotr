@@ -4,13 +4,16 @@ import * as path from 'node:path';
 import { PNG } from 'pngjs';
 import { describe, expect, it } from 'vitest';
 
+import type { UnitType } from '~/game/data/units';
 import {
   DIRECTIONS,
   animationKey,
   frameName,
 } from '~/game/render/sprites/animation-key';
 import {
+  UNIT_ATLAS_PATH,
   parseUnitManifest,
+  unitManifestPath,
   validateUnitManifest,
 } from '~/game/render/sprites/unit-manifest';
 import { TEAL_COLOR_KEY } from '~/lib/art/rgba';
@@ -18,27 +21,27 @@ import { decodePcx } from '~/lib/art/pcx';
 import { hasCdFile, readCdFile } from '~/test/cd-assets';
 
 import { FRAME_MAPS } from './frame-maps';
-import { encodeRgbaPng, packUnitSprites, type SheetJson } from './unit-sprites';
+import { encodeRgbaPng, packUnitAtlas, type SheetJson } from './unit-sprites';
 
 /**
- * Tests against the **committed** unit sheets in `public/assets/units/`.
- * They need no `.cd/` data, so they always run. A fresh pack from the real
- * `BATTLE.ART`, compared byte for byte, runs only where `.cd/` exists.
+ * Tests against the **committed** shared unit atlas and per-unit manifests
+ * in `public/assets/`. They need no `.cd/` data, so they always run. A fresh
+ * pack from the real `BATTLE.ART`, compared byte for byte, runs only where
+ * `.cd/` exists.
  */
 
-const UNITS_DIR = path.join(process.cwd(), 'public', 'assets', 'units');
-const units = Object.keys(FRAME_MAPS) as (keyof typeof FRAME_MAPS)[];
+const PUBLIC_DIR = path.join(process.cwd(), 'public');
+const read = (publicPath: string) =>
+  fs.readFileSync(path.join(PUBLIC_DIR, publicPath));
+const readJson = (publicPath: string): unknown =>
+  JSON.parse(read(publicPath).toString('utf8'));
 
-const read = (file: string) => fs.readFileSync(path.join(UNITS_DIR, file));
-const readJson = (file: string): unknown =>
-  JSON.parse(read(file).toString('utf8'));
+const units = Object.keys(FRAME_MAPS) as UnitType[];
+const pngBytes = read('assets/units.png');
+const png = PNG.sync.read(pngBytes);
+const sheet = readJson(UNIT_ATLAS_PATH) as SheetJson;
 
-describe.each(units)('committed %s sheet', (unit) => {
-  const pngBytes = read(`${unit}.png`);
-  const png = PNG.sync.read(pngBytes);
-  const sheet = readJson(`${unit}.sheet.json`) as SheetJson;
-  const manifest = readJson(`${unit}.json`);
-
+describe('committed unit atlas', () => {
   it('is a genuine RGBA PNG (colour type 6)', () => {
     expect(
       pngBytes
@@ -66,16 +69,42 @@ describe.each(units)('committed %s sheet', (unit) => {
     expect(teal).toBe(0);
   });
 
-  it('has a manifest that validates against the contract', () => {
-    expect(validateUnitManifest(manifest)).toEqual([]);
-  });
-
   it('points the sheet at its image, at the image size', () => {
-    expect(sheet.meta.image).toBe(`${unit}.png`);
+    expect(sheet.meta.image).toBe('units.png');
     expect(sheet.meta.size).toEqual({ w: png.width, h: png.height });
   });
 
-  it('resolves every manifest animation to an ordered, same-size frame list', () => {
+  it('holds only animations of units with a frame map', () => {
+    for (const key of Object.keys(sheet.animations)) {
+      expect(units).toContain(key.split('.')[0]);
+    }
+  });
+
+  it.runIf(hasCdFile('ART/BATTLE.ART'))(
+    'matches a fresh pack of the real BATTLE.ART',
+    () => {
+      const image = decodePcx(readCdFile('ART/BATTLE.ART'));
+      const packed = packUnitAtlas(image, Object.values(FRAME_MAPS));
+      expect(encodeRgbaPng(packed).equals(pngBytes)).toBe(true);
+      expect(packed.sheet).toEqual(sheet);
+      for (const unit of units) {
+        expect(packed.manifests[unit]).toEqual(
+          readJson(unitManifestPath(unit))
+        );
+      }
+    }
+  );
+});
+
+describe.each(units)('committed %s manifest', (unit) => {
+  const manifest = readJson(unitManifestPath(unit));
+
+  it('validates against the contract and points at the shared atlas', () => {
+    expect(validateUnitManifest(manifest)).toEqual([]);
+    expect(parseUnitManifest(manifest).atlas).toBe(UNIT_ATLAS_PATH);
+  });
+
+  it('resolves every animation to an ordered, same-size frame list', () => {
     const { teams, actions, frameSize } = parseUnitManifest(manifest);
     let expected = 0;
     for (const team of teams) {
@@ -101,17 +130,9 @@ describe.each(units)('committed %s sheet', (unit) => {
         }
       }
     }
-    expect(Object.keys(sheet.animations)).toHaveLength(expected);
+    const own = Object.keys(sheet.animations).filter((key) =>
+      key.startsWith(`${unit}.`)
+    );
+    expect(own).toHaveLength(expected);
   });
-
-  it.runIf(hasCdFile('ART/BATTLE.ART'))(
-    'matches a fresh pack of the real BATTLE.ART',
-    () => {
-      const image = decodePcx(readCdFile('ART/BATTLE.ART'));
-      const packed = packUnitSprites(image, FRAME_MAPS[unit]!);
-      expect(encodeRgbaPng(packed).equals(pngBytes)).toBe(true);
-      expect(packed.sheet).toEqual(sheet);
-      expect(packed.manifest).toEqual(manifest);
-    }
-  );
 });

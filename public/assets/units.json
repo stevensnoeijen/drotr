@@ -8533,7 +8533,7 @@
   },
   "meta": {
     "app": "drotr scripts/unit-sprites",
-    "image": "swordsmen.png",
+    "image": "units.png",
     "format": "RGBA8888",
     "size": {
       "w": 406,

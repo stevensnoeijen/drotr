@@ -11,7 +11,7 @@ import {
 import {
   parseUnitManifest,
   unitManifestPath,
-  unitSpritesheetPath,
+  UNIT_ATLAS_PATH,
   type UnitManifest,
 } from '~/game/render/sprites/unit-manifest';
 
@@ -224,7 +224,7 @@ function useUnitSprites(unit: UnitType, compare: boolean): LoadState {
   useEffect(() => {
     let cancelled = false;
     Promise.all([
-      loadSheet(unitSpritesheetPath(unit)),
+      loadSheet(UNIT_ATLAS_PATH),
       fetchJson(publicUrl(unitManifestPath(unit))).then(parseUnitManifest),
       compare ? loadSheet(OLD_SHEET_PATH) : Promise.resolve(undefined),
     ])

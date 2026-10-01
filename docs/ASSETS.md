@@ -121,13 +121,17 @@ and is verified, `raw/sprites/units` can be deleted.
 
 ## Unit spritesheets
 
-`npm run pack:sprites [unit...]` (`scripts/unit-sprites/`) cuts unit frames
-out of `ART/BATTLE.ART` and packs one lossless, straight-RGBA Pixi v8 sheet
-per unit type, both teams on it, into `public/assets/units/`:
-`<unit>.png`, `<unit>.sheet.json` (animations keyed by `AnimationKey`) and
-the `<unit>.json` manifest. With no unit named, every unit with a frame map
-is packed. So far only `swordsmen` is migrated; the other units still use
-`public/assets/unit-spritesheet.*`.
+`npm run pack:sprites` (`scripts/unit-sprites/`) cuts unit frames out of
+`ART/BATTLE.ART` and packs every unit that has a frame map into **one
+shared**, lossless, straight-RGBA Pixi v8 atlas: `public/assets/units.png`
+and `public/assets/units.json` (`UNIT_ATLAS_PATH`), with `animations` keyed
+by `AnimationKey`. Animation keys already start with the unit type
+(`swordsmen.red.move.n`), so units can't collide in the shared map and need
+no extra prefix. Each unit's manifest is written to
+`public/assets/units/<unit>.json` and points at the atlas through its
+`atlas` field. The script takes no arguments: it always regenerates the
+whole atlas and every manifest, deterministically. So far only `swordsmen`
+is migrated; the other units still use `public/assets/unit-spritesheet.*`.
 
 Unit frames are not on the atlas's 40 px tile grid, nor on any uniform
 grid, so each unit has a committed **frame map**
@@ -160,8 +164,8 @@ and the runtime renderer; the manifest path is derived from the unit type, so
   `idle | move | attack | dead`; directions are compass abbreviations
   `n ne e se s sw w nw`.
 - Manifest (`src/game/render/sprites/unit-manifest.ts`) at
-  `public/assets/units/<unit>.json`, next to the Pixi sheet
-  `<unit>.sheet.json` (`unitSpritesheetPath`): `frameSize`, `anchor`, `teams`, and
+  `public/assets/units/<unit>.json`, with an optional `atlas` path to the
+  shared sheet (`UNIT_ATLAS_PATH`, `/assets/units.json`): `frameSize`, `anchor`, `teams`, and
   `actions`, each action having `frames` (per direction), `fps`, `loop`, and
   optionally `hitFrame` (attack only, 0-based, must be `< frames`) or
   `holdLast`. Actions a unit has no frames for may be omitted; single-frame
