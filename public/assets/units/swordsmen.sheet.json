@@ -1,0 +1,8544 @@
+{
+  "frames": {
+    "swordsmen.blue.move.n_01": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.move.n_02": {
+      "frame": {
+        "x": 34,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.move.n_03": {
+      "frame": {
+        "x": 68,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.move.n_04": {
+      "frame": {
+        "x": 102,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.move.n_05": {
+      "frame": {
+        "x": 136,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.move.n_06": {
+      "frame": {
+        "x": 170,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.move.n_07": {
+      "frame": {
+        "x": 204,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.move.n_08": {
+      "frame": {
+        "x": 238,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.move.ne_01": {
+      "frame": {
+        "x": 0,
+        "y": 34,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.move.ne_02": {
+      "frame": {
+        "x": 34,
+        "y": 34,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.move.ne_03": {
+      "frame": {
+        "x": 68,
+        "y": 34,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.move.ne_04": {
+      "frame": {
+        "x": 102,
+        "y": 34,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.move.ne_05": {
+      "frame": {
+        "x": 136,
+        "y": 34,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.move.ne_06": {
+      "frame": {
+        "x": 170,
+        "y": 34,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.move.ne_07": {
+      "frame": {
+        "x": 204,
+        "y": 34,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.move.ne_08": {
+      "frame": {
+        "x": 238,
+        "y": 34,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.move.e_01": {
+      "frame": {
+        "x": 0,
+        "y": 68,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.move.e_02": {
+      "frame": {
+        "x": 34,
+        "y": 68,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.move.e_03": {
+      "frame": {
+        "x": 68,
+        "y": 68,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.move.e_04": {
+      "frame": {
+        "x": 102,
+        "y": 68,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.move.e_05": {
+      "frame": {
+        "x": 136,
+        "y": 68,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.move.e_06": {
+      "frame": {
+        "x": 170,
+        "y": 68,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.move.e_07": {
+      "frame": {
+        "x": 204,
+        "y": 68,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.move.e_08": {
+      "frame": {
+        "x": 238,
+        "y": 68,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.move.se_01": {
+      "frame": {
+        "x": 0,
+        "y": 102,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.move.se_02": {
+      "frame": {
+        "x": 34,
+        "y": 102,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.move.se_03": {
+      "frame": {
+        "x": 68,
+        "y": 102,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.move.se_04": {
+      "frame": {
+        "x": 102,
+        "y": 102,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.move.se_05": {
+      "frame": {
+        "x": 136,
+        "y": 102,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.move.se_06": {
+      "frame": {
+        "x": 170,
+        "y": 102,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.move.se_07": {
+      "frame": {
+        "x": 204,
+        "y": 102,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.move.se_08": {
+      "frame": {
+        "x": 238,
+        "y": 102,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.move.s_01": {
+      "frame": {
+        "x": 0,
+        "y": 136,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.move.s_02": {
+      "frame": {
+        "x": 34,
+        "y": 136,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.move.s_03": {
+      "frame": {
+        "x": 68,
+        "y": 136,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.move.s_04": {
+      "frame": {
+        "x": 102,
+        "y": 136,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.move.s_05": {
+      "frame": {
+        "x": 136,
+        "y": 136,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.move.s_06": {
+      "frame": {
+        "x": 170,
+        "y": 136,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.move.s_07": {
+      "frame": {
+        "x": 204,
+        "y": 136,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.move.s_08": {
+      "frame": {
+        "x": 238,
+        "y": 136,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.move.sw_01": {
+      "frame": {
+        "x": 0,
+        "y": 170,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.move.sw_02": {
+      "frame": {
+        "x": 34,
+        "y": 170,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.move.sw_03": {
+      "frame": {
+        "x": 68,
+        "y": 170,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.move.sw_04": {
+      "frame": {
+        "x": 102,
+        "y": 170,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.move.sw_05": {
+      "frame": {
+        "x": 136,
+        "y": 170,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.move.sw_06": {
+      "frame": {
+        "x": 170,
+        "y": 170,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.move.sw_07": {
+      "frame": {
+        "x": 204,
+        "y": 170,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.move.sw_08": {
+      "frame": {
+        "x": 238,
+        "y": 170,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.move.w_01": {
+      "frame": {
+        "x": 0,
+        "y": 204,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.move.w_02": {
+      "frame": {
+        "x": 34,
+        "y": 204,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.move.w_03": {
+      "frame": {
+        "x": 68,
+        "y": 204,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.move.w_04": {
+      "frame": {
+        "x": 102,
+        "y": 204,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.move.w_05": {
+      "frame": {
+        "x": 136,
+        "y": 204,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.move.w_06": {
+      "frame": {
+        "x": 170,
+        "y": 204,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.move.w_07": {
+      "frame": {
+        "x": 204,
+        "y": 204,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.move.w_08": {
+      "frame": {
+        "x": 238,
+        "y": 204,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.move.nw_01": {
+      "frame": {
+        "x": 0,
+        "y": 238,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.move.nw_02": {
+      "frame": {
+        "x": 34,
+        "y": 238,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.move.nw_03": {
+      "frame": {
+        "x": 68,
+        "y": 238,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.move.nw_04": {
+      "frame": {
+        "x": 102,
+        "y": 238,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.move.nw_05": {
+      "frame": {
+        "x": 136,
+        "y": 238,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.move.nw_06": {
+      "frame": {
+        "x": 170,
+        "y": 238,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.move.nw_07": {
+      "frame": {
+        "x": 204,
+        "y": 238,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.move.nw_08": {
+      "frame": {
+        "x": 238,
+        "y": 238,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.n_01": {
+      "frame": {
+        "x": 0,
+        "y": 272,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.n_02": {
+      "frame": {
+        "x": 34,
+        "y": 272,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.n_03": {
+      "frame": {
+        "x": 68,
+        "y": 272,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.n_04": {
+      "frame": {
+        "x": 102,
+        "y": 272,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.n_05": {
+      "frame": {
+        "x": 136,
+        "y": 272,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.n_06": {
+      "frame": {
+        "x": 170,
+        "y": 272,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.n_07": {
+      "frame": {
+        "x": 204,
+        "y": 272,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.n_08": {
+      "frame": {
+        "x": 238,
+        "y": 272,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.n_09": {
+      "frame": {
+        "x": 272,
+        "y": 272,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.n_10": {
+      "frame": {
+        "x": 306,
+        "y": 272,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.n_11": {
+      "frame": {
+        "x": 340,
+        "y": 272,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.n_12": {
+      "frame": {
+        "x": 374,
+        "y": 272,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.ne_01": {
+      "frame": {
+        "x": 0,
+        "y": 306,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.ne_02": {
+      "frame": {
+        "x": 34,
+        "y": 306,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.ne_03": {
+      "frame": {
+        "x": 68,
+        "y": 306,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.ne_04": {
+      "frame": {
+        "x": 102,
+        "y": 306,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.ne_05": {
+      "frame": {
+        "x": 136,
+        "y": 306,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.ne_06": {
+      "frame": {
+        "x": 170,
+        "y": 306,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.ne_07": {
+      "frame": {
+        "x": 204,
+        "y": 306,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.ne_08": {
+      "frame": {
+        "x": 238,
+        "y": 306,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.ne_09": {
+      "frame": {
+        "x": 272,
+        "y": 306,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.ne_10": {
+      "frame": {
+        "x": 306,
+        "y": 306,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.ne_11": {
+      "frame": {
+        "x": 340,
+        "y": 306,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.ne_12": {
+      "frame": {
+        "x": 374,
+        "y": 306,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.e_01": {
+      "frame": {
+        "x": 0,
+        "y": 340,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.e_02": {
+      "frame": {
+        "x": 34,
+        "y": 340,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.e_03": {
+      "frame": {
+        "x": 68,
+        "y": 340,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.e_04": {
+      "frame": {
+        "x": 102,
+        "y": 340,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.e_05": {
+      "frame": {
+        "x": 136,
+        "y": 340,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.e_06": {
+      "frame": {
+        "x": 170,
+        "y": 340,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.e_07": {
+      "frame": {
+        "x": 204,
+        "y": 340,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.e_08": {
+      "frame": {
+        "x": 238,
+        "y": 340,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.e_09": {
+      "frame": {
+        "x": 272,
+        "y": 340,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.e_10": {
+      "frame": {
+        "x": 306,
+        "y": 340,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.e_11": {
+      "frame": {
+        "x": 340,
+        "y": 340,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.e_12": {
+      "frame": {
+        "x": 374,
+        "y": 340,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.se_01": {
+      "frame": {
+        "x": 0,
+        "y": 374,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.se_02": {
+      "frame": {
+        "x": 34,
+        "y": 374,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.se_03": {
+      "frame": {
+        "x": 68,
+        "y": 374,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.se_04": {
+      "frame": {
+        "x": 102,
+        "y": 374,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.se_05": {
+      "frame": {
+        "x": 136,
+        "y": 374,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.se_06": {
+      "frame": {
+        "x": 170,
+        "y": 374,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.se_07": {
+      "frame": {
+        "x": 204,
+        "y": 374,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.se_08": {
+      "frame": {
+        "x": 238,
+        "y": 374,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.se_09": {
+      "frame": {
+        "x": 272,
+        "y": 374,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.se_10": {
+      "frame": {
+        "x": 306,
+        "y": 374,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.se_11": {
+      "frame": {
+        "x": 340,
+        "y": 374,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.se_12": {
+      "frame": {
+        "x": 374,
+        "y": 374,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.s_01": {
+      "frame": {
+        "x": 0,
+        "y": 408,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.s_02": {
+      "frame": {
+        "x": 34,
+        "y": 408,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.s_03": {
+      "frame": {
+        "x": 68,
+        "y": 408,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.s_04": {
+      "frame": {
+        "x": 102,
+        "y": 408,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.s_05": {
+      "frame": {
+        "x": 136,
+        "y": 408,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.s_06": {
+      "frame": {
+        "x": 170,
+        "y": 408,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.s_07": {
+      "frame": {
+        "x": 204,
+        "y": 408,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.s_08": {
+      "frame": {
+        "x": 238,
+        "y": 408,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.s_09": {
+      "frame": {
+        "x": 272,
+        "y": 408,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.s_10": {
+      "frame": {
+        "x": 306,
+        "y": 408,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.s_11": {
+      "frame": {
+        "x": 340,
+        "y": 408,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.s_12": {
+      "frame": {
+        "x": 374,
+        "y": 408,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.sw_01": {
+      "frame": {
+        "x": 0,
+        "y": 442,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.sw_02": {
+      "frame": {
+        "x": 34,
+        "y": 442,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.sw_03": {
+      "frame": {
+        "x": 68,
+        "y": 442,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.sw_04": {
+      "frame": {
+        "x": 102,
+        "y": 442,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.sw_05": {
+      "frame": {
+        "x": 136,
+        "y": 442,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.sw_06": {
+      "frame": {
+        "x": 170,
+        "y": 442,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.sw_07": {
+      "frame": {
+        "x": 204,
+        "y": 442,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.sw_08": {
+      "frame": {
+        "x": 238,
+        "y": 442,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.sw_09": {
+      "frame": {
+        "x": 272,
+        "y": 442,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.sw_10": {
+      "frame": {
+        "x": 306,
+        "y": 442,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.sw_11": {
+      "frame": {
+        "x": 340,
+        "y": 442,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.sw_12": {
+      "frame": {
+        "x": 374,
+        "y": 442,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.w_01": {
+      "frame": {
+        "x": 0,
+        "y": 476,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.w_02": {
+      "frame": {
+        "x": 34,
+        "y": 476,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.w_03": {
+      "frame": {
+        "x": 68,
+        "y": 476,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.w_04": {
+      "frame": {
+        "x": 102,
+        "y": 476,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.w_05": {
+      "frame": {
+        "x": 136,
+        "y": 476,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.w_06": {
+      "frame": {
+        "x": 170,
+        "y": 476,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.w_07": {
+      "frame": {
+        "x": 204,
+        "y": 476,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.w_08": {
+      "frame": {
+        "x": 238,
+        "y": 476,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.w_09": {
+      "frame": {
+        "x": 272,
+        "y": 476,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.w_10": {
+      "frame": {
+        "x": 306,
+        "y": 476,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.w_11": {
+      "frame": {
+        "x": 340,
+        "y": 476,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.w_12": {
+      "frame": {
+        "x": 374,
+        "y": 476,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.nw_01": {
+      "frame": {
+        "x": 0,
+        "y": 510,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.nw_02": {
+      "frame": {
+        "x": 34,
+        "y": 510,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.nw_03": {
+      "frame": {
+        "x": 68,
+        "y": 510,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.nw_04": {
+      "frame": {
+        "x": 102,
+        "y": 510,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.nw_05": {
+      "frame": {
+        "x": 136,
+        "y": 510,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.nw_06": {
+      "frame": {
+        "x": 170,
+        "y": 510,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.nw_07": {
+      "frame": {
+        "x": 204,
+        "y": 510,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.nw_08": {
+      "frame": {
+        "x": 238,
+        "y": 510,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.nw_09": {
+      "frame": {
+        "x": 272,
+        "y": 510,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.nw_10": {
+      "frame": {
+        "x": 306,
+        "y": 510,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.nw_11": {
+      "frame": {
+        "x": 340,
+        "y": 510,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.attack.nw_12": {
+      "frame": {
+        "x": 374,
+        "y": 510,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.dead.n_01": {
+      "frame": {
+        "x": 0,
+        "y": 544,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.dead.n_02": {
+      "frame": {
+        "x": 34,
+        "y": 544,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.dead.n_03": {
+      "frame": {
+        "x": 68,
+        "y": 544,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.dead.n_04": {
+      "frame": {
+        "x": 102,
+        "y": 544,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.dead.ne_01": {
+      "frame": {
+        "x": 0,
+        "y": 578,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.dead.ne_02": {
+      "frame": {
+        "x": 34,
+        "y": 578,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.dead.ne_03": {
+      "frame": {
+        "x": 68,
+        "y": 578,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.dead.ne_04": {
+      "frame": {
+        "x": 102,
+        "y": 578,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.dead.e_01": {
+      "frame": {
+        "x": 0,
+        "y": 612,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.dead.e_02": {
+      "frame": {
+        "x": 34,
+        "y": 612,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.dead.e_03": {
+      "frame": {
+        "x": 68,
+        "y": 612,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.dead.e_04": {
+      "frame": {
+        "x": 102,
+        "y": 612,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.dead.se_01": {
+      "frame": {
+        "x": 0,
+        "y": 646,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.dead.se_02": {
+      "frame": {
+        "x": 34,
+        "y": 646,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.dead.se_03": {
+      "frame": {
+        "x": 68,
+        "y": 646,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.dead.se_04": {
+      "frame": {
+        "x": 102,
+        "y": 646,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.dead.s_01": {
+      "frame": {
+        "x": 0,
+        "y": 680,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.dead.s_02": {
+      "frame": {
+        "x": 34,
+        "y": 680,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.dead.s_03": {
+      "frame": {
+        "x": 68,
+        "y": 680,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.dead.s_04": {
+      "frame": {
+        "x": 102,
+        "y": 680,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.dead.sw_01": {
+      "frame": {
+        "x": 0,
+        "y": 714,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.dead.sw_02": {
+      "frame": {
+        "x": 34,
+        "y": 714,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.dead.sw_03": {
+      "frame": {
+        "x": 68,
+        "y": 714,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.dead.sw_04": {
+      "frame": {
+        "x": 102,
+        "y": 714,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.dead.w_01": {
+      "frame": {
+        "x": 0,
+        "y": 748,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.dead.w_02": {
+      "frame": {
+        "x": 34,
+        "y": 748,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.dead.w_03": {
+      "frame": {
+        "x": 68,
+        "y": 748,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.dead.w_04": {
+      "frame": {
+        "x": 102,
+        "y": 748,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.dead.nw_01": {
+      "frame": {
+        "x": 0,
+        "y": 782,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.dead.nw_02": {
+      "frame": {
+        "x": 34,
+        "y": 782,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.dead.nw_03": {
+      "frame": {
+        "x": 68,
+        "y": 782,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.dead.nw_04": {
+      "frame": {
+        "x": 102,
+        "y": 782,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.idle.n_01": {
+      "frame": {
+        "x": 68,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.idle.ne_01": {
+      "frame": {
+        "x": 68,
+        "y": 34,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.idle.e_01": {
+      "frame": {
+        "x": 68,
+        "y": 68,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.idle.se_01": {
+      "frame": {
+        "x": 68,
+        "y": 102,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.idle.s_01": {
+      "frame": {
+        "x": 68,
+        "y": 136,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.idle.sw_01": {
+      "frame": {
+        "x": 68,
+        "y": 170,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.idle.w_01": {
+      "frame": {
+        "x": 68,
+        "y": 204,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.blue.idle.nw_01": {
+      "frame": {
+        "x": 68,
+        "y": 238,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.move.n_01": {
+      "frame": {
+        "x": 0,
+        "y": 816,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.move.n_02": {
+      "frame": {
+        "x": 34,
+        "y": 816,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.move.n_03": {
+      "frame": {
+        "x": 68,
+        "y": 816,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.move.n_04": {
+      "frame": {
+        "x": 102,
+        "y": 816,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.move.n_05": {
+      "frame": {
+        "x": 136,
+        "y": 816,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.move.n_06": {
+      "frame": {
+        "x": 170,
+        "y": 816,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.move.n_07": {
+      "frame": {
+        "x": 204,
+        "y": 816,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.move.n_08": {
+      "frame": {
+        "x": 238,
+        "y": 816,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.move.ne_01": {
+      "frame": {
+        "x": 0,
+        "y": 850,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.move.ne_02": {
+      "frame": {
+        "x": 34,
+        "y": 850,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.move.ne_03": {
+      "frame": {
+        "x": 68,
+        "y": 850,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.move.ne_04": {
+      "frame": {
+        "x": 102,
+        "y": 850,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.move.ne_05": {
+      "frame": {
+        "x": 136,
+        "y": 850,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.move.ne_06": {
+      "frame": {
+        "x": 170,
+        "y": 850,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.move.ne_07": {
+      "frame": {
+        "x": 204,
+        "y": 850,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.move.ne_08": {
+      "frame": {
+        "x": 238,
+        "y": 850,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.move.e_01": {
+      "frame": {
+        "x": 0,
+        "y": 884,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.move.e_02": {
+      "frame": {
+        "x": 34,
+        "y": 884,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.move.e_03": {
+      "frame": {
+        "x": 68,
+        "y": 884,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.move.e_04": {
+      "frame": {
+        "x": 102,
+        "y": 884,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.move.e_05": {
+      "frame": {
+        "x": 136,
+        "y": 884,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.move.e_06": {
+      "frame": {
+        "x": 170,
+        "y": 884,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.move.e_07": {
+      "frame": {
+        "x": 204,
+        "y": 884,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.move.e_08": {
+      "frame": {
+        "x": 238,
+        "y": 884,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.move.se_01": {
+      "frame": {
+        "x": 0,
+        "y": 918,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.move.se_02": {
+      "frame": {
+        "x": 34,
+        "y": 918,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.move.se_03": {
+      "frame": {
+        "x": 68,
+        "y": 918,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.move.se_04": {
+      "frame": {
+        "x": 102,
+        "y": 918,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.move.se_05": {
+      "frame": {
+        "x": 136,
+        "y": 918,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.move.se_06": {
+      "frame": {
+        "x": 170,
+        "y": 918,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.move.se_07": {
+      "frame": {
+        "x": 204,
+        "y": 918,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.move.se_08": {
+      "frame": {
+        "x": 238,
+        "y": 918,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.move.s_01": {
+      "frame": {
+        "x": 0,
+        "y": 952,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.move.s_02": {
+      "frame": {
+        "x": 34,
+        "y": 952,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.move.s_03": {
+      "frame": {
+        "x": 68,
+        "y": 952,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.move.s_04": {
+      "frame": {
+        "x": 102,
+        "y": 952,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.move.s_05": {
+      "frame": {
+        "x": 136,
+        "y": 952,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.move.s_06": {
+      "frame": {
+        "x": 170,
+        "y": 952,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.move.s_07": {
+      "frame": {
+        "x": 204,
+        "y": 952,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.move.s_08": {
+      "frame": {
+        "x": 238,
+        "y": 952,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.move.sw_01": {
+      "frame": {
+        "x": 0,
+        "y": 986,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.move.sw_02": {
+      "frame": {
+        "x": 34,
+        "y": 986,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.move.sw_03": {
+      "frame": {
+        "x": 68,
+        "y": 986,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.move.sw_04": {
+      "frame": {
+        "x": 102,
+        "y": 986,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.move.sw_05": {
+      "frame": {
+        "x": 136,
+        "y": 986,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.move.sw_06": {
+      "frame": {
+        "x": 170,
+        "y": 986,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.move.sw_07": {
+      "frame": {
+        "x": 204,
+        "y": 986,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.move.sw_08": {
+      "frame": {
+        "x": 238,
+        "y": 986,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.move.w_01": {
+      "frame": {
+        "x": 0,
+        "y": 1020,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.move.w_02": {
+      "frame": {
+        "x": 34,
+        "y": 1020,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.move.w_03": {
+      "frame": {
+        "x": 68,
+        "y": 1020,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.move.w_04": {
+      "frame": {
+        "x": 102,
+        "y": 1020,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.move.w_05": {
+      "frame": {
+        "x": 136,
+        "y": 1020,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.move.w_06": {
+      "frame": {
+        "x": 170,
+        "y": 1020,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.move.w_07": {
+      "frame": {
+        "x": 204,
+        "y": 1020,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.move.w_08": {
+      "frame": {
+        "x": 238,
+        "y": 1020,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.move.nw_01": {
+      "frame": {
+        "x": 0,
+        "y": 1054,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.move.nw_02": {
+      "frame": {
+        "x": 34,
+        "y": 1054,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.move.nw_03": {
+      "frame": {
+        "x": 68,
+        "y": 1054,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.move.nw_04": {
+      "frame": {
+        "x": 102,
+        "y": 1054,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.move.nw_05": {
+      "frame": {
+        "x": 136,
+        "y": 1054,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.move.nw_06": {
+      "frame": {
+        "x": 170,
+        "y": 1054,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.move.nw_07": {
+      "frame": {
+        "x": 204,
+        "y": 1054,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.move.nw_08": {
+      "frame": {
+        "x": 238,
+        "y": 1054,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.n_01": {
+      "frame": {
+        "x": 0,
+        "y": 1088,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.n_02": {
+      "frame": {
+        "x": 34,
+        "y": 1088,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.n_03": {
+      "frame": {
+        "x": 68,
+        "y": 1088,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.n_04": {
+      "frame": {
+        "x": 102,
+        "y": 1088,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.n_05": {
+      "frame": {
+        "x": 136,
+        "y": 1088,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.n_06": {
+      "frame": {
+        "x": 170,
+        "y": 1088,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.n_07": {
+      "frame": {
+        "x": 204,
+        "y": 1088,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.n_08": {
+      "frame": {
+        "x": 238,
+        "y": 1088,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.n_09": {
+      "frame": {
+        "x": 272,
+        "y": 1088,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.n_10": {
+      "frame": {
+        "x": 306,
+        "y": 1088,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.n_11": {
+      "frame": {
+        "x": 340,
+        "y": 1088,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.n_12": {
+      "frame": {
+        "x": 374,
+        "y": 1088,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.ne_01": {
+      "frame": {
+        "x": 0,
+        "y": 1122,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.ne_02": {
+      "frame": {
+        "x": 34,
+        "y": 1122,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.ne_03": {
+      "frame": {
+        "x": 68,
+        "y": 1122,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.ne_04": {
+      "frame": {
+        "x": 102,
+        "y": 1122,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.ne_05": {
+      "frame": {
+        "x": 136,
+        "y": 1122,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.ne_06": {
+      "frame": {
+        "x": 170,
+        "y": 1122,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.ne_07": {
+      "frame": {
+        "x": 204,
+        "y": 1122,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.ne_08": {
+      "frame": {
+        "x": 238,
+        "y": 1122,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.ne_09": {
+      "frame": {
+        "x": 272,
+        "y": 1122,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.ne_10": {
+      "frame": {
+        "x": 306,
+        "y": 1122,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.ne_11": {
+      "frame": {
+        "x": 340,
+        "y": 1122,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.ne_12": {
+      "frame": {
+        "x": 374,
+        "y": 1122,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.e_01": {
+      "frame": {
+        "x": 0,
+        "y": 1156,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.e_02": {
+      "frame": {
+        "x": 34,
+        "y": 1156,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.e_03": {
+      "frame": {
+        "x": 68,
+        "y": 1156,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.e_04": {
+      "frame": {
+        "x": 102,
+        "y": 1156,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.e_05": {
+      "frame": {
+        "x": 136,
+        "y": 1156,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.e_06": {
+      "frame": {
+        "x": 170,
+        "y": 1156,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.e_07": {
+      "frame": {
+        "x": 204,
+        "y": 1156,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.e_08": {
+      "frame": {
+        "x": 238,
+        "y": 1156,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.e_09": {
+      "frame": {
+        "x": 272,
+        "y": 1156,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.e_10": {
+      "frame": {
+        "x": 306,
+        "y": 1156,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.e_11": {
+      "frame": {
+        "x": 340,
+        "y": 1156,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.e_12": {
+      "frame": {
+        "x": 374,
+        "y": 1156,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.se_01": {
+      "frame": {
+        "x": 0,
+        "y": 1190,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.se_02": {
+      "frame": {
+        "x": 34,
+        "y": 1190,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.se_03": {
+      "frame": {
+        "x": 68,
+        "y": 1190,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.se_04": {
+      "frame": {
+        "x": 102,
+        "y": 1190,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.se_05": {
+      "frame": {
+        "x": 136,
+        "y": 1190,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.se_06": {
+      "frame": {
+        "x": 170,
+        "y": 1190,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.se_07": {
+      "frame": {
+        "x": 204,
+        "y": 1190,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.se_08": {
+      "frame": {
+        "x": 238,
+        "y": 1190,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.se_09": {
+      "frame": {
+        "x": 272,
+        "y": 1190,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.se_10": {
+      "frame": {
+        "x": 306,
+        "y": 1190,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.se_11": {
+      "frame": {
+        "x": 340,
+        "y": 1190,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.se_12": {
+      "frame": {
+        "x": 374,
+        "y": 1190,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.s_01": {
+      "frame": {
+        "x": 0,
+        "y": 1224,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.s_02": {
+      "frame": {
+        "x": 34,
+        "y": 1224,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.s_03": {
+      "frame": {
+        "x": 68,
+        "y": 1224,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.s_04": {
+      "frame": {
+        "x": 102,
+        "y": 1224,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.s_05": {
+      "frame": {
+        "x": 136,
+        "y": 1224,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.s_06": {
+      "frame": {
+        "x": 170,
+        "y": 1224,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.s_07": {
+      "frame": {
+        "x": 204,
+        "y": 1224,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.s_08": {
+      "frame": {
+        "x": 238,
+        "y": 1224,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.s_09": {
+      "frame": {
+        "x": 272,
+        "y": 1224,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.s_10": {
+      "frame": {
+        "x": 306,
+        "y": 1224,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.s_11": {
+      "frame": {
+        "x": 340,
+        "y": 1224,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.s_12": {
+      "frame": {
+        "x": 374,
+        "y": 1224,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.sw_01": {
+      "frame": {
+        "x": 0,
+        "y": 1258,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.sw_02": {
+      "frame": {
+        "x": 34,
+        "y": 1258,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.sw_03": {
+      "frame": {
+        "x": 68,
+        "y": 1258,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.sw_04": {
+      "frame": {
+        "x": 102,
+        "y": 1258,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.sw_05": {
+      "frame": {
+        "x": 136,
+        "y": 1258,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.sw_06": {
+      "frame": {
+        "x": 170,
+        "y": 1258,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.sw_07": {
+      "frame": {
+        "x": 204,
+        "y": 1258,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.sw_08": {
+      "frame": {
+        "x": 238,
+        "y": 1258,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.sw_09": {
+      "frame": {
+        "x": 272,
+        "y": 1258,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.sw_10": {
+      "frame": {
+        "x": 306,
+        "y": 1258,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.sw_11": {
+      "frame": {
+        "x": 340,
+        "y": 1258,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.sw_12": {
+      "frame": {
+        "x": 374,
+        "y": 1258,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.w_01": {
+      "frame": {
+        "x": 0,
+        "y": 1292,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.w_02": {
+      "frame": {
+        "x": 34,
+        "y": 1292,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.w_03": {
+      "frame": {
+        "x": 68,
+        "y": 1292,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.w_04": {
+      "frame": {
+        "x": 102,
+        "y": 1292,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.w_05": {
+      "frame": {
+        "x": 136,
+        "y": 1292,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.w_06": {
+      "frame": {
+        "x": 170,
+        "y": 1292,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.w_07": {
+      "frame": {
+        "x": 204,
+        "y": 1292,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.w_08": {
+      "frame": {
+        "x": 238,
+        "y": 1292,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.w_09": {
+      "frame": {
+        "x": 272,
+        "y": 1292,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.w_10": {
+      "frame": {
+        "x": 306,
+        "y": 1292,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.w_11": {
+      "frame": {
+        "x": 340,
+        "y": 1292,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.w_12": {
+      "frame": {
+        "x": 374,
+        "y": 1292,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.nw_01": {
+      "frame": {
+        "x": 0,
+        "y": 1326,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.nw_02": {
+      "frame": {
+        "x": 34,
+        "y": 1326,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.nw_03": {
+      "frame": {
+        "x": 68,
+        "y": 1326,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.nw_04": {
+      "frame": {
+        "x": 102,
+        "y": 1326,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.nw_05": {
+      "frame": {
+        "x": 136,
+        "y": 1326,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.nw_06": {
+      "frame": {
+        "x": 170,
+        "y": 1326,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.nw_07": {
+      "frame": {
+        "x": 204,
+        "y": 1326,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.nw_08": {
+      "frame": {
+        "x": 238,
+        "y": 1326,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.nw_09": {
+      "frame": {
+        "x": 272,
+        "y": 1326,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.nw_10": {
+      "frame": {
+        "x": 306,
+        "y": 1326,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.nw_11": {
+      "frame": {
+        "x": 340,
+        "y": 1326,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.attack.nw_12": {
+      "frame": {
+        "x": 374,
+        "y": 1326,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.dead.n_01": {
+      "frame": {
+        "x": 0,
+        "y": 1360,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.dead.n_02": {
+      "frame": {
+        "x": 34,
+        "y": 1360,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.dead.n_03": {
+      "frame": {
+        "x": 68,
+        "y": 1360,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.dead.n_04": {
+      "frame": {
+        "x": 102,
+        "y": 1360,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.dead.ne_01": {
+      "frame": {
+        "x": 0,
+        "y": 1394,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.dead.ne_02": {
+      "frame": {
+        "x": 34,
+        "y": 1394,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.dead.ne_03": {
+      "frame": {
+        "x": 68,
+        "y": 1394,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.dead.ne_04": {
+      "frame": {
+        "x": 102,
+        "y": 1394,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.dead.e_01": {
+      "frame": {
+        "x": 0,
+        "y": 1428,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.dead.e_02": {
+      "frame": {
+        "x": 34,
+        "y": 1428,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.dead.e_03": {
+      "frame": {
+        "x": 68,
+        "y": 1428,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.dead.e_04": {
+      "frame": {
+        "x": 102,
+        "y": 1428,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.dead.se_01": {
+      "frame": {
+        "x": 0,
+        "y": 1462,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.dead.se_02": {
+      "frame": {
+        "x": 34,
+        "y": 1462,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.dead.se_03": {
+      "frame": {
+        "x": 68,
+        "y": 1462,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.dead.se_04": {
+      "frame": {
+        "x": 102,
+        "y": 1462,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.dead.s_01": {
+      "frame": {
+        "x": 0,
+        "y": 1496,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.dead.s_02": {
+      "frame": {
+        "x": 34,
+        "y": 1496,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.dead.s_03": {
+      "frame": {
+        "x": 68,
+        "y": 1496,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.dead.s_04": {
+      "frame": {
+        "x": 102,
+        "y": 1496,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.dead.sw_01": {
+      "frame": {
+        "x": 0,
+        "y": 1530,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.dead.sw_02": {
+      "frame": {
+        "x": 34,
+        "y": 1530,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.dead.sw_03": {
+      "frame": {
+        "x": 68,
+        "y": 1530,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.dead.sw_04": {
+      "frame": {
+        "x": 102,
+        "y": 1530,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.dead.w_01": {
+      "frame": {
+        "x": 0,
+        "y": 1564,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.dead.w_02": {
+      "frame": {
+        "x": 34,
+        "y": 1564,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.dead.w_03": {
+      "frame": {
+        "x": 68,
+        "y": 1564,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.dead.w_04": {
+      "frame": {
+        "x": 102,
+        "y": 1564,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.dead.nw_01": {
+      "frame": {
+        "x": 0,
+        "y": 1598,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.dead.nw_02": {
+      "frame": {
+        "x": 34,
+        "y": 1598,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.dead.nw_03": {
+      "frame": {
+        "x": 68,
+        "y": 1598,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.dead.nw_04": {
+      "frame": {
+        "x": 102,
+        "y": 1598,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.idle.n_01": {
+      "frame": {
+        "x": 68,
+        "y": 816,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.idle.ne_01": {
+      "frame": {
+        "x": 68,
+        "y": 850,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.idle.e_01": {
+      "frame": {
+        "x": 68,
+        "y": 884,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.idle.se_01": {
+      "frame": {
+        "x": 68,
+        "y": 918,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.idle.s_01": {
+      "frame": {
+        "x": 68,
+        "y": 952,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.idle.sw_01": {
+      "frame": {
+        "x": 68,
+        "y": 986,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.idle.w_01": {
+      "frame": {
+        "x": 68,
+        "y": 1020,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "swordsmen.red.idle.nw_01": {
+      "frame": {
+        "x": 68,
+        "y": 1054,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    }
+  },
+  "animations": {
+    "swordsmen.blue.move.n": [
+      "swordsmen.blue.move.n_01",
+      "swordsmen.blue.move.n_02",
+      "swordsmen.blue.move.n_03",
+      "swordsmen.blue.move.n_04",
+      "swordsmen.blue.move.n_05",
+      "swordsmen.blue.move.n_06",
+      "swordsmen.blue.move.n_07",
+      "swordsmen.blue.move.n_08"
+    ],
+    "swordsmen.blue.move.ne": [
+      "swordsmen.blue.move.ne_01",
+      "swordsmen.blue.move.ne_02",
+      "swordsmen.blue.move.ne_03",
+      "swordsmen.blue.move.ne_04",
+      "swordsmen.blue.move.ne_05",
+      "swordsmen.blue.move.ne_06",
+      "swordsmen.blue.move.ne_07",
+      "swordsmen.blue.move.ne_08"
+    ],
+    "swordsmen.blue.move.e": [
+      "swordsmen.blue.move.e_01",
+      "swordsmen.blue.move.e_02",
+      "swordsmen.blue.move.e_03",
+      "swordsmen.blue.move.e_04",
+      "swordsmen.blue.move.e_05",
+      "swordsmen.blue.move.e_06",
+      "swordsmen.blue.move.e_07",
+      "swordsmen.blue.move.e_08"
+    ],
+    "swordsmen.blue.move.se": [
+      "swordsmen.blue.move.se_01",
+      "swordsmen.blue.move.se_02",
+      "swordsmen.blue.move.se_03",
+      "swordsmen.blue.move.se_04",
+      "swordsmen.blue.move.se_05",
+      "swordsmen.blue.move.se_06",
+      "swordsmen.blue.move.se_07",
+      "swordsmen.blue.move.se_08"
+    ],
+    "swordsmen.blue.move.s": [
+      "swordsmen.blue.move.s_01",
+      "swordsmen.blue.move.s_02",
+      "swordsmen.blue.move.s_03",
+      "swordsmen.blue.move.s_04",
+      "swordsmen.blue.move.s_05",
+      "swordsmen.blue.move.s_06",
+      "swordsmen.blue.move.s_07",
+      "swordsmen.blue.move.s_08"
+    ],
+    "swordsmen.blue.move.sw": [
+      "swordsmen.blue.move.sw_01",
+      "swordsmen.blue.move.sw_02",
+      "swordsmen.blue.move.sw_03",
+      "swordsmen.blue.move.sw_04",
+      "swordsmen.blue.move.sw_05",
+      "swordsmen.blue.move.sw_06",
+      "swordsmen.blue.move.sw_07",
+      "swordsmen.blue.move.sw_08"
+    ],
+    "swordsmen.blue.move.w": [
+      "swordsmen.blue.move.w_01",
+      "swordsmen.blue.move.w_02",
+      "swordsmen.blue.move.w_03",
+      "swordsmen.blue.move.w_04",
+      "swordsmen.blue.move.w_05",
+      "swordsmen.blue.move.w_06",
+      "swordsmen.blue.move.w_07",
+      "swordsmen.blue.move.w_08"
+    ],
+    "swordsmen.blue.move.nw": [
+      "swordsmen.blue.move.nw_01",
+      "swordsmen.blue.move.nw_02",
+      "swordsmen.blue.move.nw_03",
+      "swordsmen.blue.move.nw_04",
+      "swordsmen.blue.move.nw_05",
+      "swordsmen.blue.move.nw_06",
+      "swordsmen.blue.move.nw_07",
+      "swordsmen.blue.move.nw_08"
+    ],
+    "swordsmen.blue.attack.n": [
+      "swordsmen.blue.attack.n_01",
+      "swordsmen.blue.attack.n_02",
+      "swordsmen.blue.attack.n_03",
+      "swordsmen.blue.attack.n_04",
+      "swordsmen.blue.attack.n_05",
+      "swordsmen.blue.attack.n_06",
+      "swordsmen.blue.attack.n_07",
+      "swordsmen.blue.attack.n_08",
+      "swordsmen.blue.attack.n_09",
+      "swordsmen.blue.attack.n_10",
+      "swordsmen.blue.attack.n_11",
+      "swordsmen.blue.attack.n_12"
+    ],
+    "swordsmen.blue.attack.ne": [
+      "swordsmen.blue.attack.ne_01",
+      "swordsmen.blue.attack.ne_02",
+      "swordsmen.blue.attack.ne_03",
+      "swordsmen.blue.attack.ne_04",
+      "swordsmen.blue.attack.ne_05",
+      "swordsmen.blue.attack.ne_06",
+      "swordsmen.blue.attack.ne_07",
+      "swordsmen.blue.attack.ne_08",
+      "swordsmen.blue.attack.ne_09",
+      "swordsmen.blue.attack.ne_10",
+      "swordsmen.blue.attack.ne_11",
+      "swordsmen.blue.attack.ne_12"
+    ],
+    "swordsmen.blue.attack.e": [
+      "swordsmen.blue.attack.e_01",
+      "swordsmen.blue.attack.e_02",
+      "swordsmen.blue.attack.e_03",
+      "swordsmen.blue.attack.e_04",
+      "swordsmen.blue.attack.e_05",
+      "swordsmen.blue.attack.e_06",
+      "swordsmen.blue.attack.e_07",
+      "swordsmen.blue.attack.e_08",
+      "swordsmen.blue.attack.e_09",
+      "swordsmen.blue.attack.e_10",
+      "swordsmen.blue.attack.e_11",
+      "swordsmen.blue.attack.e_12"
+    ],
+    "swordsmen.blue.attack.se": [
+      "swordsmen.blue.attack.se_01",
+      "swordsmen.blue.attack.se_02",
+      "swordsmen.blue.attack.se_03",
+      "swordsmen.blue.attack.se_04",
+      "swordsmen.blue.attack.se_05",
+      "swordsmen.blue.attack.se_06",
+      "swordsmen.blue.attack.se_07",
+      "swordsmen.blue.attack.se_08",
+      "swordsmen.blue.attack.se_09",
+      "swordsmen.blue.attack.se_10",
+      "swordsmen.blue.attack.se_11",
+      "swordsmen.blue.attack.se_12"
+    ],
+    "swordsmen.blue.attack.s": [
+      "swordsmen.blue.attack.s_01",
+      "swordsmen.blue.attack.s_02",
+      "swordsmen.blue.attack.s_03",
+      "swordsmen.blue.attack.s_04",
+      "swordsmen.blue.attack.s_05",
+      "swordsmen.blue.attack.s_06",
+      "swordsmen.blue.attack.s_07",
+      "swordsmen.blue.attack.s_08",
+      "swordsmen.blue.attack.s_09",
+      "swordsmen.blue.attack.s_10",
+      "swordsmen.blue.attack.s_11",
+      "swordsmen.blue.attack.s_12"
+    ],
+    "swordsmen.blue.attack.sw": [
+      "swordsmen.blue.attack.sw_01",
+      "swordsmen.blue.attack.sw_02",
+      "swordsmen.blue.attack.sw_03",
+      "swordsmen.blue.attack.sw_04",
+      "swordsmen.blue.attack.sw_05",
+      "swordsmen.blue.attack.sw_06",
+      "swordsmen.blue.attack.sw_07",
+      "swordsmen.blue.attack.sw_08",
+      "swordsmen.blue.attack.sw_09",
+      "swordsmen.blue.attack.sw_10",
+      "swordsmen.blue.attack.sw_11",
+      "swordsmen.blue.attack.sw_12"
+    ],
+    "swordsmen.blue.attack.w": [
+      "swordsmen.blue.attack.w_01",
+      "swordsmen.blue.attack.w_02",
+      "swordsmen.blue.attack.w_03",
+      "swordsmen.blue.attack.w_04",
+      "swordsmen.blue.attack.w_05",
+      "swordsmen.blue.attack.w_06",
+      "swordsmen.blue.attack.w_07",
+      "swordsmen.blue.attack.w_08",
+      "swordsmen.blue.attack.w_09",
+      "swordsmen.blue.attack.w_10",
+      "swordsmen.blue.attack.w_11",
+      "swordsmen.blue.attack.w_12"
+    ],
+    "swordsmen.blue.attack.nw": [
+      "swordsmen.blue.attack.nw_01",
+      "swordsmen.blue.attack.nw_02",
+      "swordsmen.blue.attack.nw_03",
+      "swordsmen.blue.attack.nw_04",
+      "swordsmen.blue.attack.nw_05",
+      "swordsmen.blue.attack.nw_06",
+      "swordsmen.blue.attack.nw_07",
+      "swordsmen.blue.attack.nw_08",
+      "swordsmen.blue.attack.nw_09",
+      "swordsmen.blue.attack.nw_10",
+      "swordsmen.blue.attack.nw_11",
+      "swordsmen.blue.attack.nw_12"
+    ],
+    "swordsmen.blue.dead.n": [
+      "swordsmen.blue.dead.n_01",
+      "swordsmen.blue.dead.n_02",
+      "swordsmen.blue.dead.n_03",
+      "swordsmen.blue.dead.n_04"
+    ],
+    "swordsmen.blue.dead.ne": [
+      "swordsmen.blue.dead.ne_01",
+      "swordsmen.blue.dead.ne_02",
+      "swordsmen.blue.dead.ne_03",
+      "swordsmen.blue.dead.ne_04"
+    ],
+    "swordsmen.blue.dead.e": [
+      "swordsmen.blue.dead.e_01",
+      "swordsmen.blue.dead.e_02",
+      "swordsmen.blue.dead.e_03",
+      "swordsmen.blue.dead.e_04"
+    ],
+    "swordsmen.blue.dead.se": [
+      "swordsmen.blue.dead.se_01",
+      "swordsmen.blue.dead.se_02",
+      "swordsmen.blue.dead.se_03",
+      "swordsmen.blue.dead.se_04"
+    ],
+    "swordsmen.blue.dead.s": [
+      "swordsmen.blue.dead.s_01",
+      "swordsmen.blue.dead.s_02",
+      "swordsmen.blue.dead.s_03",
+      "swordsmen.blue.dead.s_04"
+    ],
+    "swordsmen.blue.dead.sw": [
+      "swordsmen.blue.dead.sw_01",
+      "swordsmen.blue.dead.sw_02",
+      "swordsmen.blue.dead.sw_03",
+      "swordsmen.blue.dead.sw_04"
+    ],
+    "swordsmen.blue.dead.w": [
+      "swordsmen.blue.dead.w_01",
+      "swordsmen.blue.dead.w_02",
+      "swordsmen.blue.dead.w_03",
+      "swordsmen.blue.dead.w_04"
+    ],
+    "swordsmen.blue.dead.nw": [
+      "swordsmen.blue.dead.nw_01",
+      "swordsmen.blue.dead.nw_02",
+      "swordsmen.blue.dead.nw_03",
+      "swordsmen.blue.dead.nw_04"
+    ],
+    "swordsmen.blue.idle.n": [
+      "swordsmen.blue.idle.n_01"
+    ],
+    "swordsmen.blue.idle.ne": [
+      "swordsmen.blue.idle.ne_01"
+    ],
+    "swordsmen.blue.idle.e": [
+      "swordsmen.blue.idle.e_01"
+    ],
+    "swordsmen.blue.idle.se": [
+      "swordsmen.blue.idle.se_01"
+    ],
+    "swordsmen.blue.idle.s": [
+      "swordsmen.blue.idle.s_01"
+    ],
+    "swordsmen.blue.idle.sw": [
+      "swordsmen.blue.idle.sw_01"
+    ],
+    "swordsmen.blue.idle.w": [
+      "swordsmen.blue.idle.w_01"
+    ],
+    "swordsmen.blue.idle.nw": [
+      "swordsmen.blue.idle.nw_01"
+    ],
+    "swordsmen.red.move.n": [
+      "swordsmen.red.move.n_01",
+      "swordsmen.red.move.n_02",
+      "swordsmen.red.move.n_03",
+      "swordsmen.red.move.n_04",
+      "swordsmen.red.move.n_05",
+      "swordsmen.red.move.n_06",
+      "swordsmen.red.move.n_07",
+      "swordsmen.red.move.n_08"
+    ],
+    "swordsmen.red.move.ne": [
+      "swordsmen.red.move.ne_01",
+      "swordsmen.red.move.ne_02",
+      "swordsmen.red.move.ne_03",
+      "swordsmen.red.move.ne_04",
+      "swordsmen.red.move.ne_05",
+      "swordsmen.red.move.ne_06",
+      "swordsmen.red.move.ne_07",
+      "swordsmen.red.move.ne_08"
+    ],
+    "swordsmen.red.move.e": [
+      "swordsmen.red.move.e_01",
+      "swordsmen.red.move.e_02",
+      "swordsmen.red.move.e_03",
+      "swordsmen.red.move.e_04",
+      "swordsmen.red.move.e_05",
+      "swordsmen.red.move.e_06",
+      "swordsmen.red.move.e_07",
+      "swordsmen.red.move.e_08"
+    ],
+    "swordsmen.red.move.se": [
+      "swordsmen.red.move.se_01",
+      "swordsmen.red.move.se_02",
+      "swordsmen.red.move.se_03",
+      "swordsmen.red.move.se_04",
+      "swordsmen.red.move.se_05",
+      "swordsmen.red.move.se_06",
+      "swordsmen.red.move.se_07",
+      "swordsmen.red.move.se_08"
+    ],
+    "swordsmen.red.move.s": [
+      "swordsmen.red.move.s_01",
+      "swordsmen.red.move.s_02",
+      "swordsmen.red.move.s_03",
+      "swordsmen.red.move.s_04",
+      "swordsmen.red.move.s_05",
+      "swordsmen.red.move.s_06",
+      "swordsmen.red.move.s_07",
+      "swordsmen.red.move.s_08"
+    ],
+    "swordsmen.red.move.sw": [
+      "swordsmen.red.move.sw_01",
+      "swordsmen.red.move.sw_02",
+      "swordsmen.red.move.sw_03",
+      "swordsmen.red.move.sw_04",
+      "swordsmen.red.move.sw_05",
+      "swordsmen.red.move.sw_06",
+      "swordsmen.red.move.sw_07",
+      "swordsmen.red.move.sw_08"
+    ],
+    "swordsmen.red.move.w": [
+      "swordsmen.red.move.w_01",
+      "swordsmen.red.move.w_02",
+      "swordsmen.red.move.w_03",
+      "swordsmen.red.move.w_04",
+      "swordsmen.red.move.w_05",
+      "swordsmen.red.move.w_06",
+      "swordsmen.red.move.w_07",
+      "swordsmen.red.move.w_08"
+    ],
+    "swordsmen.red.move.nw": [
+      "swordsmen.red.move.nw_01",
+      "swordsmen.red.move.nw_02",
+      "swordsmen.red.move.nw_03",
+      "swordsmen.red.move.nw_04",
+      "swordsmen.red.move.nw_05",
+      "swordsmen.red.move.nw_06",
+      "swordsmen.red.move.nw_07",
+      "swordsmen.red.move.nw_08"
+    ],
+    "swordsmen.red.attack.n": [
+      "swordsmen.red.attack.n_01",
+      "swordsmen.red.attack.n_02",
+      "swordsmen.red.attack.n_03",
+      "swordsmen.red.attack.n_04",
+      "swordsmen.red.attack.n_05",
+      "swordsmen.red.attack.n_06",
+      "swordsmen.red.attack.n_07",
+      "swordsmen.red.attack.n_08",
+      "swordsmen.red.attack.n_09",
+      "swordsmen.red.attack.n_10",
+      "swordsmen.red.attack.n_11",
+      "swordsmen.red.attack.n_12"
+    ],
+    "swordsmen.red.attack.ne": [
+      "swordsmen.red.attack.ne_01",
+      "swordsmen.red.attack.ne_02",
+      "swordsmen.red.attack.ne_03",
+      "swordsmen.red.attack.ne_04",
+      "swordsmen.red.attack.ne_05",
+      "swordsmen.red.attack.ne_06",
+      "swordsmen.red.attack.ne_07",
+      "swordsmen.red.attack.ne_08",
+      "swordsmen.red.attack.ne_09",
+      "swordsmen.red.attack.ne_10",
+      "swordsmen.red.attack.ne_11",
+      "swordsmen.red.attack.ne_12"
+    ],
+    "swordsmen.red.attack.e": [
+      "swordsmen.red.attack.e_01",
+      "swordsmen.red.attack.e_02",
+      "swordsmen.red.attack.e_03",
+      "swordsmen.red.attack.e_04",
+      "swordsmen.red.attack.e_05",
+      "swordsmen.red.attack.e_06",
+      "swordsmen.red.attack.e_07",
+      "swordsmen.red.attack.e_08",
+      "swordsmen.red.attack.e_09",
+      "swordsmen.red.attack.e_10",
+      "swordsmen.red.attack.e_11",
+      "swordsmen.red.attack.e_12"
+    ],
+    "swordsmen.red.attack.se": [
+      "swordsmen.red.attack.se_01",
+      "swordsmen.red.attack.se_02",
+      "swordsmen.red.attack.se_03",
+      "swordsmen.red.attack.se_04",
+      "swordsmen.red.attack.se_05",
+      "swordsmen.red.attack.se_06",
+      "swordsmen.red.attack.se_07",
+      "swordsmen.red.attack.se_08",
+      "swordsmen.red.attack.se_09",
+      "swordsmen.red.attack.se_10",
+      "swordsmen.red.attack.se_11",
+      "swordsmen.red.attack.se_12"
+    ],
+    "swordsmen.red.attack.s": [
+      "swordsmen.red.attack.s_01",
+      "swordsmen.red.attack.s_02",
+      "swordsmen.red.attack.s_03",
+      "swordsmen.red.attack.s_04",
+      "swordsmen.red.attack.s_05",
+      "swordsmen.red.attack.s_06",
+      "swordsmen.red.attack.s_07",
+      "swordsmen.red.attack.s_08",
+      "swordsmen.red.attack.s_09",
+      "swordsmen.red.attack.s_10",
+      "swordsmen.red.attack.s_11",
+      "swordsmen.red.attack.s_12"
+    ],
+    "swordsmen.red.attack.sw": [
+      "swordsmen.red.attack.sw_01",
+      "swordsmen.red.attack.sw_02",
+      "swordsmen.red.attack.sw_03",
+      "swordsmen.red.attack.sw_04",
+      "swordsmen.red.attack.sw_05",
+      "swordsmen.red.attack.sw_06",
+      "swordsmen.red.attack.sw_07",
+      "swordsmen.red.attack.sw_08",
+      "swordsmen.red.attack.sw_09",
+      "swordsmen.red.attack.sw_10",
+      "swordsmen.red.attack.sw_11",
+      "swordsmen.red.attack.sw_12"
+    ],
+    "swordsmen.red.attack.w": [
+      "swordsmen.red.attack.w_01",
+      "swordsmen.red.attack.w_02",
+      "swordsmen.red.attack.w_03",
+      "swordsmen.red.attack.w_04",
+      "swordsmen.red.attack.w_05",
+      "swordsmen.red.attack.w_06",
+      "swordsmen.red.attack.w_07",
+      "swordsmen.red.attack.w_08",
+      "swordsmen.red.attack.w_09",
+      "swordsmen.red.attack.w_10",
+      "swordsmen.red.attack.w_11",
+      "swordsmen.red.attack.w_12"
+    ],
+    "swordsmen.red.attack.nw": [
+      "swordsmen.red.attack.nw_01",
+      "swordsmen.red.attack.nw_02",
+      "swordsmen.red.attack.nw_03",
+      "swordsmen.red.attack.nw_04",
+      "swordsmen.red.attack.nw_05",
+      "swordsmen.red.attack.nw_06",
+      "swordsmen.red.attack.nw_07",
+      "swordsmen.red.attack.nw_08",
+      "swordsmen.red.attack.nw_09",
+      "swordsmen.red.attack.nw_10",
+      "swordsmen.red.attack.nw_11",
+      "swordsmen.red.attack.nw_12"
+    ],
+    "swordsmen.red.dead.n": [
+      "swordsmen.red.dead.n_01",
+      "swordsmen.red.dead.n_02",
+      "swordsmen.red.dead.n_03",
+      "swordsmen.red.dead.n_04"
+    ],
+    "swordsmen.red.dead.ne": [
+      "swordsmen.red.dead.ne_01",
+      "swordsmen.red.dead.ne_02",
+      "swordsmen.red.dead.ne_03",
+      "swordsmen.red.dead.ne_04"
+    ],
+    "swordsmen.red.dead.e": [
+      "swordsmen.red.dead.e_01",
+      "swordsmen.red.dead.e_02",
+      "swordsmen.red.dead.e_03",
+      "swordsmen.red.dead.e_04"
+    ],
+    "swordsmen.red.dead.se": [
+      "swordsmen.red.dead.se_01",
+      "swordsmen.red.dead.se_02",
+      "swordsmen.red.dead.se_03",
+      "swordsmen.red.dead.se_04"
+    ],
+    "swordsmen.red.dead.s": [
+      "swordsmen.red.dead.s_01",
+      "swordsmen.red.dead.s_02",
+      "swordsmen.red.dead.s_03",
+      "swordsmen.red.dead.s_04"
+    ],
+    "swordsmen.red.dead.sw": [
+      "swordsmen.red.dead.sw_01",
+      "swordsmen.red.dead.sw_02",
+      "swordsmen.red.dead.sw_03",
+      "swordsmen.red.dead.sw_04"
+    ],
+    "swordsmen.red.dead.w": [
+      "swordsmen.red.dead.w_01",
+      "swordsmen.red.dead.w_02",
+      "swordsmen.red.dead.w_03",
+      "swordsmen.red.dead.w_04"
+    ],
+    "swordsmen.red.dead.nw": [
+      "swordsmen.red.dead.nw_01",
+      "swordsmen.red.dead.nw_02",
+      "swordsmen.red.dead.nw_03",
+      "swordsmen.red.dead.nw_04"
+    ],
+    "swordsmen.red.idle.n": [
+      "swordsmen.red.idle.n_01"
+    ],
+    "swordsmen.red.idle.ne": [
+      "swordsmen.red.idle.ne_01"
+    ],
+    "swordsmen.red.idle.e": [
+      "swordsmen.red.idle.e_01"
+    ],
+    "swordsmen.red.idle.se": [
+      "swordsmen.red.idle.se_01"
+    ],
+    "swordsmen.red.idle.s": [
+      "swordsmen.red.idle.s_01"
+    ],
+    "swordsmen.red.idle.sw": [
+      "swordsmen.red.idle.sw_01"
+    ],
+    "swordsmen.red.idle.w": [
+      "swordsmen.red.idle.w_01"
+    ],
+    "swordsmen.red.idle.nw": [
+      "swordsmen.red.idle.nw_01"
+    ]
+  },
+  "meta": {
+    "app": "drotr scripts/unit-sprites",
+    "image": "swordsmen.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 406,
+      "h": 1630
+    },
+    "scale": 1
+  }
+}

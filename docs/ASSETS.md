@@ -119,6 +119,31 @@ old `gulp`/`raw/sprites/units` pipeline (history around commits
 reference, but it's not the target design). Once that new pipeline exists
 and is verified, `raw/sprites/units` can be deleted.
 
+## Unit spritesheets
+
+`npm run pack:sprites [unit...]` (`scripts/unit-sprites/`) cuts unit frames
+out of `ART/BATTLE.ART` and packs one lossless, straight-RGBA Pixi v8 sheet
+per unit type, both teams on it, into `public/assets/units/`:
+`<unit>.png`, `<unit>.sheet.json` (animations keyed by `AnimationKey`) and
+the `<unit>.json` manifest. With no unit named, every unit with a frame map
+is packed. So far only `swordsmen` is migrated; the other units still use
+`public/assets/unit-spritesheet.*`.
+
+Unit frames are not on the atlas's 40 px tile grid, nor on any uniform
+grid, so each unit has a committed **frame map**
+(`scripts/unit-sprites/frame-maps/<unit>.ts`): the measured atlas rect of
+every team × action × direction × frame, in playback order. Frames are
+copied untrimmed, so all frames of an animation share one size and pivot;
+the teal key becomes alpha and nothing else is changed. `idle` has no
+frames of its own and reuses one explicitly chosen move frame per team and
+direction.
+
+The swordsmen map was bootstrapped by template-matching
+`raw/sprites/units` against the decoded atlas (every frame matched exactly
+one position), then normalised to atlas column order, which fixed the
+dump's ordering errors (swapped, reversed and rotated frame runs, and a
+blue idle that pointed at a death frame).
+
 ## Unit sprite contract
 
 Unit sprites are described by a typed contract shared by the sprite pipeline
@@ -131,7 +156,8 @@ and the runtime renderer; the manifest path is derived from the unit type, so
   `idle | move | attack | dead`; directions are compass abbreviations
   `n ne e se s sw w nw`.
 - Manifest (`src/game/render/sprites/unit-manifest.ts`) at
-  `public/assets/units/<unit>.json`: `frameSize`, `anchor`, `teams`, and
+  `public/assets/units/<unit>.json`, next to the Pixi sheet
+  `<unit>.sheet.json` (`unitSpritesheetPath`): `frameSize`, `anchor`, `teams`, and
   `actions`, each action having `frames` (per direction), `fps`, `loop`, and
   optionally `hitFrame` (attack only, 0-based, must be `< frames`) or
   `holdLast`. Actions a unit has no frames for may be omitted; single-frame
