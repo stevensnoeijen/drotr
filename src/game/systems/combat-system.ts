@@ -35,8 +35,9 @@ export function cellDistance(a: Point, b: Point, cellSize: number): number {
  * True once a unit has *finished* moving into a cell: standing still, on that
  * cell's centre, rather than part-way across it or between two.
  *
- * This is the gate on combat in both directions — a unit may neither
- * swing nor be swung at until it holds, which is what stops two units
+ * This is the gate on melee combat in both directions — a unit may neither
+ * swing nor be swung at until it holds (a ranged attacker only needs itself
+ * settled, not its target), which is what stops two units
  * trading blows while they are still visibly sliding past each other.
  *
  * Three things have to hold:
@@ -91,7 +92,7 @@ export function isSettled(entity: Entity, cellSize: number): boolean {
  *
  * A `Ranged` attacker (currently just the crossbow soldier) does not
  * touch the target's HP here at all: once everything above has confirmed
- * this swing lands (in range, both settled), it fires a travelling
+ * this swing lands (in range, attacker settled), it fires a travelling
  * `Projectile` instead (`fireProjectile`), and `ProjectileSystem` is what
  * actually damages the target once that projectile arrives. The range gate
  * above is exactly what stops a crossbow soldier from firing at a target
@@ -114,12 +115,14 @@ function attack(
     return;
   }
 
-  // Neither combatant may be mid-step between two cells: a swing only lands
-  // once both are standing still inside the cell they occupy. The target
-  // keeps its `target` here (unlike the dead-target case above) — it's still
-  // a live, in-range foe, just not settled yet, and the swing is simply
-  // deferred to a later tick.
-  if (!isSettled(self, cellSize) || !isSettled(other, cellSize)) {
+  // The attacker must be standing still inside its cell to swing or fire.
+  // A melee swing additionally needs the target settled — two units don't
+  // trade blows while visibly sliding past each other. A ranged attacker has
+  // no such restriction: a projectile homes on its target, so it fires at a
+  // target that is walking, as long as the target is within range. A deferred
+  // swing keeps the target (it's still a live foe), and is simply retried on
+  // a later tick.
+  if (!isSettled(self, cellSize) || (!self.ranged && !isSettled(other, cellSize))) {
     return;
   }
 

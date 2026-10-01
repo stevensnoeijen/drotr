@@ -604,6 +604,52 @@ describe('CombatSystem ranged attacks', () => {
     expect(projectile.damage.value).toBe(2);
   });
 
+  function setupShooter() {
+    const world = new World<Entity>();
+    const queries = createQueries(world);
+    const system = createCombatSystem(queries, DEFAULT_CELL_SIZE);
+    const target = makeUnit(world, { team: 'red', x: 3 * DEFAULT_CELL_SIZE });
+    const crossbowman = makeUnit(world, {
+      team: 'blue',
+      x: 0,
+      attackRangeCells: 5,
+      damage: 2,
+      attackCooldown: 1,
+      projectileSpeed: 10 * DEFAULT_CELL_SIZE,
+    });
+    crossbowman.target = { entityId: target.id! };
+    return { world, queries, system, target, crossbowman };
+  }
+
+  it('fires at a target that is walking (nonzero velocity, mid-transit)', () => {
+    const { world, queries, system, target } = setupShooter();
+    target.cellOccupancy = { occupantId: 1, cell: 1, reserved: 2, blockedFor: 0, rerouted: false };
+    target.velocity = { x: 80, y: 0 };
+
+    run(system, world, 60);
+
+    expect(queries.projectiles.size).toBe(1);
+  });
+
+  it('still withholds a shot while the shooter itself is moving', () => {
+    const { world, queries, system, crossbowman } = setupShooter();
+    crossbowman.velocity = { x: 80, y: 0 };
+
+    run(system, world, 120);
+
+    expect(queries.projectiles.size).toBe(0);
+  });
+
+  it('still does not fire at a moving target beyond attack range', () => {
+    const { world, queries, system, target } = setupShooter();
+    target.transform!.position.x = 20 * DEFAULT_CELL_SIZE;
+    target.velocity = { x: 80, y: 0 };
+
+    run(system, world, 120);
+
+    expect(queries.projectiles.size).toBe(0);
+  });
+
   it('does not fire at a target beyond its 5-cell attack range', () => {
     const world = new World<Entity>();
     const queries = createQueries(world);
