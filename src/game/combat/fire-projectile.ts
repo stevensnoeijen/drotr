@@ -17,6 +17,14 @@ const PROJECTILE_SIZE = 8;
 const PROJECTILE_COLOR = 0x9b59b6;
 
 /**
+ * How many times the firer's attack range a bolt may fly before expiring as
+ * a miss. A homing bolt chasing a target retreating at fraction `r` of its
+ * speed flies `1 / (1 - r)` times the firing distance, so 3 covers targets
+ * moving up to two thirds of bolt speed — far above any unit's walking speed.
+ */
+const MAX_FLIGHT_RANGE_FACTOR = 3;
+
+/**
  * Spawns a travelling `Projectile` entity aimed at `target`'s current
  * position, fired by `attacker`. Called by `CombatSystem` in place of
  * applying damage directly, the instant a `Ranged` attacker's swing lands
@@ -24,16 +32,15 @@ const PROJECTILE_COLOR = 0x9b59b6;
  * the projectile, not this call, is what actually damages the target, once
  * `ProjectileSystem` lands it.
  *
- * Velocity is fixed at fire time, aimed at wherever `target` stood at this
- * instant — the projectile does not home in on a target that moves after
- * launch; `ProjectileSystem` re-reads the target's *live* position only to
- * decide whether the shot has arrived, not to steer it.
+ * Velocity starts aimed at wherever `target` stands at this instant;
+ * `ProjectileSystem` then homes the projectile on the target's live position
+ * each tick, so it still lands if the target moves after launch.
  *
- * `maxRange` is taken from `attacker.attackRange`, not measured from the
- * firing distance: a projectile fired at the very edge of range must still
- * expire at (not fly past) that same boundary if its target manages to
- * sidestep it, mirroring the firer's own reach rather than this one shot's
- * particular aim. `cellSize` converts that range from cells to world units.
+ * `maxRange` is a safety cap on flight distance, `MAX_FLIGHT_RANGE_FACTOR`
+ * times `attacker.attackRange` (converted from cells to world units by
+ * `cellSize`). It is deliberately more than the attack range itself, so a
+ * target walking away mid-flight is still caught, while a bolt that somehow
+ * can never arrive still expires eventually.
  */
 export function fireProjectile(
   world: World<Entity>,
@@ -54,10 +61,9 @@ export function fireProjectile(
       ? { x: (dx / distance) * speed, y: (dy / distance) * speed }
       : { x: 0, y: speed };
 
-  // Non-homing (see the doc comment above): rotation, like velocity, is set
-  // once here from the aim at fire time and never touched again, so the
-  // `stripe` shape is drawn pointing the way it's actually travelling
-  // instead of stuck at rotation 0.
+  // Initial rotation matches the initial aim, so the `stripe` shape is drawn
+  // pointing the way it travels from the first frame; `ProjectileSystem`
+  // keeps it in step as it re-aims.
   const rotation = quantizeAngle(Math.atan2(dx, -dy));
 
   world.add({
@@ -68,7 +74,7 @@ export function fireProjectile(
     projectile: {
       sourceTeam: attacker.team,
       targetId,
-      maxRange: attacker.attackRange.value * cellSize,
+      maxRange: attacker.attackRange.value * cellSize * MAX_FLIGHT_RANGE_FACTOR,
       traveled: 0,
     },
     renderable: { shape: 'stripe', color: PROJECTILE_COLOR, size: PROJECTILE_SIZE },

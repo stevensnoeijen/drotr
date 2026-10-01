@@ -31,7 +31,7 @@ describe('fireProjectile', () => {
     expect(spawned!.projectile).toEqual({
       sourceTeam: 'blue',
       targetId: 2,
-      maxRange: 5 * DEFAULT_CELL_SIZE,
+      maxRange: 15 * DEFAULT_CELL_SIZE,
       traveled: 0,
     });
     // Aimed straight up (target due north) at the firer's projectile speed.

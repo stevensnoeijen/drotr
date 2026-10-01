@@ -3,7 +3,7 @@ import type { Team } from '~/game/ecs/components/team';
 /**
  * Marks an entity as a fired, travelling projectile — a crossbow bolt
  * in flight. Always paired with `Transform` (current position), `Velocity`
- * (fixed at fire time — see `fireProjectile`) and `Damage` (how hard it hits
+ * (re-aimed at the target every tick by `ProjectileSystem`) and `Damage` (how hard it hits
  * on impact), which is what
  * {@link file://../../systems/projectile-system.ts#createProjectileSystem}
  * requires to move, hit-test and damage it.
@@ -12,7 +12,7 @@ export interface Projectile {
   /**
    * Team that fired this projectile. Not read for hit detection today (a
    * projectile only ever tracks the one `targetId` it was fired at), but
-   * kept alongside it so a friendly-fire check, or a future homing/splash
+   * kept alongside it so a friendly-fire check, or a future splash
    * mechanic that needs to tell foe from source, has it to hand without
    * resolving back through the (possibly already-dead) firer.
    */
@@ -21,9 +21,9 @@ export interface Projectile {
   targetId: number;
   /**
    * Total distance, in world units, this projectile may travel before it
-   * expires unfired — a miss, not a hit. Set from the firer's `attackRange`
-   * at fire time, so a projectile can never travel further than the unit
-   * that fired it was allowed to shoot.
+   * expires unfired — a miss, not a hit. A generous multiple of the firer's
+   * `attackRange` (see `fireProjectile`), so a homing projectile still
+   * reaches a target that retreats mid-flight.
    */
   maxRange: number;
   /** World units travelled so far, advanced by `ProjectileSystem` each tick. */

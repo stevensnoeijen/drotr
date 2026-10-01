@@ -4,6 +4,7 @@ import type { Entity } from '~/game/ecs/entity';
 import type { Queries } from '~/game/ecs/world';
 import { findEntityById } from '~/game/ecs/world';
 import type { System } from '~/game/ecs/system';
+import { quantizeAngle } from '~/lib/math/angle';
 
 /**
  * Slack, in world units, added to the hit test below to absorb float drift
@@ -31,10 +32,15 @@ const HIT_EPSILON = 0.01;
  * - it has travelled `Projectile.maxRange` world units without hitting
  *   anything, in which case it expires as a miss.
  *
- * Deliberately non-homing: `fireProjectile` fixes `Velocity` at fire time,
- * aimed at the target's position that instant, and this system never
- * re-aims it — the target's *live* position is read only to test whether
- * the shot has arrived, not to steer the projectile toward it.
+ * Homing: every tick the projectile's `Velocity` (keeping its speed) and
+ * `Transform.rotation` are re-aimed at the target's *live* position before
+ * it moves, so a bolt fired at a unit in range reaches it whether that unit
+ * stands still or walks. Because bolts are much faster than units, a homing
+ * bolt always closes the distance; `maxRange` is a generous safety cap (see
+ * `fireProjectile`), not the attack range, so a target retreating mid-flight
+ * is still caught. A swept hit test plus lead-aiming was the alternative;
+ * homing was chosen as simpler and exact for a bolt that already reads the
+ * target position to test arrival.
  *
  * `world.remove` is called directly, with no delayed-removal/corpse phase
  * the way `DeathSystem` gives a killed unit: a spent projectile has nothing
@@ -87,6 +93,12 @@ export function createProjectileSystem(queries: Queries): System {
         world.remove(entity);
         continue;
       }
+
+      // Re-aim at the target's live position, keeping the bolt's speed.
+      // `distance > step + HIT_EPSILON > 0` here, so the division is safe.
+      entity.velocity.x = (dx / distance) * speed;
+      entity.velocity.y = (dy / distance) * speed;
+      entity.transform.rotation = quantizeAngle(Math.atan2(dx, -dy));
 
       entity.transform.position.x += entity.velocity.x * dt;
       entity.transform.position.y += entity.velocity.y * dt;

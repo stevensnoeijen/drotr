@@ -60,7 +60,7 @@ describe('unit world scale on a 40px-tile map', () => {
     expect(cellDistance(from, outOfRange, cellSize)).toBeGreaterThan(shooter.attackRange!.value);
   });
 
-  it("limits a crossbow bolt's flight to 5 tiles in world units", () => {
+  it("caps a crossbow bolt's flight at a multiple of its 5 tile range in world units", () => {
     const { world, spawn, cellSize } = setup();
     const shooter = spawn('crossbowsoldier', 'blue', TILE);
     const target = spawn('swordsmen', 'red', TILE * 4);
@@ -74,7 +74,7 @@ describe('unit world scale on a 40px-tile map', () => {
     );
 
     const bolt = [...world.with('projectile')][0];
-    expect(bolt.projectile.maxRange).toBe(5 * TILE);
+    expect(bolt.projectile.maxRange).toBe(15 * TILE);
   });
 
   it('keeps melee range at one adjacent movement cell', () => {
