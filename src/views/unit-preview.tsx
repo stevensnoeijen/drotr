@@ -222,7 +222,7 @@ export default function UnitPreview() {
       view.destroy({ children: true });
     };
     // `selection` is rebuilt every render; its fields are the real inputs.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [stage, ready, manifest, key, selection?.loop]);
 
   const update = (change: Partial<AnimationSelection>) =>
