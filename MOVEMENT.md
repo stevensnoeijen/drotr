@@ -27,13 +27,24 @@ on the hand-authored 32 px maps, 20 px on the converted 40 px county maps,
 placed on, routed through and collide in this grid; `createMapNavigation`
 (`src/game/navigation/map-navigation.ts`) upsamples the terrain's per-tile
 collision onto it once (a blocked tile blocks its 2x2 cells) and sets up
-pathfinding and occupancy for any tile size. Every unit occupies exactly one
-cell, even a knight that is drawn a full tile wide.
+pathfinding and occupancy for any tile size. Most units occupy exactly one
+cell; a unit may instead carry an explicit `footprint` (`width` x `height`
+cells — see `footprintOf` in `src/game/data/units.ts`), which the knight
+does: a 2x2 block. A unit's position is always the centre of its footprint
+rectangle — a cell centre for a 1x1 unit, the shared corner of its cells for
+the knight's 2x2 block — never `(cell + 0.5) * cellSize` for a multi-cell
+unit; see `src/game/navigation/footprint.ts` for the shared helpers
+(`footprintCentre`, `anchorCellAt`, `snapToFootprint`, `isAtFootprintCentre`,
+`footprintGap`) every world<->cell conversion for a unit goes through, and
+`OccupancyGrid.reserveBlock`/`releaseBlock` for how a footprint's cells are
+claimed and released atomically.
 
 Unit data (`movementSpeed`, `range`, `aggroRange`, `size`) is authored in
 tiles and converted in one place, `spawnUnit` (`src/game/data/spawn.ts`), so
 a unit covers the same world distance whatever the cell size; a melee
-`range` of 1 means an adjacent cell.
+`range` of 1 means an adjacent cell — or, for a multi-cell unit, the
+footprint-to-footprint gap of 1 the attacker and target touch at
+(`footprintGap`), diagonals included.
 
 ## Issuing an order
 
@@ -111,6 +122,14 @@ sequenceDiagram
 - **Destinations inside a wall.** Relocated to the nearest walkable cell, so
   clicking a wall walks up to it. `blockedDestination: 'fail'` refuses the
   order instead.
+- **Wide units and A*.** `findPath` always plans a single-cell path; it has
+  no notion of a multi-cell unit's footprint. `planMovePath` shifts a
+  footprint's anchor cell onto this single-cell path and shifts the
+  resulting waypoints back onto footprint centres (see above), but the
+  search itself can still route a 2x2 unit through a one-cell-wide corridor
+  it cannot physically fit in — it then stalls against
+  `CellOccupancySystem`'s leading-edge check. Clearance-aware routing for
+  wide units is a separate, not-yet-implemented concern.
 
 ## Seeing it
 
