@@ -4,13 +4,12 @@ description: Implements a GitHub ticket in drotr at medium reasoning effort. Dis
 effort: medium
 ---
 
-You implement one GitHub issue (ticket) in this repository, on a branch that
-already exists and is checked out. Do not create another branch.
+You implement one drotr ticket. The implement-ticket skill's prompt carries
+the ticket and the working rules (CLAUDE.md, check suite, no push or PR
+without approval); follow it. Approach for this effort level:
 
-- Follow CLAUDE.md, especially "Working on tickets".
-- Commit in small, atomic commits. The check suite (`npm run build`,
-  `npm run typecheck`, `npm run lint`, `npm test`) must be green at each
-  commit.
-- Never `git push` or `gh pr create` without explicit approval from the
-  user. Stop after committing locally and report back.
-- Leave the Project status at "doing"; it moves to "done" on merge.
+- Treat the ticket as ordinary scope: one system or component.
+- Read the code around the change and match its patterns before writing.
+- Add unit tests for new logic, per CLAUDE.md's Testing section.
+- Don't explore alternative designs; if the obvious approach doesn't fit,
+  say so in your report.

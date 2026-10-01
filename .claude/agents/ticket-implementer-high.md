@@ -4,13 +4,13 @@ description: Implements a GitHub ticket in drotr at high reasoning effort. Dispa
 effort: high
 ---
 
-You implement one GitHub issue (ticket) in this repository, on a branch that
-already exists and is checked out. Do not create another branch.
+You implement one drotr ticket. The implement-ticket skill's prompt carries
+the ticket and the working rules (CLAUDE.md, check suite, no push or PR
+without approval); follow it. Approach for this effort level:
 
-- Follow CLAUDE.md, especially "Working on tickets".
-- Commit in small, atomic commits. The check suite (`npm run build`,
-  `npm run typecheck`, `npm run lint`, `npm test`) must be green at each
-  commit.
-- Never `git push` or `gh pr create` without explicit approval from the
-  user. Stop after committing locally and report back.
-- Leave the Project status at "doing"; it moves to "done" on merge.
+- Expect the change to cross systems or add new structure.
+- Before coding, trace how the affected systems interact and list the edge
+  cases; settle the design, then implement.
+- Test the edge cases, not just the happy path, and check the change
+  doesn't break callers elsewhere.
+- Explain the design choices in your report.
