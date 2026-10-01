@@ -14,7 +14,8 @@
     "test-coverage": "vitest run --coverage",
     "export:terrain-tileset": "jiti scripts/terrain-tileset/main.ts",
     "convert:map": "jiti scripts/county-map/main.ts",
-    "convert:maps": "jiti scripts/county-map/convert-all.ts"
+    "convert:maps": "jiti scripts/county-map/convert-all.ts",
+    "pack:sprites": "JITI_TSCONFIG_PATHS=1 jiti scripts/unit-sprites/main.ts"
   },
   "dependencies": {
     "lodash": "^4.17.21",

@@ -5,6 +5,7 @@ import GameCanvas, { type ViewportTransform } from '~/components/game-canvas';
 import DebugOverlay, { type GameStats } from '~/components/debug-overlay';
 import UnitInfoTooltip from '~/components/unit-info-tooltip';
 import Atlas from '~/views/atlas';
+import UnitSprites from '~/views/unit-sprites';
 import { resolveMap } from '~/game/maps';
 import {
   effectiveTileLayerVisibility,
@@ -31,6 +32,12 @@ const ASSET_CASES: Record<
 > = {
   atlas: (searchParams) => (
     <Atlas file={searchParams.get('art') ?? undefined} />
+  ),
+  'unit-sprites': (searchParams) => (
+    <UnitSprites
+      unit={searchParams.get('unit') ?? undefined}
+      compare={searchParams.get('compare') === '1'}
+    />
   ),
 };
 

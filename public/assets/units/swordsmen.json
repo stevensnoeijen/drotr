@@ -1,0 +1,38 @@
+{
+  "atlas": "/assets/units.json",
+  "frameSize": [
+    32,
+    32
+  ],
+  "anchor": [
+    0.5,
+    0.5
+  ],
+  "teams": [
+    "blue",
+    "red"
+  ],
+  "actions": {
+    "idle": {
+      "frames": 1,
+      "fps": 0,
+      "loop": false
+    },
+    "move": {
+      "frames": 8,
+      "fps": 15,
+      "loop": true
+    },
+    "attack": {
+      "frames": 12,
+      "fps": 15,
+      "loop": false
+    },
+    "dead": {
+      "frames": 4,
+      "fps": 15,
+      "loop": false,
+      "holdLast": true
+    }
+  }
+}
