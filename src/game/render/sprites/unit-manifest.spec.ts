@@ -89,6 +89,14 @@ describe('validateUnitManifest', () => {
     expect(() => parseUnitManifest(null)).toThrow(/Invalid unit manifest/);
   });
 
+  it('rejects a looping dead animation', () => {
+    const m = valid();
+    m.actions.dead.loop = true;
+    expect(validateUnitManifest(m)).toEqual([
+      'actions.dead.loop must be false',
+    ]);
+  });
+
   it('derives the manifest path from the unit type', () => {
     expect(unitManifestPath('knight')).toBe('/assets/units/knight.json');
   });

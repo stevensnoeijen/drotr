@@ -135,6 +135,7 @@ and the runtime renderer; the manifest path is derived from the unit type, so
   `actions`, each action having `frames` (per direction), `fps`, `loop`, and
   optionally `hitFrame` (attack only, 0-based, must be `< frames`) or
   `holdLast`. Actions a unit has no frames for may be omitted; single-frame
-  actions are valid. Check manifests with `validateUnitManifest`.
+  actions are valid. `dead` is the dying animation itself — it must not
+  loop, and normally sets `holdLast` to stay on the corpse frame. Check manifests with `validateUnitManifest`.
 
 This supersedes `public/assets/animation-models.json`.

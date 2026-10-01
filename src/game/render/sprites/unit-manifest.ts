@@ -87,6 +87,10 @@ function validateAction(name: string, a: unknown, errors: string[]): void {
   if (a.holdLast !== undefined && typeof a.holdLast !== 'boolean') {
     errors.push(`${at}.holdLast must be a boolean`);
   }
+  // `dead` is the dying sequence: it plays once and stays on the corpse.
+  if (name === 'dead' && a.loop === true) {
+    errors.push(`${at}.loop must be false`);
+  }
   if (a.hitFrame !== undefined) {
     if (name !== 'attack') {
       errors.push(`${at}.hitFrame is only allowed on attack`);
