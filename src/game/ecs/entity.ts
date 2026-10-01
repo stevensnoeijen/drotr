@@ -3,6 +3,7 @@ import type {
   AggroRange,
   AttackCooldown,
   AttackRange,
+  AttackSwing,
   CellOccupancy,
   Damage,
   Dead,
@@ -47,6 +48,7 @@ export interface Entity {
   aggroRange?: AggroRange;
   damage?: Damage;
   attackCooldown?: AttackCooldown;
+  attackSwing?: AttackSwing;
   target?: Target;
   moveTarget?: MoveTarget;
   movePath?: MovePath;

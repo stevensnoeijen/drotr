@@ -8,7 +8,7 @@ import type { Health, Renderable } from '~/game/ecs/components';
 import { DEFAULT_CELL_SIZE, cellCentreCoordinate, toWorldPositionCellCenter } from '~/lib/grid';
 import { Vector2 } from '~/lib/math/vector2';
 import { NO_CELL } from '~/game/navigation/occupancy-grid';
-import { cellDistance, createCombatSystem, isSettled } from './combat-system';
+import { MAX_SWING_SECONDS, cellDistance, createCombatSystem, isSettled } from './combat-system';
 
 /** The fixed timestep the game loop runs systems at (60 Hz). */
 const DT = 1 / 60;
@@ -571,6 +571,47 @@ describe('CombatSystem', () => {
     }
 
     expect(dirtyTicks).toEqual([60, 120, 180]);
+  });
+
+  describe('attack swing flag', () => {
+    it('flags a swing on the tick the cooldown elapses and clears it afterwards', () => {
+      const { world, attacker, system } = setupDuel({ gapCells: 1, attackCooldown: 1 });
+
+      run(system, world, 59);
+      expect(attacker.attackSwing).toBeUndefined();
+
+      run(system, world, 1);
+      expect(attacker.attackSwing).toEqual({ elapsed: 0 });
+
+      // Cleared once MAX_SWING_SECONDS has passed, well before the next swing.
+      run(system, world, Math.ceil(MAX_SWING_SECONDS / DT) + 1);
+      expect(attacker.attackSwing).toBeUndefined();
+    });
+
+    it('never outlasts a cooldown shorter than the maximum swing length', () => {
+      const { world, attacker, system } = setupDuel({ gapCells: 1, attackCooldown: 0.25 });
+
+      run(system, world, Math.round(0.25 / DT));
+      expect(attacker.attackSwing).toBeDefined();
+      // Restarted by the next swing rather than left running over it.
+      run(system, world, Math.round(0.25 / DT));
+      expect(attacker.attackSwing).toEqual({ elapsed: 0 });
+    });
+
+    it('does not flag a swing that is not taken (target out of range)', () => {
+      const { world, attacker, system } = setupDuel({ gapCells: 5, attackRangeCells: 1 });
+
+      run(system, world, 180);
+      expect(attacker.attackSwing).toBeUndefined();
+    });
+
+    it('flags a swing for a ranged attacker when it fires', () => {
+      const { world, attacker, system } = setupDuel({ gapCells: 3, attackRangeCells: 5 });
+      attacker.ranged = { projectileSpeed: 100 };
+
+      run(system, world, 60);
+      expect(attacker.attackSwing).toBeDefined();
+    });
   });
 });
 
