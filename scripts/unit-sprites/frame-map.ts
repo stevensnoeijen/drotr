@@ -1,4 +1,5 @@
 import type { UnitType } from '../../src/game/data/units';
+import type { ActionManifest } from '../../src/game/render/sprites/unit-manifest';
 import {
   DIRECTIONS,
   type AnimationTeam,
@@ -28,9 +29,16 @@ export type FrameMapTeam = Readonly<
   Partial<Record<UnitAction, FrameMapAnimation>>
 >;
 
+/** Playback settings of one action; its frame count comes from the frames themselves. */
+export type ActionPlayback = Omit<ActionManifest, 'frames'>;
+
 export interface UnitFrameMap {
   readonly unit: UnitType;
   readonly teams: Readonly<Partial<Record<AnimationTeam, FrameMapTeam>>>;
+  /** Normalised `[x, y]` point of each frame placed on the unit position. */
+  readonly anchor: readonly [number, number];
+  /** Playback settings for every action the teams have frames for. */
+  readonly playback: Readonly<Partial<Record<UnitAction, ActionPlayback>>>;
 }
 
 /** An atlas rectangle in pixels. */

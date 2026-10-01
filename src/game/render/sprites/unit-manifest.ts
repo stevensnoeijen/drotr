@@ -59,6 +59,15 @@ export function unitManifestPath(unit: UnitType): string {
   return `/assets/units/${unit}.json`;
 }
 
+/**
+ * Public URL path of a unit's Pixi spritesheet JSON, next to its manifest.
+ * The sheet's `animations` are keyed by `AnimationKey` and its image is
+ * `<unit>.png` in the same directory.
+ */
+export function unitSpritesheetPath(unit: UnitType): string {
+  return `/assets/units/${unit}.sheet.json`;
+}
+
 const isRecord = (v: unknown): v is Record<string, unknown> =>
   typeof v === 'object' && v !== null && !Array.isArray(v);
 

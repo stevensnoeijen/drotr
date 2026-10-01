@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   parseUnitManifest,
   unitManifestPath,
+  unitSpritesheetPath,
   validateUnitManifest,
 } from './unit-manifest';
 
@@ -99,5 +100,11 @@ describe('validateUnitManifest', () => {
 
   it('derives the manifest path from the unit type', () => {
     expect(unitManifestPath('knight')).toBe('/assets/units/knight.json');
+  });
+
+  it('puts the spritesheet next to the manifest', () => {
+    expect(unitSpritesheetPath('knight')).toBe(
+      '/assets/units/knight.sheet.json'
+    );
   });
 });

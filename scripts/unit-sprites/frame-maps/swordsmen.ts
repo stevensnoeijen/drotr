@@ -85,6 +85,17 @@ const blueMove = frameBlock(0, BLUE_ROWS, 8);
 
 export const SWORDSMEN_FRAME_MAP: UnitFrameMap = {
   unit: 'swordsmen',
+  // The figure is drawn centred in its cell (top-down view): the opaque
+  // pixels of the idle frames centre on about (15.5, 15).
+  anchor: [0.5, 0.5],
+  // The old animation models played every action at Pixi speed 0.25, i.e.
+  // 15 fps on the 60 Hz ticker; kept until real timings are measured.
+  playback: {
+    idle: { fps: 0, loop: false },
+    move: { fps: 15, loop: true },
+    attack: { fps: 15, loop: false },
+    dead: { fps: 15, loop: false, holdLast: true },
+  },
   teams: {
     blue: {
       idle: pickFrames(blueMove, IDLE_PICK.blue),
