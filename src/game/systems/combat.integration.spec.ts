@@ -141,24 +141,26 @@ describe('perception + seek + move + combat integration', () => {
     );
     shooter.target = { entityId: walker.id! };
 
-    // The shot only fires while both are settled; wait for the bolt to leave.
-    for (let i = 0; i < 180 && queries.projectiles.size === 0; i++) {
+    // A player-style move order, which outranks auto-seeking: the swordsman
+    // walks away from the shooter through the real movement systems.
+    const startX = walker.transform!.position.x;
+    walker.moveTarget = {
+      position: { x: startX + 8 * DEFAULT_CELL_SIZE, y: walker.transform!.position.y },
+    };
+
+    let sawWalking = false;
+    let firedWhileWalking = false;
+    for (let i = 0; i < 300; i++) {
       tick();
       projectile(world, DT);
-    }
-    expect(queries.projectiles.size).toBe(1);
-    expect(walker.health!.current).toBe(walker.health!.max);
-
-    // Then the swordsman walks away at its own movement speed while the bolt
-    // is still in flight.
-    const startX = walker.transform!.position.x;
-    for (let i = 0; i < 60 && queries.projectiles.size > 0; i++) {
-      walker.transform!.position.x += walker.moveSpeed!.value * DT;
-      projectile(world, DT);
+      const walking = walker.velocity!.x !== 0 || walker.velocity!.y !== 0;
+      sawWalking ||= walking;
+      firedWhileWalking ||= walking && queries.projectiles.size > 0;
     }
 
+    expect(sawWalking).toBe(true);
+    expect(firedWhileWalking).toBe(true);
     expect(walker.transform!.position.x).toBeGreaterThan(startX);
-    expect(queries.projectiles.size).toBe(0);
     expect(walker.health!.current).toBeLessThan(walker.health!.max);
   });
 
