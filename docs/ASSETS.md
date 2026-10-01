@@ -118,3 +118,23 @@ old `gulp`/`raw/sprites/units` pipeline (history around commits
 `ab7067c6`/`17c3acce`/`78f5df2d` shows how the old one worked, for
 reference, but it's not the target design). Once that new pipeline exists
 and is verified, `raw/sprites/units` can be deleted.
+
+## Unit sprite contract
+
+Unit sprites are described by a typed contract shared by the sprite pipeline
+and the runtime renderer; the manifest path is derived from the unit type, so
+`UnitDefinition` carries no asset reference.
+
+- Animation keys (`src/game/render/sprites/animation-key.ts`):
+  `<unit>.<team|neutral>.<action>.<direction>`, e.g. `swordsmen.red.move.nw`;
+  frames append a 1-based index, e.g. `swordsmen.red.move.nw_01`. Actions are
+  `idle | move | attack | dead`; directions are compass abbreviations
+  `n ne e se s sw w nw`.
+- Manifest (`src/game/render/sprites/unit-manifest.ts`) at
+  `public/assets/units/<unit>.json`: `frameSize`, `anchor`, `teams`, and
+  `actions`, each action having `frames` (per direction), `fps`, `loop`, and
+  optionally `hitFrame` (attack only, 0-based, must be `< frames`) or
+  `holdLast`. Actions a unit has no frames for may be omitted; single-frame
+  actions are valid. Check manifests with `validateUnitManifest`.
+
+This supersedes `public/assets/animation-models.json`.

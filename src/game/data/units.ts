@@ -65,7 +65,6 @@ export interface UnitDefinition {
    * is the only unit that sets this so far.
    */
   projectile?: boolean;
-  assets?: unknown;
 }
 
 /** All unit definitions, keyed by {@link UnitType}. */

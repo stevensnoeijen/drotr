@@ -1,0 +1,162 @@
+import type { UnitType } from '~/game/data/units';
+import {
+  ANIMATION_TEAMS,
+  UNIT_ACTIONS,
+  type AnimationTeam,
+  type UnitAction,
+} from './animation-key';
+
+/**
+ * Per-unit sprite manifest, emitted by the sprite pipeline next to the sheet
+ * at `public/assets/units/<unit>.json` (see {@link unitManifestPath}) and
+ * read by the runtime renderer. Animation keys and frame names are defined in
+ * `animation-key.ts`.
+ *
+ * ```jsonc
+ * { "frameSize": [32, 32], "anchor": [0.5, 0.75],
+ *   "teams": ["blue", "red"],            // or ["neutral"] for siege units
+ *   "actions": {
+ *     "idle":   { "frames": 1,  "fps": 0,  "loop": false },
+ *     "move":   { "frames": 8,  "fps": 10, "loop": true },
+ *     "attack": { "frames": 10, "fps": 12, "loop": false, "hitFrame": 7 },
+ *     "dead":   { "frames": 6,  "fps": 8,  "loop": false, "holdLast": true } } }
+ * ```
+ *
+ * Rules:
+ * - A unit may omit actions it has no frames for (e.g. a cannon).
+ * - Single-frame actions are valid (`idle` reuses the most static frame of the
+ *   move cycle). `frames` is the per-direction frame count and is the same for
+ *   every direction and team.
+ * - `hitFrame` (attack only, optional) is the 0-based frame index at which
+ *   damage lands, so the renderer can line the swing up with `CombatSystem`,
+ *   which applies damage the instant the attack cooldown elapses. It must be
+ *   less than `frames`.
+ * - `anchor` is the normalised point of the frame placed on the unit position.
+ */
+export interface ActionManifest {
+  /** Frames per direction (at least 1). */
+  frames: number;
+  /** Playback speed; `0` is allowed for single-frame actions. */
+  fps: number;
+  loop: boolean;
+  /** Attack only: frame index at which damage lands. */
+  hitFrame?: number;
+  /** Keep showing the final frame once finished (e.g. a corpse). */
+  holdLast?: boolean;
+}
+
+export interface UnitManifest {
+  /** Frame width and height in pixels. */
+  frameSize: [number, number];
+  /** Normalised [x, y] anchor within the frame. */
+  anchor: [number, number];
+  teams: AnimationTeam[];
+  actions: Partial<Record<UnitAction, ActionManifest>>;
+}
+
+/** Public URL path of a unit's manifest; derived from the unit type. */
+export function unitManifestPath(unit: UnitType): string {
+  return `/assets/units/${unit}.json`;
+}
+
+const isRecord = (v: unknown): v is Record<string, unknown> =>
+  typeof v === 'object' && v !== null && !Array.isArray(v);
+
+const isPositiveInt = (v: unknown): v is number =>
+  Number.isInteger(v) && (v as number) > 0;
+const isNonNegInt = (v: unknown): v is number =>
+  Number.isInteger(v) && (v as number) >= 0;
+
+function validateAction(name: string, a: unknown, errors: string[]): void {
+  const at = `actions.${name}`;
+  if (!isRecord(a)) {
+    errors.push(`${at} must be an object`);
+    return;
+  }
+  for (const k of Object.keys(a)) {
+    if (!['frames', 'fps', 'loop', 'hitFrame', 'holdLast'].includes(k)) {
+      errors.push(`${at}.${k} is not a known field`);
+    }
+  }
+  if (!isPositiveInt(a.frames))
+    errors.push(`${at}.frames must be a positive integer`);
+  if (typeof a.fps !== 'number' || !Number.isFinite(a.fps) || a.fps < 0) {
+    errors.push(`${at}.fps must be a non-negative number`);
+  }
+  if (typeof a.loop !== 'boolean') errors.push(`${at}.loop must be a boolean`);
+  if (a.holdLast !== undefined && typeof a.holdLast !== 'boolean') {
+    errors.push(`${at}.holdLast must be a boolean`);
+  }
+  if (a.hitFrame !== undefined) {
+    if (name !== 'attack') {
+      errors.push(`${at}.hitFrame is only allowed on attack`);
+    } else if (!isNonNegInt(a.hitFrame)) {
+      errors.push(`${at}.hitFrame must be a non-negative integer`);
+    } else if (isPositiveInt(a.frames) && a.hitFrame >= a.frames) {
+      errors.push(
+        `${at}.hitFrame ${a.hitFrame} is outside the frame range 0..${a.frames - 1}`
+      );
+    }
+  }
+}
+
+/** Returns a list of problems with `value`; empty means it is a valid {@link UnitManifest}. */
+export function validateUnitManifest(value: unknown): string[] {
+  const errors: string[] = [];
+  if (!isRecord(value)) return ['manifest must be an object'];
+
+  const { frameSize, anchor, teams, actions } = value;
+  if (
+    !Array.isArray(frameSize) ||
+    frameSize.length !== 2 ||
+    !frameSize.every(isPositiveInt)
+  ) {
+    errors.push('frameSize must be [width, height] of positive integers');
+  }
+  if (
+    !Array.isArray(anchor) ||
+    anchor.length !== 2 ||
+    !anchor.every((n) => typeof n === 'number' && n >= 0 && n <= 1)
+  ) {
+    errors.push('anchor must be [x, y] numbers between 0 and 1');
+  }
+  if (!Array.isArray(teams) || teams.length === 0) {
+    errors.push('teams must be a non-empty array');
+  } else {
+    for (const t of teams) {
+      if (!(ANIMATION_TEAMS as readonly unknown[]).includes(t))
+        errors.push(`unknown team ${JSON.stringify(t)}`);
+    }
+    if (new Set(teams).size !== teams.length)
+      errors.push('teams must not repeat');
+    if (teams.includes('neutral') && teams.length > 1)
+      errors.push('neutral cannot be combined with other teams');
+  }
+  if (!isRecord(actions)) {
+    errors.push('actions must be an object');
+  } else {
+    const names = Object.keys(actions);
+    if (names.length === 0)
+      errors.push('actions must define at least one action');
+    for (const name of names) {
+      if (!(UNIT_ACTIONS as readonly string[]).includes(name)) {
+        errors.push(`unknown action ${JSON.stringify(name)}`);
+      } else {
+        validateAction(name, actions[name], errors);
+      }
+    }
+  }
+  return errors;
+}
+
+export function isUnitManifest(value: unknown): value is UnitManifest {
+  return validateUnitManifest(value).length === 0;
+}
+
+/** Validates and returns a manifest, throwing with every problem listed. */
+export function parseUnitManifest(value: unknown): UnitManifest {
+  const errors = validateUnitManifest(value);
+  if (errors.length > 0)
+    throw new Error(`Invalid unit manifest: ${errors.join('; ')}`);
+  return value as UnitManifest;
+}
