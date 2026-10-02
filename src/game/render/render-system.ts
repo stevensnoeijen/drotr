@@ -3,6 +3,7 @@ import type { Query, With } from 'miniplex';
 
 import type { Entity } from '~/game/ecs/entity';
 import type { Renderable } from '~/game/ecs/components';
+import type { UnitSprites } from './sprites/unit-sprites';
 import {
   createHealthBar,
   drawDeathMark,
@@ -227,10 +228,15 @@ export class RenderSystem {
   /** Whether health bars are currently shown, toggled via `?debug=health`. */
   private healthBarsVisible: boolean;
 
+  /**
+   * @param sprites Loaded sprite data for every `SPRITE_UNIT_TYPES` type
+   *   (see `loadUnitSprites`).
+   */
   constructor(
     query: Query<RenderableEntity>,
     private readonly parent: Container,
-    healthBarsVisible = false
+    healthBarsVisible = false,
+    private readonly sprites: UnitSprites = new Map()
   ) {
     this.query = query;
     this.healthBarsVisible = healthBarsVisible;

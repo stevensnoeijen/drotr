@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import GameCanvas from './game-canvas';
+import { loadUnitSprites } from '~/game/render/sprites/load-unit-sprites';
 import type { MapDefinition } from '~/game/maps';
 import type { Scenario } from '~/game/scenarios';
 
@@ -153,8 +154,15 @@ vi.mock('~/game/render/map-render-system', () => ({
   }),
 }));
 
+// No network in specs: the sprite data itself is covered by the loader's
+// own spec, so here it's just whether, when and with what outcome it loads.
+vi.mock('~/game/render/sprites/load-unit-sprites', () => ({
+  loadUnitSprites: vi.fn(async () => new Map()),
+}));
+
 describe('GameCanvas', () => {
   beforeEach(() => {
+    vi.mocked(loadUnitSprites).mockClear();
     mapRenderSystems = [];
     instances = [];
     viewportInstances = [];
@@ -222,6 +230,55 @@ describe('GameCanvas', () => {
 
     act(() => {
       root.unmount();
+    });
+  });
+
+  describe('unit sprites', () => {
+    it('loads them before the scenario spawns, on every mount', async () => {
+      const setup = vi.fn();
+      const root = createRoot(container);
+
+      await act(async () => {
+        root.render(<GameCanvas scenario={{ ...scenario, setup }} map={map} />);
+      });
+
+      expect(loadUnitSprites).toHaveBeenCalledOnce();
+      expect(setup).toHaveBeenCalledOnce();
+      expect(vi.mocked(loadUnitSprites).mock.invocationCallOrder[0]).toBeLessThan(
+        setup.mock.invocationCallOrder[0]
+      );
+      act(() => root.unmount());
+
+      // A remount (e.g. switching scenario or map and back) loads them again.
+      const remounted = createRoot(container);
+      await act(async () => {
+        remounted.render(<GameCanvas scenario={{ ...scenario, setup }} map={map} />);
+      });
+
+      expect(loadUnitSprites).toHaveBeenCalledTimes(2);
+      expect(setup).toHaveBeenCalledTimes(2);
+      act(() => remounted.unmount());
+    });
+
+    it('reports a failed load through onError and spawns nothing', async () => {
+      vi.mocked(loadUnitSprites).mockRejectedValueOnce(
+        new Error("Couldn't load the unit atlas (/assets/units.json): 404 Not Found")
+      );
+      const setup = vi.fn();
+      const onError = vi.fn();
+      const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
+      const root = createRoot(container);
+
+      await act(async () => {
+        root.render(<GameCanvas scenario={{ ...scenario, setup }} map={map} onError={onError} />);
+      });
+
+      expect(onError).toHaveBeenCalledExactlyOnceWith(
+        "Couldn't load the unit atlas (/assets/units.json): 404 Not Found"
+      );
+      expect(setup).not.toHaveBeenCalled();
+      consoleError.mockRestore();
+      act(() => root.unmount());
     });
   });
 
