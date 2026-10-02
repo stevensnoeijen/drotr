@@ -17,6 +17,11 @@ Guidance for Claude Code (and contributors) working in this repository.
   - `npm test`
 - Open the PR against `main` and reference the issue it closes (e.g.
   `Closes #75`).
+- When creating or editing issue/PR bodies via `gh`, write the body to a file
+  in the scratchpad and pass `--body-file` instead of inline `--body`. Inside
+  a quoted heredoc (`<<'EOF'`), never escape backticks or `$` — no escaping is
+  needed. After creation/edit, verify the body with `gh issue view N --json body`
+  to confirm no stray `` \` `` appears.
 - Prefer small, focused PRs scoped to a single issue over bundling multiple
   tickets together.
 - Commit in small, atomic commits rather than one large commit per ticket:
