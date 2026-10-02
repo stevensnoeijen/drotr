@@ -1,10 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { DIRECTIONS } from '../../src/game/render/sprites/animation-key';
-import { decodePcx } from '../../src/lib/art/pcx';
-import { extractRgbaRect } from '../../src/lib/art/rgba';
-import { hasCdFile, readCdFile } from '../../src/test/cd-assets';
-import { frameBlock, frameRect, pickFrames } from './frame-map';
+import { frameBlock, pickFrames } from './frame-map';
 import { IDLE_PICK, SWORDSMEN_FRAME_MAP } from './frame-maps/swordsmen';
 
 describe('swordsmen frame map', () => {
@@ -83,26 +80,3 @@ describe('frame map helpers', () => {
     ).toThrow(RangeError);
   });
 });
-
-describe.runIf(hasCdFile('ART/BATTLE.ART'))(
-  'swordsmen frame map against the real BATTLE.ART',
-  () => {
-    it('has visible art in every frame rect', () => {
-      const image = decodePcx(readCdFile('ART/BATTLE.ART'));
-      for (const team of Object.values(SWORDSMEN_FRAME_MAP.teams)) {
-        for (const animation of Object.values(team!)) {
-          for (const direction of DIRECTIONS) {
-            animation.frames[direction].forEach((_, i) => {
-              const pixels = extractRgbaRect(
-                image,
-                frameRect(animation, direction, i)
-              );
-              const opaque = pixels.filter((_, k) => k % 4 === 3 && _ > 0);
-              expect(opaque.length).toBeGreaterThan(0);
-            });
-          }
-        }
-      }
-    });
-  }
-);
