@@ -85,7 +85,11 @@ describe('UnitSprites contact sheet', () => {
     ).not.toBeNull();
   });
 
-  it('reports a unit that has no sheet yet', async () => {
+  it('reports a unit whose sheet cannot be loaded', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => new Response('not found', { status: 404, statusText: 'Not Found' }))
+    );
     await render(root, { unit: 'knight' });
     expect(container.textContent).toContain('Could not load sprites');
   });

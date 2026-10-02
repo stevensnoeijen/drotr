@@ -76,20 +76,6 @@ describe('RenderSystem sprite views', () => {
       expect(view.children).toEqual([sprite, selectionMarks, healthBar]);
     });
 
-    it.each<UnitType>(['knight'])('keeps drawing a %s as its shape', (type) => {
-      const { parent, spawn, system } = setup();
-      const entity = spawn(type);
-
-      const [shape] = viewOf(parent).children;
-      expect(shape).not.toBeInstanceOf(AnimatedSprite);
-      // Body, facing mark and death mark.
-      expect(shape.children).toHaveLength(3);
-
-      entity.transform!.rotation = 1.2;
-      system.sync();
-      expect(shape.rotation).toBe(1.2);
-    });
-
     it('keeps drawing an entity without a unit type as its shape', () => {
       const { parent, world } = setup();
       world.add({
