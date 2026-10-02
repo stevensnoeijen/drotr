@@ -6,25 +6,22 @@ import type { Scenario } from './types';
 
 /**
  * Unit types spawned per side, and how many of each. Originally this
- * scenario spawned 250 swordsmen per side; mixing in crossbow soldiers
- * (ranged, so every one of them keeps a projectile alive for the length of
- * an engagement) exercises differing aggro ranges and the ranged-projectile
- * path that an all-swordsmen roster never touched. Hundreds of concurrent
- * projectiles are meaningfully more expensive per unit than melee, so the
- * per-side total was lowered from 250 to 180 (60 each of swordsmen, knights
- * and crossbow soldiers) to stay inside the measured frame-budget headroom —
- * see the `test` map's open area against the 33ms-per-frame budget a stable
- * 30fps needs, with headroom left for PixiJS's own per-unit
- * draw/health-bar cost, which a headless simulation can't include.
- *
- * Knights are left out until they get a 2x2 multi-cell footprint (#232).
- * Their 60 went to swordsmen rather than crossbow soldiers, so the total
- * stays at 180 without adding projectile load beyond what was measured.
- * Split it back to 60 of each type then, so neither team's composition is
- * skewed toward one archetype.
+ * scenario spawned 250 swordsmen per side; mixing in knights and crossbow
+ * soldiers (ranged, so every one of them keeps a projectile alive for the
+ * length of an engagement) exercises differing move speeds and aggro
+ * ranges, the ranged-projectile path, and multi-cell occupancy under load —
+ * none of which an all-swordsmen roster ever touched. Hundreds of
+ * concurrent projectiles are meaningfully more expensive per unit than
+ * melee, so the per-side total was lowered from 250 to 180 (60 each of
+ * swordsmen, knights and crossbow soldiers) to stay inside the measured
+ * frame-budget headroom — see the `test` map's open area against the
+ * 33ms-per-frame budget a stable 30fps needs, with headroom left for
+ * PixiJS's own per-unit draw/health-bar cost, which a headless simulation
+ * can't include.
  */
-const UNIT_COUNTS: Record<Exclude<UnitType, 'knight'>, number> = {
-  swordsmen: 120,
+const UNIT_COUNTS: Record<UnitType, number> = {
+  swordsmen: 60,
+  knight: 60,
   crossbowsoldier: 60,
 };
 

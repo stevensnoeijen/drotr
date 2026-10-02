@@ -6,9 +6,10 @@ import { findEntityById } from '~/game/ecs/world';
 import type { System } from '~/game/ecs/system';
 import { cellSteps } from '~/game/combat/attack-cell';
 import { fireProjectile } from '~/game/combat/fire-projectile';
+import { entityGap, footprintOf, isAtFootprintCentre } from '~/game/navigation/footprint';
 import { Cooldown } from '~/lib/cooldown';
 import { GameTime } from '~/lib/game-time';
-import { isAtCellCentre, toGridPosition } from '~/lib/grid';
+import { toGridPosition } from '~/lib/grid';
 import { Vector2 } from '~/lib/math/vector2';
 import type { Point } from '~/lib/math/types';
 import { NO_CELL } from '~/game/navigation/occupancy-grid';
@@ -47,12 +48,13 @@ export function cellDistance(a: Point, b: Point, cellSize: number): number {
  *   claimed a cell, so it can't be mid-transit; stationary test fixtures
  *   and units `CellOccupancySystem` hasn't visited yet fall in here).
  * - **At rest**: `entity.velocity` is exactly zero (or absent).
- * - **On the cell's centre** ({@link isAtCellCentre}). The other two are
- *   proxies that a unit can satisfy anywhere at all: `reserved` clears the
- *   moment a unit stops needing to cross into a *new* cell, and a unit can
- *   be brought to a halt part-way across one (an order it gave up on, a
- *   step vetoed by a neighbour). Only this one is the fact the player can
- *   see. `SeekSystem` walks a unit onto the centre before it will let it
+ * - **On its footprint's centre** ({@link isAtFootprintCentre} — a cell
+ *   centre for a 1x1 unit, the centre of its whole block for a knight). The
+ *   other two are proxies that a unit can satisfy anywhere at all: `reserved`
+ *   clears the moment a unit stops needing to cross into a *new* cell, and a
+ *   unit can be brought to a halt part-way across one (an order it gave up
+ *   on, a step vetoed by a neighbour). Only this one is the fact the player
+ *   can see. `SeekSystem` walks a unit onto the centre before it will let it
  *   fight, so in practice a unit reaches this state within a tick or two of
  *   arriving; the check is what makes that a guarantee rather than a
  *   convention.
@@ -69,7 +71,7 @@ export function isSettled(entity: Entity, cellSize: number): boolean {
   }
 
   const transform = entity.transform;
-  return !transform || isAtCellCentre(transform.position, cellSize);
+  return !transform || isAtFootprintCentre(transform.position, footprintOf(entity), cellSize);
 }
 
 /**
@@ -126,15 +128,16 @@ function attack(
     return;
   }
 
-  // Cell-based (Chebyshev) range, not Euclidean world distance: `other` must
-  // be within `attackRange` 8-way cell steps, diagonal steps counting the
-  // same as orthogonal ones. A plain Euclidean check would wrongly
-  // reject a target one cell diagonally away at `attackRange` 1, since its
-  // straight-line distance (`cellSize * sqrt(2)`) exceeds one cell width.
-  if (
-    cellDistance(self.transform.position, other.transform.position, cellSize) >
-    self.attackRange.value
-  ) {
+  // Cell-based (Chebyshev) range, not Euclidean world distance: `other`'s
+  // footprint must be within `attackRange` 8-way cell steps of `self`'s,
+  // measured between the nearest cells of the two blocks ({@link entityGap}),
+  // diagonal steps counting the same as orthogonal ones. A plain Euclidean
+  // check would wrongly reject a target one cell diagonally away at
+  // `attackRange` 1, since its straight-line distance (`cellSize * sqrt(2)`)
+  // exceeds one cell width — and measuring between blocks rather than points
+  // is what puts a 1x1 unit touching a knight's 2x2 block at a corner in
+  // melee range, both ways.
+  if (entityGap(self, other, cellSize) > self.attackRange.value) {
     return;
   }
 

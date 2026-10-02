@@ -2,7 +2,8 @@ import { Graphics } from 'pixi.js';
 
 import type { Entity } from '~/game/ecs/entity';
 import { findEntityById } from '~/game/ecs/world';
-import { cellDistance, isSettled } from '~/game/systems/combat-system';
+import { entityGap } from '~/game/navigation/footprint';
+import { isSettled } from '~/game/systems/combat-system';
 
 /** Colour of a unit's target line, drawn regardless of team — pink marks it as a debug overlay. */
 const LINE_COLOR = 0xff69b4;
@@ -103,8 +104,9 @@ function drawArrowHead(
  *
  * A pair only gets a line under exactly the conditions a swing would land:
  * both sides `CombatSystem.isSettled` (see there — at rest, on the centre of
- * the cell they stand in) and, when the origin carries an `attackRange`,
- * within that range in 8-way cell steps. Sharing the predicate rather than
+ * the footprint they stand in) and, when the origin carries an `attackRange`,
+ * within that range in 8-way cell steps between their footprints
+ * (`entityGap`). Sharing the predicate rather than
  * approximating it is the point: the overlay is how this is checked by eye,
  * so a line on screen has to mean "these two can fight right now", not
  * "these two are near each other". Without it the arrow would appear the
@@ -135,11 +137,7 @@ export function drawTargetLines(
       continue;
     }
 
-    if (
-      origin.attackRange &&
-      cellDistance(origin.transform.position, targetEntity.transform.position, cellSize) >
-        origin.attackRange.value
-    ) {
+    if (origin.attackRange && entityGap(origin, targetEntity, cellSize) > origin.attackRange.value) {
       continue;
     }
 

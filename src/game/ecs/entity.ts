@@ -7,6 +7,7 @@ import type {
   CellOccupancy,
   Damage,
   Dead,
+  Footprint,
   Health,
   Hoverable,
   MovePath,
@@ -55,6 +56,7 @@ export interface Entity {
   pendingMoveOrder?: PendingMoveOrder;
   pursuit?: Pursuit;
   cellOccupancy?: CellOccupancy;
+  footprint?: Footprint;
   dead?: Dead;
   ranged?: Ranged;
   projectile?: Projectile;

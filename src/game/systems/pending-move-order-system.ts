@@ -1,6 +1,7 @@
 import type { Queries } from '~/game/ecs/world';
 import type { System } from '~/game/ecs/system';
 import { applyMoveOrder, planMoveOrder } from '~/game/navigation/move-order';
+import { footprintOf } from '~/game/navigation/footprint';
 import type { GridLike } from '~/lib/navigation/astar';
 
 /**
@@ -44,7 +45,13 @@ export function createPendingMoveOrderSystem(
       delete self.pendingMoveOrder;
       applyMoveOrder(
         self,
-        planMoveOrder(grid, self.transform.position, pending.destination, cellSize)
+        planMoveOrder(
+          grid,
+          self.transform.position,
+          pending.destination,
+          cellSize,
+          footprintOf(self)
+        )
       );
     }
   };

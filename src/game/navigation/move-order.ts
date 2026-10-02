@@ -1,10 +1,14 @@
 import { cancelAttackOrder } from '~/game/combat/attack-order';
 import type { Entity } from '~/game/ecs/entity';
+import type { Footprint } from '~/game/ecs/components';
 import type { MovePath } from '~/game/ecs/components/move-path';
 import type { MoveTarget } from '~/game/ecs/components/move-target';
 import { planMovePath } from '~/game/navigation/plan-move-path';
 import type { GridLike } from '~/lib/navigation/astar';
 import type { Point } from '~/lib/math/types';
+
+/** Every call below defaults to a single cell, today's behaviour. */
+const DEFAULT_FOOTPRINT: Footprint = { width: 1, height: 1 };
 
 /**
  * The outcome of planning a single unit's move order (see
@@ -39,13 +43,19 @@ export type MoveOrderResult =
  * against.
  *
  * `cellSize` is the world size of one of `grid`'s cells (see
- * `planMovePath`); unused when there is no grid to route through.
+ * `planMovePath`); unused when there is no grid to route through. `footprint`
+ * is the unit's block size in cells (see `footprintOf`), defaulting to a
+ * single cell; it only affects a routed (`grid`-backed) order — `from` and
+ * `destination` are already proper block centres by the time either branch
+ * runs (the caller snaps them, e.g. via `snapToFootprint`), so the
+ * straight-line branch needs no footprint of its own.
  */
 export function planMoveOrder(
   grid: GridLike | undefined,
   from: Point,
   destination: Point,
-  cellSize: number
+  cellSize: number,
+  footprint: Footprint = DEFAULT_FOOTPRINT
 ): MoveOrderResult {
   if (!grid) {
     return {
@@ -54,7 +64,7 @@ export function planMoveOrder(
     };
   }
 
-  const { status, waypoints } = planMovePath(grid, from, destination, cellSize);
+  const { status, waypoints } = planMovePath(grid, from, destination, cellSize, footprint);
   if (status !== 'found') {
     return { kind: 'none' };
   }

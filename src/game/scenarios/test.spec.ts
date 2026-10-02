@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 
 import { createQueries } from '~/game/ecs/world';
 import type { Entity } from '~/game/ecs/entity';
-import { cellDistance } from '~/game/systems/combat-system';
+import { anchorCellAt, entityGap } from '~/game/navigation/footprint';
 import { cellSizeOf } from '~/lib/grid';
 import { testScenario } from './test';
 
@@ -24,8 +24,7 @@ function setup() {
 function duels(world: World<Entity>) {
   const units = [...world];
   const blues = units.filter((e) => e.team === 'blue');
-  const distance = (a: Entity, b: Entity) =>
-    cellDistance(a.transform!.position, b.transform!.position, cellSize);
+  const distance = (a: Entity, b: Entity) => entityGap(a, b, cellSize);
   return units
     .filter((e) => e.team === 'red')
     .map((red) => {
@@ -52,14 +51,25 @@ describe('testScenario', () => {
   });
 
   it('starts the adjacent swordsmen pair within melee range', () => {
-    const melee = duels(setup()).filter(({ blue }) => blue.unitType !== 'crossbowsoldier');
-    const inRange = melee.filter(({ blue, distance }) => distance <= blue.attackRange!.value);
+    const swordsmenDuels = duels(setup()).filter(
+      ({ red, blue }) => red.unitType === 'swordsmen' && blue.unitType === 'swordsmen'
+    );
+    const inRange = swordsmenDuels.filter(({ blue, distance }) => distance <= blue.attackRange!.value);
 
-    expect(inRange.map(({ blue }) => blue.unitType).sort()).toEqual(['swordsmen']);
+    expect(inRange).toHaveLength(1);
   });
 
-  it('spawns no knights until they get a multi-cell footprint', () => {
-    expect([...setup()].some((e) => e.unitType === 'knight')).toBe(false);
+  it('places the knight duel so the swordsman touches the knight\'s 2x2 block only at a corner', () => {
+    const { red, blue } = duels(setup()).find(({ blue }) => blue.unitType === 'knight')!;
+    const knight = blue.transform!.position;
+    const foe = red.transform!.position;
+    const knightAnchor = anchorCellAt(knight.x, knight.y, blue.footprint!, cellSize);
+    const foeCell = anchorCellAt(foe.x, foe.y, { width: 1, height: 1 }, cellSize);
+
+    expect(entityGap(blue, red, cellSize)).toBe(1);
+    // Outside the block's columns and rows alike: a corner, not an edge.
+    expect([knightAnchor.x, knightAnchor.x + 1]).not.toContain(foeCell.x);
+    expect([knightAnchor.y, knightAnchor.y + 1]).not.toContain(foeCell.y);
   });
 
   it('starts the separated swordsmen pair outside melee range but inside aggro range', () => {

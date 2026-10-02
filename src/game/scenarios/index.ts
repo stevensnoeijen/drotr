@@ -1,4 +1,5 @@
 import { emptyScenario } from './empty';
+import { knightsScenario } from './knights';
 import { testBigFightScenario } from './test-big-fight';
 import { testScenario } from './test';
 import type { Scenario } from './types';
@@ -7,17 +8,11 @@ export type { Scenario, SystemName } from './types';
 export { ALL_DEBUG_FLAGS, parseDebugFlags, serializeDebugFlags } from './debug-flags';
 export type { DebugFlag } from './debug-flags';
 
-/**
- * Every registered scenario, in the order they're listed on `/`. The
- * `knights` scenario (`./knights`) is intentionally left out of this list:
- * the knight is drawn a full tile wide while occupying a single half-tile
- * movement cell, which looks wrong until it gets a proper 2x2 multi-cell
- * footprint (#232). It stays in the codebase, just unreachable via
- * `?scenario=`, until then.
- */
+/** Every registered scenario, in the order they're listed on `/`. */
 export const scenarios: readonly Scenario[] = [
   testScenario,
   testBigFightScenario,
+  knightsScenario,
   emptyScenario,
 ];
 

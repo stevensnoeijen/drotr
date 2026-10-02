@@ -1,7 +1,7 @@
 import type { World } from 'miniplex';
 
 import { spawnUnit } from '~/game/data/spawn';
-import type { UnitType } from '~/game/data/units';
+import { footprintOf, units as unitDefinitions, type UnitType } from '~/game/data/units';
 import type { Entity } from '~/game/ecs/entity';
 import type { Team } from '~/game/ecs/components';
 import type { SpawnPoint } from '~/game/map/load-tiled-map';
@@ -15,13 +15,23 @@ export interface ClaimSpawnOptions {
 }
 
 /**
- * Evenly spaced x-offsets, centered on 0, for `count` units in a row. Spaced
- * one grid cell (`cellSize`) apart, so each unit's placement snaps to a
- * distinct cell instead of landing in (or straddling) the same one as its
- * neighbour.
+ * X-offsets, centred on 0, for a row of units whose footprints are `widths`
+ * cells wide. Each unit is centred on its own stretch of the row — `widths`
+ * cells end to end, in order — so neighbours' blocks sit side by side
+ * instead of landing in (or straddling) each other's cells: every unit a
+ * single cell wide comes out exactly one cell apart from the next (the
+ * previous, uniform behaviour), and a wider footprint such as the knight's
+ * 2x2 block claims two cells' worth of the row instead of being packed as
+ * tightly as its 1x1 neighbours.
  */
-function layoutOffsets(count: number, cellSize: number): number[] {
-  return Array.from({ length: count }, (_, i) => (i - (count - 1) / 2) * cellSize);
+function layoutOffsets(widths: readonly number[], cellSize: number): number[] {
+  const total = widths.reduce((sum, width) => sum + width, 0);
+  let start = -total / 2;
+  return widths.map((width) => {
+    const offset = (start + width / 2) * cellSize;
+    start += width;
+    return offset;
+  });
 }
 
 /**
@@ -44,7 +54,10 @@ export function claimSpawn(
     throw new Error(`No spawn point named "${spawnId}"`);
   }
 
-  const offsets = layoutOffsets(units.length, cellSize);
+  const offsets = layoutOffsets(
+    units.map((type) => footprintOf(unitDefinitions[type]).width),
+    cellSize
+  );
   return units.map((unitType, i) =>
     spawnUnit(
       world,

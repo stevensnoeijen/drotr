@@ -4,9 +4,13 @@
  *
  * Units are grid-cell-based rather than free-floating circles, so "do these
  * two units overlap" is answered by cell identity instead of a pairwise
- * distance check. A unit at rest holds exactly one cell; a unit mid-step
- * holds two — its origin and its destination — so nothing else can enter
- * either while it is straddling the boundary.
+ * distance check. A unit at rest holds exactly its footprint's block of
+ * cells — one, for every unit but the knight, whose 2x2 block is claimed and
+ * released atomically (see `~/game/navigation/footprint#footprintOf` and
+ * `OccupancyGrid.reserveBlock`/`releaseBlock`); a unit mid-step holds both
+ * its origin block and its destination block — up to a 2x3 or 3x3 block for
+ * a 2x2 unit stepping one cell — so nothing else can enter either while it
+ * is straddling the boundary.
  *
  * The cells themselves live in the shared `OccupancyGrid` (see
  * `~/game/navigation/occupancy-grid`), which layers over the map's terrain
@@ -23,13 +27,15 @@ export interface CellOccupancy {
    */
   occupantId: number;
   /**
-   * Row-major index of the cell the unit stands in, or `NO_CELL` before its
-   * first claim.
+   * Row-major index of the **anchor** (top-left) cell of the block the unit
+   * stands in, or `NO_CELL` before its first claim. The unit's own footprint
+   * (`footprintOf`) says how large that block is; for a 1x1 unit the anchor
+   * is simply the one cell it occupies.
    */
   cell: number;
   /**
-   * Row-major index of the cell being walked into, or `NO_CELL` when the
-   * unit is at rest and holds only {@link cell}.
+   * Row-major index of the anchor cell of the block being walked into, or
+   * `NO_CELL` when the unit is at rest and holds only {@link cell}'s block.
    */
   reserved: number;
   /**

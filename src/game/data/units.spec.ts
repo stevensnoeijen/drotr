@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import swordsmenData from './units/swordsmen.json';
 import crossbowsoldierData from './units/crossbowsoldier.json';
 import knightData from './units/knight.json';
-import { roundUpToHalfTiles, unitSizeInTiles, units } from './units';
+import { footprintOf, roundUpToHalfTiles, unitSizeInTiles, units } from './units';
 
 describe('Unit definitions', () => {
   it('swordsmen JSON has complete, non-zero combat stats', () => {
@@ -136,5 +136,17 @@ describe('unitSizeInTiles', () => {
       width: 0.5,
       height: 1,
     });
+  });
+});
+
+describe('footprintOf', () => {
+  it('defaults to a single cell for a definition with no footprint', () => {
+    expect(footprintOf({})).toEqual({ width: 1, height: 1 });
+    expect(footprintOf(units.swordsmen)).toEqual({ width: 1, height: 1 });
+    expect(footprintOf(units.crossbowsoldier)).toEqual({ width: 1, height: 1 });
+  });
+
+  it('gives the knight its authored 2x2 block', () => {
+    expect(footprintOf(units.knight)).toEqual({ width: 2, height: 2 });
   });
 });

@@ -1,6 +1,7 @@
 {
   "type": "knight",
   "size": { "width": 1, "height": 1 },
+  "footprint": { "width": 2, "height": 2 },
   "shape": "circle",
   "health": 12,
   "attackDamage": 8,

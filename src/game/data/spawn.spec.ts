@@ -25,17 +25,20 @@ describe('spawnUnit', () => {
     const world = new World<Entity>();
 
     const unit = spawnUnit(world, {
-      type: 'knight',
+      type: 'swordsmen',
       team: 'red',
       // Falls inside the 16px cell spanning [0, 16) x [16, 32), centred on (8, 24).
       position: { x: 10, y: 20 },
     }, DEFAULT_CELL_SIZE);
 
     expect(unit.transform?.position).toEqual({ x: 8, y: 24 });
-    expect(unit.renderable?.shape).toBe('circle');
+    expect(unit.renderable?.shape).toBe('square');
     expect(unit.team).toBe('red');
-    expect(unit.unitType).toBe('knight');
-    expect(unit.health).toEqual({ current: 12, max: 12 });
+    expect(unit.unitType).toBe('swordsmen');
+    expect(unit.health).toEqual({ current: 15, max: 15 });
+    // A 1x1 unit (every unit but the knight) carries no `Footprint`
+    // component at all — `footprintOf` resolves the 1x1 default itself.
+    expect(unit.footprint).toBeUndefined();
   });
 
   it('makes a blue unit selectable but not a red one', () => {
@@ -216,7 +219,7 @@ describe('spawnUnit', () => {
     const world = new World<Entity>();
     const position = { x: 1, y: 2 };
 
-    const unit = spawnUnit(world, { type: 'knight', team: 'blue', position }, DEFAULT_CELL_SIZE);
+    const unit = spawnUnit(world, { type: 'swordsmen', team: 'blue', position }, DEFAULT_CELL_SIZE);
     position.x = 999;
 
     expect(unit.transform?.position.x).toBe(8);
@@ -234,7 +237,7 @@ describe('spawnUnit', () => {
       const unit = spawnUnit(
         world,
         // Inside the [40, 60) x [20, 40) cell, centred on (50, 30).
-        { type: 'knight', team: 'blue', position: { x: 41, y: 39 } },
+        { type: 'swordsmen', team: 'blue', position: { x: 41, y: 39 } },
         cellSize
       );
 
@@ -301,7 +304,7 @@ describe('spawnUnit', () => {
       expect(large.renderable!.size - small.renderable!.size).toBe(4);
     });
 
-    it('draws a knight two cells wide although it occupies one cell', () => {
+    it('draws a knight two cells wide, matching the 2x2 block of cells it occupies', () => {
       const world = new World<Entity>();
 
       const knight = spawnUnit(
@@ -311,6 +314,59 @@ describe('spawnUnit', () => {
       );
 
       expect(knight.renderable!.extent! * 2).toBe(2 * cellSize);
+      expect(knight.footprint).toEqual({ width: 2, height: 2 });
+    });
+  });
+
+  describe('for a knight, which occupies a 2x2 block of cells', () => {
+    it('gets a 2x2 footprint component', () => {
+      const world = new World<Entity>();
+
+      const knight = spawnUnit(
+        world,
+        { type: 'knight', team: 'blue', position: { x: 0, y: 0 } },
+        20
+      );
+
+      expect(knight.footprint).toEqual({ width: 2, height: 2 });
+    });
+
+    it('rests on the centre of its block — a cell corner, not a cell centre', () => {
+      const world = new World<Entity>();
+      // (41, 39) is nearest the corner shared by cells (1..2, 1..2) on a
+      // 20px grid: the knight's block covers those four.
+      const knight = spawnUnit(
+        world,
+        { type: 'knight', team: 'blue', position: { x: 41, y: 39 } },
+        20
+      );
+
+      expect(knight.transform?.position).toEqual({ x: 40, y: 40 });
+    });
+
+    it('covers a whole 40px tile when spawned at the tile centre', () => {
+      const world = new World<Entity>();
+      const knight = spawnUnit(
+        world,
+        { type: 'knight', team: 'blue', position: { x: 60, y: 20 } },
+        20
+      );
+
+      expect(knight.transform?.position).toEqual({ x: 60, y: 20 });
+    });
+  });
+
+  describe('for a 1x1 unit', () => {
+    it('gets no footprint component at all', () => {
+      const world = new World<Entity>();
+
+      const swordsmen = spawnUnit(
+        world,
+        { type: 'swordsmen', team: 'blue', position: { x: 0, y: 0 } },
+        DEFAULT_CELL_SIZE
+      );
+
+      expect(swordsmen.footprint).toBeUndefined();
     });
   });
 });
