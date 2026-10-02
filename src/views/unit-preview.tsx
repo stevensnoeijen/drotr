@@ -11,16 +11,17 @@ import {
 
 import type { UnitType } from '~/game/data/units';
 import { animationKey } from '~/game/render/sprites/animation-key';
+import { publicUrl } from '~/game/render/sprites/load-unit-sprites';
 import {
   UNIT_ATLAS_PATH,
   parseUnitManifest,
   unitManifestPath,
   type UnitManifest,
 } from '~/game/render/sprites/unit-manifest';
+import { animationSpeed } from '~/game/render/sprites/unit-sprites';
 
 import {
   animationOptions,
-  animationSpeed,
   atlasUnits,
   resolveSelection,
   selectionFromParams,
@@ -38,9 +39,6 @@ import {
 /** Canvas size and zoom: a 32 px frame fills about two thirds of the canvas. */
 const CANVAS_SIZE = 384;
 const ZOOM = 8;
-
-const publicUrl = (p: string) =>
-  `${import.meta.env.BASE_URL}${p.replace(/^\//, '')}`;
 
 type LoadState =
   | { status: 'loading' }
