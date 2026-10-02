@@ -23,6 +23,7 @@ import { animationSpeed } from '~/game/render/sprites/unit-sprites';
 import {
   animationOptions,
   atlasUnits,
+  previewZoom,
   resolveSelection,
   selectionFromParams,
   type AnimationSelection,
@@ -36,9 +37,7 @@ import {
  * from the atlas itself, so a newly packed unit appears here on its own.
  */
 
-/** Canvas size and zoom: a 32 px frame fills about two thirds of the canvas. */
 const CANVAS_SIZE = 384;
-const ZOOM = 8;
 
 type LoadState =
   | { status: 'loading' }
@@ -185,11 +184,12 @@ export default function UnitPreview() {
     if (!textures) return;
     const [w, h] = manifest.frameSize;
     const [ax, ay] = manifest.anchor;
+    const zoom = previewZoom(CANVAS_SIZE, manifest.frameSize);
     const { fps } = manifest.actions[selection.action]!;
 
     const view = new Container();
     view.position.set(CANVAS_SIZE / 2, CANVAS_SIZE / 2);
-    view.scale.set(ZOOM);
+    view.scale.set(zoom);
 
     const sprite = new AnimatedSprite({ textures, autoPlay: false });
     sprite.anchor.set(ax, ay);
@@ -202,12 +202,12 @@ export default function UnitPreview() {
     // Frame bounds and anchor, in frame pixels; 1/ZOOM keeps lines 1 px wide.
     const overlay = new Graphics()
       .rect(-ax * w, -ay * h, w, h)
-      .stroke({ width: 1 / ZOOM, color: 0xff00ff })
+      .stroke({ width: 1 / zoom, color: 0xff00ff })
       .moveTo(-2, 0)
       .lineTo(2, 0)
       .moveTo(0, -2)
       .lineTo(0, 2)
-      .stroke({ width: 1 / ZOOM, color: 0x00ffff });
+      .stroke({ width: 1 / zoom, color: 0x00ffff });
     view.addChild(overlay);
     stage.addChild(view);
 

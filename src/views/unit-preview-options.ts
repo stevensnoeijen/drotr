@@ -101,3 +101,16 @@ export function selectionFromParams(
   if (loop === '1' || loop === '0') requested.loop = loop === '1';
   return requested;
 }
+
+/**
+ * Whole-number zoom for the preview canvas: as large as possible (up to 8x)
+ * while the unit's whole frame stays within three quarters of the canvas, so
+ * a 32 px frame is shown at 8x and a 64 px frame at 4x without clipping.
+ */
+export function previewZoom(
+  canvasSize: number,
+  frameSize: readonly [number, number]
+): number {
+  const fit = Math.floor((canvasSize * 0.75) / Math.max(frameSize[0], frameSize[1]));
+  return Math.max(1, Math.min(8, fit));
+}
