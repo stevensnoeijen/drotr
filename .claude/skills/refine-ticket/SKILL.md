@@ -1,6 +1,6 @@
 ---
 name: refine-ticket
-description: "Refine a GitHub issue (ticket) in stevensnoeijen/drotr before implementation: fetch it, research the codebase for what it actually requires, then question the user to build an approved, adjustable implementation plan instead of guessing — and write that plan into the issue description. Triggers on: refine issue, refine ticket, flesh out issue #N, scope issue #N, plan issue #N, ticket refinement."
+description: "Refine a GitHub issue (ticket) in stevensnoeijen/drotr before implementation: fetch it, research the codebase for what it actually requires, then question the user to build an approved, adjustable implementation plan instead of guessing — and write that plan into the issue description. Triggers on: refine issue, refine ticket, flesh out issue #N, scope issue #N, ticket refinement."
 license: MIT
 ---
 
@@ -13,6 +13,18 @@ the user first, never guessed.
 This is a *planning* skill, not an implementation one. Don't write code or
 open branches here — that's `implement-ticket`'s job, and it can run afterward
 once the ticket is refined.
+
+It works on one ticket at a time. Deciding which tickets exist and how work
+is split across them is `plan-tickets`' job. Tickets that `plan-tickets`
+created arrive as outlines (Goal, Delivers, Scope, Out of scope, Research
+notes, Open questions for refinement, Blocked by / Consumed by, Part of).
+Refining one turns it into the detailed spec:
+
+- Start from its Research notes, and make its Open questions for refinement
+  part of what you ask the user in step 6.
+- Keep its agreed Goal, Delivers and Out of scope, and its `Blocked by`,
+  `Consumed by` and `Part of` lines. Changing any of those changes the plan
+  across tickets: stop and send it back to `plan-tickets` instead.
 
 Also use this skill to **re-refine** an already-refined ticket whose scope
 changed (new requirement surfaced, user redirected the approach, etc.). Same
@@ -93,7 +105,9 @@ Cover, as applicable to the ticket:
 - **Edge cases**: anything step 5's research surfaced that doesn't fit the
   main-line answer cleanly — ask about it explicitly rather than picking a
   default silently.
-- **Delivery shape**: one PR vs. split into several, if scope is large.
+- **Delivery shape**: whether it fits one PR. If the research shows it's
+  too big, don't split it here. Tell the user and hand the ticket to
+  `plan-tickets`.
 
 Keep the plan adjustable: after the user answers, summarize the resulting
 plan back to them in plain terms before writing anything, and give them a
@@ -107,7 +121,8 @@ ask what's genuinely the user's call.
 Once agreed, update the issue body (`gh issue edit <number> --body-file
 <tmpfile>`) so it reflects the finalized plan: problem statement, scope
 (in/out), the approach and any decided edge-case handling, and delivery
-shape. This becomes the source of truth a later `implement-ticket` run (by this
+shape. Keep the `Blocked by`, `Consumed by` and `Part of` lines, and drop
+the outline's "Run refine-ticket before implementing" note. This becomes the source of truth a later `implement-ticket` run (by this
 session or a subagent) implements from — write it so a subagent with no
 other context could pick it up correctly.
 
