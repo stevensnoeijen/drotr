@@ -133,6 +133,44 @@ no extra prefix. Each unit's manifest is written to
 whole atlas and every manifest, deterministically. So far only `swordsmen`
 is migrated; the other units still use `public/assets/unit-spritesheet.*`.
 
+### In the game
+
+The game renders every unit type listed in `SPRITE_UNIT_TYPES`
+(`src/game/render/sprites/unit-sprites.ts`; only `swordsmen` for now) as an
+animated sprite from the shared atlas, on every map and in every scenario.
+Every other unit type, and fired projectiles, keep their primitive shape.
+That list is the only switch: there is no URL or debug toggle and no
+fallback to the shape. To move a unit over, add its frame map, run
+`npm run pack:sprites`, and add its type to `SPRITE_UNIT_TYPES`.
+
+- **Loading.** `GameCanvas` loads the atlas and each sprite unit's manifest
+  on every game start, before the scenario spawns anything
+  (`loadUnitSprites`, `src/game/render/sprites/load-unit-sprites.ts`). It
+  checks that every team × action × direction a manifest declares has an
+  atlas animation with exactly `frames` frames. Any failure (network error,
+  non-OK response, invalid manifest, missing or short animation) is fatal:
+  the page shows "Can't load this game" with the reason, and nothing spawns.
+- **Drawing.** `RenderSystem` gives each sprite unit one `AnimatedSprite`,
+  anchored per its manifest and never rotated. The animation key derived
+  from the unit's ECS state (`animationKeyOf`) picks which team, action and
+  direction plays. Textures are swapped on the same sprite only when that
+  key changes, or when a new attack swing restarts the attack.
+  Non-looping animations stop on their last frame, so a corpse holds its
+  final `dead` frame. Playback runs on Pixi's ticker, in real time, at the
+  manifest's `fps` (`animationSpeed`, shared with `#/unit-preview`).
+- **Scale.** Frames are fitted to the unit's footprint box: the uniform
+  scale is `2 * overlayExtent / max(frameSize)`, e.g. 0.5 for a one-cell
+  unit on the 32 px-tile `test` map and 0.625 on a 40 px-tile county map.
+  Figures therefore come out smaller than in the original game; that's
+  intended.
+- **Unchanged.** Selection marks, the health bar, z-order (dead behind
+  alive) and hit-testing (which uses `renderable.size`) work exactly as for
+  shape units. A sprite unit has no facing mark or death cross; its
+  animation shows both.
+- **Texture lifetime.** The atlas textures belong to Pixi's `Assets` cache
+  and are shared, so they survive `GameCanvas` remounts. Sprite views are
+  destroyed with `{ children: true }` only, never their textures.
+
 Unit frames are not on the atlas's 40 px tile grid, nor on any uniform
 grid, so each unit has a committed **frame map**
 (`scripts/unit-sprites/frame-maps/<unit>.ts`): the measured atlas rect of

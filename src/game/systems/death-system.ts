@@ -16,7 +16,7 @@ export const DEATH_REMOVAL_DELAY_SECONDS = 5 * 60;
  * it outright, and only the delayed sweep below actually calls
  * `world.remove`. A corpse needs to keep existing in the world for
  * {@link DEATH_REMOVAL_DELAY_SECONDS} — `RenderSystem` still draws it (dead
- * z-order, death mark) and the battle isn't "over" from a spectator's
+ * z-order, death mark or final `dead` frame) and the battle isn't "over" from a spectator's
  * perspective the instant the last blow lands — so this can't be a single
  * `health.current <= 0` -> `world.remove` step.
  *

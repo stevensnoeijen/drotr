@@ -21,7 +21,8 @@ const TEAM_COLOR: Record<Team, number> = {
  * 40px) 36px — close to the visible extent of their original sprites. Its
  * selection marks and health bar (see `render-system.ts`, `health-bar.ts`)
  * are laid out against the full footprint box (`renderable.extent`), not
- * this shape size.
+ * this shape size — as are a sprite unit's frames, which are fitted to that
+ * box. Hit-testing still uses this shape size for every unit.
  */
 const UNIT_MARGIN = 2;
 
