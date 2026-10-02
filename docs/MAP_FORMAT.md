@@ -257,9 +257,7 @@ extracting them from `DRACULA.EXE`" below. (An earlier revision of this
 section decided to author build spots by hand because the executable was
 not available. That decision is superseded.)
 
-The evidence is pinned by golden tests across all 12 counties, in
-`scripts/county-map/county-map-markers-golden.spec.ts` (skipped without
-`.cd/`).
+The evidence was gathered across all 12 counties.
 
 ### Map-edge signposts (tile 701)
 
@@ -752,8 +750,8 @@ copyright/redistribution risk — so `.cd/` stays local-only and gitignored,
 and none of the original `.MAP`/`.ART` files are committed.
 
 The `.ART` decoder added since follows exactly this strategy — synthetic
-in-memory PCX fixtures for the format-level tests, plus golden hashes
-(never pixels) for the real file, skipped when `.cd/` is absent. See
+in-memory PCX fixtures for the format-level tests, plus recorded hashes
+(never pixels) of real tiles. See
 [`ART_FORMAT.md`](./ART_FORMAT.md).
 
 The county `.MAP` parser, `src/lib/county-map`, and its converter,
@@ -766,10 +764,9 @@ section-offset math, the 128×128 / 256×256 **column-major** decoding (file
 order: `offset = (x*size + y) * 4`), and the two-`u16`-per-record layout
 without shipping any original game data. The parser reads the file
 column-major but stores both grids **row-major** (`[y*size + x]`), like
-every other grid in the engine. Golden tests against the real `FAGARAS.MAP`
-skip when `.cd/` is absent. The `BUILDING.MAP` parser, `src/lib/building-map`,
+every other grid in the engine. The `BUILDING.MAP` parser, `src/lib/building-map`,
 does the same with its own synthetic 983,040-byte fixture
-(`src/test/building-map-fixture.ts`) and golden tests against the real file.
+(`src/test/building-map-fixture.ts`). No tests run against the real files.
 
 The parser treats a Section B subcell as blocked when `hi != 0`, so a
 subcell carrying only `256` counts (see "`256` is not a third terrain

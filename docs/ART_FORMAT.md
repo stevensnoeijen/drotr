@@ -148,10 +148,11 @@ Accordingly the decoder's tests come in two layers:
   PCX buffers in memory and cover the format-level behaviour — header
   parsing, RLE expansion, scanline padding, palette handling, colour
   keying, tile geometry and every rejection path. These always run.
-- **Golden tests** (`scripts/terrain-tileset/battle-art.spec.ts`) pin the
-  real `BATTLE.ART` decode to recorded SHA-256 hashes of its pixels. They record
-  only hashes, never pixel data, so nothing reproduces the original
-  artwork; they skip themselves wherever `.cd/` is absent, CI included.
+- **Recorded hashes** (`scripts/terrain-tileset/battle-art-golden-hashes.ts`)
+  hold SHA-256 hashes of a handful of real `BATTLE.ART` tiles' pixels, which
+  the committed terrain tileset spec checks against `public/maps/terrain.png`.
+  They record only hashes, never pixel data, so nothing reproduces the
+  original artwork. There are no tests against the real `BATTLE.ART` itself.
 
 `DROTR_CD_DIR` overrides where the CD data is looked up. In development the
 Vite config serves it under `/cd/`, so the `?case=atlas` viewer can fetch

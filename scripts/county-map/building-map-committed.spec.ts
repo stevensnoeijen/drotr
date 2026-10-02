@@ -11,10 +11,7 @@ import {
 
 /**
  * Tests against the **committed** `public/maps/buildings.tmj` itself. These
- * need no `.cd/` data, so they always run (CI included). That the file is
- * exactly what the converter produces from the real `BUILDING.MAP` is
- * checked by the golden suite (`building-map-golden.spec.ts`), which skips
- * without `.cd/`.
+ * need no `.cd/` data, so they always run (CI included).
  */
 
 const MAPS_DIR = path.join(process.cwd(), 'public', 'maps');
