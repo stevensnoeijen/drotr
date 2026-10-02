@@ -3,6 +3,7 @@
     "vue.volar",
     "vue.vscode-typescript-vue-plugin",
     "esbenp.prettier-vscode",
-    "oxc.oxc-vscode"
+    "oxc.oxc-vscode",
+    "TypeScriptTeam.native-preview"
   ]
 }
