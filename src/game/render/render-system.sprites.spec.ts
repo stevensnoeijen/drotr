@@ -76,7 +76,7 @@ describe('RenderSystem sprite views', () => {
       expect(view.children).toEqual([sprite, selectionMarks, healthBar]);
     });
 
-    it.each<UnitType>(['knight', 'crossbowsoldier'])('keeps drawing a %s as its shape', (type) => {
+    it.each<UnitType>(['knight'])('keeps drawing a %s as its shape', (type) => {
       const { parent, spawn, system } = setup();
       const entity = spawn(type);
 

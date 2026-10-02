@@ -7999,6 +7999,6726 @@
         "w": 32,
         "h": 32
       }
+    },
+    "crossbowsoldier.blue.move.n_01": {
+      "frame": {
+        "x": 0,
+        "y": 1632,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.move.n_02": {
+      "frame": {
+        "x": 34,
+        "y": 1632,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.move.n_03": {
+      "frame": {
+        "x": 68,
+        "y": 1632,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.move.n_04": {
+      "frame": {
+        "x": 102,
+        "y": 1632,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.move.n_05": {
+      "frame": {
+        "x": 136,
+        "y": 1632,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.move.n_06": {
+      "frame": {
+        "x": 170,
+        "y": 1632,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.move.n_07": {
+      "frame": {
+        "x": 204,
+        "y": 1632,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.move.n_08": {
+      "frame": {
+        "x": 238,
+        "y": 1632,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.move.ne_01": {
+      "frame": {
+        "x": 0,
+        "y": 1666,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.move.ne_02": {
+      "frame": {
+        "x": 34,
+        "y": 1666,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.move.ne_03": {
+      "frame": {
+        "x": 68,
+        "y": 1666,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.move.ne_04": {
+      "frame": {
+        "x": 102,
+        "y": 1666,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.move.ne_05": {
+      "frame": {
+        "x": 136,
+        "y": 1666,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.move.ne_06": {
+      "frame": {
+        "x": 170,
+        "y": 1666,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.move.ne_07": {
+      "frame": {
+        "x": 204,
+        "y": 1666,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.move.ne_08": {
+      "frame": {
+        "x": 238,
+        "y": 1666,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.move.e_01": {
+      "frame": {
+        "x": 0,
+        "y": 1700,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.move.e_02": {
+      "frame": {
+        "x": 34,
+        "y": 1700,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.move.e_03": {
+      "frame": {
+        "x": 68,
+        "y": 1700,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.move.e_04": {
+      "frame": {
+        "x": 102,
+        "y": 1700,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.move.e_05": {
+      "frame": {
+        "x": 136,
+        "y": 1700,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.move.e_06": {
+      "frame": {
+        "x": 170,
+        "y": 1700,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.move.e_07": {
+      "frame": {
+        "x": 204,
+        "y": 1700,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.move.e_08": {
+      "frame": {
+        "x": 238,
+        "y": 1700,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.move.se_01": {
+      "frame": {
+        "x": 0,
+        "y": 1734,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.move.se_02": {
+      "frame": {
+        "x": 34,
+        "y": 1734,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.move.se_03": {
+      "frame": {
+        "x": 68,
+        "y": 1734,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.move.se_04": {
+      "frame": {
+        "x": 102,
+        "y": 1734,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.move.se_05": {
+      "frame": {
+        "x": 136,
+        "y": 1734,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.move.se_06": {
+      "frame": {
+        "x": 170,
+        "y": 1734,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.move.se_07": {
+      "frame": {
+        "x": 204,
+        "y": 1734,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.move.se_08": {
+      "frame": {
+        "x": 238,
+        "y": 1734,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.move.s_01": {
+      "frame": {
+        "x": 0,
+        "y": 1768,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.move.s_02": {
+      "frame": {
+        "x": 34,
+        "y": 1768,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.move.s_03": {
+      "frame": {
+        "x": 68,
+        "y": 1768,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.move.s_04": {
+      "frame": {
+        "x": 102,
+        "y": 1768,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.move.s_05": {
+      "frame": {
+        "x": 136,
+        "y": 1768,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.move.s_06": {
+      "frame": {
+        "x": 170,
+        "y": 1768,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.move.s_07": {
+      "frame": {
+        "x": 204,
+        "y": 1768,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.move.s_08": {
+      "frame": {
+        "x": 238,
+        "y": 1768,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.move.sw_01": {
+      "frame": {
+        "x": 0,
+        "y": 1802,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.move.sw_02": {
+      "frame": {
+        "x": 34,
+        "y": 1802,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.move.sw_03": {
+      "frame": {
+        "x": 68,
+        "y": 1802,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.move.sw_04": {
+      "frame": {
+        "x": 102,
+        "y": 1802,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.move.sw_05": {
+      "frame": {
+        "x": 136,
+        "y": 1802,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.move.sw_06": {
+      "frame": {
+        "x": 170,
+        "y": 1802,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.move.sw_07": {
+      "frame": {
+        "x": 204,
+        "y": 1802,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.move.sw_08": {
+      "frame": {
+        "x": 238,
+        "y": 1802,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.move.w_01": {
+      "frame": {
+        "x": 0,
+        "y": 1836,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.move.w_02": {
+      "frame": {
+        "x": 34,
+        "y": 1836,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.move.w_03": {
+      "frame": {
+        "x": 68,
+        "y": 1836,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.move.w_04": {
+      "frame": {
+        "x": 102,
+        "y": 1836,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.move.w_05": {
+      "frame": {
+        "x": 136,
+        "y": 1836,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.move.w_06": {
+      "frame": {
+        "x": 170,
+        "y": 1836,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.move.w_07": {
+      "frame": {
+        "x": 204,
+        "y": 1836,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.move.w_08": {
+      "frame": {
+        "x": 238,
+        "y": 1836,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.move.nw_01": {
+      "frame": {
+        "x": 0,
+        "y": 1870,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.move.nw_02": {
+      "frame": {
+        "x": 34,
+        "y": 1870,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.move.nw_03": {
+      "frame": {
+        "x": 68,
+        "y": 1870,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.move.nw_04": {
+      "frame": {
+        "x": 102,
+        "y": 1870,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.move.nw_05": {
+      "frame": {
+        "x": 136,
+        "y": 1870,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.move.nw_06": {
+      "frame": {
+        "x": 170,
+        "y": 1870,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.move.nw_07": {
+      "frame": {
+        "x": 204,
+        "y": 1870,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.move.nw_08": {
+      "frame": {
+        "x": 238,
+        "y": 1870,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.attack.n_01": {
+      "frame": {
+        "x": 0,
+        "y": 1904,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.attack.n_02": {
+      "frame": {
+        "x": 34,
+        "y": 1904,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.attack.n_03": {
+      "frame": {
+        "x": 68,
+        "y": 1904,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.attack.n_04": {
+      "frame": {
+        "x": 102,
+        "y": 1904,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.attack.n_05": {
+      "frame": {
+        "x": 136,
+        "y": 1904,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.attack.n_06": {
+      "frame": {
+        "x": 170,
+        "y": 1904,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.attack.n_07": {
+      "frame": {
+        "x": 204,
+        "y": 1904,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.attack.n_08": {
+      "frame": {
+        "x": 238,
+        "y": 1904,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.attack.ne_01": {
+      "frame": {
+        "x": 0,
+        "y": 1938,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.attack.ne_02": {
+      "frame": {
+        "x": 34,
+        "y": 1938,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.attack.ne_03": {
+      "frame": {
+        "x": 68,
+        "y": 1938,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.attack.ne_04": {
+      "frame": {
+        "x": 102,
+        "y": 1938,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.attack.ne_05": {
+      "frame": {
+        "x": 136,
+        "y": 1938,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.attack.ne_06": {
+      "frame": {
+        "x": 170,
+        "y": 1938,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.attack.ne_07": {
+      "frame": {
+        "x": 204,
+        "y": 1938,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.attack.ne_08": {
+      "frame": {
+        "x": 238,
+        "y": 1938,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.attack.e_01": {
+      "frame": {
+        "x": 0,
+        "y": 1972,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.attack.e_02": {
+      "frame": {
+        "x": 34,
+        "y": 1972,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.attack.e_03": {
+      "frame": {
+        "x": 68,
+        "y": 1972,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.attack.e_04": {
+      "frame": {
+        "x": 102,
+        "y": 1972,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.attack.e_05": {
+      "frame": {
+        "x": 136,
+        "y": 1972,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.attack.e_06": {
+      "frame": {
+        "x": 170,
+        "y": 1972,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.attack.e_07": {
+      "frame": {
+        "x": 204,
+        "y": 1972,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.attack.e_08": {
+      "frame": {
+        "x": 238,
+        "y": 1972,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.attack.se_01": {
+      "frame": {
+        "x": 0,
+        "y": 2006,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.attack.se_02": {
+      "frame": {
+        "x": 34,
+        "y": 2006,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.attack.se_03": {
+      "frame": {
+        "x": 68,
+        "y": 2006,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.attack.se_04": {
+      "frame": {
+        "x": 102,
+        "y": 2006,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.attack.se_05": {
+      "frame": {
+        "x": 136,
+        "y": 2006,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.attack.se_06": {
+      "frame": {
+        "x": 170,
+        "y": 2006,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.attack.se_07": {
+      "frame": {
+        "x": 204,
+        "y": 2006,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.attack.se_08": {
+      "frame": {
+        "x": 238,
+        "y": 2006,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.attack.s_01": {
+      "frame": {
+        "x": 0,
+        "y": 2040,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.attack.s_02": {
+      "frame": {
+        "x": 34,
+        "y": 2040,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.attack.s_03": {
+      "frame": {
+        "x": 68,
+        "y": 2040,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.attack.s_04": {
+      "frame": {
+        "x": 102,
+        "y": 2040,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.attack.s_05": {
+      "frame": {
+        "x": 136,
+        "y": 2040,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.attack.s_06": {
+      "frame": {
+        "x": 170,
+        "y": 2040,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.attack.s_07": {
+      "frame": {
+        "x": 204,
+        "y": 2040,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.attack.s_08": {
+      "frame": {
+        "x": 238,
+        "y": 2040,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.attack.sw_01": {
+      "frame": {
+        "x": 0,
+        "y": 2074,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.attack.sw_02": {
+      "frame": {
+        "x": 34,
+        "y": 2074,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.attack.sw_03": {
+      "frame": {
+        "x": 68,
+        "y": 2074,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.attack.sw_04": {
+      "frame": {
+        "x": 102,
+        "y": 2074,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.attack.sw_05": {
+      "frame": {
+        "x": 136,
+        "y": 2074,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.attack.sw_06": {
+      "frame": {
+        "x": 170,
+        "y": 2074,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.attack.sw_07": {
+      "frame": {
+        "x": 204,
+        "y": 2074,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.attack.sw_08": {
+      "frame": {
+        "x": 238,
+        "y": 2074,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.attack.w_01": {
+      "frame": {
+        "x": 0,
+        "y": 2108,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.attack.w_02": {
+      "frame": {
+        "x": 34,
+        "y": 2108,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.attack.w_03": {
+      "frame": {
+        "x": 68,
+        "y": 2108,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.attack.w_04": {
+      "frame": {
+        "x": 102,
+        "y": 2108,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.attack.w_05": {
+      "frame": {
+        "x": 136,
+        "y": 2108,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.attack.w_06": {
+      "frame": {
+        "x": 170,
+        "y": 2108,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.attack.w_07": {
+      "frame": {
+        "x": 204,
+        "y": 2108,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.attack.w_08": {
+      "frame": {
+        "x": 238,
+        "y": 2108,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.attack.nw_01": {
+      "frame": {
+        "x": 0,
+        "y": 2142,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.attack.nw_02": {
+      "frame": {
+        "x": 34,
+        "y": 2142,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.attack.nw_03": {
+      "frame": {
+        "x": 68,
+        "y": 2142,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.attack.nw_04": {
+      "frame": {
+        "x": 102,
+        "y": 2142,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.attack.nw_05": {
+      "frame": {
+        "x": 136,
+        "y": 2142,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.attack.nw_06": {
+      "frame": {
+        "x": 170,
+        "y": 2142,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.attack.nw_07": {
+      "frame": {
+        "x": 204,
+        "y": 2142,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.attack.nw_08": {
+      "frame": {
+        "x": 238,
+        "y": 2142,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.dead.n_01": {
+      "frame": {
+        "x": 0,
+        "y": 2176,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.dead.n_02": {
+      "frame": {
+        "x": 34,
+        "y": 2176,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.dead.n_03": {
+      "frame": {
+        "x": 68,
+        "y": 2176,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.dead.n_04": {
+      "frame": {
+        "x": 102,
+        "y": 2176,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.dead.ne_01": {
+      "frame": {
+        "x": 0,
+        "y": 2210,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.dead.ne_02": {
+      "frame": {
+        "x": 34,
+        "y": 2210,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.dead.ne_03": {
+      "frame": {
+        "x": 68,
+        "y": 2210,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.dead.ne_04": {
+      "frame": {
+        "x": 102,
+        "y": 2210,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.dead.e_01": {
+      "frame": {
+        "x": 0,
+        "y": 2244,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.dead.e_02": {
+      "frame": {
+        "x": 34,
+        "y": 2244,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.dead.e_03": {
+      "frame": {
+        "x": 68,
+        "y": 2244,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.dead.e_04": {
+      "frame": {
+        "x": 102,
+        "y": 2244,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.dead.se_01": {
+      "frame": {
+        "x": 0,
+        "y": 2278,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.dead.se_02": {
+      "frame": {
+        "x": 34,
+        "y": 2278,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.dead.se_03": {
+      "frame": {
+        "x": 68,
+        "y": 2278,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.dead.se_04": {
+      "frame": {
+        "x": 102,
+        "y": 2278,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.dead.s_01": {
+      "frame": {
+        "x": 0,
+        "y": 2312,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.dead.s_02": {
+      "frame": {
+        "x": 34,
+        "y": 2312,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.dead.s_03": {
+      "frame": {
+        "x": 68,
+        "y": 2312,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.dead.s_04": {
+      "frame": {
+        "x": 102,
+        "y": 2312,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.dead.sw_01": {
+      "frame": {
+        "x": 0,
+        "y": 2346,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.dead.sw_02": {
+      "frame": {
+        "x": 34,
+        "y": 2346,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.dead.sw_03": {
+      "frame": {
+        "x": 68,
+        "y": 2346,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.dead.sw_04": {
+      "frame": {
+        "x": 102,
+        "y": 2346,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.dead.w_01": {
+      "frame": {
+        "x": 0,
+        "y": 2380,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.dead.w_02": {
+      "frame": {
+        "x": 34,
+        "y": 2380,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.dead.w_03": {
+      "frame": {
+        "x": 68,
+        "y": 2380,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.dead.w_04": {
+      "frame": {
+        "x": 102,
+        "y": 2380,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.dead.nw_01": {
+      "frame": {
+        "x": 0,
+        "y": 2414,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.dead.nw_02": {
+      "frame": {
+        "x": 34,
+        "y": 2414,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.dead.nw_03": {
+      "frame": {
+        "x": 68,
+        "y": 2414,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.dead.nw_04": {
+      "frame": {
+        "x": 102,
+        "y": 2414,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.idle.n_01": {
+      "frame": {
+        "x": 68,
+        "y": 1632,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.idle.ne_01": {
+      "frame": {
+        "x": 68,
+        "y": 1666,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.idle.e_01": {
+      "frame": {
+        "x": 68,
+        "y": 1700,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.idle.se_01": {
+      "frame": {
+        "x": 68,
+        "y": 1734,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.idle.s_01": {
+      "frame": {
+        "x": 68,
+        "y": 1768,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.idle.sw_01": {
+      "frame": {
+        "x": 68,
+        "y": 1802,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.idle.w_01": {
+      "frame": {
+        "x": 68,
+        "y": 1836,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.blue.idle.nw_01": {
+      "frame": {
+        "x": 68,
+        "y": 1870,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.move.n_01": {
+      "frame": {
+        "x": 0,
+        "y": 2448,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.move.n_02": {
+      "frame": {
+        "x": 34,
+        "y": 2448,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.move.n_03": {
+      "frame": {
+        "x": 68,
+        "y": 2448,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.move.n_04": {
+      "frame": {
+        "x": 102,
+        "y": 2448,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.move.n_05": {
+      "frame": {
+        "x": 136,
+        "y": 2448,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.move.n_06": {
+      "frame": {
+        "x": 170,
+        "y": 2448,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.move.n_07": {
+      "frame": {
+        "x": 204,
+        "y": 2448,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.move.n_08": {
+      "frame": {
+        "x": 238,
+        "y": 2448,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.move.ne_01": {
+      "frame": {
+        "x": 0,
+        "y": 2482,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.move.ne_02": {
+      "frame": {
+        "x": 34,
+        "y": 2482,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.move.ne_03": {
+      "frame": {
+        "x": 68,
+        "y": 2482,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.move.ne_04": {
+      "frame": {
+        "x": 102,
+        "y": 2482,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.move.ne_05": {
+      "frame": {
+        "x": 136,
+        "y": 2482,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.move.ne_06": {
+      "frame": {
+        "x": 170,
+        "y": 2482,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.move.ne_07": {
+      "frame": {
+        "x": 204,
+        "y": 2482,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.move.ne_08": {
+      "frame": {
+        "x": 238,
+        "y": 2482,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.move.e_01": {
+      "frame": {
+        "x": 0,
+        "y": 2516,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.move.e_02": {
+      "frame": {
+        "x": 34,
+        "y": 2516,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.move.e_03": {
+      "frame": {
+        "x": 68,
+        "y": 2516,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.move.e_04": {
+      "frame": {
+        "x": 102,
+        "y": 2516,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.move.e_05": {
+      "frame": {
+        "x": 136,
+        "y": 2516,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.move.e_06": {
+      "frame": {
+        "x": 170,
+        "y": 2516,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.move.e_07": {
+      "frame": {
+        "x": 204,
+        "y": 2516,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.move.e_08": {
+      "frame": {
+        "x": 238,
+        "y": 2516,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.move.se_01": {
+      "frame": {
+        "x": 0,
+        "y": 2550,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.move.se_02": {
+      "frame": {
+        "x": 34,
+        "y": 2550,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.move.se_03": {
+      "frame": {
+        "x": 68,
+        "y": 2550,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.move.se_04": {
+      "frame": {
+        "x": 102,
+        "y": 2550,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.move.se_05": {
+      "frame": {
+        "x": 136,
+        "y": 2550,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.move.se_06": {
+      "frame": {
+        "x": 170,
+        "y": 2550,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.move.se_07": {
+      "frame": {
+        "x": 204,
+        "y": 2550,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.move.se_08": {
+      "frame": {
+        "x": 238,
+        "y": 2550,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.move.s_01": {
+      "frame": {
+        "x": 0,
+        "y": 2584,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.move.s_02": {
+      "frame": {
+        "x": 34,
+        "y": 2584,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.move.s_03": {
+      "frame": {
+        "x": 68,
+        "y": 2584,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.move.s_04": {
+      "frame": {
+        "x": 102,
+        "y": 2584,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.move.s_05": {
+      "frame": {
+        "x": 136,
+        "y": 2584,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.move.s_06": {
+      "frame": {
+        "x": 170,
+        "y": 2584,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.move.s_07": {
+      "frame": {
+        "x": 204,
+        "y": 2584,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.move.s_08": {
+      "frame": {
+        "x": 238,
+        "y": 2584,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.move.sw_01": {
+      "frame": {
+        "x": 0,
+        "y": 2618,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.move.sw_02": {
+      "frame": {
+        "x": 34,
+        "y": 2618,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.move.sw_03": {
+      "frame": {
+        "x": 68,
+        "y": 2618,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.move.sw_04": {
+      "frame": {
+        "x": 102,
+        "y": 2618,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.move.sw_05": {
+      "frame": {
+        "x": 136,
+        "y": 2618,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.move.sw_06": {
+      "frame": {
+        "x": 170,
+        "y": 2618,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.move.sw_07": {
+      "frame": {
+        "x": 204,
+        "y": 2618,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.move.sw_08": {
+      "frame": {
+        "x": 238,
+        "y": 2618,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.move.w_01": {
+      "frame": {
+        "x": 0,
+        "y": 2652,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.move.w_02": {
+      "frame": {
+        "x": 34,
+        "y": 2652,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.move.w_03": {
+      "frame": {
+        "x": 68,
+        "y": 2652,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.move.w_04": {
+      "frame": {
+        "x": 102,
+        "y": 2652,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.move.w_05": {
+      "frame": {
+        "x": 136,
+        "y": 2652,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.move.w_06": {
+      "frame": {
+        "x": 170,
+        "y": 2652,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.move.w_07": {
+      "frame": {
+        "x": 204,
+        "y": 2652,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.move.w_08": {
+      "frame": {
+        "x": 238,
+        "y": 2652,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.move.nw_01": {
+      "frame": {
+        "x": 0,
+        "y": 2686,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.move.nw_02": {
+      "frame": {
+        "x": 34,
+        "y": 2686,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.move.nw_03": {
+      "frame": {
+        "x": 68,
+        "y": 2686,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.move.nw_04": {
+      "frame": {
+        "x": 102,
+        "y": 2686,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.move.nw_05": {
+      "frame": {
+        "x": 136,
+        "y": 2686,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.move.nw_06": {
+      "frame": {
+        "x": 170,
+        "y": 2686,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.move.nw_07": {
+      "frame": {
+        "x": 204,
+        "y": 2686,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.move.nw_08": {
+      "frame": {
+        "x": 238,
+        "y": 2686,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.attack.n_01": {
+      "frame": {
+        "x": 0,
+        "y": 2720,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.attack.n_02": {
+      "frame": {
+        "x": 34,
+        "y": 2720,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.attack.n_03": {
+      "frame": {
+        "x": 68,
+        "y": 2720,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.attack.n_04": {
+      "frame": {
+        "x": 102,
+        "y": 2720,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.attack.n_05": {
+      "frame": {
+        "x": 136,
+        "y": 2720,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.attack.n_06": {
+      "frame": {
+        "x": 170,
+        "y": 2720,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.attack.n_07": {
+      "frame": {
+        "x": 204,
+        "y": 2720,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.attack.n_08": {
+      "frame": {
+        "x": 238,
+        "y": 2720,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.attack.ne_01": {
+      "frame": {
+        "x": 0,
+        "y": 2754,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.attack.ne_02": {
+      "frame": {
+        "x": 34,
+        "y": 2754,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.attack.ne_03": {
+      "frame": {
+        "x": 68,
+        "y": 2754,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.attack.ne_04": {
+      "frame": {
+        "x": 102,
+        "y": 2754,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.attack.ne_05": {
+      "frame": {
+        "x": 136,
+        "y": 2754,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.attack.ne_06": {
+      "frame": {
+        "x": 170,
+        "y": 2754,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.attack.ne_07": {
+      "frame": {
+        "x": 204,
+        "y": 2754,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.attack.ne_08": {
+      "frame": {
+        "x": 238,
+        "y": 2754,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.attack.e_01": {
+      "frame": {
+        "x": 0,
+        "y": 2788,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.attack.e_02": {
+      "frame": {
+        "x": 34,
+        "y": 2788,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.attack.e_03": {
+      "frame": {
+        "x": 68,
+        "y": 2788,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.attack.e_04": {
+      "frame": {
+        "x": 102,
+        "y": 2788,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.attack.e_05": {
+      "frame": {
+        "x": 136,
+        "y": 2788,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.attack.e_06": {
+      "frame": {
+        "x": 170,
+        "y": 2788,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.attack.e_07": {
+      "frame": {
+        "x": 204,
+        "y": 2788,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.attack.e_08": {
+      "frame": {
+        "x": 238,
+        "y": 2788,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.attack.se_01": {
+      "frame": {
+        "x": 0,
+        "y": 2822,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.attack.se_02": {
+      "frame": {
+        "x": 34,
+        "y": 2822,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.attack.se_03": {
+      "frame": {
+        "x": 68,
+        "y": 2822,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.attack.se_04": {
+      "frame": {
+        "x": 102,
+        "y": 2822,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.attack.se_05": {
+      "frame": {
+        "x": 136,
+        "y": 2822,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.attack.se_06": {
+      "frame": {
+        "x": 170,
+        "y": 2822,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.attack.se_07": {
+      "frame": {
+        "x": 204,
+        "y": 2822,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.attack.se_08": {
+      "frame": {
+        "x": 238,
+        "y": 2822,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.attack.s_01": {
+      "frame": {
+        "x": 0,
+        "y": 2856,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.attack.s_02": {
+      "frame": {
+        "x": 34,
+        "y": 2856,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.attack.s_03": {
+      "frame": {
+        "x": 68,
+        "y": 2856,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.attack.s_04": {
+      "frame": {
+        "x": 102,
+        "y": 2856,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.attack.s_05": {
+      "frame": {
+        "x": 136,
+        "y": 2856,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.attack.s_06": {
+      "frame": {
+        "x": 170,
+        "y": 2856,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.attack.s_07": {
+      "frame": {
+        "x": 204,
+        "y": 2856,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.attack.s_08": {
+      "frame": {
+        "x": 238,
+        "y": 2856,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.attack.sw_01": {
+      "frame": {
+        "x": 0,
+        "y": 2890,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.attack.sw_02": {
+      "frame": {
+        "x": 34,
+        "y": 2890,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.attack.sw_03": {
+      "frame": {
+        "x": 68,
+        "y": 2890,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.attack.sw_04": {
+      "frame": {
+        "x": 102,
+        "y": 2890,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.attack.sw_05": {
+      "frame": {
+        "x": 136,
+        "y": 2890,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.attack.sw_06": {
+      "frame": {
+        "x": 170,
+        "y": 2890,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.attack.sw_07": {
+      "frame": {
+        "x": 204,
+        "y": 2890,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.attack.sw_08": {
+      "frame": {
+        "x": 238,
+        "y": 2890,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.attack.w_01": {
+      "frame": {
+        "x": 0,
+        "y": 2924,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.attack.w_02": {
+      "frame": {
+        "x": 34,
+        "y": 2924,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.attack.w_03": {
+      "frame": {
+        "x": 68,
+        "y": 2924,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.attack.w_04": {
+      "frame": {
+        "x": 102,
+        "y": 2924,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.attack.w_05": {
+      "frame": {
+        "x": 136,
+        "y": 2924,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.attack.w_06": {
+      "frame": {
+        "x": 170,
+        "y": 2924,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.attack.w_07": {
+      "frame": {
+        "x": 204,
+        "y": 2924,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.attack.w_08": {
+      "frame": {
+        "x": 238,
+        "y": 2924,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.attack.nw_01": {
+      "frame": {
+        "x": 0,
+        "y": 2958,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.attack.nw_02": {
+      "frame": {
+        "x": 34,
+        "y": 2958,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.attack.nw_03": {
+      "frame": {
+        "x": 68,
+        "y": 2958,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.attack.nw_04": {
+      "frame": {
+        "x": 102,
+        "y": 2958,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.attack.nw_05": {
+      "frame": {
+        "x": 136,
+        "y": 2958,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.attack.nw_06": {
+      "frame": {
+        "x": 170,
+        "y": 2958,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.attack.nw_07": {
+      "frame": {
+        "x": 204,
+        "y": 2958,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.attack.nw_08": {
+      "frame": {
+        "x": 238,
+        "y": 2958,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.dead.n_01": {
+      "frame": {
+        "x": 0,
+        "y": 2992,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.dead.n_02": {
+      "frame": {
+        "x": 34,
+        "y": 2992,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.dead.n_03": {
+      "frame": {
+        "x": 68,
+        "y": 2992,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.dead.n_04": {
+      "frame": {
+        "x": 102,
+        "y": 2992,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.dead.ne_01": {
+      "frame": {
+        "x": 0,
+        "y": 3026,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.dead.ne_02": {
+      "frame": {
+        "x": 34,
+        "y": 3026,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.dead.ne_03": {
+      "frame": {
+        "x": 68,
+        "y": 3026,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.dead.ne_04": {
+      "frame": {
+        "x": 102,
+        "y": 3026,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.dead.e_01": {
+      "frame": {
+        "x": 0,
+        "y": 3060,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.dead.e_02": {
+      "frame": {
+        "x": 34,
+        "y": 3060,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.dead.e_03": {
+      "frame": {
+        "x": 68,
+        "y": 3060,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.dead.e_04": {
+      "frame": {
+        "x": 102,
+        "y": 3060,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.dead.se_01": {
+      "frame": {
+        "x": 0,
+        "y": 3094,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.dead.se_02": {
+      "frame": {
+        "x": 34,
+        "y": 3094,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.dead.se_03": {
+      "frame": {
+        "x": 68,
+        "y": 3094,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.dead.se_04": {
+      "frame": {
+        "x": 102,
+        "y": 3094,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.dead.s_01": {
+      "frame": {
+        "x": 0,
+        "y": 3128,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.dead.s_02": {
+      "frame": {
+        "x": 34,
+        "y": 3128,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.dead.s_03": {
+      "frame": {
+        "x": 68,
+        "y": 3128,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.dead.s_04": {
+      "frame": {
+        "x": 102,
+        "y": 3128,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.dead.sw_01": {
+      "frame": {
+        "x": 0,
+        "y": 3162,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.dead.sw_02": {
+      "frame": {
+        "x": 34,
+        "y": 3162,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.dead.sw_03": {
+      "frame": {
+        "x": 68,
+        "y": 3162,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.dead.sw_04": {
+      "frame": {
+        "x": 102,
+        "y": 3162,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.dead.w_01": {
+      "frame": {
+        "x": 0,
+        "y": 3196,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.dead.w_02": {
+      "frame": {
+        "x": 34,
+        "y": 3196,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.dead.w_03": {
+      "frame": {
+        "x": 68,
+        "y": 3196,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.dead.w_04": {
+      "frame": {
+        "x": 102,
+        "y": 3196,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.dead.nw_01": {
+      "frame": {
+        "x": 0,
+        "y": 3230,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.dead.nw_02": {
+      "frame": {
+        "x": 34,
+        "y": 3230,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.dead.nw_03": {
+      "frame": {
+        "x": 68,
+        "y": 3230,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.dead.nw_04": {
+      "frame": {
+        "x": 102,
+        "y": 3230,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.idle.n_01": {
+      "frame": {
+        "x": 68,
+        "y": 2448,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.idle.ne_01": {
+      "frame": {
+        "x": 68,
+        "y": 2482,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.idle.e_01": {
+      "frame": {
+        "x": 68,
+        "y": 2516,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.idle.se_01": {
+      "frame": {
+        "x": 68,
+        "y": 2550,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.idle.s_01": {
+      "frame": {
+        "x": 68,
+        "y": 2584,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.idle.sw_01": {
+      "frame": {
+        "x": 68,
+        "y": 2618,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.idle.w_01": {
+      "frame": {
+        "x": 68,
+        "y": 2652,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
+    },
+    "crossbowsoldier.red.idle.nw_01": {
+      "frame": {
+        "x": 68,
+        "y": 2686,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 32
+      }
     }
   },
   "animations": {
@@ -8529,6 +15249,470 @@
     ],
     "swordsmen.red.idle.nw": [
       "swordsmen.red.idle.nw_01"
+    ],
+    "crossbowsoldier.blue.move.n": [
+      "crossbowsoldier.blue.move.n_01",
+      "crossbowsoldier.blue.move.n_02",
+      "crossbowsoldier.blue.move.n_03",
+      "crossbowsoldier.blue.move.n_04",
+      "crossbowsoldier.blue.move.n_05",
+      "crossbowsoldier.blue.move.n_06",
+      "crossbowsoldier.blue.move.n_07",
+      "crossbowsoldier.blue.move.n_08"
+    ],
+    "crossbowsoldier.blue.move.ne": [
+      "crossbowsoldier.blue.move.ne_01",
+      "crossbowsoldier.blue.move.ne_02",
+      "crossbowsoldier.blue.move.ne_03",
+      "crossbowsoldier.blue.move.ne_04",
+      "crossbowsoldier.blue.move.ne_05",
+      "crossbowsoldier.blue.move.ne_06",
+      "crossbowsoldier.blue.move.ne_07",
+      "crossbowsoldier.blue.move.ne_08"
+    ],
+    "crossbowsoldier.blue.move.e": [
+      "crossbowsoldier.blue.move.e_01",
+      "crossbowsoldier.blue.move.e_02",
+      "crossbowsoldier.blue.move.e_03",
+      "crossbowsoldier.blue.move.e_04",
+      "crossbowsoldier.blue.move.e_05",
+      "crossbowsoldier.blue.move.e_06",
+      "crossbowsoldier.blue.move.e_07",
+      "crossbowsoldier.blue.move.e_08"
+    ],
+    "crossbowsoldier.blue.move.se": [
+      "crossbowsoldier.blue.move.se_01",
+      "crossbowsoldier.blue.move.se_02",
+      "crossbowsoldier.blue.move.se_03",
+      "crossbowsoldier.blue.move.se_04",
+      "crossbowsoldier.blue.move.se_05",
+      "crossbowsoldier.blue.move.se_06",
+      "crossbowsoldier.blue.move.se_07",
+      "crossbowsoldier.blue.move.se_08"
+    ],
+    "crossbowsoldier.blue.move.s": [
+      "crossbowsoldier.blue.move.s_01",
+      "crossbowsoldier.blue.move.s_02",
+      "crossbowsoldier.blue.move.s_03",
+      "crossbowsoldier.blue.move.s_04",
+      "crossbowsoldier.blue.move.s_05",
+      "crossbowsoldier.blue.move.s_06",
+      "crossbowsoldier.blue.move.s_07",
+      "crossbowsoldier.blue.move.s_08"
+    ],
+    "crossbowsoldier.blue.move.sw": [
+      "crossbowsoldier.blue.move.sw_01",
+      "crossbowsoldier.blue.move.sw_02",
+      "crossbowsoldier.blue.move.sw_03",
+      "crossbowsoldier.blue.move.sw_04",
+      "crossbowsoldier.blue.move.sw_05",
+      "crossbowsoldier.blue.move.sw_06",
+      "crossbowsoldier.blue.move.sw_07",
+      "crossbowsoldier.blue.move.sw_08"
+    ],
+    "crossbowsoldier.blue.move.w": [
+      "crossbowsoldier.blue.move.w_01",
+      "crossbowsoldier.blue.move.w_02",
+      "crossbowsoldier.blue.move.w_03",
+      "crossbowsoldier.blue.move.w_04",
+      "crossbowsoldier.blue.move.w_05",
+      "crossbowsoldier.blue.move.w_06",
+      "crossbowsoldier.blue.move.w_07",
+      "crossbowsoldier.blue.move.w_08"
+    ],
+    "crossbowsoldier.blue.move.nw": [
+      "crossbowsoldier.blue.move.nw_01",
+      "crossbowsoldier.blue.move.nw_02",
+      "crossbowsoldier.blue.move.nw_03",
+      "crossbowsoldier.blue.move.nw_04",
+      "crossbowsoldier.blue.move.nw_05",
+      "crossbowsoldier.blue.move.nw_06",
+      "crossbowsoldier.blue.move.nw_07",
+      "crossbowsoldier.blue.move.nw_08"
+    ],
+    "crossbowsoldier.blue.attack.n": [
+      "crossbowsoldier.blue.attack.n_01",
+      "crossbowsoldier.blue.attack.n_02",
+      "crossbowsoldier.blue.attack.n_03",
+      "crossbowsoldier.blue.attack.n_04",
+      "crossbowsoldier.blue.attack.n_05",
+      "crossbowsoldier.blue.attack.n_06",
+      "crossbowsoldier.blue.attack.n_07",
+      "crossbowsoldier.blue.attack.n_08"
+    ],
+    "crossbowsoldier.blue.attack.ne": [
+      "crossbowsoldier.blue.attack.ne_01",
+      "crossbowsoldier.blue.attack.ne_02",
+      "crossbowsoldier.blue.attack.ne_03",
+      "crossbowsoldier.blue.attack.ne_04",
+      "crossbowsoldier.blue.attack.ne_05",
+      "crossbowsoldier.blue.attack.ne_06",
+      "crossbowsoldier.blue.attack.ne_07",
+      "crossbowsoldier.blue.attack.ne_08"
+    ],
+    "crossbowsoldier.blue.attack.e": [
+      "crossbowsoldier.blue.attack.e_01",
+      "crossbowsoldier.blue.attack.e_02",
+      "crossbowsoldier.blue.attack.e_03",
+      "crossbowsoldier.blue.attack.e_04",
+      "crossbowsoldier.blue.attack.e_05",
+      "crossbowsoldier.blue.attack.e_06",
+      "crossbowsoldier.blue.attack.e_07",
+      "crossbowsoldier.blue.attack.e_08"
+    ],
+    "crossbowsoldier.blue.attack.se": [
+      "crossbowsoldier.blue.attack.se_01",
+      "crossbowsoldier.blue.attack.se_02",
+      "crossbowsoldier.blue.attack.se_03",
+      "crossbowsoldier.blue.attack.se_04",
+      "crossbowsoldier.blue.attack.se_05",
+      "crossbowsoldier.blue.attack.se_06",
+      "crossbowsoldier.blue.attack.se_07",
+      "crossbowsoldier.blue.attack.se_08"
+    ],
+    "crossbowsoldier.blue.attack.s": [
+      "crossbowsoldier.blue.attack.s_01",
+      "crossbowsoldier.blue.attack.s_02",
+      "crossbowsoldier.blue.attack.s_03",
+      "crossbowsoldier.blue.attack.s_04",
+      "crossbowsoldier.blue.attack.s_05",
+      "crossbowsoldier.blue.attack.s_06",
+      "crossbowsoldier.blue.attack.s_07",
+      "crossbowsoldier.blue.attack.s_08"
+    ],
+    "crossbowsoldier.blue.attack.sw": [
+      "crossbowsoldier.blue.attack.sw_01",
+      "crossbowsoldier.blue.attack.sw_02",
+      "crossbowsoldier.blue.attack.sw_03",
+      "crossbowsoldier.blue.attack.sw_04",
+      "crossbowsoldier.blue.attack.sw_05",
+      "crossbowsoldier.blue.attack.sw_06",
+      "crossbowsoldier.blue.attack.sw_07",
+      "crossbowsoldier.blue.attack.sw_08"
+    ],
+    "crossbowsoldier.blue.attack.w": [
+      "crossbowsoldier.blue.attack.w_01",
+      "crossbowsoldier.blue.attack.w_02",
+      "crossbowsoldier.blue.attack.w_03",
+      "crossbowsoldier.blue.attack.w_04",
+      "crossbowsoldier.blue.attack.w_05",
+      "crossbowsoldier.blue.attack.w_06",
+      "crossbowsoldier.blue.attack.w_07",
+      "crossbowsoldier.blue.attack.w_08"
+    ],
+    "crossbowsoldier.blue.attack.nw": [
+      "crossbowsoldier.blue.attack.nw_01",
+      "crossbowsoldier.blue.attack.nw_02",
+      "crossbowsoldier.blue.attack.nw_03",
+      "crossbowsoldier.blue.attack.nw_04",
+      "crossbowsoldier.blue.attack.nw_05",
+      "crossbowsoldier.blue.attack.nw_06",
+      "crossbowsoldier.blue.attack.nw_07",
+      "crossbowsoldier.blue.attack.nw_08"
+    ],
+    "crossbowsoldier.blue.dead.n": [
+      "crossbowsoldier.blue.dead.n_01",
+      "crossbowsoldier.blue.dead.n_02",
+      "crossbowsoldier.blue.dead.n_03",
+      "crossbowsoldier.blue.dead.n_04"
+    ],
+    "crossbowsoldier.blue.dead.ne": [
+      "crossbowsoldier.blue.dead.ne_01",
+      "crossbowsoldier.blue.dead.ne_02",
+      "crossbowsoldier.blue.dead.ne_03",
+      "crossbowsoldier.blue.dead.ne_04"
+    ],
+    "crossbowsoldier.blue.dead.e": [
+      "crossbowsoldier.blue.dead.e_01",
+      "crossbowsoldier.blue.dead.e_02",
+      "crossbowsoldier.blue.dead.e_03",
+      "crossbowsoldier.blue.dead.e_04"
+    ],
+    "crossbowsoldier.blue.dead.se": [
+      "crossbowsoldier.blue.dead.se_01",
+      "crossbowsoldier.blue.dead.se_02",
+      "crossbowsoldier.blue.dead.se_03",
+      "crossbowsoldier.blue.dead.se_04"
+    ],
+    "crossbowsoldier.blue.dead.s": [
+      "crossbowsoldier.blue.dead.s_01",
+      "crossbowsoldier.blue.dead.s_02",
+      "crossbowsoldier.blue.dead.s_03",
+      "crossbowsoldier.blue.dead.s_04"
+    ],
+    "crossbowsoldier.blue.dead.sw": [
+      "crossbowsoldier.blue.dead.sw_01",
+      "crossbowsoldier.blue.dead.sw_02",
+      "crossbowsoldier.blue.dead.sw_03",
+      "crossbowsoldier.blue.dead.sw_04"
+    ],
+    "crossbowsoldier.blue.dead.w": [
+      "crossbowsoldier.blue.dead.w_01",
+      "crossbowsoldier.blue.dead.w_02",
+      "crossbowsoldier.blue.dead.w_03",
+      "crossbowsoldier.blue.dead.w_04"
+    ],
+    "crossbowsoldier.blue.dead.nw": [
+      "crossbowsoldier.blue.dead.nw_01",
+      "crossbowsoldier.blue.dead.nw_02",
+      "crossbowsoldier.blue.dead.nw_03",
+      "crossbowsoldier.blue.dead.nw_04"
+    ],
+    "crossbowsoldier.blue.idle.n": [
+      "crossbowsoldier.blue.idle.n_01"
+    ],
+    "crossbowsoldier.blue.idle.ne": [
+      "crossbowsoldier.blue.idle.ne_01"
+    ],
+    "crossbowsoldier.blue.idle.e": [
+      "crossbowsoldier.blue.idle.e_01"
+    ],
+    "crossbowsoldier.blue.idle.se": [
+      "crossbowsoldier.blue.idle.se_01"
+    ],
+    "crossbowsoldier.blue.idle.s": [
+      "crossbowsoldier.blue.idle.s_01"
+    ],
+    "crossbowsoldier.blue.idle.sw": [
+      "crossbowsoldier.blue.idle.sw_01"
+    ],
+    "crossbowsoldier.blue.idle.w": [
+      "crossbowsoldier.blue.idle.w_01"
+    ],
+    "crossbowsoldier.blue.idle.nw": [
+      "crossbowsoldier.blue.idle.nw_01"
+    ],
+    "crossbowsoldier.red.move.n": [
+      "crossbowsoldier.red.move.n_01",
+      "crossbowsoldier.red.move.n_02",
+      "crossbowsoldier.red.move.n_03",
+      "crossbowsoldier.red.move.n_04",
+      "crossbowsoldier.red.move.n_05",
+      "crossbowsoldier.red.move.n_06",
+      "crossbowsoldier.red.move.n_07",
+      "crossbowsoldier.red.move.n_08"
+    ],
+    "crossbowsoldier.red.move.ne": [
+      "crossbowsoldier.red.move.ne_01",
+      "crossbowsoldier.red.move.ne_02",
+      "crossbowsoldier.red.move.ne_03",
+      "crossbowsoldier.red.move.ne_04",
+      "crossbowsoldier.red.move.ne_05",
+      "crossbowsoldier.red.move.ne_06",
+      "crossbowsoldier.red.move.ne_07",
+      "crossbowsoldier.red.move.ne_08"
+    ],
+    "crossbowsoldier.red.move.e": [
+      "crossbowsoldier.red.move.e_01",
+      "crossbowsoldier.red.move.e_02",
+      "crossbowsoldier.red.move.e_03",
+      "crossbowsoldier.red.move.e_04",
+      "crossbowsoldier.red.move.e_05",
+      "crossbowsoldier.red.move.e_06",
+      "crossbowsoldier.red.move.e_07",
+      "crossbowsoldier.red.move.e_08"
+    ],
+    "crossbowsoldier.red.move.se": [
+      "crossbowsoldier.red.move.se_01",
+      "crossbowsoldier.red.move.se_02",
+      "crossbowsoldier.red.move.se_03",
+      "crossbowsoldier.red.move.se_04",
+      "crossbowsoldier.red.move.se_05",
+      "crossbowsoldier.red.move.se_06",
+      "crossbowsoldier.red.move.se_07",
+      "crossbowsoldier.red.move.se_08"
+    ],
+    "crossbowsoldier.red.move.s": [
+      "crossbowsoldier.red.move.s_01",
+      "crossbowsoldier.red.move.s_02",
+      "crossbowsoldier.red.move.s_03",
+      "crossbowsoldier.red.move.s_04",
+      "crossbowsoldier.red.move.s_05",
+      "crossbowsoldier.red.move.s_06",
+      "crossbowsoldier.red.move.s_07",
+      "crossbowsoldier.red.move.s_08"
+    ],
+    "crossbowsoldier.red.move.sw": [
+      "crossbowsoldier.red.move.sw_01",
+      "crossbowsoldier.red.move.sw_02",
+      "crossbowsoldier.red.move.sw_03",
+      "crossbowsoldier.red.move.sw_04",
+      "crossbowsoldier.red.move.sw_05",
+      "crossbowsoldier.red.move.sw_06",
+      "crossbowsoldier.red.move.sw_07",
+      "crossbowsoldier.red.move.sw_08"
+    ],
+    "crossbowsoldier.red.move.w": [
+      "crossbowsoldier.red.move.w_01",
+      "crossbowsoldier.red.move.w_02",
+      "crossbowsoldier.red.move.w_03",
+      "crossbowsoldier.red.move.w_04",
+      "crossbowsoldier.red.move.w_05",
+      "crossbowsoldier.red.move.w_06",
+      "crossbowsoldier.red.move.w_07",
+      "crossbowsoldier.red.move.w_08"
+    ],
+    "crossbowsoldier.red.move.nw": [
+      "crossbowsoldier.red.move.nw_01",
+      "crossbowsoldier.red.move.nw_02",
+      "crossbowsoldier.red.move.nw_03",
+      "crossbowsoldier.red.move.nw_04",
+      "crossbowsoldier.red.move.nw_05",
+      "crossbowsoldier.red.move.nw_06",
+      "crossbowsoldier.red.move.nw_07",
+      "crossbowsoldier.red.move.nw_08"
+    ],
+    "crossbowsoldier.red.attack.n": [
+      "crossbowsoldier.red.attack.n_01",
+      "crossbowsoldier.red.attack.n_02",
+      "crossbowsoldier.red.attack.n_03",
+      "crossbowsoldier.red.attack.n_04",
+      "crossbowsoldier.red.attack.n_05",
+      "crossbowsoldier.red.attack.n_06",
+      "crossbowsoldier.red.attack.n_07",
+      "crossbowsoldier.red.attack.n_08"
+    ],
+    "crossbowsoldier.red.attack.ne": [
+      "crossbowsoldier.red.attack.ne_01",
+      "crossbowsoldier.red.attack.ne_02",
+      "crossbowsoldier.red.attack.ne_03",
+      "crossbowsoldier.red.attack.ne_04",
+      "crossbowsoldier.red.attack.ne_05",
+      "crossbowsoldier.red.attack.ne_06",
+      "crossbowsoldier.red.attack.ne_07",
+      "crossbowsoldier.red.attack.ne_08"
+    ],
+    "crossbowsoldier.red.attack.e": [
+      "crossbowsoldier.red.attack.e_01",
+      "crossbowsoldier.red.attack.e_02",
+      "crossbowsoldier.red.attack.e_03",
+      "crossbowsoldier.red.attack.e_04",
+      "crossbowsoldier.red.attack.e_05",
+      "crossbowsoldier.red.attack.e_06",
+      "crossbowsoldier.red.attack.e_07",
+      "crossbowsoldier.red.attack.e_08"
+    ],
+    "crossbowsoldier.red.attack.se": [
+      "crossbowsoldier.red.attack.se_01",
+      "crossbowsoldier.red.attack.se_02",
+      "crossbowsoldier.red.attack.se_03",
+      "crossbowsoldier.red.attack.se_04",
+      "crossbowsoldier.red.attack.se_05",
+      "crossbowsoldier.red.attack.se_06",
+      "crossbowsoldier.red.attack.se_07",
+      "crossbowsoldier.red.attack.se_08"
+    ],
+    "crossbowsoldier.red.attack.s": [
+      "crossbowsoldier.red.attack.s_01",
+      "crossbowsoldier.red.attack.s_02",
+      "crossbowsoldier.red.attack.s_03",
+      "crossbowsoldier.red.attack.s_04",
+      "crossbowsoldier.red.attack.s_05",
+      "crossbowsoldier.red.attack.s_06",
+      "crossbowsoldier.red.attack.s_07",
+      "crossbowsoldier.red.attack.s_08"
+    ],
+    "crossbowsoldier.red.attack.sw": [
+      "crossbowsoldier.red.attack.sw_01",
+      "crossbowsoldier.red.attack.sw_02",
+      "crossbowsoldier.red.attack.sw_03",
+      "crossbowsoldier.red.attack.sw_04",
+      "crossbowsoldier.red.attack.sw_05",
+      "crossbowsoldier.red.attack.sw_06",
+      "crossbowsoldier.red.attack.sw_07",
+      "crossbowsoldier.red.attack.sw_08"
+    ],
+    "crossbowsoldier.red.attack.w": [
+      "crossbowsoldier.red.attack.w_01",
+      "crossbowsoldier.red.attack.w_02",
+      "crossbowsoldier.red.attack.w_03",
+      "crossbowsoldier.red.attack.w_04",
+      "crossbowsoldier.red.attack.w_05",
+      "crossbowsoldier.red.attack.w_06",
+      "crossbowsoldier.red.attack.w_07",
+      "crossbowsoldier.red.attack.w_08"
+    ],
+    "crossbowsoldier.red.attack.nw": [
+      "crossbowsoldier.red.attack.nw_01",
+      "crossbowsoldier.red.attack.nw_02",
+      "crossbowsoldier.red.attack.nw_03",
+      "crossbowsoldier.red.attack.nw_04",
+      "crossbowsoldier.red.attack.nw_05",
+      "crossbowsoldier.red.attack.nw_06",
+      "crossbowsoldier.red.attack.nw_07",
+      "crossbowsoldier.red.attack.nw_08"
+    ],
+    "crossbowsoldier.red.dead.n": [
+      "crossbowsoldier.red.dead.n_01",
+      "crossbowsoldier.red.dead.n_02",
+      "crossbowsoldier.red.dead.n_03",
+      "crossbowsoldier.red.dead.n_04"
+    ],
+    "crossbowsoldier.red.dead.ne": [
+      "crossbowsoldier.red.dead.ne_01",
+      "crossbowsoldier.red.dead.ne_02",
+      "crossbowsoldier.red.dead.ne_03",
+      "crossbowsoldier.red.dead.ne_04"
+    ],
+    "crossbowsoldier.red.dead.e": [
+      "crossbowsoldier.red.dead.e_01",
+      "crossbowsoldier.red.dead.e_02",
+      "crossbowsoldier.red.dead.e_03",
+      "crossbowsoldier.red.dead.e_04"
+    ],
+    "crossbowsoldier.red.dead.se": [
+      "crossbowsoldier.red.dead.se_01",
+      "crossbowsoldier.red.dead.se_02",
+      "crossbowsoldier.red.dead.se_03",
+      "crossbowsoldier.red.dead.se_04"
+    ],
+    "crossbowsoldier.red.dead.s": [
+      "crossbowsoldier.red.dead.s_01",
+      "crossbowsoldier.red.dead.s_02",
+      "crossbowsoldier.red.dead.s_03",
+      "crossbowsoldier.red.dead.s_04"
+    ],
+    "crossbowsoldier.red.dead.sw": [
+      "crossbowsoldier.red.dead.sw_01",
+      "crossbowsoldier.red.dead.sw_02",
+      "crossbowsoldier.red.dead.sw_03",
+      "crossbowsoldier.red.dead.sw_04"
+    ],
+    "crossbowsoldier.red.dead.w": [
+      "crossbowsoldier.red.dead.w_01",
+      "crossbowsoldier.red.dead.w_02",
+      "crossbowsoldier.red.dead.w_03",
+      "crossbowsoldier.red.dead.w_04"
+    ],
+    "crossbowsoldier.red.dead.nw": [
+      "crossbowsoldier.red.dead.nw_01",
+      "crossbowsoldier.red.dead.nw_02",
+      "crossbowsoldier.red.dead.nw_03",
+      "crossbowsoldier.red.dead.nw_04"
+    ],
+    "crossbowsoldier.red.idle.n": [
+      "crossbowsoldier.red.idle.n_01"
+    ],
+    "crossbowsoldier.red.idle.ne": [
+      "crossbowsoldier.red.idle.ne_01"
+    ],
+    "crossbowsoldier.red.idle.e": [
+      "crossbowsoldier.red.idle.e_01"
+    ],
+    "crossbowsoldier.red.idle.se": [
+      "crossbowsoldier.red.idle.se_01"
+    ],
+    "crossbowsoldier.red.idle.s": [
+      "crossbowsoldier.red.idle.s_01"
+    ],
+    "crossbowsoldier.red.idle.sw": [
+      "crossbowsoldier.red.idle.sw_01"
+    ],
+    "crossbowsoldier.red.idle.w": [
+      "crossbowsoldier.red.idle.w_01"
+    ],
+    "crossbowsoldier.red.idle.nw": [
+      "crossbowsoldier.red.idle.nw_01"
     ]
   },
   "meta": {
@@ -8537,7 +15721,7 @@
     "format": "RGBA8888",
     "size": {
       "w": 406,
-      "h": 1630
+      "h": 3262
     },
     "scale": 1
   }

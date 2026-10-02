@@ -43,7 +43,9 @@ describe('loadUnitSprites', () => {
     for (const unit of SPRITE_UNIT_TYPES) {
       const data = sprites.get(unit)!;
       expect(data.manifest).toEqual(committedManifest(unit));
-      expect(data.animations[`${unit}.red.attack.se`]).toHaveLength(12);
+      expect(data.animations[`${unit}.red.attack.se`]).toHaveLength(
+        data.manifest.actions.attack!.frames
+      );
     }
     expect(src.loadAtlas).toHaveBeenCalledWith(publicUrl(UNIT_ATLAS_PATH));
     for (const unit of SPRITE_UNIT_TYPES) {
