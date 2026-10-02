@@ -3,13 +3,13 @@ import { describe, expect, it } from 'vitest';
 import { animationSpeed, isSpriteUnitType, SPRITE_UNIT_TYPES } from './unit-sprites';
 
 describe('SPRITE_UNIT_TYPES', () => {
-  it('renders swordsmen and crossbow soldiers as sprites', () => {
-    expect(SPRITE_UNIT_TYPES).toEqual(['swordsmen', 'crossbowsoldier']);
+  it('renders swordsmen, crossbow soldiers and knights as sprites', () => {
+    expect(SPRITE_UNIT_TYPES).toEqual(['swordsmen', 'crossbowsoldier', 'knight']);
   });
 
   it('is what isSpriteUnitType decides by', () => {
     expect(isSpriteUnitType('swordsmen')).toBe(true);
-    expect(isSpriteUnitType('knight')).toBe(false);
+    expect(isSpriteUnitType('knight')).toBe(true);
     expect(isSpriteUnitType('crossbowsoldier')).toBe(true);
     expect(isSpriteUnitType(undefined)).toBe(false);
   });

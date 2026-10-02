@@ -120,7 +120,7 @@ describe.each(units)('committed %s manifest', (unit) => {
   });
 });
 
-describe.each(['swordsmen', 'crossbowsoldier'] as const)('committed %s timing', (unit) => {
+describe.each(['swordsmen', 'crossbowsoldier', 'knight'] as const)('committed %s timing', (unit) => {
   const { actions } = parseUnitManifest(readJson(unitManifestPath(unit)));
   const seconds = (action: 'attack' | 'dead') =>
     actions[action]!.frames / actions[action]!.fps;

@@ -5,6 +5,7 @@ import type { UnitManifest } from '~/game/render/sprites/unit-manifest';
 import {
   animationOptions,
   atlasUnits,
+  previewZoom,
   resolveSelection,
   selectionFromParams,
 } from './unit-preview-options';
@@ -126,5 +127,21 @@ describe('selectionFromParams', () => {
 
   it('leaves out missing parameters and ignores a malformed loop', () => {
     expect(selectionFromParams(new URLSearchParams('loop=yes'))).toEqual({});
+  });
+});
+
+describe('previewZoom', () => {
+  it('keeps the 8x zoom for 32 px frames', () => {
+    expect(previewZoom(384, [32, 32])).toBe(8);
+  });
+
+  it('zooms 64 px frames out so the whole frame fits the canvas', () => {
+    const zoom = previewZoom(384, [64, 64]);
+    expect(zoom).toBe(4);
+    expect(64 * zoom).toBeLessThanOrEqual(384);
+  });
+
+  it('never drops below 1x', () => {
+    expect(previewZoom(384, [1000, 1000])).toBe(1);
   });
 });
