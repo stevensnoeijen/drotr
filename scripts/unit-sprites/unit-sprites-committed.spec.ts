@@ -16,6 +16,8 @@ import {
   unitManifestPath,
   validateUnitManifest,
 } from '~/game/render/sprites/unit-manifest';
+import { MAX_SWING_SECONDS } from '~/game/systems/combat-system';
+import { DEATH_REMOVAL_DELAY_SECONDS } from '~/game/systems/death-system';
 import { TEAL_COLOR_KEY } from '~/lib/art/rgba';
 import { decodePcx } from '~/lib/art/pcx';
 import { hasCdFile, readCdFile } from '~/test/cd-assets';
@@ -134,5 +136,21 @@ describe.each(units)('committed %s manifest', (unit) => {
       key.startsWith(`${unit}.`)
     );
     expect(own).toHaveLength(expected);
+  });
+});
+
+describe('committed swordsmen timing', () => {
+  const { actions } = parseUnitManifest(readJson(unitManifestPath('swordsmen')));
+  const seconds = (action: 'attack' | 'dead') =>
+    actions[action]!.frames / actions[action]!.fps;
+
+  it('plays the attack within one swing and lands the hit on a real frame', () => {
+    expect(seconds('attack')).toBeLessThanOrEqual(MAX_SWING_SECONDS);
+    expect(actions.attack!.hitFrame).toBeLessThan(actions.attack!.frames);
+  });
+
+  it('finishes dying and holds its last frame before the corpse is removed', () => {
+    expect(actions.dead!.holdLast).toBe(true);
+    expect(seconds('dead')).toBeLessThan(DEATH_REMOVAL_DELAY_SECONDS);
   });
 });
