@@ -40,11 +40,11 @@ function spriteOf(parent: Container, index = 0): AnimatedSprite {
   return body as AnimatedSprite;
 }
 
-/** Advances a playing sprite as the shared ticker would, by `frames` of 15 fps animation. */
+/** Advances a playing sprite as the shared ticker would, by `frames` of its own fps. */
 function advance(sprite: AnimatedSprite, frames: number): void {
-  // At the 15 fps placeholder speed (0.25 per 60 Hz tick), one animation
-  // frame is four ticks.
-  sprite.update({ deltaTime: 4 * frames } as Ticker);
+  // Pixi advances `animationSpeed` frames per 60 Hz tick; the small nudge
+  // keeps float rounding from stopping a frame short.
+  sprite.update({ deltaTime: (frames + 1e-6) / sprite.animationSpeed } as Ticker);
 }
 
 const animation = (key: string) => sheet.animations[key];
@@ -170,7 +170,9 @@ describe('RenderSystem sprite views', () => {
 
       expect(spriteOf(parent)).toBe(sprite);
       expect(sprite.textures).toBe(animation('swordsmen.blue.move.e'));
-      expect(sprite.animationSpeed).toBe(0.25);
+      expect(sprite.animationSpeed).toBeCloseTo(
+        sprites.get('swordsmen')!.manifest.actions.move!.fps / 60
+      );
       expect(sprite.loop).toBe(true);
       expect(sprite.playing).toBe(true);
       expect(sprite.currentFrame).toBe(0);

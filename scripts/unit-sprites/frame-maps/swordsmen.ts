@@ -89,13 +89,23 @@ export const SWORDSMEN_FRAME_MAP: UnitFrameMap = {
   // The figure is drawn centred in its cell (top-down view): the opaque
   // pixels of the idle frames centre on about (15.5, 15).
   anchor: [0.5, 0.5],
-  // The old animation models played every action at Pixi speed 0.25, i.e.
-  // 15 fps on the 60 Hz ticker; kept until real timings are measured.
+  // Timings come from the simulation: a swing is flagged for
+  // MAX_SWING_SECONDS (0.5 s) and the renderer restarts the attack on the
+  // tick CombatSystem applies damage, so 12 frames at 24 fps fill exactly one
+  // swing and the unit is back on idle as the swing flag clears. The blade
+  // is fully extended on 0-based frame 3 (frame 7 is the follow-through);
+  // damage lands at swing start, so hitFrame marks the visual contact about
+  // 125 ms in. Move: 8 frames at 10 fps is 0.8 s per cycle, about 1.6 cells
+  // at the swordsmen's 2 cells/s, so feet do not skate. Dead: 4 frames at
+  // 8 fps is 0.5 s, then holdLast keeps the corpse on its final frame for the
+  // 300 s DEATH_REMOVAL_DELAY_SECONDS. Frames are 32x32 and the figure is
+  // centred in them (opaque pixels centre on about (15.5, 15)), so the
+  // anchor stays at the frame centre.
   playback: {
     idle: { fps: 0, loop: false },
-    move: { fps: 15, loop: true },
-    attack: { fps: 15, loop: false },
-    dead: { fps: 15, loop: false, holdLast: true },
+    move: { fps: 10, loop: true },
+    attack: { fps: 24, loop: false, hitFrame: 3 },
+    dead: { fps: 8, loop: false, holdLast: true },
   },
   teams: {
     blue: {

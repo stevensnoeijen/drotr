@@ -20,17 +20,18 @@
     },
     "move": {
       "frames": 8,
-      "fps": 15,
+      "fps": 10,
       "loop": true
     },
     "attack": {
       "frames": 12,
-      "fps": 15,
-      "loop": false
+      "fps": 24,
+      "loop": false,
+      "hitFrame": 3
     },
     "dead": {
       "frames": 4,
-      "fps": 15,
+      "fps": 8,
       "loop": false,
       "holdLast": true
     }
