@@ -21,9 +21,6 @@ import {
  * `buildTerrainTilesetXml`. The `.png` only gets spot checks: its size, a
  * handful of tiles against recorded hashes, and which slots are filled or
  * transparent. So a `.png` that has drifted elsewhere can still pass here.
- * The full pixel comparison against a fresh build off the real `BATTLE.ART`
- * lives in the golden suite (`terrain-tileset-golden.spec.ts`), which skips
- * without `.cd/`.
  */
 
 const MAPS_DIR = path.join(process.cwd(), 'public', 'maps');

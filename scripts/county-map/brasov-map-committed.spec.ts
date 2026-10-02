@@ -11,9 +11,7 @@ import {
 
 /**
  * Tests against the **committed** `public/maps/brasov.tmj` itself. These need
- * no `.cd/` data, so they always run (CI included). That the file is exactly
- * what the converter produces from the real `BRASOV.MAP` is checked by the
- * golden suite (`county-map-golden.spec.ts`), which skips without `.cd/`.
+ * no `.cd/` data, so they always run (CI included).
  */
 
 const MAPS_DIR = path.join(process.cwd(), 'public', 'maps');

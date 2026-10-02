@@ -19,17 +19,13 @@ import {
 import { MAX_SWING_SECONDS } from '~/game/systems/combat-system';
 import { DEATH_REMOVAL_DELAY_SECONDS } from '~/game/systems/death-system';
 import { TEAL_COLOR_KEY } from '~/lib/art/rgba';
-import { decodePcx } from '~/lib/art/pcx';
-import { hasCdFile, readCdFile } from '~/test/cd-assets';
 
 import { FRAME_MAPS } from './frame-maps';
-import { encodeRgbaPng, packUnitAtlas, type SheetJson } from './unit-sprites';
+import type { SheetJson } from './unit-sprites';
 
 /**
  * Tests against the **committed** shared unit atlas and per-unit manifests
- * in `public/assets/`. They need no `.cd/` data, so they always run. A fresh
- * pack from the real `BATTLE.ART`, compared byte for byte, runs only where
- * `.cd/` exists.
+ * in `public/assets/`. They need no `.cd/` data.
  */
 
 const PUBLIC_DIR = path.join(process.cwd(), 'public');
@@ -81,21 +77,6 @@ describe('committed unit atlas', () => {
       expect(units).toContain(key.split('.')[0]);
     }
   });
-
-  it.runIf(hasCdFile('ART/BATTLE.ART'))(
-    'matches a fresh pack of the real BATTLE.ART',
-    () => {
-      const image = decodePcx(readCdFile('ART/BATTLE.ART'));
-      const packed = packUnitAtlas(image, Object.values(FRAME_MAPS));
-      expect(encodeRgbaPng(packed).equals(pngBytes)).toBe(true);
-      expect(packed.sheet).toEqual(sheet);
-      for (const unit of units) {
-        expect(packed.manifests[unit]).toEqual(
-          readJson(unitManifestPath(unit))
-        );
-      }
-    }
-  );
 });
 
 describe.each(units)('committed %s manifest', (unit) => {

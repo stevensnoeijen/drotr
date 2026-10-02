@@ -2,11 +2,9 @@
  * SHA-256 of a handful of `ART/BATTLE.ART` tiles' decoded RGBA bytes,
  * colour key resolved to alpha.
  *
- * Recorded once here and shared by every spec that needs to pin real tile
- * pixels — `battle-art.spec.ts` (decoding straight off the atlas) and the
- * terrain tileset's committed-file spec (decoding the same tiles back out
- * of `public/maps/terrain.png`, where they carry the same ids for indices
- * 0–1471). Only hashes are recorded, never pixels, so nothing here
+ * Recorded once here and used by the terrain tileset's committed-file spec to pin
+ * real tile pixels (decoding tiles back out of `public/maps/terrain.png`,
+ * where they carry the same ids as in the atlas for indices 0–1471). Only hashes are recorded, never pixels, so nothing here
  * reproduces the original artwork.
  */
 export const GOLDEN_TILE_HASHES: Readonly<Record<number, string>> = {

@@ -16,8 +16,8 @@
  *   files), and `lo` is always 0.
  *
  * The parser keeps only those two meaningful fields and doesn't validate
- * the always-zero ones; that invariant is checked against the real files by
- * the golden tests instead.
+ * the always-zero ones; that invariant was checked against the real files
+ * when the format was reverse-engineered (see `docs/MAP_FORMAT.md`).
  */
 
 /** Exact size of every county `.MAP` file, in bytes. */
