@@ -42,6 +42,14 @@ interface LoadedSheet {
 }
 
 const SCALE = 3;
+
+/** Largest edge, in CSS pixels, a preview box may have, so big frames still fit. */
+const MAX_PREVIEW_PX = 96;
+
+/** Zoom for a unit's frames: {@link SCALE}, shrunk so the frame fits {@link MAX_PREVIEW_PX}. */
+function previewScale(size: readonly [number, number]): number {
+  return Math.min(SCALE, MAX_PREVIEW_PX / Math.max(size[0], size[1]));
+}
 const TICK_MS = 1000 / 30;
 /** Old sheet location, kept only for the side-by-side comparison. */
 const OLD_SHEET_PATH = '/assets/unit-spritesheet.json';
@@ -113,9 +121,10 @@ function Frame({
   size: [number, number];
 }) {
   const entry = sheet.json.frames[name];
+  const scale = previewScale(size);
   const box: CSSProperties = {
-    width: size[0] * SCALE,
-    height: size[1] * SCALE,
+    width: size[0] * scale,
+    height: size[1] * scale,
   };
   if (!entry) {
     return (
@@ -142,13 +151,13 @@ function Frame({
       <div
         className="absolute [image-rendering:pixelated]"
         style={{
-          left: offset.x * SCALE,
-          top: offset.y * SCALE,
-          width: frame.w * SCALE,
-          height: frame.h * SCALE,
+          left: offset.x * scale,
+          top: offset.y * scale,
+          width: frame.w * scale,
+          height: frame.h * scale,
           backgroundImage: `url(${sheet.imageUrl})`,
-          backgroundPosition: `-${frame.x * SCALE}px -${frame.y * SCALE}px`,
-          backgroundSize: `${w * SCALE}px ${h * SCALE}px`,
+          backgroundPosition: `-${frame.x * scale}px -${frame.y * scale}px`,
+          backgroundSize: `${w * scale}px ${h * scale}px`,
         }}
       />
     </div>
@@ -189,6 +198,7 @@ function AnimationRow({
   fps: number;
   elapsedMs: number;
 }) {
+  const scale = previewScale(size);
   const current =
     names.length > 0
       ? names[Math.floor((elapsedMs / 1000) * fps) % names.length]
@@ -201,7 +211,7 @@ function AnimationRow({
       {current ? (
         <Frame sheet={sheet} name={current} size={size} />
       ) : (
-        <div style={{ width: size[0] * SCALE }} />
+        <div style={{ width: size[0] * scale }} />
       )}
       <FrameStrip sheet={sheet} names={names} size={size} />
     </div>

@@ -75,6 +75,23 @@ describe('UnitSprites contact sheet', () => {
     ).not.toBeNull();
   });
 
+  it('zooms each unit out so its whole frame fits the preview box', async () => {
+    await render(root, { unit: 'swordsmen' });
+    const small = container.querySelector<HTMLElement>(
+      '[data-animation="swordsmen.blue.move.s"] [data-frame]'
+    )!;
+    expect(small.style.width).toBe('96px');
+    act(() => root.unmount());
+    root = createRoot(container);
+    await render(root, { unit: 'knight' });
+    const big = container.querySelector<HTMLElement>(
+      '[data-animation="knight.blue.move.s"] [data-frame]'
+    )!;
+    // A 64 px frame is shown at 1.5x rather than 3x, so it is 96 px, not 192.
+    expect(big.style.width).toBe('96px');
+    expect(big.style.height).toBe('96px');
+  });
+
   it('adds the old sheet frames underneath when comparing', async () => {
     await render(root, { unit: 'swordsmen', compare: true });
     const old = container.querySelector(
