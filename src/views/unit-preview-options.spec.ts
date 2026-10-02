@@ -77,6 +77,20 @@ describe('resolveSelection', () => {
     });
   });
 
+  it('loops attack by default but lets an explicit loop override it', () => {
+    const request = { unit: 'knight', action: 'attack' } as const;
+    expect(resolveSelection(units, manifests, request)?.loop).toBe(true);
+    expect(
+      resolveSelection(units, manifests, { ...request, loop: false })?.loop
+    ).toBe(false);
+  });
+
+  it('keeps dead playing once by default', () => {
+    expect(resolveSelection(units, manifests, { action: 'dead' })?.loop).toBe(
+      false
+    );
+  });
+
   it('falls back to the first option for anything the unit lacks', () => {
     expect(
       resolveSelection(units, manifests, {
