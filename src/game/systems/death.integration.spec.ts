@@ -18,6 +18,7 @@ import { createMoveVelocitySystem } from './move-velocity-system';
 import { createPerceptionSystem, runPerceptionScan } from './perception-system';
 import { createSeekSystem } from './seek-system';
 import { DEFAULT_CELL_SIZE } from '~/lib/grid';
+import { committedUnitSprites } from '~/test/unit-sprites-fixture';
 
 /**
  * End-to-end coverage for the visual milestone: a scripted battle run to
@@ -41,7 +42,14 @@ describe('death + render cleanup integration', () => {
     const world = new World<Entity>();
     const queries = createQueries(world);
     const parent = new Container();
-    const renderSystem = new RenderSystem(queries.renderable, parent);
+    // Swordsmen are drawn as sprites, so the render system needs the atlas
+    // data the game would have loaded.
+    const renderSystem = new RenderSystem(
+      queries.renderable,
+      parent,
+      false,
+      committedUnitSprites()
+    );
     new DeathCleanupSystem(world);
 
     const blue = spawnUnit(

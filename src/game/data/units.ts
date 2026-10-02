@@ -7,8 +7,9 @@ import knightData from './units/knight.json';
 /**
  * The kinds of unit in the game. Names and starting HP match
  * `public/assets/entity-definitions.json` (the original game's unit roster),
- * so `unitType` stays stable once real sprites replace these primitives in
- * the asset-integration phase.
+ * so `unitType` stays stable as real sprites replace these primitives in
+ * the asset-integration phase (see `SPRITE_UNIT_TYPES` for which units
+ * already have).
  */
 export const UNIT_TYPES = ['swordsmen', 'knight', 'crossbowsoldier'] as const;
 export type UnitType = (typeof UNIT_TYPES)[number];

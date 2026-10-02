@@ -101,11 +101,3 @@ export function selectionFromParams(
   if (loop === '1' || loop === '0') requested.loop = loop === '1';
   return requested;
 }
-
-/** Pixi's ticker runs at 60 frames per second by default. */
-const TICKER_FPS = 60;
-
-/** Converts a manifest `fps` into an `AnimatedSprite.animationSpeed`. */
-export function animationSpeed(fps: number): number {
-  return fps / TICKER_FPS;
-}

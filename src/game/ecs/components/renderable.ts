@@ -1,6 +1,12 @@
 import type { Shape } from '~/game/ecs/components/shape';
 
-/** Data describing how an entity should be drawn. The view is read-only. */
+/**
+ * Data describing how an entity should be drawn. The view is read-only.
+ * Sprite unit types (`SPRITE_UNIT_TYPES`) are drawn from their animation
+ * frames instead of `shape`, but still carry the full set: `size` drives
+ * hit-testing, `color` the unit-info tooltip, and `extent` the overlays and
+ * the sprite's scale.
+ */
 export interface Renderable {
   shape: Shape;
   /** RGB colour, e.g. `0x66ccff`. */

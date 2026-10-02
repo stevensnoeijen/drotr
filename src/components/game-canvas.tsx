@@ -12,6 +12,8 @@ import { mapLayerInfo, type TileLayerInfo } from '~/game/map/tile-layer-visibili
 import { applyViewportBounds, createGameViewport } from '~/game/render/create-game-viewport';
 import { createMapRenderSystem, type MapRenderSystem } from '~/game/render/map-render-system';
 import { RenderSystem } from '~/game/render/render-system';
+import { loadUnitSprites } from '~/game/render/sprites/load-unit-sprites';
+import type { UnitSprites } from '~/game/render/sprites/unit-sprites';
 import { visibleWorldRect } from '~/game/render/tile-chunks';
 import { drawTargetLines } from '~/game/render/target-lines';
 import { drawMoveLines } from '~/game/render/move-lines';
@@ -88,8 +90,9 @@ export interface GameCanvasProps {
    * Called once, instead of ever calling `scenario.setup`, when
    * `scenario.validateMap` rejects the loaded map (or its absence) as
    * unusable for this scenario — e.g. a scenario that needs named spawn
-   * points the selected map doesn't have. The message is meant to be shown
-   * to the user.
+   * points the selected map doesn't have — or when the unit sprites (the
+   * shared atlas or a sprite unit's manifest) fail to load or don't match.
+   * The message is meant to be shown to the user.
    */
   onError?: (message: string) => void;
   /** Called whenever the camera pans or zooms, with its latest transform. */
@@ -191,6 +194,15 @@ export default function GameCanvas({
     const loop = new GameLoop({ update: (dt) => runner.run(world, dt) });
 
     (async () => {
+      // Every sprite unit type's frames and manifest, loaded on every mount
+      // whether or not the scenario spawns any of them (the atlas itself
+      // comes from Pixi's `Assets` cache after the first load). Started
+      // first so it overlaps the app and map setup below; awaited before
+      // the render system is built. The no-op catch only keeps an early
+      // rejection from being reported as unhandled before it's awaited.
+      const spritesLoad = loadUnitSprites();
+      spritesLoad.catch(() => {});
+
       const instance = new Application();
       await instance.init({
         resizeTo: container,
@@ -301,6 +313,23 @@ export default function GameCanvas({
       // no occupancy.
       const { cellSize, navigationGrid, occupancyGrid } = createMapNavigation(map);
 
+      // Sprite units can't be drawn without their frames, and there's no
+      // fallback to a shape for them, so a failed load ends the game here:
+      // nothing is spawned and the caller shows the error instead.
+      let sprites: UnitSprites;
+      try {
+        sprites = await spritesLoad;
+      } catch (error) {
+        if (!cancelled) {
+          console.error('Failed to load unit sprites:', error);
+          onErrorRef.current?.(error instanceof Error ? error.message : String(error));
+        }
+        return;
+      }
+      if (cancelled) {
+        return;
+      }
+
       // Reactively mirrors `queries.renderable` into Pixi views: it must be
       // live before any spawning happens below so every unit — whether
       // added by the map's spawns or by the scenario's own setup — gets a
@@ -308,7 +337,8 @@ export default function GameCanvas({
       renderSystem = new RenderSystem(
         queries.renderable,
         entitiesLayer,
-        debugFlagsRef.current?.has('health') ?? false
+        debugFlagsRef.current?.has('health') ?? false,
+        sprites
       );
       syncHealthBarsRef.current = () => {
         renderSystem?.setHealthBarsVisible(debugFlagsRef.current?.has('health') ?? false);

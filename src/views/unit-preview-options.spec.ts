@@ -4,7 +4,6 @@ import type { UnitManifest } from '~/game/render/sprites/unit-manifest';
 
 import {
   animationOptions,
-  animationSpeed,
   atlasUnits,
   resolveSelection,
   selectionFromParams,
@@ -127,12 +126,5 @@ describe('selectionFromParams', () => {
 
   it('leaves out missing parameters and ignores a malformed loop', () => {
     expect(selectionFromParams(new URLSearchParams('loop=yes'))).toEqual({});
-  });
-});
-
-describe('animationSpeed', () => {
-  it('converts manifest fps to a speed on the 60 Hz ticker', () => {
-    expect(animationSpeed(15)).toBe(0.25);
-    expect(animationSpeed(0)).toBe(0);
   });
 });
