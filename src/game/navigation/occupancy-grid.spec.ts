@@ -384,6 +384,103 @@ describe('asBlockedGridExcluding', () => {
   });
 });
 
+describe('asBlockedGridExcluding for a multi-cell footprint', () => {
+  const TWO_BY_TWO = { width: 2, height: 2 };
+
+  /** The snapshot rendered as art, so expectations read as pictures. */
+  const artOf = (snapshot: { width: number; height: number; collision: Uint8Array }) =>
+    Array.from({ length: snapshot.height }, (_, y) =>
+      Array.from({ length: snapshot.width }, (_, x) =>
+        snapshot.collision[y * snapshot.width + x] ? '#' : '.'
+      ).join('')
+    );
+
+  it('is the plain snapshot for a single cell', () => {
+    const grid = open();
+    grid.reserve(grid.indexOf(2, 2), 7);
+
+    expect(artOf(grid.asBlockedGridExcluding(1, { width: 1, height: 1 }))).toEqual(
+      artOf(grid.asBlockedGridExcluding(1))
+    );
+  });
+
+  it('blocks an anchor when its block would hang off the grid', () => {
+    expect(artOf(open().asBlockedGridExcluding(1, TWO_BY_TWO))).toEqual([
+      '....#',
+      '....#',
+      '....#',
+      '....#',
+      '#####',
+    ]);
+  });
+
+  it('blocks an anchor when any cell of its block is terrain', () => {
+    const grid = new OccupancyGrid(
+      gridFrom(`
+        .....
+        .....
+        ..#..
+        .....
+        .....
+      `),
+      DEFAULT_CELL_SIZE
+    );
+
+    expect(artOf(grid.asBlockedGridExcluding(1, TWO_BY_TWO))).toEqual([
+      '....#',
+      '.##.#',
+      '.##.#',
+      '....#',
+      '#####',
+    ]);
+  });
+
+  it('blocks every anchor whose block would overlap another unit', () => {
+    const grid = open();
+    grid.reserve(grid.indexOf(2, 2), 7);
+
+    expect(artOf(grid.asBlockedGridExcluding(1, TWO_BY_TWO))).toEqual([
+      '....#',
+      '.##.#',
+      '.##.#',
+      '....#',
+      '#####',
+    ]);
+  });
+
+  it('blocks anchors for a unit held in a corner without wrapping rows', () => {
+    const grid = open();
+    grid.reserve(grid.indexOf(0, 1), 7);
+
+    expect(artOf(grid.asBlockedGridExcluding(1, TWO_BY_TWO))).toEqual([
+      '#...#',
+      '#...#',
+      '....#',
+      '....#',
+      '#####',
+    ]);
+  });
+
+  it("never counts the excluded unit's own block against it", () => {
+    const grid = open();
+    grid.reserveBlock(grid.indexOf(1, 1), TWO_BY_TWO, 1);
+
+    expect(artOf(grid.asBlockedGridExcluding(1, TWO_BY_TWO))).toEqual(
+      artOf(open().asBlockedGridExcluding(1, TWO_BY_TWO))
+    );
+  });
+
+  it('leaves the cached terrain block grid untouched by a later snapshot', () => {
+    const grid = open();
+    const before = artOf(grid.asBlockedGridExcluding(1, TWO_BY_TWO));
+    grid.reserve(grid.indexOf(2, 2), 7);
+    grid.asBlockedGridExcluding(1, TWO_BY_TWO);
+    grid.release(grid.indexOf(2, 2), 7);
+
+    expect(artOf(grid.asBlockedGridExcluding(1, TWO_BY_TWO))).toEqual(before);
+  });
+});
+
 describe('findNearestAvailableCell', () => {
   const grid = () =>
     new OccupancyGrid(
