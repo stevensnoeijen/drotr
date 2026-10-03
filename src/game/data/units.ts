@@ -104,6 +104,12 @@ export interface UnitDefinition {
    * is the only unit that sets this so far.
    */
   projectile?: boolean;
+  /**
+   * Seconds into the attack swing at which a projectile unit looses its
+   * shot, matching the attack animation's release frame (`hitFrame / fps`
+   * in its sprite manifest). Absent or 0 fires as the swing starts.
+   */
+  attackReleaseTime?: number;
 }
 
 /** All unit definitions, keyed by {@link UnitType}. */

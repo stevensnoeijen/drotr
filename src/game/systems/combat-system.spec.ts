@@ -43,7 +43,7 @@ let nextId = 1;
  */
 function crossbow(projectileSpeed: number): Pick<Entity, 'ranged' | 'unitType' | 'renderable'> {
   return {
-    ranged: { projectileSpeed, projectile: 'bolt' },
+    ranged: { projectileSpeed, projectile: 'bolt', releaseTime: 0 },
     unitType: 'crossbowsoldier',
     renderable: { shape: 'triangle', color: 0x66ccff, size: 6, extent: 8 },
   };

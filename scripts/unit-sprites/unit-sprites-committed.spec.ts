@@ -5,7 +5,7 @@ import * as path from 'node:path';
 import { PNG } from 'pngjs';
 import { describe, expect, it } from 'vitest';
 
-import type { UnitType } from '~/game/data/units';
+import { units as unitDefinitions, type UnitType } from '~/game/data/units';
 import {
   DIRECTIONS,
   animationKey,
@@ -175,6 +175,14 @@ describe.each(['swordsmen', 'crossbowsoldier', 'knight', 'juggernaut', 'catapult
   it('finishes dying and holds its last frame before the corpse is removed', () => {
     expect(actions.dead!.holdLast).toBe(true);
     expect(seconds('dead')).toBeLessThan(DEATH_REMOVAL_DELAY_SECONDS);
+  });
+});
+
+describe('crossbowsoldier attack release time', () => {
+  it('matches the committed attack animation\'s release frame', () => {
+    const { actions } = parseUnitManifest(readJson(unitManifestPath('crossbowsoldier')));
+    const { hitFrame, fps } = actions.attack!;
+    expect(unitDefinitions.crossbowsoldier.attackReleaseTime).toBeCloseTo(hitFrame! / fps, 6);
   });
 });
 

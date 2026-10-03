@@ -10,6 +10,7 @@
   "speed": 2,
   "movementSpeed": 2,
   "attackCooldown": 1.5,
+  "attackReleaseTime": 0.125,
   "range": 5,
   "aggroRange": 5,
   "projectile": true,

@@ -227,6 +227,18 @@ describe('spawnUnit', () => {
     expect(unit.ranged?.projectile).toBe('bolt');
   });
 
+  it('gives a crossbowsoldier the release time from its unit data', () => {
+    const world = new World<Entity>();
+
+    const unit = spawnUnit(world, {
+      type: 'crossbowsoldier',
+      team: 'blue',
+      position: { x: 0, y: 0 },
+    }, DEFAULT_CELL_SIZE);
+
+    expect(unit.ranged?.releaseTime).toBe(0.125);
+  });
+
   it('refuses to spawn a bolt, which only exists once fired, and adds nothing', () => {
     const world = new World<Entity>();
 
