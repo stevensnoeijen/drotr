@@ -122,14 +122,43 @@ sequenceDiagram
 - **Destinations inside a wall.** Relocated to the nearest walkable cell, so
   clicking a wall walks up to it. `blockedDestination: 'fail'` refuses the
   order instead.
-- **Wide units and A*.** `findPath` always plans a single-cell path; it has
-  no notion of a multi-cell unit's footprint. `planMovePath` shifts a
-  footprint's anchor cell onto this single-cell path and shifts the
-  resulting waypoints back onto footprint centres (see above), but the
-  search itself can still route a 2x2 unit through a one-cell-wide corridor
-  it cannot physically fit in — it then stalls against
-  `CellOccupancySystem`'s leading-edge check. Clearance-aware routing for
-  wide units is a separate, not-yet-implemented concern.
+- **Wide units and A*.** `findPath` itself only ever plans a single-cell
+  path, and stays that way: a multi-cell unit is routed by its anchor
+  (top-left) cell over a **block grid**, where an anchor is blocked whenever
+  any cell of the width x height block it anchors is terrain, off the map or
+  (for repaths) held by another unit (`blockAnchorGrid` in
+  `src/game/navigation/block-grid.ts`). Every node A* expands is then a
+  placement where the whole block fits, so a knight is only sent through
+  gaps its 2x2 block fits, and an order with no such route is refused
+  (`'unreachable'`) instead of becoming a path it would stall on. A 1x1
+  footprint's block grid is the input grid itself, so single-cell units route
+  exactly as before. `planMovePath` shifts the anchor cell back onto block
+  centres (see above) and takes the block grid as its `grid`.
+  - Diagonal steps need no extra rule. A* already refuses a diagonal unless
+    both orthogonal neighbours are free; on the block grid that means three
+    free blocks, and the block at the step's target covers every cell the
+    diagonal newly enters — the very cells `CellOccupancySystem` reserves
+    before stepping. A planned step is therefore never one the occupancy
+    system refuses.
+  - A blocked destination (`blockedDestination: 'nearest'`) relocates over the
+    block grid too, to the nearest anchor whose whole block is walkable.
+  - Where the grids come from: `planMoveOrder` (move orders, the pending-order
+    and pursuit plans, and the `?debug=paths` preview) uses `terrainBlockGrid`,
+    built once per terrain grid and footprint size and cached for as long as the
+    map's grid lives. `CellOccupancySystem`'s repath around units uses
+    `OccupancyGrid.asBlockedGridExcluding(occupantId, size)`, a fresh
+    snapshot per repath: a copy of the cached terrain block grid plus the
+    anchors covered by each cell another unit holds. That is a full-grid pass
+    (one scan of the occupant array and a buffer copy, the same as the
+    single-cell snapshot) plus marking proportional to how many cells other
+    units hold; it only runs on the rare repath, never per tick.
+  - `SeekSystem`'s straight-line "clear line to the attack cell" shortcut
+    walks the same block grid for a multi-cell unit, so it only heads
+    straight for a cell when its whole footprint fits along the line;
+    otherwise it plans a route like any other order.
+  - Not covered: hierarchical or downsampled pathfinding (the block grid
+    keeps the existing A* and cell resolution), formation and group-move
+    spacing for larger units, and footprints that rotate with facing.
 
 ## Seeing it
 

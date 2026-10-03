@@ -3,6 +3,7 @@ import type { Entity } from '~/game/ecs/entity';
 import type { Footprint } from '~/game/ecs/components';
 import type { MovePath } from '~/game/ecs/components/move-path';
 import type { MoveTarget } from '~/game/ecs/components/move-target';
+import { terrainBlockGrid } from '~/game/navigation/block-grid';
 import { planMovePath } from '~/game/navigation/plan-move-path';
 import type { GridLike } from '~/lib/navigation/astar';
 import type { Point } from '~/lib/math/types';
@@ -45,7 +46,10 @@ export type MoveOrderResult =
  * `cellSize` is the world size of one of `grid`'s cells (see
  * `planMovePath`); unused when there is no grid to route through. `footprint`
  * is the unit's block size in cells (see `footprintOf`), defaulting to a
- * single cell; it only affects a routed (`grid`-backed) order — `from` and
+ * single cell; it only affects a routed (`grid`-backed) order, which is planned
+ * over the terrain's cached block grid for that footprint (see
+ * {@link terrainBlockGrid}) so a wide unit is only routed through gaps its
+ * whole block fits — `from` and
  * `destination` are already proper block centres by the time either branch
  * runs (the caller snaps them, e.g. via `snapToFootprint`), so the
  * straight-line branch needs no footprint of its own.
@@ -64,7 +68,13 @@ export function planMoveOrder(
     };
   }
 
-  const { status, waypoints } = planMovePath(grid, from, destination, cellSize, footprint);
+  const { status, waypoints } = planMovePath(
+    terrainBlockGrid(grid, footprint),
+    from,
+    destination,
+    cellSize,
+    footprint
+  );
   if (status !== 'found') {
     return { kind: 'none' };
   }

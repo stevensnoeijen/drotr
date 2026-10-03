@@ -13,6 +13,7 @@ import {
   footprintOf,
   isAtFootprintCentre,
 } from '~/game/navigation/footprint';
+import { terrainBlockGrid } from '~/game/navigation/block-grid';
 import { planMoveOrder } from '~/game/navigation/move-order';
 import { NO_OCCUPANT, type OccupancyGrid } from '~/game/navigation/occupancy-grid';
 import { quantizeAngle } from '~/lib/math/angle';
@@ -205,7 +206,11 @@ function markPursuit(
  *
  * "Clear line" is {@link hasLineOfSight} between the two cells — the same
  * strict, corner-respecting test A* path smoothing uses, so seeking never
- * commits to a straight line the pathfinder itself wouldn't walk. With no
+ * commits to a straight line the pathfinder itself wouldn't walk. A
+ * multi-cell unit runs it over its terrain block grid (see
+ * `terrainBlockGrid`), so a line only counts as clear if its whole footprint
+ * fits along it; a unit that can't walk straight is routed by
+ * {@link planMoveOrder}, over that same block grid. With no
  * `grid` (a map with no terrain at all) everything is in sight.
  *
  * Which cells count as available to stand in comes from the shared
@@ -294,8 +299,12 @@ export function createSeekSystem(
     return true;
   };
 
-  const isInSight = (from: Cell, to: Cell): boolean => {
-    return !collisionGrid || hasLineOfSight(collisionGrid, from, to);
+  // `from`/`to` are anchor cells, so for a multi-cell unit the line is
+  // walked over its block grid: a clear line there means the whole block
+  // fits along the way, not just its anchor cell. A single cell's block grid
+  // is the terrain itself.
+  const isInSight = (from: Cell, to: Cell, size: Footprint): boolean => {
+    return !collisionGrid || hasLineOfSight(terrainBlockGrid(collisionGrid, size), from, to);
   };
 
   return (world: World<Entity>, dt: number) => {
@@ -404,7 +413,7 @@ export function createSeekSystem(
         cellSize
       );
 
-      if (isInSight(selfCell, destination)) {
+      if (isInSight(selfCell, destination, selfSize)) {
         // Nothing in the way: walk straight at the cell, no search needed.
         delete self.movePath;
         markPursuit(self, target.entityId, targetPosition, PURSUIT_REPATH_INTERVAL);

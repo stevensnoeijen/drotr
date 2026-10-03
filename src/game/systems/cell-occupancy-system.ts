@@ -109,7 +109,10 @@ const BLOCK_LEAD_EPSILON = 0.5;
  * gets one attempt to route *around* the obstruction: a fresh, one-off A*
  * search from where it now stands to its original destination, over a
  * snapshot grid that layers current unit occupancy on top of terrain (see
- * {@link OccupancyGrid.asBlockedGridExcluding}). This is deliberately
+ * {@link OccupancyGrid.asBlockedGridExcluding}) — for a multi-cell unit, a
+ * grid over its anchor cells in which an anchor is blocked by any terrain or
+ * other unit under its whole block, so it reroutes around a gap between two
+ * units it cannot fit through. This is deliberately
  * reactive rather than baked into the order at dispatch time — planning
  * around every unit on the map up front is wasted work for a search whose
  * result is stale the moment anyone else moves, whereas re-planning only
@@ -350,7 +353,7 @@ export function createCellOccupancySystem(queries: Queries, grid: OccupancyGrid)
         const { waypoints } = self.movePath;
         const destination = waypoints[waypoints.length - 1];
         if (destination) {
-          const blockedGrid = grid.asBlockedGridExcluding(occupancy.occupantId);
+          const blockedGrid = grid.asBlockedGridExcluding(occupancy.occupantId, size);
           const planned = planMovePath(
             blockedGrid,
             transform.position,

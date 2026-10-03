@@ -66,6 +66,54 @@ describe('planMoveOrder', () => {
   });
 });
 
+describe('planMoveOrder for a multi-cell footprint', () => {
+  const TWO_BY_TWO = { width: 2, height: 2 };
+
+  /** A 9x6 grid split by a wall at column 4, with a one-cell gap at row 1. */
+  const wallWithNarrowGap = (extraGapRows: number[] = []): CollisionGrid => {
+    const width = 9;
+    const height = 6;
+    const collision = new Uint8Array(width * height);
+    for (let row = 0; row < height; row++) {
+      collision[row * width + 4] = row === 1 || extraGapRows.includes(row) ? 0 : 1;
+    }
+    return { width, height, collision };
+  };
+
+  /** Block centre for a 2x2 anchored at (`col`, `row`). */
+  const block = (col: number, row: number) => ({ x: (col + 1) * CELL_SIZE, y: (row + 1) * CELL_SIZE });
+
+  it('refuses an order whose only route is a gap the block cannot fit', () => {
+    const grid = wallWithNarrowGap();
+
+    expect(planMoveOrder(grid, block(0, 0), block(6, 0), CELL_SIZE, TWO_BY_TWO)).toEqual({
+      kind: 'none',
+    });
+    // The same order is fine for a single cell.
+    expect(
+      planMoveOrder(grid, { x: 16, y: 16 }, { x: 7 * CELL_SIZE + 16, y: 16 }, CELL_SIZE).kind
+    ).toBe('path');
+  });
+
+  it('routes the block through a wider gap when one exists', () => {
+    const grid = wallWithNarrowGap([3, 4]);
+
+    const result = planMoveOrder(grid, block(0, 0), block(6, 0), CELL_SIZE, TWO_BY_TWO);
+
+    expect(result.kind).toBe('path');
+    if (result.kind === 'path') {
+      // A block straddling the wall column (anchor column 3 or 4) can only
+      // sit in the two-row gap at rows 3-4, i.e. anchored on row 3.
+      const crossing = result.movePath.waypoints.filter(
+        (w) => w.x === 4 * CELL_SIZE || w.x === 5 * CELL_SIZE
+      );
+      expect(result.movePath.waypoints.at(-1)).toEqual(block(6, 0));
+      expect(crossing.length).toBeGreaterThan(0);
+      expect(crossing.every((w) => w.y === 4 * CELL_SIZE)).toBe(true);
+    }
+  });
+});
+
 describe('applyMoveOrder', () => {
   it('does nothing for a "none" result', () => {
     const entity = {

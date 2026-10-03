@@ -2,6 +2,7 @@ import { toWorldPosition } from '~/lib/grid';
 import { Vector2 } from '~/lib/math/vector2';
 import type { Point } from '~/lib/math/types';
 import { toCollisionGrid, type CollisionGrid, type GridLike } from '~/lib/navigation/astar';
+import { terrainBlockGrid } from './block-grid';
 
 /** Value stored in a cell that no unit holds. */
 export const NO_OCCUPANT = 0;
@@ -69,6 +70,14 @@ export class OccupancyGrid {
   private readonly collision: Uint8Array;
 
   /**
+   * The terrain grid `collision` belongs to, kept so block grids derived
+   * from it (see {@link asBlockedGridExcluding}) are cached against its
+   * identity — the same object `terrainBlockGrid` is keyed on for move
+   * orders — rather than rebuilt per repath.
+   */
+  private readonly terrain: CollisionGrid;
+
+  /**
    * Occupant id per cell, or {@link NO_OCCUPANT}. A flat typed array rather
    * than a `Map` with string keys: fixed size, no per-tick key allocation or
    * hashing, and the same shape as the terrain buffer it layers on.
@@ -78,7 +87,9 @@ export class OccupancyGrid {
   private nextOccupantId = NO_OCCUPANT + 1;
 
   constructor(grid: GridLike, cellSize: number) {
-    const { width, height, collision } = toCollisionGrid(grid);
+    const terrain = toCollisionGrid(grid);
+    const { width, height, collision } = terrain;
+    this.terrain = terrain;
     this.width = width;
     this.height = height;
     this.cellSize = cellSize;
@@ -285,20 +296,46 @@ export class OccupancyGrid {
    * claim (its current and any straddled cell) never counts against it —
    * a unit is never blocked by the ground it's already standing on.
    *
+   * For a multi-cell `size` the snapshot is a *block grid* over anchor
+   * cells (see `blockAnchorGrid`): an anchor is blocked when any cell of the
+   * block it anchors is terrain, off the grid, or held by another unit, so a
+   * knight reroutes around a gap between two units it cannot fit through. It
+   * is derived from the cached terrain block grid rather than recomputed: a
+   * copy of that, plus, for each cell another unit holds, the `width * height`
+   * anchors whose block covers it. The cost is one pass over the occupant
+   * array and a buffer copy (both `O(width * height)`, the same full-grid
+   * pass the single-cell snapshot already makes), plus
+   * `O(held cells * width * height of size)` marking — proportional to how
+   * crowded the map is, never to the area searched. `size` defaults to a
+   * single cell, where the result is exactly the plain snapshot.
+   *
    * Deliberately a fresh copy taken only when a reroute is actually
    * attempted, not a view kept live: unit positions change every tick, but a
    * plan is only ever as good as the instant it was made, so there is
    * nothing to gain from the copy tracking further ticks it will never see.
    */
-  public asBlockedGridExcluding(occupantId: number): CollisionGrid {
-    const collision = new Uint8Array(this.collision);
+  public asBlockedGridExcluding(occupantId: number, size: BlockSize = SINGLE_CELL): CollisionGrid {
+    const collision = new Uint8Array(terrainBlockGrid(this.terrain, size).collision);
+    const { width, height } = this;
+
     for (let i = 0; i < this.occupants.length; i++) {
       const occupant = this.occupants[i];
-      if (occupant !== NO_OCCUPANT && occupant !== occupantId) {
-        collision[i] = 1;
+      if (occupant === NO_OCCUPANT || occupant === occupantId) {
+        continue;
+      }
+
+      // Every anchor whose block covers this cell: the block's top-left can
+      // sit up to `size - 1` cells above and to the left of it.
+      const col = i % width;
+      const row = Math.floor(i / width);
+      for (let dy = 0; dy < size.height && row - dy >= 0; dy++) {
+        for (let dx = 0; dx < size.width && col - dx >= 0; dx++) {
+          collision[(row - dy) * width + (col - dx)] = 1;
+        }
       }
     }
-    return { width: this.width, height: this.height, collision };
+
+    return { width, height, collision };
   }
 
   /** Drops every claim, leaving terrain untouched. */

@@ -29,11 +29,11 @@ const ONE_CELL = { width: 1, height: 1 };
 /**
  * A knight occupies a 2x2 block of cells and rests on the block's centre —
  * a cell corner, never a cell centre. Covered end to end through the same
- * systems `game-canvas.tsx` wires, on a synthetic open grid rather than a
- * real map: a cross-map A* route can pinch narrower than two cells wide
- * (out of scope — see "Wide units and A*" in MOVEMENT.md), which this test
- * sidesteps by only ever walking the knight a cell or two at a time, the
- * same granularity `CellOccupancySystem`'s leading-edge check works at.
+ * systems `game-canvas.tsx` wires, on synthetic grids rather than a real map.
+ * Most tests walk the knight a cell or two at a time, the granularity
+ * `CellOccupancySystem`'s leading-edge check works at; the routing tests at
+ * the end send it across maps with gaps of different widths (see "Wide units
+ * and A*" in MOVEMENT.md).
  */
 describe('knight 2x2 footprint', () => {
   beforeEach(() => {
@@ -259,6 +259,86 @@ describe('knight 2x2 footprint', () => {
         x: 4,
         y: 4,
       });
+    });
+  });
+  describe('routing past gaps its block fits through', () => {
+    /** Cells of a wall down `col`, leaving the listed rows open. */
+    const wallDown = (col: number, height: number, openRows: readonly number[]) =>
+      Array.from({ length: height }, (_, y) => ({ x: col, y }))
+        .filter(({ y }) => !openRows.includes(y));
+
+    /** Orders the (already selected) knight to the block anchored at (col, row) and runs until it stops. */
+    function orderAndRun(
+      ctx: ReturnType<typeof setup>,
+      knight: Entity,
+      col: number,
+      row: number,
+      onTick: () => void = () => {}
+    ) {
+      const { queries, grid, terrain, tick } = ctx;
+      const to = footprintCentre(col, row, KNIGHT, CELL);
+      moveSelectedTo(queries, new Vector2(to.x, to.y), CELL, terrain, grid);
+      for (let i = 0; i < 3000 && (knight.moveTarget || knight.movePath); i++) {
+        tick();
+        onTick();
+      }
+    }
+
+    function selectedKnight(ctx: ReturnType<typeof setup>, col: number, row: number) {
+      const knight = ctx.spawnAt('knight', 'blue', col, row);
+      knight.selected = true;
+      ctx.world.reindex(knight);
+      ctx.tick();
+      return knight;
+    }
+
+    it('arrives past a narrow gap through the wide gap beside it, rather than stalling', () => {
+      // A wall down column 6 with a one-cell gap at row 2 and a two-cell one
+      // at rows 6-7.
+      const ctx = setup(14, 10, wallDown(6, 10, [2, 6, 7]));
+      const knight = selectedKnight(ctx, 1, 2);
+      // Rows the knight's block was anchored on while straddling the wall.
+      const rowsAtWall = new Set<number>();
+
+      orderAndRun(ctx, knight, 10, 2, () => {
+        // Planned through the wide gap from the start, never walked up to
+        // the narrow one and refused there.
+        expect(knight.cellOccupancy!.blockedFor).toBe(0);
+        const anchorCol = Math.floor((knight.transform!.position.x - CELL) / CELL);
+        if (anchorCol >= 5 && anchorCol <= 6) {
+          rowsAtWall.add(Math.floor((knight.transform!.position.y - CELL) / CELL));
+        }
+      });
+
+      expect(knight.transform!.position).toEqual(footprintCentre(10, 2, KNIGHT, CELL));
+      expect(isSettled(knight, CELL)).toBe(true);
+      // It went through the two-cell gap (block anchored on row 6) alone.
+      expect([...rowsAtWall]).toEqual([6]);
+    });
+
+    it('refuses an order whose only route is a gap the block cannot fit, instead of walking up to it', () => {
+      const ctx = setup(14, 10, wallDown(6, 10, [2]));
+      const knight = selectedKnight(ctx, 1, 2);
+      const start = { ...knight.transform!.position };
+
+      orderAndRun(ctx, knight, 10, 2);
+
+      expect(knight.movePath).toBeUndefined();
+      expect(knight.moveTarget).toBeUndefined();
+      expect(knight.transform!.position).toEqual(start);
+    });
+
+    it('reroutes around a gap between two units it cannot fit through', () => {
+      const ctx = setup(14, 10);
+      // Two units one cell apart: the knight's block cannot pass between them.
+      ctx.spawnAt('swordsmen', 'red', 6, 2);
+      ctx.spawnAt('swordsmen', 'red', 6, 4);
+      const knight = selectedKnight(ctx, 1, 3);
+
+      orderAndRun(ctx, knight, 10, 3);
+
+      expect(knight.transform!.position).toEqual(footprintCentre(10, 3, KNIGHT, CELL));
+      expect(isSettled(knight, CELL)).toBe(true);
     });
   });
 });
