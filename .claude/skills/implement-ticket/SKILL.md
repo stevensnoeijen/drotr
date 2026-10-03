@@ -23,7 +23,7 @@ integer.
 
 ```
 gh issue view <number> --repo stevensnoeijen/drotr \
-  --json number,title,body,labels,milestone,url
+  --json number,title,body,labels,url
 ```
 
 Read the body in full — acceptance criteria and scope live there, and drive
@@ -65,7 +65,7 @@ model and effort were chosen so they can be written back to the Project.
 | Signal | Model | Effort |
 |---|---|---|
 | `type:chore`, mechanical/well-scoped (config, CI, rename, single-file cleanup) | `sonnet` | `medium` |
-| `type:feature`, ordinary scope within one milestone phase | `sonnet` | `medium` |
+| `type:feature`, ordinary scope within one roadmap phase | `sonnet` | `medium` |
 | `type:feature` spanning multiple systems, new architecture, or phase 5+ asset pipeline | `opus` | `high` |
 | `type:research` (reverse-engineering, format decoding, investigation) | `opus` | `high` |
 | Ambiguous/underspecified scope, or body says "investigate", "design", "explore approaches" | `opus` | `high` |
@@ -94,7 +94,7 @@ subagent) and `model` set from the mapped `Model` field per step 3.
 
 The subagent starts with no context, so the prompt must be self-contained:
 
-- Full issue title, body, number, URL, labels, milestone.
+- Full issue title, body, number, URL, labels.
 - The branch already exists and is checked out — tell it so, and tell it not
   to create another one.
 - Point it at CLAUDE.md's "Working on tickets" section for the check suite

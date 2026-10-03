@@ -73,7 +73,7 @@ there's nothing to classify from):
 
 ```
 gh issue view <number> --repo stevensnoeijen/drotr \
-  --json number,title,body,labels,milestone,url
+  --json number,title,body,labels,url
 ```
 
 If the body is empty or thin (common in this repo — see #214), the title is
@@ -84,7 +84,7 @@ the only signal; don't invent acceptance criteria to fill the gap.
 Before bringing anything to the user, ground the ticket in what's actually
 in the codebase: grep for what it refers to, check how big/scattered the
 affected area is, look for prior art (similar past tickets/PRs via
-`git log --oneline --grep`), and check the milestone phase in CLAUDE.md's
+`git log --oneline --grep`), and check the roadmap phase in CLAUDE.md's
 roadmap section so questions don't propose something out of phase.
 
 The goal of this step is to arrive at the questions with real numbers and

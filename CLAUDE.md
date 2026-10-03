@@ -86,8 +86,7 @@ Guidance for Claude Code (and contributors) working in this repository.
 
 ## Roadmap awareness
 
-The GitHub milestones describe the phased plan for this engine rewrite; keep
-new work aligned with the current phase instead of jumping ahead:
+The engine rewrite follows the phased plan below; keep new work aligned with the current phase instead of jumping ahead:
 
 1. **Stack** — React + Pixi v8 + miniplex foundation (routing, ECS
    bootstrap, URL-param test-case harness).
@@ -104,6 +103,5 @@ new work aligned with the current phase instead of jumping ahead:
 6. **Asset integration** — replace primitives with re-extracted original
    sprites and audio (via `howler.js`) without changing mechanics.
 
-When picking up a ticket, check its milestone to understand which phase it
-belongs to, and avoid depending on capabilities from a later phase that
+When picking up a ticket, work out which phase it belongs to, and avoid depending on capabilities from a later phase that
 don't exist yet.
