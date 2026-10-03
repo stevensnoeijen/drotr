@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
+import { DIRECTIONS, animationKey } from '~/game/render/sprites/animation-key';
 import type { UnitManifest } from '~/game/render/sprites/unit-manifest';
+import { committedAtlasData, committedManifest } from '~/test/unit-sprites-fixture';
 
 import {
   animationOptions,
@@ -193,5 +195,52 @@ describe('per-action directions', () => {
       direction: 'sw',
     });
     expect(selection?.direction).toBe('sw');
+  });
+});
+
+describe('a projectile like the bolt', () => {
+  // Neutral, move only, one still frame per direction, in all eight.
+  const bolt: UnitManifest = {
+    frameSize: [14, 14],
+    anchor: [0.5, 0.5],
+    teams: ['neutral'],
+    actions: { move: { frames: 1, fps: 0, loop: false } },
+  };
+
+  it('offers the neutral team, the move action and all eight directions', () => {
+    expect(animationOptions(bolt)).toEqual({
+      teams: ['neutral'],
+      actions: ['move'],
+      directions: ['n', 'ne', 'e', 'se', 's', 'sw', 'w', 'nw'],
+    });
+  });
+
+  it('resolves any request to its neutral move, keeping the requested direction', () => {
+    for (const direction of DIRECTIONS) {
+      expect(
+        resolveSelection(['bolt'], { bolt }, { unit: 'bolt', team: 'red', action: 'attack', direction })
+      ).toEqual({ unit: 'bolt', team: 'neutral', action: 'move', direction, loop: false });
+    }
+  });
+
+  it('shows the small frame at the 8x zoom cap', () => {
+    expect(previewZoom(384, bolt.frameSize)).toBe(8);
+  });
+
+  it('is listed from the committed atlas, with a frame of its own for every direction', () => {
+    const animations = committedAtlasData().animations!;
+    expect(atlasUnits(Object.keys(animations))).toContain('bolt');
+
+    const manifest = committedManifest('bolt');
+    const frames = DIRECTIONS.map((direction) => {
+      const selection = resolveSelection(['bolt'], { bolt: manifest }, { unit: 'bolt', direction })!;
+      const names = animations[
+        animationKey(selection.unit, selection.team, selection.action, selection.direction)
+      ];
+      expect(names).toHaveLength(1);
+      return names[0];
+    });
+    // Changing direction changes the frame shown.
+    expect(new Set(frames).size).toBe(DIRECTIONS.length);
   });
 });
