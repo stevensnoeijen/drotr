@@ -48,7 +48,7 @@ describe('objectColour', () => {
 });
 
 describe('buildObjectLayerContainer', () => {
-  it('builds a hidden container, labelled by layer, with a name label per named point', () => {
+  it('builds a hidden container, labelled by layer, with a name label per named object', () => {
     const container = buildObjectLayerContainer(
       {
         name: 'constructions',
@@ -67,7 +67,9 @@ describe('buildObjectLayerContainer', () => {
     expect(container.visible).toBe(false);
     expect(container.children[0]).toBeInstanceOf(Graphics);
     const labels = container.children.filter((child): child is Text => child instanceof Text);
-    expect(labels.map((label) => label.text)).toEqual(['castle-1']);
+    expect(labels.map((label) => label.text)).toEqual(['castle-1', 'area']);
+    // A point's label sits beside the dot; a rectangle's inside its top-left corner.
     expect(labels[0].position).toMatchObject({ x: 110, y: 193 });
+    expect(labels[1].position).toMatchObject({ x: 102, y: 202 });
   });
 });

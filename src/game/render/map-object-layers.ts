@@ -8,7 +8,8 @@ import type { MapObject, MapObjectLayer } from '~/game/map/load-tiled-map';
  * through the `tile-layers` debug option.
  *
  * - A point object is a dot with its name beside it.
- * - A rectangle object is an outline of its bounds.
+ * - A rectangle object is an outline of its bounds, with its name inside the
+ *   top-left corner.
  * - Every `footprint:<level>` property (`x,y,width,height` in tiles, as on
  *   a construction site) is an outline of the tiles that level occupies.
  *
@@ -19,6 +20,7 @@ import type { MapObject, MapObjectLayer } from '~/game/map/load-tiled-map';
 const DOT_RADIUS = 6;
 const LABEL_OFFSET = DOT_RADIUS + 4;
 const LABEL_FONT_SIZE = 14;
+const RECT_LABEL_INSET = 2;
 const FOOTPRINT_FILL_ALPHA = 0.15;
 
 /** Property-name prefix of a construction level's footprint. */
@@ -91,17 +93,17 @@ export function buildObjectLayerContainer(layer: MapObjectLayer, tileSize: numbe
         .stroke({ color: colour, pixelLine: true });
     }
 
-    if (!object.point && object.width > 0 && object.height > 0) {
+    const isRect = !object.point && object.width > 0 && object.height > 0;
+    if (isRect) {
       shapes
         .rect(object.x, object.y, object.width, object.height)
         .stroke({ color: colour, pixelLine: true });
-      continue;
+    } else {
+      shapes
+        .circle(object.x, object.y, DOT_RADIUS)
+        .fill(colour)
+        .stroke({ width: 1, color: 0x000000 });
     }
-
-    shapes
-      .circle(object.x, object.y, DOT_RADIUS)
-      .fill(colour)
-      .stroke({ width: 1, color: 0x000000 });
     if (object.name) {
       const label = new Text({
         text: object.name,
@@ -112,7 +114,11 @@ export function buildObjectLayerContainer(layer: MapObjectLayer, tileSize: numbe
           stroke: { color: 0x000000, width: 3 },
         },
       });
-      label.position.set(object.x + LABEL_OFFSET, object.y - LABEL_FONT_SIZE / 2);
+      if (isRect) {
+        label.position.set(object.x + RECT_LABEL_INSET, object.y + RECT_LABEL_INSET);
+      } else {
+        label.position.set(object.x + LABEL_OFFSET, object.y - LABEL_FONT_SIZE / 2);
+      }
       container.addChild(label);
     }
   }
