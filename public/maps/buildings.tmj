@@ -9,8 +9,8 @@
  "tilewidth": 40,
  "tileheight": 40,
  "infinite": false,
- "nextlayerid": 6,
- "nextobjectid": 1,
+ "nextlayerid": 7,
+ "nextobjectid": 58,
  "compressionlevel": -1,
  "properties": [],
  "tilesets": [
@@ -65620,6 +65620,2036 @@
    "visible": true,
    "draworder": "topdown",
    "objects": []
+  },
+  {
+   "id": 6,
+   "name": "prefabs",
+   "type": "objectgroup",
+   "x": 0,
+   "y": 0,
+   "width": 0,
+   "height": 0,
+   "opacity": 1,
+   "visible": true,
+   "draworder": "topdown",
+   "objects": [
+    {
+     "height": 120,
+     "id": 1,
+     "name": "bridge-wood-vertical-grass-0",
+     "properties": [
+      {
+       "name": "bank",
+       "type": "string",
+       "value": "grass"
+      },
+      {
+       "name": "category",
+       "type": "string",
+       "value": "bridge"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "wood"
+      },
+      {
+       "name": "orientation",
+       "type": "string",
+       "value": "vertical"
+      },
+      {
+       "name": "slot",
+       "type": "int",
+       "value": 0
+      }
+     ],
+     "rotation": 0,
+     "type": "bridge",
+     "visible": true,
+     "width": 40,
+     "x": 440,
+     "y": 0
+    },
+    {
+     "height": 160,
+     "id": 2,
+     "name": "bridge-wood-vertical-grass-1",
+     "properties": [
+      {
+       "name": "bank",
+       "type": "string",
+       "value": "grass"
+      },
+      {
+       "name": "category",
+       "type": "string",
+       "value": "bridge"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "wood"
+      },
+      {
+       "name": "orientation",
+       "type": "string",
+       "value": "vertical"
+      },
+      {
+       "name": "slot",
+       "type": "int",
+       "value": 1
+      }
+     ],
+     "rotation": 0,
+     "type": "bridge",
+     "visible": true,
+     "width": 40,
+     "x": 440,
+     "y": 120
+    },
+    {
+     "height": 200,
+     "id": 3,
+     "name": "bridge-wood-vertical-grass-2",
+     "properties": [
+      {
+       "name": "bank",
+       "type": "string",
+       "value": "grass"
+      },
+      {
+       "name": "category",
+       "type": "string",
+       "value": "bridge"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "wood"
+      },
+      {
+       "name": "orientation",
+       "type": "string",
+       "value": "vertical"
+      },
+      {
+       "name": "slot",
+       "type": "int",
+       "value": 2
+      }
+     ],
+     "rotation": 0,
+     "type": "bridge",
+     "visible": true,
+     "width": 40,
+     "x": 480,
+     "y": 0
+    },
+    {
+     "height": 80,
+     "id": 4,
+     "name": "bridge-wood-vertical-rock-3",
+     "properties": [
+      {
+       "name": "bank",
+       "type": "string",
+       "value": "rock"
+      },
+      {
+       "name": "category",
+       "type": "string",
+       "value": "bridge"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "wood"
+      },
+      {
+       "name": "orientation",
+       "type": "string",
+       "value": "vertical"
+      },
+      {
+       "name": "slot",
+       "type": "int",
+       "value": 3
+      }
+     ],
+     "rotation": 0,
+     "type": "bridge",
+     "visible": true,
+     "width": 40,
+     "x": 560,
+     "y": 360
+    },
+    {
+     "height": 120,
+     "id": 5,
+     "name": "bridge-wood-vertical-rock-4",
+     "properties": [
+      {
+       "name": "bank",
+       "type": "string",
+       "value": "rock"
+      },
+      {
+       "name": "category",
+       "type": "string",
+       "value": "bridge"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "wood"
+      },
+      {
+       "name": "orientation",
+       "type": "string",
+       "value": "vertical"
+      },
+      {
+       "name": "slot",
+       "type": "int",
+       "value": 4
+      }
+     ],
+     "rotation": 0,
+     "type": "bridge",
+     "visible": true,
+     "width": 40,
+     "x": 600,
+     "y": 240
+    },
+    {
+     "height": 160,
+     "id": 6,
+     "name": "bridge-wood-vertical-rock-5",
+     "properties": [
+      {
+       "name": "bank",
+       "type": "string",
+       "value": "rock"
+      },
+      {
+       "name": "category",
+       "type": "string",
+       "value": "bridge"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "wood"
+      },
+      {
+       "name": "orientation",
+       "type": "string",
+       "value": "vertical"
+      },
+      {
+       "name": "slot",
+       "type": "int",
+       "value": 5
+      }
+     ],
+     "rotation": 0,
+     "type": "bridge",
+     "visible": true,
+     "width": 40,
+     "x": 600,
+     "y": 360
+    },
+    {
+     "height": 200,
+     "id": 7,
+     "name": "bridge-wood-vertical-rock-6",
+     "properties": [
+      {
+       "name": "bank",
+       "type": "string",
+       "value": "rock"
+      },
+      {
+       "name": "category",
+       "type": "string",
+       "value": "bridge"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "wood"
+      },
+      {
+       "name": "orientation",
+       "type": "string",
+       "value": "vertical"
+      },
+      {
+       "name": "slot",
+       "type": "int",
+       "value": 6
+      }
+     ],
+     "rotation": 0,
+     "type": "bridge",
+     "visible": true,
+     "width": 40,
+     "x": 640,
+     "y": 240
+    },
+    {
+     "height": 120,
+     "id": 8,
+     "name": "bridge-stone-vertical-grass-7",
+     "properties": [
+      {
+       "name": "bank",
+       "type": "string",
+       "value": "grass"
+      },
+      {
+       "name": "category",
+       "type": "string",
+       "value": "bridge"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "stone"
+      },
+      {
+       "name": "orientation",
+       "type": "string",
+       "value": "vertical"
+      },
+      {
+       "name": "slot",
+       "type": "int",
+       "value": 7
+      }
+     ],
+     "rotation": 0,
+     "type": "bridge",
+     "visible": true,
+     "width": 80,
+     "x": 440,
+     "y": 280
+    },
+    {
+     "height": 160,
+     "id": 9,
+     "name": "bridge-stone-vertical-grass-8",
+     "properties": [
+      {
+       "name": "bank",
+       "type": "string",
+       "value": "grass"
+      },
+      {
+       "name": "category",
+       "type": "string",
+       "value": "bridge"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "stone"
+      },
+      {
+       "name": "orientation",
+       "type": "string",
+       "value": "vertical"
+      },
+      {
+       "name": "slot",
+       "type": "int",
+       "value": 8
+      }
+     ],
+     "rotation": 0,
+     "type": "bridge",
+     "visible": true,
+     "width": 80,
+     "x": 520,
+     "y": 0
+    },
+    {
+     "height": 200,
+     "id": 10,
+     "name": "bridge-stone-vertical-grass-9",
+     "properties": [
+      {
+       "name": "bank",
+       "type": "string",
+       "value": "grass"
+      },
+      {
+       "name": "category",
+       "type": "string",
+       "value": "bridge"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "stone"
+      },
+      {
+       "name": "orientation",
+       "type": "string",
+       "value": "vertical"
+      },
+      {
+       "name": "slot",
+       "type": "int",
+       "value": 9
+      }
+     ],
+     "rotation": 0,
+     "type": "bridge",
+     "visible": true,
+     "width": 80,
+     "x": 520,
+     "y": 160
+    },
+    {
+     "height": 240,
+     "id": 11,
+     "name": "bridge-stone-vertical-grass-10",
+     "properties": [
+      {
+       "name": "bank",
+       "type": "string",
+       "value": "grass"
+      },
+      {
+       "name": "category",
+       "type": "string",
+       "value": "bridge"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "stone"
+      },
+      {
+       "name": "orientation",
+       "type": "string",
+       "value": "vertical"
+      },
+      {
+       "name": "slot",
+       "type": "int",
+       "value": 10
+      }
+     ],
+     "rotation": 0,
+     "type": "bridge",
+     "visible": true,
+     "width": 80,
+     "x": 600,
+     "y": 0
+    },
+    {
+     "height": 160,
+     "id": 12,
+     "name": "bridge-stone-wide-vertical-grass-11",
+     "properties": [
+      {
+       "name": "bank",
+       "type": "string",
+       "value": "grass"
+      },
+      {
+       "name": "category",
+       "type": "string",
+       "value": "bridge"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "stone-wide"
+      },
+      {
+       "name": "orientation",
+       "type": "string",
+       "value": "vertical"
+      },
+      {
+       "name": "slot",
+       "type": "int",
+       "value": 11
+      }
+     ],
+     "rotation": 0,
+     "type": "bridge",
+     "visible": true,
+     "width": 120,
+     "x": 680,
+     "y": 0
+    },
+    {
+     "height": 200,
+     "id": 13,
+     "name": "bridge-stone-wide-vertical-grass-12",
+     "properties": [
+      {
+       "name": "bank",
+       "type": "string",
+       "value": "grass"
+      },
+      {
+       "name": "category",
+       "type": "string",
+       "value": "bridge"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "stone-wide"
+      },
+      {
+       "name": "orientation",
+       "type": "string",
+       "value": "vertical"
+      },
+      {
+       "name": "slot",
+       "type": "int",
+       "value": 12
+      }
+     ],
+     "rotation": 0,
+     "type": "bridge",
+     "visible": true,
+     "width": 120,
+     "x": 680,
+     "y": 160
+    },
+    {
+     "height": 240,
+     "id": 14,
+     "name": "bridge-stone-wide-vertical-grass-13",
+     "properties": [
+      {
+       "name": "bank",
+       "type": "string",
+       "value": "grass"
+      },
+      {
+       "name": "category",
+       "type": "string",
+       "value": "bridge"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "stone-wide"
+      },
+      {
+       "name": "orientation",
+       "type": "string",
+       "value": "vertical"
+      },
+      {
+       "name": "slot",
+       "type": "int",
+       "value": 13
+      }
+     ],
+     "rotation": 0,
+     "type": "bridge",
+     "visible": true,
+     "width": 120,
+     "x": 800,
+     "y": 0
+    },
+    {
+     "height": 280,
+     "id": 15,
+     "name": "bridge-stone-wide-vertical-grass-14",
+     "properties": [
+      {
+       "name": "bank",
+       "type": "string",
+       "value": "grass"
+      },
+      {
+       "name": "category",
+       "type": "string",
+       "value": "bridge"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "stone-wide"
+      },
+      {
+       "name": "orientation",
+       "type": "string",
+       "value": "vertical"
+      },
+      {
+       "name": "slot",
+       "type": "int",
+       "value": 14
+      }
+     ],
+     "rotation": 0,
+     "type": "bridge",
+     "visible": true,
+     "width": 120,
+     "x": 920,
+     "y": 0
+    },
+    {
+     "height": 320,
+     "id": 16,
+     "name": "bridge-stone-wide-vertical-grass-15",
+     "properties": [
+      {
+       "name": "bank",
+       "type": "string",
+       "value": "grass"
+      },
+      {
+       "name": "category",
+       "type": "string",
+       "value": "bridge"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "stone-wide"
+      },
+      {
+       "name": "orientation",
+       "type": "string",
+       "value": "vertical"
+      },
+      {
+       "name": "slot",
+       "type": "int",
+       "value": 15
+      }
+     ],
+     "rotation": 0,
+     "type": "bridge",
+     "visible": true,
+     "width": 120,
+     "x": 800,
+     "y": 240
+    },
+    {
+     "height": 440,
+     "id": 17,
+     "name": "bridge-stone-wide-vertical-grass-16",
+     "properties": [
+      {
+       "name": "bank",
+       "type": "string",
+       "value": "grass"
+      },
+      {
+       "name": "category",
+       "type": "string",
+       "value": "bridge"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "stone-wide"
+      },
+      {
+       "name": "orientation",
+       "type": "string",
+       "value": "vertical"
+      },
+      {
+       "name": "slot",
+       "type": "int",
+       "value": 16
+      }
+     ],
+     "rotation": 0,
+     "type": "bridge",
+     "visible": true,
+     "width": 120,
+     "x": 800,
+     "y": 560
+    },
+    {
+     "height": 120,
+     "id": 18,
+     "name": "bridge-stone-vertical-rock-17",
+     "properties": [
+      {
+       "name": "bank",
+       "type": "string",
+       "value": "rock"
+      },
+      {
+       "name": "category",
+       "type": "string",
+       "value": "bridge"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "stone"
+      },
+      {
+       "name": "orientation",
+       "type": "string",
+       "value": "vertical"
+      },
+      {
+       "name": "slot",
+       "type": "int",
+       "value": 17
+      }
+     ],
+     "rotation": 0,
+     "type": "bridge",
+     "visible": true,
+     "width": 80,
+     "x": 720,
+     "y": 1160
+    },
+    {
+     "height": 200,
+     "id": 19,
+     "name": "bridge-stone-vertical-rock-18",
+     "properties": [
+      {
+       "name": "bank",
+       "type": "string",
+       "value": "rock"
+      },
+      {
+       "name": "category",
+       "type": "string",
+       "value": "bridge"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "stone"
+      },
+      {
+       "name": "orientation",
+       "type": "string",
+       "value": "vertical"
+      },
+      {
+       "name": "slot",
+       "type": "int",
+       "value": 18
+      }
+     ],
+     "rotation": 0,
+     "type": "bridge",
+     "visible": true,
+     "width": 80,
+     "x": 880,
+     "y": 1160
+    },
+    {
+     "height": 240,
+     "id": 20,
+     "name": "bridge-stone-vertical-rock-19",
+     "properties": [
+      {
+       "name": "bank",
+       "type": "string",
+       "value": "rock"
+      },
+      {
+       "name": "category",
+       "type": "string",
+       "value": "bridge"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "stone"
+      },
+      {
+       "name": "orientation",
+       "type": "string",
+       "value": "vertical"
+      },
+      {
+       "name": "slot",
+       "type": "int",
+       "value": 19
+      }
+     ],
+     "rotation": 0,
+     "type": "bridge",
+     "visible": true,
+     "width": 80,
+     "x": 960,
+     "y": 1160
+    },
+    {
+     "height": 40,
+     "id": 21,
+     "name": "bridge-wood-horizontal-grass-20",
+     "properties": [
+      {
+       "name": "bank",
+       "type": "string",
+       "value": "grass"
+      },
+      {
+       "name": "category",
+       "type": "string",
+       "value": "bridge"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "wood"
+      },
+      {
+       "name": "orientation",
+       "type": "string",
+       "value": "horizontal"
+      },
+      {
+       "name": "slot",
+       "type": "int",
+       "value": 20
+      }
+     ],
+     "rotation": 0,
+     "type": "bridge",
+     "visible": true,
+     "width": 120,
+     "x": 800,
+     "y": 1000
+    },
+    {
+     "height": 40,
+     "id": 22,
+     "name": "bridge-wood-horizontal-grass-21",
+     "properties": [
+      {
+       "name": "bank",
+       "type": "string",
+       "value": "grass"
+      },
+      {
+       "name": "category",
+       "type": "string",
+       "value": "bridge"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "wood"
+      },
+      {
+       "name": "orientation",
+       "type": "string",
+       "value": "horizontal"
+      },
+      {
+       "name": "slot",
+       "type": "int",
+       "value": 21
+      }
+     ],
+     "rotation": 0,
+     "type": "bridge",
+     "visible": true,
+     "width": 200,
+     "x": 920,
+     "y": 1000
+    },
+    {
+     "height": 40,
+     "id": 23,
+     "name": "bridge-wood-horizontal-grass-22",
+     "properties": [
+      {
+       "name": "bank",
+       "type": "string",
+       "value": "grass"
+      },
+      {
+       "name": "category",
+       "type": "string",
+       "value": "bridge"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "wood"
+      },
+      {
+       "name": "orientation",
+       "type": "string",
+       "value": "horizontal"
+      },
+      {
+       "name": "slot",
+       "type": "int",
+       "value": 22
+      }
+     ],
+     "rotation": 0,
+     "type": "bridge",
+     "visible": true,
+     "width": 200,
+     "x": 720,
+     "y": 1040
+    },
+    {
+     "height": 40,
+     "id": 24,
+     "name": "bridge-wood-horizontal-rock-23",
+     "properties": [
+      {
+       "name": "bank",
+       "type": "string",
+       "value": "rock"
+      },
+      {
+       "name": "category",
+       "type": "string",
+       "value": "bridge"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "wood"
+      },
+      {
+       "name": "orientation",
+       "type": "string",
+       "value": "horizontal"
+      },
+      {
+       "name": "slot",
+       "type": "int",
+       "value": 23
+      }
+     ],
+     "rotation": 0,
+     "type": "bridge",
+     "visible": true,
+     "width": 120,
+     "x": 800,
+     "y": 1080
+    },
+    {
+     "height": 40,
+     "id": 25,
+     "name": "bridge-wood-horizontal-rock-24",
+     "properties": [
+      {
+       "name": "bank",
+       "type": "string",
+       "value": "rock"
+      },
+      {
+       "name": "category",
+       "type": "string",
+       "value": "bridge"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "wood"
+      },
+      {
+       "name": "orientation",
+       "type": "string",
+       "value": "horizontal"
+      },
+      {
+       "name": "slot",
+       "type": "int",
+       "value": 24
+      }
+     ],
+     "rotation": 0,
+     "type": "bridge",
+     "visible": true,
+     "width": 200,
+     "x": 920,
+     "y": 1080
+    },
+    {
+     "height": 40,
+     "id": 26,
+     "name": "bridge-wood-horizontal-rock-25",
+     "properties": [
+      {
+       "name": "bank",
+       "type": "string",
+       "value": "rock"
+      },
+      {
+       "name": "category",
+       "type": "string",
+       "value": "bridge"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "wood"
+      },
+      {
+       "name": "orientation",
+       "type": "string",
+       "value": "horizontal"
+      },
+      {
+       "name": "slot",
+       "type": "int",
+       "value": 25
+      }
+     ],
+     "rotation": 0,
+     "type": "bridge",
+     "visible": true,
+     "width": 200,
+     "x": 720,
+     "y": 1120
+    },
+    {
+     "height": 80,
+     "id": 27,
+     "name": "bridge-stone-horizontal-grass-26",
+     "properties": [
+      {
+       "name": "bank",
+       "type": "string",
+       "value": "grass"
+      },
+      {
+       "name": "category",
+       "type": "string",
+       "value": "bridge"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "stone"
+      },
+      {
+       "name": "orientation",
+       "type": "string",
+       "value": "horizontal"
+      },
+      {
+       "name": "slot",
+       "type": "int",
+       "value": 26
+      }
+     ],
+     "rotation": 0,
+     "type": "bridge",
+     "visible": true,
+     "width": 120,
+     "x": 840,
+     "y": 1600
+    },
+    {
+     "height": 80,
+     "id": 28,
+     "name": "bridge-stone-horizontal-grass-27",
+     "properties": [
+      {
+       "name": "bank",
+       "type": "string",
+       "value": "grass"
+      },
+      {
+       "name": "category",
+       "type": "string",
+       "value": "bridge"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "stone"
+      },
+      {
+       "name": "orientation",
+       "type": "string",
+       "value": "horizontal"
+      },
+      {
+       "name": "slot",
+       "type": "int",
+       "value": 27
+      }
+     ],
+     "rotation": 0,
+     "type": "bridge",
+     "visible": true,
+     "width": 160,
+     "x": 960,
+     "y": 1600
+    },
+    {
+     "height": 80,
+     "id": 29,
+     "name": "bridge-stone-horizontal-grass-28",
+     "properties": [
+      {
+       "name": "bank",
+       "type": "string",
+       "value": "grass"
+      },
+      {
+       "name": "category",
+       "type": "string",
+       "value": "bridge"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "stone"
+      },
+      {
+       "name": "orientation",
+       "type": "string",
+       "value": "horizontal"
+      },
+      {
+       "name": "slot",
+       "type": "int",
+       "value": 28
+      }
+     ],
+     "rotation": 0,
+     "type": "bridge",
+     "visible": true,
+     "width": 200,
+     "x": 1120,
+     "y": 1600
+    },
+    {
+     "height": 80,
+     "id": 30,
+     "name": "bridge-stone-horizontal-grass-29",
+     "properties": [
+      {
+       "name": "bank",
+       "type": "string",
+       "value": "grass"
+      },
+      {
+       "name": "category",
+       "type": "string",
+       "value": "bridge"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "stone"
+      },
+      {
+       "name": "orientation",
+       "type": "string",
+       "value": "horizontal"
+      },
+      {
+       "name": "slot",
+       "type": "int",
+       "value": 29
+      }
+     ],
+     "rotation": 0,
+     "type": "bridge",
+     "visible": true,
+     "width": 240,
+     "x": 1320,
+     "y": 1600
+    },
+    {
+     "height": 120,
+     "id": 31,
+     "name": "bridge-stone-wide-horizontal-grass-30",
+     "properties": [
+      {
+       "name": "bank",
+       "type": "string",
+       "value": "grass"
+      },
+      {
+       "name": "category",
+       "type": "string",
+       "value": "bridge"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "stone-wide"
+      },
+      {
+       "name": "orientation",
+       "type": "string",
+       "value": "horizontal"
+      },
+      {
+       "name": "slot",
+       "type": "int",
+       "value": 30
+      }
+     ],
+     "rotation": 0,
+     "type": "bridge",
+     "visible": true,
+     "width": 160,
+     "x": 840,
+     "y": 1680
+    },
+    {
+     "height": 120,
+     "id": 32,
+     "name": "bridge-stone-wide-horizontal-grass-31",
+     "properties": [
+      {
+       "name": "bank",
+       "type": "string",
+       "value": "grass"
+      },
+      {
+       "name": "category",
+       "type": "string",
+       "value": "bridge"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "stone-wide"
+      },
+      {
+       "name": "orientation",
+       "type": "string",
+       "value": "horizontal"
+      },
+      {
+       "name": "slot",
+       "type": "int",
+       "value": 31
+      }
+     ],
+     "rotation": 0,
+     "type": "bridge",
+     "visible": true,
+     "width": 200,
+     "x": 1000,
+     "y": 1680
+    },
+    {
+     "height": 120,
+     "id": 33,
+     "name": "bridge-stone-wide-horizontal-grass-32",
+     "properties": [
+      {
+       "name": "bank",
+       "type": "string",
+       "value": "grass"
+      },
+      {
+       "name": "category",
+       "type": "string",
+       "value": "bridge"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "stone-wide"
+      },
+      {
+       "name": "orientation",
+       "type": "string",
+       "value": "horizontal"
+      },
+      {
+       "name": "slot",
+       "type": "int",
+       "value": 32
+      }
+     ],
+     "rotation": 0,
+     "type": "bridge",
+     "visible": true,
+     "width": 240,
+     "x": 1200,
+     "y": 1680
+    },
+    {
+     "height": 120,
+     "id": 34,
+     "name": "bridge-stone-wide-horizontal-grass-33",
+     "properties": [
+      {
+       "name": "bank",
+       "type": "string",
+       "value": "grass"
+      },
+      {
+       "name": "category",
+       "type": "string",
+       "value": "bridge"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "stone-wide"
+      },
+      {
+       "name": "orientation",
+       "type": "string",
+       "value": "horizontal"
+      },
+      {
+       "name": "slot",
+       "type": "int",
+       "value": 33
+      }
+     ],
+     "rotation": 0,
+     "type": "bridge",
+     "visible": true,
+     "width": 280,
+     "x": 1440,
+     "y": 1680
+    },
+    {
+     "height": 120,
+     "id": 35,
+     "name": "bridge-stone-wide-horizontal-grass-34",
+     "properties": [
+      {
+       "name": "bank",
+       "type": "string",
+       "value": "grass"
+      },
+      {
+       "name": "category",
+       "type": "string",
+       "value": "bridge"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "stone-wide"
+      },
+      {
+       "name": "orientation",
+       "type": "string",
+       "value": "horizontal"
+      },
+      {
+       "name": "slot",
+       "type": "int",
+       "value": 34
+      }
+     ],
+     "rotation": 0,
+     "type": "bridge",
+     "visible": true,
+     "width": 320,
+     "x": 1720,
+     "y": 1680
+    },
+    {
+     "height": 120,
+     "id": 36,
+     "name": "bridge-stone-wide-horizontal-grass-35",
+     "properties": [
+      {
+       "name": "bank",
+       "type": "string",
+       "value": "grass"
+      },
+      {
+       "name": "category",
+       "type": "string",
+       "value": "bridge"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "stone-wide"
+      },
+      {
+       "name": "orientation",
+       "type": "string",
+       "value": "horizontal"
+      },
+      {
+       "name": "slot",
+       "type": "int",
+       "value": 35
+      }
+     ],
+     "rotation": 0,
+     "type": "bridge",
+     "visible": true,
+     "width": 360,
+     "x": 840,
+     "y": 1800
+    },
+    {
+     "height": 120,
+     "id": 37,
+     "name": "bridge-stone-wide-horizontal-grass-36",
+     "properties": [
+      {
+       "name": "bank",
+       "type": "string",
+       "value": "grass"
+      },
+      {
+       "name": "category",
+       "type": "string",
+       "value": "bridge"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "stone-wide"
+      },
+      {
+       "name": "orientation",
+       "type": "string",
+       "value": "horizontal"
+      },
+      {
+       "name": "slot",
+       "type": "int",
+       "value": 36
+      }
+     ],
+     "rotation": 0,
+     "type": "bridge",
+     "visible": true,
+     "width": 400,
+     "x": 1200,
+     "y": 1800
+    },
+    {
+     "height": 120,
+     "id": 38,
+     "name": "bridge-stone-wide-horizontal-grass-37",
+     "properties": [
+      {
+       "name": "bank",
+       "type": "string",
+       "value": "grass"
+      },
+      {
+       "name": "category",
+       "type": "string",
+       "value": "bridge"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "stone-wide"
+      },
+      {
+       "name": "orientation",
+       "type": "string",
+       "value": "horizontal"
+      },
+      {
+       "name": "slot",
+       "type": "int",
+       "value": 37
+      }
+     ],
+     "rotation": 0,
+     "type": "bridge",
+     "visible": true,
+     "width": 440,
+     "x": 1600,
+     "y": 1800
+    },
+    {
+     "height": 80,
+     "id": 39,
+     "name": "bridge-stone-horizontal-rock-38",
+     "properties": [
+      {
+       "name": "bank",
+       "type": "string",
+       "value": "rock"
+      },
+      {
+       "name": "category",
+       "type": "string",
+       "value": "bridge"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "stone"
+      },
+      {
+       "name": "orientation",
+       "type": "string",
+       "value": "horizontal"
+      },
+      {
+       "name": "slot",
+       "type": "int",
+       "value": 38
+      }
+     ],
+     "rotation": 0,
+     "type": "bridge",
+     "visible": true,
+     "width": 120,
+     "x": 840,
+     "y": 1920
+    },
+    {
+     "height": 80,
+     "id": 40,
+     "name": "bridge-stone-horizontal-rock-39",
+     "properties": [
+      {
+       "name": "bank",
+       "type": "string",
+       "value": "rock"
+      },
+      {
+       "name": "category",
+       "type": "string",
+       "value": "bridge"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "stone"
+      },
+      {
+       "name": "orientation",
+       "type": "string",
+       "value": "horizontal"
+      },
+      {
+       "name": "slot",
+       "type": "int",
+       "value": 39
+      }
+     ],
+     "rotation": 0,
+     "type": "bridge",
+     "visible": true,
+     "width": 160,
+     "x": 960,
+     "y": 1920
+    },
+    {
+     "height": 80,
+     "id": 41,
+     "name": "bridge-stone-horizontal-rock-40",
+     "properties": [
+      {
+       "name": "bank",
+       "type": "string",
+       "value": "rock"
+      },
+      {
+       "name": "category",
+       "type": "string",
+       "value": "bridge"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "stone"
+      },
+      {
+       "name": "orientation",
+       "type": "string",
+       "value": "horizontal"
+      },
+      {
+       "name": "slot",
+       "type": "int",
+       "value": 40
+      }
+     ],
+     "rotation": 0,
+     "type": "bridge",
+     "visible": true,
+     "width": 240,
+     "x": 1320,
+     "y": 1920
+    },
+    {
+     "height": 120,
+     "id": 42,
+     "name": "bridge-stone-wide-horizontal-rock-41",
+     "properties": [
+      {
+       "name": "bank",
+       "type": "string",
+       "value": "rock"
+      },
+      {
+       "name": "category",
+       "type": "string",
+       "value": "bridge"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "stone-wide"
+      },
+      {
+       "name": "orientation",
+       "type": "string",
+       "value": "horizontal"
+      },
+      {
+       "name": "slot",
+       "type": "int",
+       "value": 41
+      }
+     ],
+     "rotation": 0,
+     "type": "bridge",
+     "visible": true,
+     "width": 160,
+     "x": 840,
+     "y": 2000
+    },
+    {
+     "height": 120,
+     "id": 43,
+     "name": "tower-grass",
+     "properties": [
+      {
+       "name": "category",
+       "type": "string",
+       "value": "tower"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "grass"
+      },
+      {
+       "name": "slot",
+       "type": "int",
+       "value": 0
+      }
+     ],
+     "rotation": 0,
+     "type": "tower",
+     "visible": true,
+     "width": 80,
+     "x": 1040,
+     "y": 0
+    },
+    {
+     "height": 120,
+     "id": 44,
+     "name": "tower-rock-1",
+     "properties": [
+      {
+       "name": "category",
+       "type": "string",
+       "value": "tower"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "rock-1"
+      },
+      {
+       "name": "slot",
+       "type": "int",
+       "value": 1
+      }
+     ],
+     "rotation": 0,
+     "type": "tower",
+     "visible": true,
+     "width": 80,
+     "x": 1040,
+     "y": 120
+    },
+    {
+     "height": 120,
+     "id": 45,
+     "name": "tower-rock-2",
+     "properties": [
+      {
+       "name": "category",
+       "type": "string",
+       "value": "tower"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "rock-2"
+      },
+      {
+       "name": "slot",
+       "type": "int",
+       "value": 2
+      }
+     ],
+     "rotation": 0,
+     "type": "tower",
+     "visible": true,
+     "width": 80,
+     "x": 1040,
+     "y": 240
+    },
+    {
+     "height": 440,
+     "id": 46,
+     "name": "castle-1",
+     "properties": [
+      {
+       "name": "category",
+       "type": "string",
+       "value": "castle"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "1"
+      },
+      {
+       "name": "slot",
+       "type": "int",
+       "value": 0
+      }
+     ],
+     "rotation": 0,
+     "type": "castle",
+     "visible": true,
+     "width": 440,
+     "x": 0,
+     "y": 0
+    },
+    {
+     "height": 600,
+     "id": 47,
+     "name": "castle-2",
+     "properties": [
+      {
+       "name": "category",
+       "type": "string",
+       "value": "castle"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "2"
+      },
+      {
+       "name": "slot",
+       "type": "int",
+       "value": 1
+      }
+     ],
+     "rotation": 0,
+     "type": "castle",
+     "visible": true,
+     "width": 600,
+     "x": 0,
+     "y": 440
+    },
+    {
+     "height": 760,
+     "id": 48,
+     "name": "castle-3",
+     "properties": [
+      {
+       "name": "category",
+       "type": "string",
+       "value": "castle"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "3"
+      },
+      {
+       "name": "slot",
+       "type": "int",
+       "value": 2
+      }
+     ],
+     "rotation": 0,
+     "type": "castle",
+     "visible": true,
+     "width": 720,
+     "x": 0,
+     "y": 1040
+    },
+    {
+     "height": 600,
+     "id": 49,
+     "name": "castle-rock-1",
+     "properties": [
+      {
+       "name": "category",
+       "type": "string",
+       "value": "castle"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "rock-1"
+      },
+      {
+       "name": "slot",
+       "type": "int",
+       "value": 3
+      }
+     ],
+     "rotation": 0,
+     "type": "castle",
+     "visible": true,
+     "width": 560,
+     "x": 3760,
+     "y": 2080
+    },
+    {
+     "height": 680,
+     "id": 50,
+     "name": "castle-rock-2",
+     "properties": [
+      {
+       "name": "category",
+       "type": "string",
+       "value": "castle"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "rock-2"
+      },
+      {
+       "name": "slot",
+       "type": "int",
+       "value": 4
+      }
+     ],
+     "rotation": 0,
+     "type": "castle",
+     "visible": true,
+     "width": 720,
+     "x": 3640,
+     "y": 2680
+    },
+    {
+     "height": 840,
+     "id": 51,
+     "name": "castle-rock-3",
+     "properties": [
+      {
+       "name": "category",
+       "type": "string",
+       "value": "castle"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "rock-3"
+      },
+      {
+       "name": "slot",
+       "type": "int",
+       "value": 5
+      }
+     ],
+     "rotation": 0,
+     "type": "castle",
+     "visible": true,
+     "width": 840,
+     "x": 3560,
+     "y": 3400
+    },
+    {
+     "height": 840,
+     "id": 52,
+     "name": "castle-4",
+     "properties": [
+      {
+       "name": "category",
+       "type": "string",
+       "value": "castle"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "4"
+      },
+      {
+       "name": "slot",
+       "type": "int",
+       "value": 0
+      }
+     ],
+     "rotation": 0,
+     "type": "castle",
+     "visible": true,
+     "width": 840,
+     "x": 0,
+     "y": 1800
+    },
+    {
+     "height": 1080,
+     "id": 53,
+     "name": "castle-5-unmoated",
+     "properties": [
+      {
+       "name": "category",
+       "type": "string",
+       "value": "castle"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "5-unmoated"
+      },
+      {
+       "name": "slot",
+       "type": "int",
+       "value": 1
+      }
+     ],
+     "rotation": 0,
+     "type": "castle",
+     "visible": true,
+     "width": 1240,
+     "x": 0,
+     "y": 2640
+    },
+    {
+     "height": 1600,
+     "id": 54,
+     "name": "castle-6-unmoated",
+     "properties": [
+      {
+       "name": "category",
+       "type": "string",
+       "value": "castle"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "6-unmoated"
+      },
+      {
+       "name": "slot",
+       "type": "int",
+       "value": 2
+      }
+     ],
+     "rotation": 0,
+     "type": "castle",
+     "visible": true,
+     "width": 1640,
+     "x": 1120,
+     "y": 0
+    },
+    {
+     "height": 1160,
+     "id": 55,
+     "name": "castle-5-moated",
+     "properties": [
+      {
+       "name": "category",
+       "type": "string",
+       "value": "castle"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "5-moated"
+      },
+      {
+       "name": "slot",
+       "type": "int",
+       "value": 3
+      }
+     ],
+     "rotation": 0,
+     "type": "castle",
+     "visible": true,
+     "width": 1200,
+     "x": 2000,
+     "y": 3720
+    },
+    {
+     "height": 1360,
+     "id": 56,
+     "name": "castle-6-moated",
+     "properties": [
+      {
+       "name": "category",
+       "type": "string",
+       "value": "castle"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "6-moated"
+      },
+      {
+       "name": "slot",
+       "type": "int",
+       "value": 4
+      }
+     ],
+     "rotation": 0,
+     "type": "castle",
+     "visible": true,
+     "width": 1560,
+     "x": 320,
+     "y": 3760
+    },
+    {
+     "height": 1920,
+     "id": 57,
+     "name": "castle-7-moated",
+     "properties": [
+      {
+       "name": "category",
+       "type": "string",
+       "value": "castle"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "7-moated"
+      },
+      {
+       "name": "slot",
+       "type": "int",
+       "value": 5
+      }
+     ],
+     "rotation": 0,
+     "type": "castle",
+     "visible": true,
+     "width": 1960,
+     "x": 3120,
+     "y": 120
+    }
+   ]
   }
  ]
 }

@@ -16,7 +16,9 @@ import {
 } from '~/test/building-map-fixture';
 import { buildCountyMapBytes } from '~/test/county-map-fixture';
 
-import { buildBuildingsTiledMap } from './building-map-tiled';
+import type { BuildingPrefab } from '../dracula-exe';
+
+import { buildBuildingsTiledMap, buildingPrefabObjects } from './building-map-tiled';
 import { buildCountyTiledMap, serializeTiledMap } from './county-map-tiled';
 
 const MAPS_DIR = path.join(process.cwd(), 'public', 'maps');
@@ -68,7 +70,74 @@ function nonEmpty(data: number[]): [number, number, number][] {
   );
 }
 
+const PREFABS: BuildingPrefab[] = [
+  {
+    category: 'bridge',
+    level: 'stone',
+    type: 0,
+    slot: 9,
+    rect: { x: 24, y: 7, width: 2, height: 9 },
+    orientation: 'vertical',
+    bank: 'grass',
+  },
+  {
+    category: 'castle',
+    level: '5-moated',
+    type: 3,
+    slot: 3,
+    rect: { x: 50, y: 93, width: 30, height: 29 },
+  },
+];
+
+describe('buildingPrefabObjects', () => {
+  it('emits one rectangle per prefab, in pixels, named and classed by category', () => {
+    const [bridge, castle] = buildingPrefabObjects(PREFABS);
+    expect(bridge).toEqual({
+      height: 360,
+      id: 1,
+      name: 'bridge-stone-vertical-grass-9',
+      properties: [
+        { name: 'bank', type: 'string', value: 'grass' },
+        { name: 'category', type: 'string', value: 'bridge' },
+        { name: 'level', type: 'string', value: 'stone' },
+        { name: 'orientation', type: 'string', value: 'vertical' },
+        { name: 'slot', type: 'int', value: 9 },
+      ],
+      rotation: 0,
+      type: 'bridge',
+      visible: true,
+      width: 80,
+      x: 960,
+      y: 280,
+    });
+    expect(castle).toMatchObject({
+      id: 2,
+      name: 'castle-5-moated',
+      type: 'castle',
+      x: 2000,
+      y: 3720,
+      width: 1200,
+      height: 1160,
+    });
+    expect(castle.properties).toEqual([
+      { name: 'category', type: 'string', value: 'castle' },
+      { name: 'level', type: 'string', value: '5-moated' },
+      { name: 'slot', type: 'int', value: 3 },
+    ]);
+  });
+});
+
 describe('buildBuildingsTiledMap', () => {
+  it('appends the prefab objects to the prefabs layer and counts their ids', () => {
+    const map = buildBuildingsTiledMap(syntheticBuildingMap(), PREFABS);
+    const prefabs = map.layers[5];
+    expect(prefabs).toMatchObject({ name: 'prefabs', type: 'objectgroup' });
+    expect(
+      prefabs.type === 'objectgroup' && prefabs.objects.map((o) => o.name)
+    ).toEqual(['bridge-stone-vertical-grass-9', 'castle-5-moated']);
+    expect(map.nextobjectid).toBe(3);
+  });
+
   it('shares the county map shell: key order, size, tileset reference', () => {
     const map = buildBuildingsTiledMap(syntheticBuildingMap());
     const county = buildCountyTiledMap(parseCountyMap(buildCountyMapBytes()));
@@ -79,13 +148,13 @@ describe('buildBuildingsTiledMap', () => {
       height: 128,
       tilewidth: 40,
       tileheight: 40,
-      nextlayerid: 6,
+      nextlayerid: 7,
       nextobjectid: 1,
     });
     expect(map.tilesets).toEqual([{ firstgid: 1, source: 'terrain.tsx' }]);
   });
 
-  it('emits terrain, intact (hidden), ruined (hidden), collision (hidden) and spawns, back to front', () => {
+  it('emits terrain, intact (hidden), ruined (hidden), collision (hidden), spawns and prefabs, back to front', () => {
     const map = buildBuildingsTiledMap(syntheticBuildingMap());
     expect(map.layers.map((l) => [l.id, l.name, l.type, l.visible])).toEqual([
       [1, 'terrain', 'tilelayer', true],
@@ -93,8 +162,10 @@ describe('buildBuildingsTiledMap', () => {
       [3, 'ruined', 'tilelayer', false],
       [4, 'collision', 'tilelayer', false],
       [5, 'spawns', 'objectgroup', true],
+      [6, 'prefabs', 'objectgroup', true],
     ]);
     expect(map.layers[4]).toMatchObject({ draworder: 'topdown', objects: [] });
+    expect(map.layers[5]).toMatchObject({ draworder: 'topdown', objects: [] });
   });
 
   it('leaves collision all open (gid 0): real building collision is not yet derived', () => {

@@ -10,7 +10,7 @@ import type { TiledMap } from 'tiled-types';
 
 import { parseBuildingMap } from '../../src/lib/building-map';
 import { parseCountyMap } from '../../src/lib/county-map';
-import { parseBuildingSites } from '../dracula-exe';
+import { parseBuildingPrefabs, parseBuildingSites } from '../dracula-exe';
 import { cdPath, hasCdFile, readCdFile } from '../../src/test/cd-assets';
 
 import { buildBuildingsTiledMap } from './building-map-tiled';
@@ -61,9 +61,13 @@ function conversionFor(name: string): Conversion | undefined {
   if (name === BUILDING_MAP_NAME) {
     return {
       source: BUILDING_MAP_CD_PATH,
-      alsoReads: [],
+      alsoReads: [DRACULA_EXE_CD_PATH],
       fileName: BUILDINGS_TILED_MAP_FILE_NAME,
-      convert: (bytes) => buildBuildingsTiledMap(parseBuildingMap(bytes)),
+      convert: (bytes) =>
+        buildBuildingsTiledMap(
+          parseBuildingMap(bytes),
+          parseBuildingPrefabs(readCdFile(DRACULA_EXE_CD_PATH))
+        ),
     };
   }
   if (isCountyName(name)) {

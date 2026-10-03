@@ -1,13 +1,17 @@
-import type { TiledMap } from 'tiled-types';
+import type { TiledMap, TiledObject } from 'tiled-types';
 
 import {
   BUILDING_GRID_SIZE,
   type BuildingMap,
 } from '../../src/lib/building-map';
 
+import type { BuildingPrefab } from '../dracula-exe';
+
 import {
   atlasIndexGid,
   buildTerrainTiledMap,
+  COUNTY_TILE_SIZE,
+  objectLayer,
   spawnsLayer,
   tileLayer,
 } from './county-map-tiled';
@@ -19,7 +23,7 @@ import {
  * `src/game/map/load-tiled-map.ts` accepts. Same size, tile size, tileset
  * reference and key order as a converted county (see `./county-map-tiled`).
  *
- * The output has five layers, back to front:
+ * The output has six layers, back to front:
  *
  * - `terrain`: the interior grid, every cell set (`gid = atlas index + 1`,
  *   so index 0 is gid 1).
@@ -37,6 +41,8 @@ import {
  *   3-14 (see `docs/MAP_FORMAT.md`). A follow-up will fill this in; until
  *   then a unit can walk straight through a building.
  * - `spawns`: an empty object layer (the loader requires one).
+ * - `prefabs`: one rectangle per building prefab, marking where its art sits
+ *   in this map (see {@link buildingPrefabObjects}).
  */
 
 function interiorData(map: BuildingMap): number[] {
@@ -71,14 +77,71 @@ function gridData(
  * @throws {RangeError} for a tile index above the verbatim atlas range, in
  * any of the three grids.
  */
-export function buildBuildingsTiledMap(map: BuildingMap): TiledMap {
-  return buildTerrainTiledMap([
-    tileLayer(1, 'terrain', interiorData(map)),
-    tileLayer(2, 'intact', overlayData(map.intact), false),
-    tileLayer(3, 'ruined', overlayData(map.ruined), false),
-    tileLayer(4, 'collision', allOpenCollisionData(), false),
-    spawnsLayer(5),
-  ]);
+export function buildBuildingsTiledMap(
+  map: BuildingMap,
+  prefabs: readonly BuildingPrefab[] = []
+): TiledMap {
+  const prefabObjects = buildingPrefabObjects(prefabs);
+  return {
+    ...buildTerrainTiledMap([
+      tileLayer(1, 'terrain', interiorData(map)),
+      tileLayer(2, 'intact', overlayData(map.intact), false),
+      tileLayer(3, 'ruined', overlayData(map.ruined), false),
+      tileLayer(4, 'collision', allOpenCollisionData(), false),
+      spawnsLayer(5),
+      objectLayer(6, PREFABS_LAYER_NAME, prefabObjects),
+    ]),
+    nextobjectid: prefabObjects.length + 1,
+  };
+}
+
+/** Name of the object layer marking each building prefab. */
+export const PREFABS_LAYER_NAME = 'prefabs';
+
+/**
+ * The `prefabs` objects, ids from 1: one rectangle per prefab, exactly its
+ * source rectangle from `DRACULA.EXE` (tiles × 40, in pixels), with the
+ * category as its Tiled class (`type`).
+ *
+ * Names are `castle-<level>`, `tower-<level>` and
+ * `bridge-<level>-<orientation>-<bank>-<slot>`; the slot keeps bridge names
+ * unique, since two slots can share a shape.
+ *
+ * String properties, in the alphabetical order Tiled writes them:
+ * `bank` and `orientation` (bridges only), `category`, `level`, and `slot`
+ * (an int).
+ */
+export function buildingPrefabObjects(
+  prefabs: readonly BuildingPrefab[]
+): TiledObject[] {
+  return prefabs.map((prefab, i) => {
+    const { category, level, slot, rect, orientation, bank } = prefab;
+    const name =
+      category === 'bridge'
+        ? `bridge-${level}-${orientation}-${bank}-${slot}`
+        : `${category}-${level}`;
+    const properties: TiledObject['properties'] = [
+      ...(bank ? [{ name: 'bank', type: 'string' as const, value: bank }] : []),
+      { name: 'category', type: 'string' as const, value: category },
+      { name: 'level', type: 'string' as const, value: level },
+      ...(orientation
+        ? [{ name: 'orientation', type: 'string' as const, value: orientation }]
+        : []),
+      { name: 'slot', type: 'int' as const, value: slot },
+    ].sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
+    return {
+      height: rect.height * COUNTY_TILE_SIZE,
+      id: i + 1,
+      name,
+      properties,
+      rotation: 0,
+      type: category,
+      visible: true,
+      width: rect.width * COUNTY_TILE_SIZE,
+      x: rect.x * COUNTY_TILE_SIZE,
+      y: rect.y * COUNTY_TILE_SIZE,
+    } as TiledObject;
+  });
 }
 
 /**

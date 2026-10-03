@@ -1,7 +1,7 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 
-import type { TiledLayerTilelayer, TiledMap } from 'tiled-types';
+import type { TiledLayerObjectgroup, TiledLayerTilelayer, TiledMap } from 'tiled-types';
 import { describe, expect, it } from 'vitest';
 
 import {
@@ -37,14 +37,74 @@ describe('public/maps/buildings.tmj', () => {
     expect(map.tilesets).toEqual([{ firstgid: 1, source: 'terrain.tsx' }]);
   });
 
-  it('has terrain, a hidden intact, a hidden ruined, a hidden collision and an empty spawns layer, back to front', () => {
+  it('has terrain, a hidden intact, a hidden ruined, a hidden collision, an empty spawns layer and a prefabs layer, back to front', () => {
     expect(map.layers.map((l) => [l.name, l.type, l.visible])).toEqual([
       ['terrain', 'tilelayer', true],
       ['intact', 'tilelayer', false],
       ['ruined', 'tilelayer', false],
       ['collision', 'tilelayer', false],
       ['spawns', 'objectgroup', true],
+      ['prefabs', 'objectgroup', true],
     ]);
+  });
+
+  describe('prefabs layer', () => {
+    const prefabs = (
+      map.layers.find(
+        (layer): layer is TiledLayerObjectgroup => layer.name === 'prefabs'
+      )?.objects ?? []
+    ).map((object) => ({
+      ...object,
+      properties: Object.fromEntries(
+        (object.properties ?? []).map((p) => [p.name, p.value])
+      ),
+    }));
+
+    it('marks 57 prefabs: 42 bridges, 3 towers, 12 castles', () => {
+      const count = (type: string) =>
+        prefabs.filter((o) => o.type === type).length;
+      expect([count('bridge'), count('tower'), count('castle')]).toEqual([
+        42, 3, 12,
+      ]);
+      expect(new Set(prefabs.map((o) => o.name)).size).toEqual(57);
+    });
+
+    it('splits the bridges into 28 grass-bank and 14 rock-bank', () => {
+      const bank = (value: string) =>
+        prefabs.filter((o) => o.properties.bank === value).length;
+      expect([bank('grass'), bank('rock')]).toEqual([28, 14]);
+    });
+
+    it('places rects on tile boundaries, in bounds, overlapping nothing', () => {
+      for (const o of prefabs) {
+        expect([o.x, o.y, o.width, o.height].map((v) => v % 40)).toEqual([
+          0, 0, 0, 0,
+        ]);
+        expect(o.width).toBeGreaterThan(0);
+        expect(o.x + o.width).toBeLessThanOrEqual(128 * 40);
+        expect(o.y + o.height).toBeLessThanOrEqual(128 * 40);
+      }
+      for (const [i, a] of prefabs.entries()) {
+        for (const b of prefabs.slice(i + 1)) {
+          const overlaps =
+            a.x < b.x + b.width &&
+            b.x < a.x + a.width &&
+            a.y < b.y + b.height &&
+            b.y < a.y + a.height;
+          expect(overlaps, `${a.name} vs ${b.name}`).toBe(false);
+        }
+      }
+    });
+
+    it('marks the unused rock-3 castle, 21x21 tiles at (89, 85)', () => {
+      const rock3 = prefabs.find((o) => o.name === 'castle-rock-3');
+      expect(rock3).toMatchObject({
+        x: 89 * 40,
+        y: 85 * 40,
+        width: 21 * 40,
+        height: 21 * 40,
+      });
+    });
   });
 
   it('sets every terrain cell and the recorded overlay cells, all inside the verbatim range', () => {
