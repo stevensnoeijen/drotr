@@ -39,6 +39,12 @@ export interface UnitFrameMap {
   readonly anchor: readonly [number, number];
   /** Playback settings for every action the teams have frames for. */
   readonly playback: Readonly<Partial<Record<UnitAction, ActionPlayback>>>;
+  /**
+   * `BATTLE.ART` pixels `[x, y]` to clear in every frame that covers them:
+   * stray pixels that are not part of the figure, such as a sword tip from
+   * the next atlas row reaching into a frame's edge.
+   */
+  readonly erase?: readonly (readonly [number, number])[];
 }
 
 /** An atlas rectangle in pixels. */

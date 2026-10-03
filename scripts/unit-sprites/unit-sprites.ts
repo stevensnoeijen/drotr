@@ -217,11 +217,29 @@ export function packUnitAtlas(
     manifests[map.unit] = packUnit(layout, map, atlasPath);
   }
 
+  const erase = ordered.flatMap((map) => map.erase ?? []);
   const { width } = layout;
   const height = Math.max(0, layout.cursorY - FRAME_PADDING);
   const rgba = new Uint8ClampedArray(width * height * 4) as RgbaPixels;
   for (const spot of layout.placed.values()) {
     const pixels = extractRgbaRect(image, spot.rect);
+    for (const [ex, ey] of erase) {
+      const col = ex - spot.rect.x;
+      const row = ey - spot.rect.y;
+      if (
+        col < 0 ||
+        row < 0 ||
+        col >= spot.rect.width ||
+        row >= spot.rect.height
+      ) {
+        continue;
+      }
+      pixels.fill(
+        0,
+        (row * spot.rect.width + col) * 4,
+        (row * spot.rect.width + col + 1) * 4
+      );
+    }
     const rowBytes = spot.rect.width * 4;
     for (let row = 0; row < spot.rect.height; row++) {
       rgba.set(

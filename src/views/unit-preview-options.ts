@@ -57,10 +57,17 @@ const pick = <T>(options: readonly T[], wanted: unknown): T | undefined =>
   options.includes(wanted as T) ? (wanted as T) : options[0];
 
 /**
+ * Preview-only default: attack loops so it can be inspected without
+ * restarting it; every other action follows the manifest.
+ */
+const defaultLoop = (action: UnitAction, manifestLoop: boolean): boolean =>
+  action === 'attack' ? true : manifestLoop;
+
+/**
  * Turns a possibly partial or stale request into a selection the unit can
  * actually play: anything the manifest doesn't offer falls back to its
  * first option. `loop` defaults to the manifest's own setting for the
- * action. Returns `undefined` when there is no unit (or no action) at all.
+ * action, except `attack` which loops. Returns `undefined` when there is no unit (or no action) at all.
  */
 export function resolveSelection(
   units: readonly UnitType[],
@@ -80,7 +87,7 @@ export function resolveSelection(
     team,
     action,
     direction,
-    loop: requested.loop ?? manifest.actions[action]!.loop,
+    loop: requested.loop ?? defaultLoop(action, manifest.actions[action]!.loop),
   };
 }
 
