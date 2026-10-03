@@ -7,7 +7,11 @@ import {
   type Direction,
   type UnitAction,
 } from '~/game/render/sprites/animation-key';
-import type { UnitManifest } from '~/game/render/sprites/unit-manifest';
+import {
+  actionDirections,
+  playableDirection,
+  type UnitManifest,
+} from '~/game/render/sprites/unit-manifest';
 
 /**
  * Option logic for the unit preview page (`#/unit-preview`),
@@ -44,12 +48,23 @@ export function atlasUnits(animationKeys: Iterable<string>): UnitType[] {
   return UNIT_TYPES.filter((unit) => found.has(unit));
 }
 
-/** The teams, actions (in canonical order) and directions a manifest declares. */
-export function animationOptions(manifest: UnitManifest): AnimationOptions {
+/**
+ * The teams, actions (in canonical order) and directions a manifest
+ * declares. `directions` are those of `action` (the first action when
+ * omitted), since an action may have frames for only some facings.
+ */
+export function animationOptions(
+  manifest: UnitManifest,
+  action?: UnitAction
+): AnimationOptions {
+  const actions = UNIT_ACTIONS.filter((a) => manifest.actions[a]);
+  const declared = manifest.actions[action ?? actions[0]];
   return {
     teams: manifest.teams,
-    actions: UNIT_ACTIONS.filter((action) => manifest.actions[action]),
-    directions: DIRECTIONS,
+    actions,
+    directions: DIRECTIONS.filter((d) =>
+      declared ? actionDirections(declared).includes(d) : true
+    ),
   };
 }
 
@@ -80,8 +95,13 @@ export function resolveSelection(
   const options = animationOptions(manifest);
   const team = pick(options.teams, requested.team);
   const action = pick(options.actions, requested.action);
-  const direction = pick(options.directions, requested.direction);
-  if (!team || !action || !direction) return undefined;
+  if (!team || !action) return undefined;
+  // A direction the chosen action has no frames for falls back to the
+  // nearest one it does have.
+  const direction = playableDirection(
+    manifest.actions[action]!,
+    pick(DIRECTIONS, requested.direction)!
+  );
   return {
     unit,
     team,

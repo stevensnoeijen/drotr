@@ -7,7 +7,7 @@ import {
   readPublicJson,
 } from '~/test/unit-sprites-fixture';
 import { DIRECTIONS } from './animation-key';
-import { loadUnitSprites, publicUrl, type UnitSpriteSources } from './load-unit-sprites';
+import { loadUnitSprites, publicUrl, unitSpritesFromAtlas, type UnitSpriteSources } from './load-unit-sprites';
 import { UNIT_ATLAS_PATH, unitManifestPath } from './unit-manifest';
 import { SPRITE_UNIT_TYPES } from './unit-sprites';
 
@@ -92,6 +92,16 @@ describe('loadUnitSprites', () => {
     await expect(loadUnitSprites(src)).rejects.toThrow(
       "The unit atlas doesn't match the swordsmen manifest: swordsmen.red.dead.sw is missing"
     );
+  });
+
+  it('does not require frames for directions an action does not declare', async () => {
+    // The juggernaut attacks north only; its other attack keys are absent.
+    const sheet = atlas();
+    expect(sheet.animations['juggernaut.red.attack.n']).toBeDefined();
+    expect(sheet.animations['juggernaut.red.attack.s']).toBeUndefined();
+    expect(() =>
+      unitSpritesFromAtlas(sheet.animations, new Map([['juggernaut', committedManifest('juggernaut')]]))
+    ).not.toThrow();
   });
 
   it('rejects when an animation has fewer frames than the manifest declares', async () => {

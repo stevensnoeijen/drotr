@@ -192,6 +192,42 @@ describe('RenderSystem sprite views', () => {
       expect(sprite.playing).toBe(true);
     });
 
+    it('plays the nearest available facing for an action without frames for the current one', () => {
+      // Limit the swordsmen's attack to north in the manifest, as the
+      // juggernaut's is.
+      const base = sprites.get('swordsmen')!;
+      const northOnly: UnitSprites = new Map([
+        [
+          'swordsmen',
+          {
+            ...base,
+            manifest: {
+              ...base.manifest,
+              actions: {
+                ...base.manifest.actions,
+                attack: { ...base.manifest.actions.attack!, directions: ['n'] },
+              },
+            },
+          },
+        ],
+      ]);
+      const { parent, spawn, system } = setup({ sprites: northOnly });
+      const entity = spawn('swordsmen', 'red');
+      entity.transform!.rotation = Math.PI; // south
+      entity.attackSwing = { elapsed: 0 };
+      system.sync();
+      const sprite = spriteOf(parent);
+
+      // Facing south, it swings with the north frames...
+      expect(sprite.textures).toBe(animation('swordsmen.red.attack.n'));
+
+      // ...but still walks facing south.
+      delete entity.attackSwing;
+      entity.velocity = { x: 0, y: 1 };
+      system.sync();
+      expect(sprite.textures).toBe(animation('swordsmen.red.move.s'));
+    });
+
     it('restarts the attack on every new swing and holds its last frame in between', () => {
       const { parent, spawn, system } = setup();
       const entity = spawn('swordsmen', 'red');

@@ -1,9 +1,10 @@
 import { Assets, type Spritesheet, type Texture } from 'pixi.js';
 
 import type { UnitType } from '~/game/data/units';
-import { animationKey, DIRECTIONS, UNIT_ACTIONS } from './animation-key';
+import { animationKey, UNIT_ACTIONS } from './animation-key';
 import {
   UNIT_ATLAS_PATH,
+  actionDirections,
   parseUnitManifest,
   unitManifestPath,
   type UnitManifest,
@@ -75,7 +76,7 @@ export function unitSpritesFromAtlas(
       for (const action of UNIT_ACTIONS) {
         const declared = manifest.actions[action];
         if (!declared) continue;
-        for (const direction of DIRECTIONS) {
+        for (const direction of actionDirections(declared)) {
           const key = animationKey(unit, team, action, direction);
           const textures = animations?.[key];
           if (!textures) {

@@ -156,6 +156,41 @@ describe('packUnitAtlas', () => {
   });
 });
 
+describe('packUnitAtlas with an action limited to some directions', () => {
+  const base = syntheticMap();
+  const map: UnitFrameMap = {
+    ...base,
+    playback: { ...base.playback, attack: { fps: 12, loop: false } },
+    teams: {
+      red: {
+        ...base.teams.red,
+        attack: { ...frameBlock(0, rows(6), 2, [2, 2]), directions: ['n'] },
+      },
+    },
+  };
+  const packed = packUnitAtlas(syntheticImage(), [map]);
+
+  it('packs only the listed directions and records them in the manifest', () => {
+    const keys = Object.keys(packed.sheet.animations);
+    expect(keys.filter((k) => k.includes('.attack.'))).toEqual(['swordsmen.red.attack.n']);
+    expect(packed.manifests.swordsmen!.actions.attack!.directions).toEqual(['n']);
+    expect(packed.manifests.swordsmen!.actions.move!.directions).toBeUndefined();
+    expect(validateUnitManifest(packed.manifests.swordsmen)).toEqual([]);
+  });
+
+  it('rejects teams that disagree on the directions', () => {
+    const red = map.teams.red!;
+    const bad: UnitFrameMap = {
+      ...map,
+      teams: {
+        red,
+        blue: { ...red, attack: { ...red.attack!, directions: ['n', 's'] } },
+      },
+    };
+    expect(() => packUnitAtlas(syntheticImage(), [bad])).toThrow(/different directions/);
+  });
+});
+
 describe('packUnitAtlas with several units', () => {
   /** A second unit whose frames sit lower in the synthetic atlas. */
   function knightMap(): UnitFrameMap {

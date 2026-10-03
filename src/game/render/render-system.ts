@@ -4,9 +4,9 @@ import type { Query, With } from 'miniplex';
 import type { UnitType } from '~/game/data/units';
 import type { Entity } from '~/game/ecs/entity';
 import type { Renderable } from '~/game/ecs/components';
-import type { AnimationKey } from './sprites/animation-key';
-import { animationKeyOf, unitActionOf } from './sprites/unit-animation';
-import type { UnitManifest } from './sprites/unit-manifest';
+import { animationKey, type AnimationKey } from './sprites/animation-key';
+import { directionOf, unitActionOf } from './sprites/unit-animation';
+import { playableDirection, type UnitManifest } from './sprites/unit-manifest';
 import {
   animationSpeed,
   isSpriteUnitType,
@@ -211,10 +211,18 @@ export function spriteScale(renderable: Renderable, manifest: UnitManifest): num
 
 /** What a sprite entity should be showing right now, from its ECS state. */
 function currentAnimation(entity: RenderableEntity, data: UnitSpriteData) {
-  const key = animationKeyOf(entity)!;
   const action = unitActionOf(entity);
-  const textures: Texture[] | undefined = data.animations[key];
   const playback = data.manifest.actions[action];
+  // An action that lacks frames for the unit's facing (say, an attack drawn
+  // for north only) plays its nearest available facing instead.
+  const facing = directionOf(entity.transform.rotation);
+  const key = animationKey(
+    entity.unitType!,
+    entity.team ?? 'neutral',
+    action,
+    playback ? playableDirection(playback, facing) : facing
+  );
+  const textures: Texture[] | undefined = data.animations[key];
   if (!textures || !playback) {
     // The loader checks every animation its manifest declares, so this is
     // a manifest that doesn't declare an action or team the unit can reach.

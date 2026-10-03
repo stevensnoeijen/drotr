@@ -3,6 +3,7 @@ import { CELLS_PER_TILE } from '~/lib/grid';
 import swordsmenData from './units/swordsmen.json';
 import crossbowsoldierData from './units/crossbowsoldier.json';
 import knightData from './units/knight.json';
+import juggernautData from './units/juggernaut.json';
 
 /**
  * The kinds of unit in the game. Names and starting HP match
@@ -11,7 +12,7 @@ import knightData from './units/knight.json';
  * the asset-integration phase (see `SPRITE_UNIT_TYPES` for which units
  * already have).
  */
-export const UNIT_TYPES = ['swordsmen', 'knight', 'crossbowsoldier'] as const;
+export const UNIT_TYPES = ['swordsmen', 'knight', 'crossbowsoldier', 'juggernaut'] as const;
 export type UnitType = (typeof UNIT_TYPES)[number];
 
 /**
@@ -93,6 +94,10 @@ export const units: Record<UnitType, UnitDefinition> = {
   // rather than grinding.
   knight: knightData as UnitDefinition,
   crossbowsoldier: crossbowsoldierData as UnitDefinition,
+  // A battering ram with its crew. Only the minimum for now (type, size,
+  // shape, health) so `#/unit-preview` can list its atlas sprites: combat
+  // stats, a footprint and in-game sprites land in #182.
+  juggernaut: juggernautData as UnitDefinition,
 };
 
 /** Every unit not given an explicit `footprint` occupies exactly one cell. */

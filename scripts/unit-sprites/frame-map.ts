@@ -17,6 +17,11 @@ import {
  * the same, untrimmed size, so all frames share one pivot.
  */
 export interface FrameMapAnimation {
+  /**
+   * The directions this animation has frames for; omitted means all eight.
+   * Directions not listed are not packed and the manifest records the subset.
+   */
+  readonly directions?: readonly Direction[];
   /** Width and height of every frame in this animation. */
   readonly size: readonly [number, number];
   /** Top-left atlas corner `[x, y]` of each frame, per direction, in playback order. */

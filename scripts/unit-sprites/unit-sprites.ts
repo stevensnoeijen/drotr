@@ -120,16 +120,31 @@ function packUnit(
       if (!playback) {
         throw new Error(`${map.unit}: no playback settings for ${action}`);
       }
-      const declared: ActionManifest = { frames: count, ...playback };
+      const directions = DIRECTIONS.filter(
+        (d) => !animation.directions || animation.directions.includes(d)
+      );
+      const declared: ActionManifest = {
+        frames: count,
+        ...playback,
+        ...(directions.length < DIRECTIONS.length ? { directions } : {}),
+      };
       const previous = actions[action];
       if (previous && previous.frames !== count) {
         throw new Error(
           `${map.unit}.${action}: ${team} has ${count} frames, another team ${previous.frames}`
         );
       }
+      if (
+        previous &&
+        (previous.directions ?? []).join() !== (declared.directions ?? []).join()
+      ) {
+        throw new Error(
+          `${map.unit}.${action}: ${team} has different directions than another team`
+        );
+      }
       actions[action] = declared;
 
-      for (const direction of DIRECTIONS) {
+      for (const direction of directions) {
         const frames = animation.frames[direction];
         if (frames.length !== count) {
           throw new Error(

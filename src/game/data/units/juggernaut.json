@@ -1,0 +1,7 @@
+{
+  "type": "juggernaut",
+  "size": { "width": 1.5, "height": 1.5 },
+  "shape": "square",
+  "health": 15,
+  "assets": null
+}

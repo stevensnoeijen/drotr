@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 
@@ -6,12 +7,12 @@ import { describe, expect, it } from 'vitest';
 
 import type { UnitType } from '~/game/data/units';
 import {
-  DIRECTIONS,
   animationKey,
   frameName,
 } from '~/game/render/sprites/animation-key';
 import {
   UNIT_ATLAS_PATH,
+  actionDirections,
   parseUnitManifest,
   unitManifestPath,
   validateUnitManifest,
@@ -79,6 +80,41 @@ describe('committed unit atlas', () => {
   });
 });
 
+/**
+ * SHA-1 over a unit's animation keys and the pixels of every frame, in key
+ * order. Independent of where the packer happened to place the frames, so a
+ * unit added to the atlas moves other units' rects without changing this.
+ */
+function unitPixelHash(unit: UnitType): string {
+  const hash = createHash('sha1');
+  const keys = Object.keys(sheet.animations)
+    .filter((key) => key.startsWith(`${unit}.`))
+    .sort();
+  for (const key of keys) {
+    hash.update(key);
+    for (const name of sheet.animations[key as keyof typeof sheet.animations]) {
+      const { x, y, w, h } = sheet.frames[name].frame;
+      for (let row = 0; row < h; row++) {
+        const start = ((y + row) * png.width + x) * 4;
+        hash.update(png.data.subarray(start, start + w * 4));
+      }
+    }
+  }
+  return hash.digest('hex');
+}
+
+describe('committed unit pixels', () => {
+  // Pinned when the juggernaut joined the atlas; they only change if a
+  // unit's frame map or the packer's pixel output does.
+  it.each([
+    ['swordsmen', '2f608953352bed924ee6ccf5548002dddb1c2701'],
+    ['crossbowsoldier', '48264938f23e1bf0a3603ca75e717f55690ed5be'],
+    ['knight', 'ac648223925c710a9f981234d40f0b356dd4eba9'],
+  ] as const)('leaves the %s frames unchanged', (unit, hash) => {
+    expect(unitPixelHash(unit)).toBe(hash);
+  });
+});
+
 describe.each(units)('committed %s manifest', (unit) => {
   const manifest = readJson(unitManifestPath(unit));
 
@@ -91,8 +127,9 @@ describe.each(units)('committed %s manifest', (unit) => {
     const { teams, actions, frameSize } = parseUnitManifest(manifest);
     let expected = 0;
     for (const team of teams) {
-      for (const [action, { frames: count }] of Object.entries(actions)) {
-        for (const direction of DIRECTIONS) {
+      for (const [action, declared] of Object.entries(actions)) {
+        const count = declared.frames;
+        for (const direction of actionDirections(declared)) {
           const key = animationKey(
             unit,
             team,
@@ -120,7 +157,7 @@ describe.each(units)('committed %s manifest', (unit) => {
   });
 });
 
-describe.each(['swordsmen', 'crossbowsoldier', 'knight'] as const)('committed %s timing', (unit) => {
+describe.each(['swordsmen', 'crossbowsoldier', 'knight', 'juggernaut'] as const)('committed %s timing', (unit) => {
   const { actions } = parseUnitManifest(readJson(unitManifestPath(unit)));
   const seconds = (action: 'attack' | 'dead') =>
     actions[action]!.frames / actions[action]!.fps;
@@ -133,5 +170,25 @@ describe.each(['swordsmen', 'crossbowsoldier', 'knight'] as const)('committed %s
   it('finishes dying and holds its last frame before the corpse is removed', () => {
     expect(actions.dead!.holdLast).toBe(true);
     expect(seconds('dead')).toBeLessThan(DEATH_REMOVAL_DELAY_SECONDS);
+  });
+});
+
+describe('committed juggernaut attack', () => {
+  const { actions } = parseUnitManifest(readJson(unitManifestPath('juggernaut')));
+
+  it('has frames for north only', () => {
+    expect(actions.attack!.directions).toEqual(['n']);
+    for (const team of ['blue', 'red']) {
+      expect((sheet.animations as Record<string, string[]>)[`juggernaut.${team}.attack.n`]).toHaveLength(
+        actions.attack!.frames
+      );
+      expect((sheet.animations as Record<string, string[]>)[`juggernaut.${team}.attack.e`]).toBeUndefined();
+    }
+  });
+
+  it('leaves its other actions in all eight directions', () => {
+    for (const action of ['idle', 'move', 'dead'] as const) {
+      expect(actions[action]!.directions).toBeUndefined();
+    }
   });
 });
