@@ -433,8 +433,10 @@ grass caps 1225/1229 vs rock caps 1064/1066, wood vertical 1207/1209 vs
 920/921, wood horizontal 1210/1212 vs 922/923, stone horizontal 1238/1254
 vs 1241/1257. The county sites that use the rock-bank slots all meet
 rock or cliff terrain at both ends. So the second wood run and the "alt.
-art" stone runs are bank variants, not damaged art (the `ruined` layer is
-empty inside every slot bridge rect). The rock-bank slots are a fixed table in
+art" stone runs are bank variants. They are not the damaged state of the
+other slots: a rock-bank bridge has its own `intact` art, and the `ruined`
+layer holds something only inside stone-wide bridges, grass and rock alike
+(see "Bridge art in the three layers" below). The rock-bank slots are a fixed table in
 `scripts/dracula-exe/building-sites.ts`. A bridge site is the top-left of
 its footprint on the near bank, and the footprint spans the water.
 
@@ -742,8 +744,10 @@ but starts them hidden; to see the buildings intact or ruined, toggle
   `castle-rock-3` is marked although no county places it. A bridge prefab
   is identified by slot; the county layer doesn't carry the slot, so
   resolving a site's level to a slot is up to whoever places the building.
-  Only intact art is marked: `BUILDING.MAP` has no damaged or destroyed
-  bridge art.
+  The rects mark where a bridge's tiles sit, in all three layers alike.
+  `BUILDING.MAP` has no separate damaged-bridge prefabs; what its `ruined`
+  layer holds for bridges is described under "Bridge art in the three
+  layers" below.
 
   **Spare bridges**: 15 complete bridges that no executable slot points at
   (217 `intact` cells lie outside every slot rect). They are found by
@@ -759,12 +763,43 @@ but starts them hidden; to see the buildings intact or ruined, toggle
   four stone-wide vertical rock bridges of lengths 4–7 side by side (x 51–62,
   y 40–46), and three rock horizontal bridges (stone, length 5, x 28–32,
   y 48–49; stone-wide, lengths 5 and 6, x 25–29 and x 30–35, y 50–52).
-  Their `ruined` overlay, where there is one, is a line of tile 389 down
-  the deck. Nine `intact` cells are neither inside a rect nor part of a bridge, and
+  Their `ruined` cells follow the same rule as slot bridges (below). Nine `intact` cells are neither inside a rect nor part of a bridge, and
   stay unmarked: single tile 1386 cells at (18, 33) and (18, 36), tile 2
   at x 21, y 56–58, and four tile 1382 cells at x 29–31, y 92–93.
 
 The converter also reads `DRACULA.EXE` for the `prefabs` layer.
+
+#### Bridge art in the three layers
+
+A bridge looks different in each of the three layers. Slot and spare
+bridges are alike, and so are grass and rock banks, apart from the end
+caps. Taking a stone-wide bridge (3 across):
+
+| layer | what it holds for a bridge |
+|---|---|
+| `terrain` | a clean bridge: end caps 1216–1223, deck tile 325 |
+| `intact` | a dark, scorched-looking deck: end caps 1224–1231, deck tile 357 |
+| `ruined` | tile 389 (a brown dirt strip) down the middle column only, from the second cell to the second-last. Nothing on the end caps or edge columns |
+
+Only stone-wide bridges have any `ruined` cells (slots 11–16, 30–37 and 41,
+and the spare stone-wide ones). Wood bridges and 2-wide stone bridges have
+none. All these tiles are fully opaque, so none of this is a compositing
+artefact. No county map uses any of these bridge tiles, so counties give no
+reference for how a bridge should look.
+
+What the three states mean is **not settled**. The leading interpretation,
+which is a hypothesis and not something the data shows:
+
+- A ruined bridge is mostly gone. Its `ruined` cells are the debris or
+  remains left in the river, which is why they are a strip and not a whole
+  deck.
+- On a county site the ground under a bridge is water. So the clean
+  `terrain` bridge is only a backdrop in `buildings.tmj`, and the `intact`
+  dark deck may simply be how a normal bridge looks over water.
+
+The work that places buildings on county sites (#316) and the later
+damaged-bridge work should check this by rendering both states over county
+water, and settle which layer a placed bridge copies.
 
 In the engine it is the `buildings` map; view it with the `empty`
 scenario, which spawns nothing and is allowed on every map
