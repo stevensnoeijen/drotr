@@ -413,24 +413,34 @@ colour of the prefab's tiles: brown is wood, grey is stone. Wood bridges
 are always 1 tile wide, so only one small unit can cross. Stone bridges
 are 2 or 3 tiles wide.
 
-| slots | material | orientation | width | lengths |
-|---|---|---|---|---|
-| 0–2 | wood | vertical | 1 | 3, 4, 5 |
-| 3–6 | wood | vertical | 1 | 2, 3, 4, 5 |
-| 7–10 | stone | vertical | 2 | 3, 4, 5, 6 |
-| 11–16 | stone | vertical | 3 | 4, 5, 6, 7, 8, 11 |
-| 17–19 | stone (alt. art) | vertical | 2 | 3, 5, 6 |
-| 20–25 | wood | horizontal | 1 | 3, 5, 5, 3, 5, 5 |
-| 26–29 | stone | horizontal | 2 | 3, 4, 5, 6 |
-| 30–37 | stone | horizontal | 3 | 4, 5, 6, 7, 8, 9, 10, 11 |
-| 38–40 | stone (alt. art) | horizontal | 2 | 3, 4, 6 |
-| 41 | stone (alt. art) | horizontal | 3 | 4 |
+| slots | material | orientation | bank | width | lengths |
+|---|---|---|---|---|---|
+| 0–2 | wood | vertical | grass | 1 | 3, 4, 5 |
+| 3–6 | wood | vertical | rock | 1 | 2, 3, 4, 5 |
+| 7–10 | stone | vertical | grass | 2 | 3, 4, 5, 6 |
+| 11–16 | stone | vertical | grass | 3 | 4, 5, 6, 7, 8, 11 |
+| 17–19 | stone | vertical | rock | 2 | 3, 5, 6 |
+| 20–22 | wood | horizontal | grass | 1 | 3, 5, 5 |
+| 23–25 | wood | horizontal | rock | 1 | 3, 5, 5 |
+| 26–29 | stone | horizontal | grass | 2 | 3, 4, 5, 6 |
+| 30–37 | stone | horizontal | grass | 3 | 4, 5, 6, 7, 8, 9, 10, 11 |
+| 38–40 | stone | horizontal | rock | 2 | 3, 4, 6 |
+| 41 | stone | horizontal | rock | 3 | 4 |
 
-Not yet explained: why wood has two runs per orientation (slots 0–2 vs
-3–6, and 20–25), and what the "alt. art" stone runs are for. They use
-slightly darker tiles, maybe a different bank style or a ruined state. A
-bridge site is the top-left of its footprint on the near bank, and the
-footprint spans the water.
+Most shapes exist twice, as a **grass-bank** and a **rock-bank** copy. The
+deck tiles are identical and only the end caps differ: stone vertical
+grass caps 1225/1229 vs rock caps 1064/1066, wood vertical 1207/1209 vs
+920/921, wood horizontal 1210/1212 vs 922/923, stone horizontal 1238/1254
+vs 1241/1257. The county sites that use the rock-bank slots all meet
+rock or cliff terrain at both ends. So the second wood run and the "alt.
+art" stone runs are bank variants, not damaged art (the `ruined` layer is
+empty inside every bridge rect). The rock-bank slots are a fixed table in
+`scripts/dracula-exe/building-sites.ts`. A bridge site is the top-left of
+its footprint on the near bank, and the footprint spans the water.
+
+Slots 21 and 22 are both 5×1 on grass. Slot 21's rect (and rock slot
+24's) is 5 long, but the bridge art is 4 long plus one stray neighbouring
+tile. The `prefabs` layer keeps the rect as the executable defines it.
 
 ### Extracting
 
@@ -710,6 +720,35 @@ but starts them hidden; to see the buildings intact or ruined, toggle
   "Open questions for later" below) — so a unit can walk straight through
   a building until a follow-up fills this in.
 - **`spawns`** — an empty object layer (the loader requires one).
+- **`prefabs`** — one rectangle object per building prefab, marking where
+  its art sits in this map, so it can be copied onto a county construction
+  site. The rect is exactly the prefab's source rectangle from
+  `DRACULA.EXE` (see "Prefab footprints" above), in pixels (tiles × 40),
+  and the object's class (`type`) is its category, so the `tile-layers`
+  debug colours apply. 57 objects: 42 bridges, 3 towers, 12 castles. No two
+  rects overlap. Names:
+  - `castle-<level>`, e.g. `castle-5-moated`;
+  - `tower-<level>`, e.g. `tower-rock-1`;
+  - `bridge-<level>-<orientation>-<bank>-<slot>`, e.g.
+    `bridge-stone-vertical-grass-9`. The slot keeps names unique, since
+    two slots can share a shape.
+
+  The levels are the ones the county `constructions` layer uses. String
+  properties: `category`, `level`, `slot` (an int), and for bridges
+  `orientation` (`vertical` | `horizontal`) and `bank` (`grass` | `rock`).
+  `castle-rock-3` is marked although no county places it. A bridge prefab
+  is identified by slot; the county layer doesn't carry the slot, so
+  resolving a site's level to a slot is up to whoever places the building.
+  Only intact art is marked: `BUILDING.MAP` has no damaged or destroyed
+  bridge art.
+
+  Spare pieces outside every rect stay unmarked: 217 `intact` and 45
+  `ruined` cells, almost all unused bridge pieces (e.g. a complete 2×9
+  stone bridge at x 24–25, y 7–15, and rock-bank stone bridges of lengths
+  4–7 at x 52–62, y 40–46), plus about 10 cells one tile off the edge of
+  castles `3`, `4` and `5-unmoated`.
+
+The converter also reads `DRACULA.EXE` for the `prefabs` layer.
 
 In the engine it is the `buildings` map; view it with the `empty`
 scenario, which spawns nothing and is allowed on every map
@@ -717,11 +756,9 @@ scenario, which spawns nothing and is allowed on every map
 
 ## Open questions for later
 
-- The individual compounds in `BUILDING.MAP` (and its loose wall pieces)
-  need their bounding boxes extracted (e.g. connected-component analysis
-  on the interior grid) so each prefab can be cut out and placed
-  independently, in all three states. Today `buildings.tmj` is the whole
-  file as-is.
+- Placing the prefabs onto county construction sites. `buildings.tmj` now
+  marks where each prefab sits (the `prefabs` layer), but nothing copies
+  them yet, and building collision is still undetermined.
 - What `BUILDING.MAP`'s flag grids (3–14, `hi` values `4, 8, 12, 16, 32,
   64, 128, 256`) mean, and which flag region belongs to which building
   (same coordinates? a lookup by index?). They come in three runs of four
@@ -729,8 +766,6 @@ scenario, which spawns nothing and is allowed on every map
   building's placement *into* a county map is recorded anywhere. It isn't
   in the county file itself: no county contains any prefab building tile
   (see "Buildable locations" above).
-- Bridge slot details (see "Bridges" above): why wood bridges come in two
-  runs per direction, and what the darker "alt. art" stone runs are.
 - What the Section B `hi` bits *other than* bit 2 mean, including what
   bit 8 (`256`) marks on the water blobs and cliff-rim subcells it occurs
   on. `BUILDING.MAP`
