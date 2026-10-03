@@ -23,6 +23,8 @@ const UNIT_COUNTS: Record<UnitType, number> = {
   swordsmen: 60,
   knight: 60,
   crossbowsoldier: 60,
+  // Not part of this stress test's roster.
+  juggernaut: 0,
 };
 
 const UNITS_PER_TEAM = Object.values(UNIT_COUNTS).reduce((sum, count) => sum + count, 0);

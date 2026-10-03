@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 
@@ -79,6 +80,41 @@ describe('committed unit atlas', () => {
   });
 });
 
+/**
+ * SHA-1 over a unit's animation keys and the pixels of every frame, in key
+ * order. Independent of where the packer happened to place the frames, so a
+ * unit added to the atlas moves other units' rects without changing this.
+ */
+function unitPixelHash(unit: UnitType): string {
+  const hash = createHash('sha1');
+  const keys = Object.keys(sheet.animations)
+    .filter((key) => key.startsWith(`${unit}.`))
+    .sort();
+  for (const key of keys) {
+    hash.update(key);
+    for (const name of sheet.animations[key as keyof typeof sheet.animations]) {
+      const { x, y, w, h } = sheet.frames[name].frame;
+      for (let row = 0; row < h; row++) {
+        const start = ((y + row) * png.width + x) * 4;
+        hash.update(png.data.subarray(start, start + w * 4));
+      }
+    }
+  }
+  return hash.digest('hex');
+}
+
+describe('committed unit pixels', () => {
+  // Pinned when the juggernaut joined the atlas; they only change if a
+  // unit's frame map or the packer's pixel output does.
+  it.each([
+    ['swordsmen', '2f608953352bed924ee6ccf5548002dddb1c2701'],
+    ['crossbowsoldier', '48264938f23e1bf0a3603ca75e717f55690ed5be'],
+    ['knight', 'ac648223925c710a9f981234d40f0b356dd4eba9'],
+  ] as const)('leaves the %s frames unchanged', (unit, hash) => {
+    expect(unitPixelHash(unit)).toBe(hash);
+  });
+});
+
 describe.each(units)('committed %s manifest', (unit) => {
   const manifest = readJson(unitManifestPath(unit));
 
@@ -120,7 +156,7 @@ describe.each(units)('committed %s manifest', (unit) => {
   });
 });
 
-describe.each(['swordsmen', 'crossbowsoldier', 'knight'] as const)('committed %s timing', (unit) => {
+describe.each(['swordsmen', 'crossbowsoldier', 'knight', 'juggernaut'] as const)('committed %s timing', (unit) => {
   const { actions } = parseUnitManifest(readJson(unitManifestPath(unit)));
   const seconds = (action: 'attack' | 'dead') =>
     actions[action]!.frames / actions[action]!.fps;

@@ -12,7 +12,7 @@ import type { UnitManifest } from './unit-manifest';
  * the shape when a sprite unit's frames are missing. A unit is moved over by
  * packing its frames into the atlas and adding its type here.
  */
-export const SPRITE_UNIT_TYPES: readonly UnitType[] = ['swordsmen', 'crossbowsoldier', 'knight'];
+export const SPRITE_UNIT_TYPES: readonly UnitType[] = ['swordsmen', 'crossbowsoldier', 'knight', 'juggernaut'];
 
 /** Whether entities of `type` are drawn as sprites (see {@link SPRITE_UNIT_TYPES}). */
 export function isSpriteUnitType(type: UnitType | undefined): type is UnitType {

@@ -127,6 +127,7 @@ describe('unitSizeInTiles', () => {
     ['swordsmen', 0.5],
     ['crossbowsoldier', 0.5],
     ['knight', 1],
+    ['juggernaut', 1.5],
   ] as const)('sizes a %s at %s x %s tiles', (type, tiles) => {
     expect(unitSizeInTiles(units[type])).toEqual({ width: tiles, height: tiles });
   });
@@ -148,5 +149,9 @@ describe('footprintOf', () => {
 
   it('gives the knight its authored 2x2 block', () => {
     expect(footprintOf(units.knight)).toEqual({ width: 2, height: 2 });
+  });
+
+  it('gives the juggernaut a 3x3 block matching its 1.5 tile size', () => {
+    expect(footprintOf(units.juggernaut)).toEqual({ width: 3, height: 3 });
   });
 });

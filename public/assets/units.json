@@ -20799,6 +20799,6086 @@
         "w": 32,
         "h": 32
       }
+    },
+    "juggernaut.blue.move.n_01": {
+      "frame": {
+        "x": 0,
+        "y": 6432,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.move.n_02": {
+      "frame": {
+        "x": 66,
+        "y": 6432,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.move.n_03": {
+      "frame": {
+        "x": 132,
+        "y": 6432,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.move.n_04": {
+      "frame": {
+        "x": 198,
+        "y": 6432,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.move.n_05": {
+      "frame": {
+        "x": 264,
+        "y": 6432,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.move.n_06": {
+      "frame": {
+        "x": 330,
+        "y": 6432,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.move.ne_01": {
+      "frame": {
+        "x": 0,
+        "y": 6498,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.move.ne_02": {
+      "frame": {
+        "x": 66,
+        "y": 6498,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.move.ne_03": {
+      "frame": {
+        "x": 132,
+        "y": 6498,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.move.ne_04": {
+      "frame": {
+        "x": 198,
+        "y": 6498,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.move.ne_05": {
+      "frame": {
+        "x": 264,
+        "y": 6498,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.move.ne_06": {
+      "frame": {
+        "x": 330,
+        "y": 6498,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.move.e_01": {
+      "frame": {
+        "x": 0,
+        "y": 6564,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.move.e_02": {
+      "frame": {
+        "x": 66,
+        "y": 6564,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.move.e_03": {
+      "frame": {
+        "x": 132,
+        "y": 6564,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.move.e_04": {
+      "frame": {
+        "x": 198,
+        "y": 6564,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.move.e_05": {
+      "frame": {
+        "x": 264,
+        "y": 6564,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.move.e_06": {
+      "frame": {
+        "x": 330,
+        "y": 6564,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.move.se_01": {
+      "frame": {
+        "x": 0,
+        "y": 6630,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.move.se_02": {
+      "frame": {
+        "x": 66,
+        "y": 6630,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.move.se_03": {
+      "frame": {
+        "x": 132,
+        "y": 6630,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.move.se_04": {
+      "frame": {
+        "x": 198,
+        "y": 6630,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.move.se_05": {
+      "frame": {
+        "x": 264,
+        "y": 6630,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.move.se_06": {
+      "frame": {
+        "x": 330,
+        "y": 6630,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.move.s_01": {
+      "frame": {
+        "x": 0,
+        "y": 6696,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.move.s_02": {
+      "frame": {
+        "x": 66,
+        "y": 6696,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.move.s_03": {
+      "frame": {
+        "x": 132,
+        "y": 6696,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.move.s_04": {
+      "frame": {
+        "x": 198,
+        "y": 6696,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.move.s_05": {
+      "frame": {
+        "x": 264,
+        "y": 6696,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.move.s_06": {
+      "frame": {
+        "x": 330,
+        "y": 6696,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.move.sw_01": {
+      "frame": {
+        "x": 0,
+        "y": 6762,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.move.sw_02": {
+      "frame": {
+        "x": 66,
+        "y": 6762,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.move.sw_03": {
+      "frame": {
+        "x": 132,
+        "y": 6762,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.move.sw_04": {
+      "frame": {
+        "x": 198,
+        "y": 6762,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.move.sw_05": {
+      "frame": {
+        "x": 264,
+        "y": 6762,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.move.sw_06": {
+      "frame": {
+        "x": 330,
+        "y": 6762,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.move.w_01": {
+      "frame": {
+        "x": 0,
+        "y": 6828,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.move.w_02": {
+      "frame": {
+        "x": 66,
+        "y": 6828,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.move.w_03": {
+      "frame": {
+        "x": 132,
+        "y": 6828,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.move.w_04": {
+      "frame": {
+        "x": 198,
+        "y": 6828,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.move.w_05": {
+      "frame": {
+        "x": 264,
+        "y": 6828,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.move.w_06": {
+      "frame": {
+        "x": 330,
+        "y": 6828,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.move.nw_01": {
+      "frame": {
+        "x": 0,
+        "y": 6894,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.move.nw_02": {
+      "frame": {
+        "x": 66,
+        "y": 6894,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.move.nw_03": {
+      "frame": {
+        "x": 132,
+        "y": 6894,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.move.nw_04": {
+      "frame": {
+        "x": 198,
+        "y": 6894,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.move.nw_05": {
+      "frame": {
+        "x": 264,
+        "y": 6894,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.move.nw_06": {
+      "frame": {
+        "x": 330,
+        "y": 6894,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.attack.n_01": {
+      "frame": {
+        "x": 0,
+        "y": 6960,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.attack.n_02": {
+      "frame": {
+        "x": 66,
+        "y": 6960,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.attack.n_03": {
+      "frame": {
+        "x": 132,
+        "y": 6960,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.attack.n_04": {
+      "frame": {
+        "x": 198,
+        "y": 6960,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.attack.n_05": {
+      "frame": {
+        "x": 264,
+        "y": 6960,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.attack.n_06": {
+      "frame": {
+        "x": 330,
+        "y": 6960,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.attack.n_07": {
+      "frame": {
+        "x": 396,
+        "y": 6960,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.attack.n_08": {
+      "frame": {
+        "x": 462,
+        "y": 6960,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.attack.ne_01": {
+      "frame": {
+        "x": 0,
+        "y": 6960,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.attack.ne_02": {
+      "frame": {
+        "x": 66,
+        "y": 6960,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.attack.ne_03": {
+      "frame": {
+        "x": 132,
+        "y": 6960,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.attack.ne_04": {
+      "frame": {
+        "x": 198,
+        "y": 6960,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.attack.ne_05": {
+      "frame": {
+        "x": 264,
+        "y": 6960,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.attack.ne_06": {
+      "frame": {
+        "x": 330,
+        "y": 6960,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.attack.ne_07": {
+      "frame": {
+        "x": 396,
+        "y": 6960,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.attack.ne_08": {
+      "frame": {
+        "x": 462,
+        "y": 6960,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.attack.e_01": {
+      "frame": {
+        "x": 0,
+        "y": 6960,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.attack.e_02": {
+      "frame": {
+        "x": 66,
+        "y": 6960,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.attack.e_03": {
+      "frame": {
+        "x": 132,
+        "y": 6960,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.attack.e_04": {
+      "frame": {
+        "x": 198,
+        "y": 6960,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.attack.e_05": {
+      "frame": {
+        "x": 264,
+        "y": 6960,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.attack.e_06": {
+      "frame": {
+        "x": 330,
+        "y": 6960,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.attack.e_07": {
+      "frame": {
+        "x": 396,
+        "y": 6960,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.attack.e_08": {
+      "frame": {
+        "x": 462,
+        "y": 6960,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.attack.se_01": {
+      "frame": {
+        "x": 0,
+        "y": 6960,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.attack.se_02": {
+      "frame": {
+        "x": 66,
+        "y": 6960,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.attack.se_03": {
+      "frame": {
+        "x": 132,
+        "y": 6960,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.attack.se_04": {
+      "frame": {
+        "x": 198,
+        "y": 6960,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.attack.se_05": {
+      "frame": {
+        "x": 264,
+        "y": 6960,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.attack.se_06": {
+      "frame": {
+        "x": 330,
+        "y": 6960,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.attack.se_07": {
+      "frame": {
+        "x": 396,
+        "y": 6960,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.attack.se_08": {
+      "frame": {
+        "x": 462,
+        "y": 6960,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.attack.s_01": {
+      "frame": {
+        "x": 0,
+        "y": 6960,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.attack.s_02": {
+      "frame": {
+        "x": 66,
+        "y": 6960,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.attack.s_03": {
+      "frame": {
+        "x": 132,
+        "y": 6960,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.attack.s_04": {
+      "frame": {
+        "x": 198,
+        "y": 6960,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.attack.s_05": {
+      "frame": {
+        "x": 264,
+        "y": 6960,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.attack.s_06": {
+      "frame": {
+        "x": 330,
+        "y": 6960,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.attack.s_07": {
+      "frame": {
+        "x": 396,
+        "y": 6960,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.attack.s_08": {
+      "frame": {
+        "x": 462,
+        "y": 6960,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.attack.sw_01": {
+      "frame": {
+        "x": 0,
+        "y": 6960,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.attack.sw_02": {
+      "frame": {
+        "x": 66,
+        "y": 6960,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.attack.sw_03": {
+      "frame": {
+        "x": 132,
+        "y": 6960,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.attack.sw_04": {
+      "frame": {
+        "x": 198,
+        "y": 6960,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.attack.sw_05": {
+      "frame": {
+        "x": 264,
+        "y": 6960,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.attack.sw_06": {
+      "frame": {
+        "x": 330,
+        "y": 6960,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.attack.sw_07": {
+      "frame": {
+        "x": 396,
+        "y": 6960,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.attack.sw_08": {
+      "frame": {
+        "x": 462,
+        "y": 6960,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.attack.w_01": {
+      "frame": {
+        "x": 0,
+        "y": 6960,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.attack.w_02": {
+      "frame": {
+        "x": 66,
+        "y": 6960,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.attack.w_03": {
+      "frame": {
+        "x": 132,
+        "y": 6960,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.attack.w_04": {
+      "frame": {
+        "x": 198,
+        "y": 6960,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.attack.w_05": {
+      "frame": {
+        "x": 264,
+        "y": 6960,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.attack.w_06": {
+      "frame": {
+        "x": 330,
+        "y": 6960,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.attack.w_07": {
+      "frame": {
+        "x": 396,
+        "y": 6960,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.attack.w_08": {
+      "frame": {
+        "x": 462,
+        "y": 6960,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.attack.nw_01": {
+      "frame": {
+        "x": 0,
+        "y": 6960,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.attack.nw_02": {
+      "frame": {
+        "x": 66,
+        "y": 6960,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.attack.nw_03": {
+      "frame": {
+        "x": 132,
+        "y": 6960,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.attack.nw_04": {
+      "frame": {
+        "x": 198,
+        "y": 6960,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.attack.nw_05": {
+      "frame": {
+        "x": 264,
+        "y": 6960,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.attack.nw_06": {
+      "frame": {
+        "x": 330,
+        "y": 6960,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.attack.nw_07": {
+      "frame": {
+        "x": 396,
+        "y": 6960,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.attack.nw_08": {
+      "frame": {
+        "x": 462,
+        "y": 6960,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.dead.n_01": {
+      "frame": {
+        "x": 0,
+        "y": 7026,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.dead.n_02": {
+      "frame": {
+        "x": 66,
+        "y": 7026,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.dead.n_03": {
+      "frame": {
+        "x": 132,
+        "y": 7026,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.dead.n_04": {
+      "frame": {
+        "x": 198,
+        "y": 7026,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.dead.ne_01": {
+      "frame": {
+        "x": 0,
+        "y": 7092,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.dead.ne_02": {
+      "frame": {
+        "x": 66,
+        "y": 7092,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.dead.ne_03": {
+      "frame": {
+        "x": 132,
+        "y": 7092,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.dead.ne_04": {
+      "frame": {
+        "x": 198,
+        "y": 7092,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.dead.e_01": {
+      "frame": {
+        "x": 0,
+        "y": 7158,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.dead.e_02": {
+      "frame": {
+        "x": 66,
+        "y": 7158,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.dead.e_03": {
+      "frame": {
+        "x": 132,
+        "y": 7158,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.dead.e_04": {
+      "frame": {
+        "x": 198,
+        "y": 7158,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.dead.se_01": {
+      "frame": {
+        "x": 0,
+        "y": 7224,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.dead.se_02": {
+      "frame": {
+        "x": 66,
+        "y": 7224,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.dead.se_03": {
+      "frame": {
+        "x": 132,
+        "y": 7224,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.dead.se_04": {
+      "frame": {
+        "x": 198,
+        "y": 7224,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.dead.s_01": {
+      "frame": {
+        "x": 0,
+        "y": 7290,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.dead.s_02": {
+      "frame": {
+        "x": 66,
+        "y": 7290,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.dead.s_03": {
+      "frame": {
+        "x": 132,
+        "y": 7290,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.dead.s_04": {
+      "frame": {
+        "x": 198,
+        "y": 7290,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.dead.sw_01": {
+      "frame": {
+        "x": 0,
+        "y": 7356,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.dead.sw_02": {
+      "frame": {
+        "x": 66,
+        "y": 7356,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.dead.sw_03": {
+      "frame": {
+        "x": 132,
+        "y": 7356,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.dead.sw_04": {
+      "frame": {
+        "x": 198,
+        "y": 7356,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.dead.w_01": {
+      "frame": {
+        "x": 0,
+        "y": 7422,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.dead.w_02": {
+      "frame": {
+        "x": 66,
+        "y": 7422,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.dead.w_03": {
+      "frame": {
+        "x": 132,
+        "y": 7422,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.dead.w_04": {
+      "frame": {
+        "x": 198,
+        "y": 7422,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.dead.nw_01": {
+      "frame": {
+        "x": 0,
+        "y": 7488,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.dead.nw_02": {
+      "frame": {
+        "x": 66,
+        "y": 7488,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.dead.nw_03": {
+      "frame": {
+        "x": 132,
+        "y": 7488,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.dead.nw_04": {
+      "frame": {
+        "x": 198,
+        "y": 7488,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.idle.n_01": {
+      "frame": {
+        "x": 264,
+        "y": 6432,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.idle.ne_01": {
+      "frame": {
+        "x": 264,
+        "y": 6498,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.idle.e_01": {
+      "frame": {
+        "x": 264,
+        "y": 6564,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.idle.se_01": {
+      "frame": {
+        "x": 264,
+        "y": 6630,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.idle.s_01": {
+      "frame": {
+        "x": 264,
+        "y": 6696,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.idle.sw_01": {
+      "frame": {
+        "x": 264,
+        "y": 6762,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.idle.w_01": {
+      "frame": {
+        "x": 264,
+        "y": 6828,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.blue.idle.nw_01": {
+      "frame": {
+        "x": 264,
+        "y": 6894,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.move.n_01": {
+      "frame": {
+        "x": 0,
+        "y": 7554,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.move.n_02": {
+      "frame": {
+        "x": 66,
+        "y": 7554,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.move.n_03": {
+      "frame": {
+        "x": 132,
+        "y": 7554,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.move.n_04": {
+      "frame": {
+        "x": 198,
+        "y": 7554,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.move.n_05": {
+      "frame": {
+        "x": 264,
+        "y": 7554,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.move.n_06": {
+      "frame": {
+        "x": 330,
+        "y": 7554,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.move.ne_01": {
+      "frame": {
+        "x": 0,
+        "y": 7620,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.move.ne_02": {
+      "frame": {
+        "x": 66,
+        "y": 7620,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.move.ne_03": {
+      "frame": {
+        "x": 132,
+        "y": 7620,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.move.ne_04": {
+      "frame": {
+        "x": 198,
+        "y": 7620,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.move.ne_05": {
+      "frame": {
+        "x": 264,
+        "y": 7620,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.move.ne_06": {
+      "frame": {
+        "x": 330,
+        "y": 7620,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.move.e_01": {
+      "frame": {
+        "x": 0,
+        "y": 7686,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.move.e_02": {
+      "frame": {
+        "x": 66,
+        "y": 7686,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.move.e_03": {
+      "frame": {
+        "x": 132,
+        "y": 7686,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.move.e_04": {
+      "frame": {
+        "x": 198,
+        "y": 7686,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.move.e_05": {
+      "frame": {
+        "x": 264,
+        "y": 7686,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.move.e_06": {
+      "frame": {
+        "x": 330,
+        "y": 7686,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.move.se_01": {
+      "frame": {
+        "x": 0,
+        "y": 7752,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.move.se_02": {
+      "frame": {
+        "x": 66,
+        "y": 7752,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.move.se_03": {
+      "frame": {
+        "x": 132,
+        "y": 7752,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.move.se_04": {
+      "frame": {
+        "x": 198,
+        "y": 7752,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.move.se_05": {
+      "frame": {
+        "x": 264,
+        "y": 7752,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.move.se_06": {
+      "frame": {
+        "x": 330,
+        "y": 7752,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.move.s_01": {
+      "frame": {
+        "x": 0,
+        "y": 7818,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.move.s_02": {
+      "frame": {
+        "x": 66,
+        "y": 7818,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.move.s_03": {
+      "frame": {
+        "x": 132,
+        "y": 7818,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.move.s_04": {
+      "frame": {
+        "x": 198,
+        "y": 7818,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.move.s_05": {
+      "frame": {
+        "x": 264,
+        "y": 7818,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.move.s_06": {
+      "frame": {
+        "x": 330,
+        "y": 7818,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.move.sw_01": {
+      "frame": {
+        "x": 0,
+        "y": 7884,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.move.sw_02": {
+      "frame": {
+        "x": 66,
+        "y": 7884,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.move.sw_03": {
+      "frame": {
+        "x": 132,
+        "y": 7884,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.move.sw_04": {
+      "frame": {
+        "x": 198,
+        "y": 7884,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.move.sw_05": {
+      "frame": {
+        "x": 264,
+        "y": 7884,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.move.sw_06": {
+      "frame": {
+        "x": 330,
+        "y": 7884,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.move.w_01": {
+      "frame": {
+        "x": 0,
+        "y": 7950,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.move.w_02": {
+      "frame": {
+        "x": 66,
+        "y": 7950,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.move.w_03": {
+      "frame": {
+        "x": 132,
+        "y": 7950,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.move.w_04": {
+      "frame": {
+        "x": 198,
+        "y": 7950,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.move.w_05": {
+      "frame": {
+        "x": 264,
+        "y": 7950,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.move.w_06": {
+      "frame": {
+        "x": 330,
+        "y": 7950,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.move.nw_01": {
+      "frame": {
+        "x": 0,
+        "y": 8016,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.move.nw_02": {
+      "frame": {
+        "x": 66,
+        "y": 8016,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.move.nw_03": {
+      "frame": {
+        "x": 132,
+        "y": 8016,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.move.nw_04": {
+      "frame": {
+        "x": 198,
+        "y": 8016,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.move.nw_05": {
+      "frame": {
+        "x": 264,
+        "y": 8016,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.move.nw_06": {
+      "frame": {
+        "x": 330,
+        "y": 8016,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.attack.n_01": {
+      "frame": {
+        "x": 0,
+        "y": 8082,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.attack.n_02": {
+      "frame": {
+        "x": 66,
+        "y": 8082,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.attack.n_03": {
+      "frame": {
+        "x": 132,
+        "y": 8082,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.attack.n_04": {
+      "frame": {
+        "x": 198,
+        "y": 8082,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.attack.n_05": {
+      "frame": {
+        "x": 264,
+        "y": 8082,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.attack.n_06": {
+      "frame": {
+        "x": 330,
+        "y": 8082,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.attack.n_07": {
+      "frame": {
+        "x": 396,
+        "y": 8082,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.attack.n_08": {
+      "frame": {
+        "x": 462,
+        "y": 8082,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.attack.ne_01": {
+      "frame": {
+        "x": 0,
+        "y": 8082,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.attack.ne_02": {
+      "frame": {
+        "x": 66,
+        "y": 8082,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.attack.ne_03": {
+      "frame": {
+        "x": 132,
+        "y": 8082,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.attack.ne_04": {
+      "frame": {
+        "x": 198,
+        "y": 8082,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.attack.ne_05": {
+      "frame": {
+        "x": 264,
+        "y": 8082,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.attack.ne_06": {
+      "frame": {
+        "x": 330,
+        "y": 8082,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.attack.ne_07": {
+      "frame": {
+        "x": 396,
+        "y": 8082,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.attack.ne_08": {
+      "frame": {
+        "x": 462,
+        "y": 8082,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.attack.e_01": {
+      "frame": {
+        "x": 0,
+        "y": 8082,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.attack.e_02": {
+      "frame": {
+        "x": 66,
+        "y": 8082,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.attack.e_03": {
+      "frame": {
+        "x": 132,
+        "y": 8082,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.attack.e_04": {
+      "frame": {
+        "x": 198,
+        "y": 8082,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.attack.e_05": {
+      "frame": {
+        "x": 264,
+        "y": 8082,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.attack.e_06": {
+      "frame": {
+        "x": 330,
+        "y": 8082,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.attack.e_07": {
+      "frame": {
+        "x": 396,
+        "y": 8082,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.attack.e_08": {
+      "frame": {
+        "x": 462,
+        "y": 8082,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.attack.se_01": {
+      "frame": {
+        "x": 0,
+        "y": 8082,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.attack.se_02": {
+      "frame": {
+        "x": 66,
+        "y": 8082,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.attack.se_03": {
+      "frame": {
+        "x": 132,
+        "y": 8082,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.attack.se_04": {
+      "frame": {
+        "x": 198,
+        "y": 8082,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.attack.se_05": {
+      "frame": {
+        "x": 264,
+        "y": 8082,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.attack.se_06": {
+      "frame": {
+        "x": 330,
+        "y": 8082,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.attack.se_07": {
+      "frame": {
+        "x": 396,
+        "y": 8082,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.attack.se_08": {
+      "frame": {
+        "x": 462,
+        "y": 8082,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.attack.s_01": {
+      "frame": {
+        "x": 0,
+        "y": 8082,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.attack.s_02": {
+      "frame": {
+        "x": 66,
+        "y": 8082,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.attack.s_03": {
+      "frame": {
+        "x": 132,
+        "y": 8082,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.attack.s_04": {
+      "frame": {
+        "x": 198,
+        "y": 8082,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.attack.s_05": {
+      "frame": {
+        "x": 264,
+        "y": 8082,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.attack.s_06": {
+      "frame": {
+        "x": 330,
+        "y": 8082,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.attack.s_07": {
+      "frame": {
+        "x": 396,
+        "y": 8082,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.attack.s_08": {
+      "frame": {
+        "x": 462,
+        "y": 8082,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.attack.sw_01": {
+      "frame": {
+        "x": 0,
+        "y": 8082,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.attack.sw_02": {
+      "frame": {
+        "x": 66,
+        "y": 8082,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.attack.sw_03": {
+      "frame": {
+        "x": 132,
+        "y": 8082,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.attack.sw_04": {
+      "frame": {
+        "x": 198,
+        "y": 8082,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.attack.sw_05": {
+      "frame": {
+        "x": 264,
+        "y": 8082,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.attack.sw_06": {
+      "frame": {
+        "x": 330,
+        "y": 8082,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.attack.sw_07": {
+      "frame": {
+        "x": 396,
+        "y": 8082,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.attack.sw_08": {
+      "frame": {
+        "x": 462,
+        "y": 8082,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.attack.w_01": {
+      "frame": {
+        "x": 0,
+        "y": 8082,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.attack.w_02": {
+      "frame": {
+        "x": 66,
+        "y": 8082,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.attack.w_03": {
+      "frame": {
+        "x": 132,
+        "y": 8082,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.attack.w_04": {
+      "frame": {
+        "x": 198,
+        "y": 8082,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.attack.w_05": {
+      "frame": {
+        "x": 264,
+        "y": 8082,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.attack.w_06": {
+      "frame": {
+        "x": 330,
+        "y": 8082,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.attack.w_07": {
+      "frame": {
+        "x": 396,
+        "y": 8082,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.attack.w_08": {
+      "frame": {
+        "x": 462,
+        "y": 8082,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.attack.nw_01": {
+      "frame": {
+        "x": 0,
+        "y": 8082,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.attack.nw_02": {
+      "frame": {
+        "x": 66,
+        "y": 8082,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.attack.nw_03": {
+      "frame": {
+        "x": 132,
+        "y": 8082,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.attack.nw_04": {
+      "frame": {
+        "x": 198,
+        "y": 8082,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.attack.nw_05": {
+      "frame": {
+        "x": 264,
+        "y": 8082,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.attack.nw_06": {
+      "frame": {
+        "x": 330,
+        "y": 8082,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.attack.nw_07": {
+      "frame": {
+        "x": 396,
+        "y": 8082,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.attack.nw_08": {
+      "frame": {
+        "x": 462,
+        "y": 8082,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.dead.n_01": {
+      "frame": {
+        "x": 0,
+        "y": 8148,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.dead.n_02": {
+      "frame": {
+        "x": 66,
+        "y": 8148,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.dead.n_03": {
+      "frame": {
+        "x": 132,
+        "y": 8148,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.dead.n_04": {
+      "frame": {
+        "x": 198,
+        "y": 8148,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.dead.ne_01": {
+      "frame": {
+        "x": 0,
+        "y": 8214,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.dead.ne_02": {
+      "frame": {
+        "x": 66,
+        "y": 8214,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.dead.ne_03": {
+      "frame": {
+        "x": 132,
+        "y": 8214,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.dead.ne_04": {
+      "frame": {
+        "x": 198,
+        "y": 8214,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.dead.e_01": {
+      "frame": {
+        "x": 0,
+        "y": 8280,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.dead.e_02": {
+      "frame": {
+        "x": 66,
+        "y": 8280,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.dead.e_03": {
+      "frame": {
+        "x": 132,
+        "y": 8280,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.dead.e_04": {
+      "frame": {
+        "x": 198,
+        "y": 8280,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.dead.se_01": {
+      "frame": {
+        "x": 0,
+        "y": 8346,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.dead.se_02": {
+      "frame": {
+        "x": 66,
+        "y": 8346,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.dead.se_03": {
+      "frame": {
+        "x": 132,
+        "y": 8346,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.dead.se_04": {
+      "frame": {
+        "x": 198,
+        "y": 8346,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.dead.s_01": {
+      "frame": {
+        "x": 0,
+        "y": 8412,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.dead.s_02": {
+      "frame": {
+        "x": 66,
+        "y": 8412,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.dead.s_03": {
+      "frame": {
+        "x": 132,
+        "y": 8412,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.dead.s_04": {
+      "frame": {
+        "x": 198,
+        "y": 8412,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.dead.sw_01": {
+      "frame": {
+        "x": 0,
+        "y": 8478,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.dead.sw_02": {
+      "frame": {
+        "x": 66,
+        "y": 8478,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.dead.sw_03": {
+      "frame": {
+        "x": 132,
+        "y": 8478,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.dead.sw_04": {
+      "frame": {
+        "x": 198,
+        "y": 8478,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.dead.w_01": {
+      "frame": {
+        "x": 0,
+        "y": 8544,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.dead.w_02": {
+      "frame": {
+        "x": 66,
+        "y": 8544,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.dead.w_03": {
+      "frame": {
+        "x": 132,
+        "y": 8544,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.dead.w_04": {
+      "frame": {
+        "x": 198,
+        "y": 8544,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.dead.nw_01": {
+      "frame": {
+        "x": 0,
+        "y": 8610,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.dead.nw_02": {
+      "frame": {
+        "x": 66,
+        "y": 8610,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.dead.nw_03": {
+      "frame": {
+        "x": 132,
+        "y": 8610,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.dead.nw_04": {
+      "frame": {
+        "x": 198,
+        "y": 8610,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.idle.n_01": {
+      "frame": {
+        "x": 264,
+        "y": 7554,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.idle.ne_01": {
+      "frame": {
+        "x": 264,
+        "y": 7620,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.idle.e_01": {
+      "frame": {
+        "x": 264,
+        "y": 7686,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.idle.se_01": {
+      "frame": {
+        "x": 264,
+        "y": 7752,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.idle.s_01": {
+      "frame": {
+        "x": 264,
+        "y": 7818,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.idle.sw_01": {
+      "frame": {
+        "x": 264,
+        "y": 7884,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.idle.w_01": {
+      "frame": {
+        "x": 264,
+        "y": 7950,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "juggernaut.red.idle.nw_01": {
+      "frame": {
+        "x": 264,
+        "y": 8016,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
     }
   },
   "animations": {
@@ -22225,6 +28305,438 @@
     ],
     "crossbowsoldier.red.idle.nw": [
       "crossbowsoldier.red.idle.nw_01"
+    ],
+    "juggernaut.blue.move.n": [
+      "juggernaut.blue.move.n_01",
+      "juggernaut.blue.move.n_02",
+      "juggernaut.blue.move.n_03",
+      "juggernaut.blue.move.n_04",
+      "juggernaut.blue.move.n_05",
+      "juggernaut.blue.move.n_06"
+    ],
+    "juggernaut.blue.move.ne": [
+      "juggernaut.blue.move.ne_01",
+      "juggernaut.blue.move.ne_02",
+      "juggernaut.blue.move.ne_03",
+      "juggernaut.blue.move.ne_04",
+      "juggernaut.blue.move.ne_05",
+      "juggernaut.blue.move.ne_06"
+    ],
+    "juggernaut.blue.move.e": [
+      "juggernaut.blue.move.e_01",
+      "juggernaut.blue.move.e_02",
+      "juggernaut.blue.move.e_03",
+      "juggernaut.blue.move.e_04",
+      "juggernaut.blue.move.e_05",
+      "juggernaut.blue.move.e_06"
+    ],
+    "juggernaut.blue.move.se": [
+      "juggernaut.blue.move.se_01",
+      "juggernaut.blue.move.se_02",
+      "juggernaut.blue.move.se_03",
+      "juggernaut.blue.move.se_04",
+      "juggernaut.blue.move.se_05",
+      "juggernaut.blue.move.se_06"
+    ],
+    "juggernaut.blue.move.s": [
+      "juggernaut.blue.move.s_01",
+      "juggernaut.blue.move.s_02",
+      "juggernaut.blue.move.s_03",
+      "juggernaut.blue.move.s_04",
+      "juggernaut.blue.move.s_05",
+      "juggernaut.blue.move.s_06"
+    ],
+    "juggernaut.blue.move.sw": [
+      "juggernaut.blue.move.sw_01",
+      "juggernaut.blue.move.sw_02",
+      "juggernaut.blue.move.sw_03",
+      "juggernaut.blue.move.sw_04",
+      "juggernaut.blue.move.sw_05",
+      "juggernaut.blue.move.sw_06"
+    ],
+    "juggernaut.blue.move.w": [
+      "juggernaut.blue.move.w_01",
+      "juggernaut.blue.move.w_02",
+      "juggernaut.blue.move.w_03",
+      "juggernaut.blue.move.w_04",
+      "juggernaut.blue.move.w_05",
+      "juggernaut.blue.move.w_06"
+    ],
+    "juggernaut.blue.move.nw": [
+      "juggernaut.blue.move.nw_01",
+      "juggernaut.blue.move.nw_02",
+      "juggernaut.blue.move.nw_03",
+      "juggernaut.blue.move.nw_04",
+      "juggernaut.blue.move.nw_05",
+      "juggernaut.blue.move.nw_06"
+    ],
+    "juggernaut.blue.attack.n": [
+      "juggernaut.blue.attack.n_01",
+      "juggernaut.blue.attack.n_02",
+      "juggernaut.blue.attack.n_03",
+      "juggernaut.blue.attack.n_04",
+      "juggernaut.blue.attack.n_05",
+      "juggernaut.blue.attack.n_06",
+      "juggernaut.blue.attack.n_07",
+      "juggernaut.blue.attack.n_08"
+    ],
+    "juggernaut.blue.attack.ne": [
+      "juggernaut.blue.attack.ne_01",
+      "juggernaut.blue.attack.ne_02",
+      "juggernaut.blue.attack.ne_03",
+      "juggernaut.blue.attack.ne_04",
+      "juggernaut.blue.attack.ne_05",
+      "juggernaut.blue.attack.ne_06",
+      "juggernaut.blue.attack.ne_07",
+      "juggernaut.blue.attack.ne_08"
+    ],
+    "juggernaut.blue.attack.e": [
+      "juggernaut.blue.attack.e_01",
+      "juggernaut.blue.attack.e_02",
+      "juggernaut.blue.attack.e_03",
+      "juggernaut.blue.attack.e_04",
+      "juggernaut.blue.attack.e_05",
+      "juggernaut.blue.attack.e_06",
+      "juggernaut.blue.attack.e_07",
+      "juggernaut.blue.attack.e_08"
+    ],
+    "juggernaut.blue.attack.se": [
+      "juggernaut.blue.attack.se_01",
+      "juggernaut.blue.attack.se_02",
+      "juggernaut.blue.attack.se_03",
+      "juggernaut.blue.attack.se_04",
+      "juggernaut.blue.attack.se_05",
+      "juggernaut.blue.attack.se_06",
+      "juggernaut.blue.attack.se_07",
+      "juggernaut.blue.attack.se_08"
+    ],
+    "juggernaut.blue.attack.s": [
+      "juggernaut.blue.attack.s_01",
+      "juggernaut.blue.attack.s_02",
+      "juggernaut.blue.attack.s_03",
+      "juggernaut.blue.attack.s_04",
+      "juggernaut.blue.attack.s_05",
+      "juggernaut.blue.attack.s_06",
+      "juggernaut.blue.attack.s_07",
+      "juggernaut.blue.attack.s_08"
+    ],
+    "juggernaut.blue.attack.sw": [
+      "juggernaut.blue.attack.sw_01",
+      "juggernaut.blue.attack.sw_02",
+      "juggernaut.blue.attack.sw_03",
+      "juggernaut.blue.attack.sw_04",
+      "juggernaut.blue.attack.sw_05",
+      "juggernaut.blue.attack.sw_06",
+      "juggernaut.blue.attack.sw_07",
+      "juggernaut.blue.attack.sw_08"
+    ],
+    "juggernaut.blue.attack.w": [
+      "juggernaut.blue.attack.w_01",
+      "juggernaut.blue.attack.w_02",
+      "juggernaut.blue.attack.w_03",
+      "juggernaut.blue.attack.w_04",
+      "juggernaut.blue.attack.w_05",
+      "juggernaut.blue.attack.w_06",
+      "juggernaut.blue.attack.w_07",
+      "juggernaut.blue.attack.w_08"
+    ],
+    "juggernaut.blue.attack.nw": [
+      "juggernaut.blue.attack.nw_01",
+      "juggernaut.blue.attack.nw_02",
+      "juggernaut.blue.attack.nw_03",
+      "juggernaut.blue.attack.nw_04",
+      "juggernaut.blue.attack.nw_05",
+      "juggernaut.blue.attack.nw_06",
+      "juggernaut.blue.attack.nw_07",
+      "juggernaut.blue.attack.nw_08"
+    ],
+    "juggernaut.blue.dead.n": [
+      "juggernaut.blue.dead.n_01",
+      "juggernaut.blue.dead.n_02",
+      "juggernaut.blue.dead.n_03",
+      "juggernaut.blue.dead.n_04"
+    ],
+    "juggernaut.blue.dead.ne": [
+      "juggernaut.blue.dead.ne_01",
+      "juggernaut.blue.dead.ne_02",
+      "juggernaut.blue.dead.ne_03",
+      "juggernaut.blue.dead.ne_04"
+    ],
+    "juggernaut.blue.dead.e": [
+      "juggernaut.blue.dead.e_01",
+      "juggernaut.blue.dead.e_02",
+      "juggernaut.blue.dead.e_03",
+      "juggernaut.blue.dead.e_04"
+    ],
+    "juggernaut.blue.dead.se": [
+      "juggernaut.blue.dead.se_01",
+      "juggernaut.blue.dead.se_02",
+      "juggernaut.blue.dead.se_03",
+      "juggernaut.blue.dead.se_04"
+    ],
+    "juggernaut.blue.dead.s": [
+      "juggernaut.blue.dead.s_01",
+      "juggernaut.blue.dead.s_02",
+      "juggernaut.blue.dead.s_03",
+      "juggernaut.blue.dead.s_04"
+    ],
+    "juggernaut.blue.dead.sw": [
+      "juggernaut.blue.dead.sw_01",
+      "juggernaut.blue.dead.sw_02",
+      "juggernaut.blue.dead.sw_03",
+      "juggernaut.blue.dead.sw_04"
+    ],
+    "juggernaut.blue.dead.w": [
+      "juggernaut.blue.dead.w_01",
+      "juggernaut.blue.dead.w_02",
+      "juggernaut.blue.dead.w_03",
+      "juggernaut.blue.dead.w_04"
+    ],
+    "juggernaut.blue.dead.nw": [
+      "juggernaut.blue.dead.nw_01",
+      "juggernaut.blue.dead.nw_02",
+      "juggernaut.blue.dead.nw_03",
+      "juggernaut.blue.dead.nw_04"
+    ],
+    "juggernaut.blue.idle.n": [
+      "juggernaut.blue.idle.n_01"
+    ],
+    "juggernaut.blue.idle.ne": [
+      "juggernaut.blue.idle.ne_01"
+    ],
+    "juggernaut.blue.idle.e": [
+      "juggernaut.blue.idle.e_01"
+    ],
+    "juggernaut.blue.idle.se": [
+      "juggernaut.blue.idle.se_01"
+    ],
+    "juggernaut.blue.idle.s": [
+      "juggernaut.blue.idle.s_01"
+    ],
+    "juggernaut.blue.idle.sw": [
+      "juggernaut.blue.idle.sw_01"
+    ],
+    "juggernaut.blue.idle.w": [
+      "juggernaut.blue.idle.w_01"
+    ],
+    "juggernaut.blue.idle.nw": [
+      "juggernaut.blue.idle.nw_01"
+    ],
+    "juggernaut.red.move.n": [
+      "juggernaut.red.move.n_01",
+      "juggernaut.red.move.n_02",
+      "juggernaut.red.move.n_03",
+      "juggernaut.red.move.n_04",
+      "juggernaut.red.move.n_05",
+      "juggernaut.red.move.n_06"
+    ],
+    "juggernaut.red.move.ne": [
+      "juggernaut.red.move.ne_01",
+      "juggernaut.red.move.ne_02",
+      "juggernaut.red.move.ne_03",
+      "juggernaut.red.move.ne_04",
+      "juggernaut.red.move.ne_05",
+      "juggernaut.red.move.ne_06"
+    ],
+    "juggernaut.red.move.e": [
+      "juggernaut.red.move.e_01",
+      "juggernaut.red.move.e_02",
+      "juggernaut.red.move.e_03",
+      "juggernaut.red.move.e_04",
+      "juggernaut.red.move.e_05",
+      "juggernaut.red.move.e_06"
+    ],
+    "juggernaut.red.move.se": [
+      "juggernaut.red.move.se_01",
+      "juggernaut.red.move.se_02",
+      "juggernaut.red.move.se_03",
+      "juggernaut.red.move.se_04",
+      "juggernaut.red.move.se_05",
+      "juggernaut.red.move.se_06"
+    ],
+    "juggernaut.red.move.s": [
+      "juggernaut.red.move.s_01",
+      "juggernaut.red.move.s_02",
+      "juggernaut.red.move.s_03",
+      "juggernaut.red.move.s_04",
+      "juggernaut.red.move.s_05",
+      "juggernaut.red.move.s_06"
+    ],
+    "juggernaut.red.move.sw": [
+      "juggernaut.red.move.sw_01",
+      "juggernaut.red.move.sw_02",
+      "juggernaut.red.move.sw_03",
+      "juggernaut.red.move.sw_04",
+      "juggernaut.red.move.sw_05",
+      "juggernaut.red.move.sw_06"
+    ],
+    "juggernaut.red.move.w": [
+      "juggernaut.red.move.w_01",
+      "juggernaut.red.move.w_02",
+      "juggernaut.red.move.w_03",
+      "juggernaut.red.move.w_04",
+      "juggernaut.red.move.w_05",
+      "juggernaut.red.move.w_06"
+    ],
+    "juggernaut.red.move.nw": [
+      "juggernaut.red.move.nw_01",
+      "juggernaut.red.move.nw_02",
+      "juggernaut.red.move.nw_03",
+      "juggernaut.red.move.nw_04",
+      "juggernaut.red.move.nw_05",
+      "juggernaut.red.move.nw_06"
+    ],
+    "juggernaut.red.attack.n": [
+      "juggernaut.red.attack.n_01",
+      "juggernaut.red.attack.n_02",
+      "juggernaut.red.attack.n_03",
+      "juggernaut.red.attack.n_04",
+      "juggernaut.red.attack.n_05",
+      "juggernaut.red.attack.n_06",
+      "juggernaut.red.attack.n_07",
+      "juggernaut.red.attack.n_08"
+    ],
+    "juggernaut.red.attack.ne": [
+      "juggernaut.red.attack.ne_01",
+      "juggernaut.red.attack.ne_02",
+      "juggernaut.red.attack.ne_03",
+      "juggernaut.red.attack.ne_04",
+      "juggernaut.red.attack.ne_05",
+      "juggernaut.red.attack.ne_06",
+      "juggernaut.red.attack.ne_07",
+      "juggernaut.red.attack.ne_08"
+    ],
+    "juggernaut.red.attack.e": [
+      "juggernaut.red.attack.e_01",
+      "juggernaut.red.attack.e_02",
+      "juggernaut.red.attack.e_03",
+      "juggernaut.red.attack.e_04",
+      "juggernaut.red.attack.e_05",
+      "juggernaut.red.attack.e_06",
+      "juggernaut.red.attack.e_07",
+      "juggernaut.red.attack.e_08"
+    ],
+    "juggernaut.red.attack.se": [
+      "juggernaut.red.attack.se_01",
+      "juggernaut.red.attack.se_02",
+      "juggernaut.red.attack.se_03",
+      "juggernaut.red.attack.se_04",
+      "juggernaut.red.attack.se_05",
+      "juggernaut.red.attack.se_06",
+      "juggernaut.red.attack.se_07",
+      "juggernaut.red.attack.se_08"
+    ],
+    "juggernaut.red.attack.s": [
+      "juggernaut.red.attack.s_01",
+      "juggernaut.red.attack.s_02",
+      "juggernaut.red.attack.s_03",
+      "juggernaut.red.attack.s_04",
+      "juggernaut.red.attack.s_05",
+      "juggernaut.red.attack.s_06",
+      "juggernaut.red.attack.s_07",
+      "juggernaut.red.attack.s_08"
+    ],
+    "juggernaut.red.attack.sw": [
+      "juggernaut.red.attack.sw_01",
+      "juggernaut.red.attack.sw_02",
+      "juggernaut.red.attack.sw_03",
+      "juggernaut.red.attack.sw_04",
+      "juggernaut.red.attack.sw_05",
+      "juggernaut.red.attack.sw_06",
+      "juggernaut.red.attack.sw_07",
+      "juggernaut.red.attack.sw_08"
+    ],
+    "juggernaut.red.attack.w": [
+      "juggernaut.red.attack.w_01",
+      "juggernaut.red.attack.w_02",
+      "juggernaut.red.attack.w_03",
+      "juggernaut.red.attack.w_04",
+      "juggernaut.red.attack.w_05",
+      "juggernaut.red.attack.w_06",
+      "juggernaut.red.attack.w_07",
+      "juggernaut.red.attack.w_08"
+    ],
+    "juggernaut.red.attack.nw": [
+      "juggernaut.red.attack.nw_01",
+      "juggernaut.red.attack.nw_02",
+      "juggernaut.red.attack.nw_03",
+      "juggernaut.red.attack.nw_04",
+      "juggernaut.red.attack.nw_05",
+      "juggernaut.red.attack.nw_06",
+      "juggernaut.red.attack.nw_07",
+      "juggernaut.red.attack.nw_08"
+    ],
+    "juggernaut.red.dead.n": [
+      "juggernaut.red.dead.n_01",
+      "juggernaut.red.dead.n_02",
+      "juggernaut.red.dead.n_03",
+      "juggernaut.red.dead.n_04"
+    ],
+    "juggernaut.red.dead.ne": [
+      "juggernaut.red.dead.ne_01",
+      "juggernaut.red.dead.ne_02",
+      "juggernaut.red.dead.ne_03",
+      "juggernaut.red.dead.ne_04"
+    ],
+    "juggernaut.red.dead.e": [
+      "juggernaut.red.dead.e_01",
+      "juggernaut.red.dead.e_02",
+      "juggernaut.red.dead.e_03",
+      "juggernaut.red.dead.e_04"
+    ],
+    "juggernaut.red.dead.se": [
+      "juggernaut.red.dead.se_01",
+      "juggernaut.red.dead.se_02",
+      "juggernaut.red.dead.se_03",
+      "juggernaut.red.dead.se_04"
+    ],
+    "juggernaut.red.dead.s": [
+      "juggernaut.red.dead.s_01",
+      "juggernaut.red.dead.s_02",
+      "juggernaut.red.dead.s_03",
+      "juggernaut.red.dead.s_04"
+    ],
+    "juggernaut.red.dead.sw": [
+      "juggernaut.red.dead.sw_01",
+      "juggernaut.red.dead.sw_02",
+      "juggernaut.red.dead.sw_03",
+      "juggernaut.red.dead.sw_04"
+    ],
+    "juggernaut.red.dead.w": [
+      "juggernaut.red.dead.w_01",
+      "juggernaut.red.dead.w_02",
+      "juggernaut.red.dead.w_03",
+      "juggernaut.red.dead.w_04"
+    ],
+    "juggernaut.red.dead.nw": [
+      "juggernaut.red.dead.nw_01",
+      "juggernaut.red.dead.nw_02",
+      "juggernaut.red.dead.nw_03",
+      "juggernaut.red.dead.nw_04"
+    ],
+    "juggernaut.red.idle.n": [
+      "juggernaut.red.idle.n_01"
+    ],
+    "juggernaut.red.idle.ne": [
+      "juggernaut.red.idle.ne_01"
+    ],
+    "juggernaut.red.idle.e": [
+      "juggernaut.red.idle.e_01"
+    ],
+    "juggernaut.red.idle.se": [
+      "juggernaut.red.idle.se_01"
+    ],
+    "juggernaut.red.idle.s": [
+      "juggernaut.red.idle.s_01"
+    ],
+    "juggernaut.red.idle.sw": [
+      "juggernaut.red.idle.sw_01"
+    ],
+    "juggernaut.red.idle.w": [
+      "juggernaut.red.idle.w_01"
+    ],
+    "juggernaut.red.idle.nw": [
+      "juggernaut.red.idle.nw_01"
     ]
   },
   "meta": {
@@ -22233,7 +28745,7 @@
     "format": "RGBA8888",
     "size": {
       "w": 526,
-      "h": 6430
+      "h": 8674
     },
     "scale": 1
   }
