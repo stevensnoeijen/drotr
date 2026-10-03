@@ -18,6 +18,7 @@ import { buildCountyMapBytes } from '~/test/county-map-fixture';
 
 import type { BuildingPrefab } from '../dracula-exe';
 
+import { SPARE_BRIDGES } from './spare-bridges';
 import { buildBuildingsTiledMap, buildingPrefabObjects } from './building-map-tiled';
 import { buildCountyTiledMap, serializeTiledMap } from './county-map-tiled';
 
@@ -124,6 +125,45 @@ describe('buildingPrefabObjects', () => {
       { name: 'level', type: 'string', value: '5-moated' },
       { name: 'slot', type: 'int', value: 3 },
     ]);
+  });
+});
+
+describe('buildingPrefabObjects with spare bridges', () => {
+  it('names a spare bridge by its length and leaves out the slot', () => {
+    const [spareBridge] = buildingPrefabObjects(
+      [],
+      [
+        {
+          level: 'stone-wide',
+          orientation: 'vertical',
+          bank: 'rock',
+          length: 5,
+          rect: { x: 54, y: 40, width: 3, height: 5 },
+        },
+      ]
+    );
+    expect(spareBridge).toMatchObject({
+      id: 1,
+      name: 'bridge-stone-wide-vertical-rock-spare-5',
+      type: 'bridge',
+      x: 2160,
+      y: 1600,
+      width: 120,
+      height: 200,
+    });
+    expect(spareBridge.properties).toEqual([
+      { name: 'bank', type: 'string', value: 'rock' },
+      { name: 'category', type: 'string', value: 'bridge' },
+      { name: 'level', type: 'string', value: 'stone-wide' },
+      { name: 'orientation', type: 'string', value: 'vertical' },
+    ]);
+  });
+
+  it('numbers spare bridges after the prefabs', () => {
+    const objects = buildingPrefabObjects(PREFABS, SPARE_BRIDGES);
+    expect(objects).toHaveLength(PREFABS.length + SPARE_BRIDGES.length);
+    expect(objects.map((o) => o.id)).toEqual(objects.map((_, i) => i + 1));
+    expect(new Set(objects.map((o) => o.name)).size).toEqual(objects.length);
   });
 });
 

@@ -10,7 +10,7 @@
  "tileheight": 40,
  "infinite": false,
  "nextlayerid": 7,
- "nextobjectid": 58,
+ "nextobjectid": 73,
  "compressionlevel": -1,
  "properties": [],
  "tilesets": [
@@ -67648,6 +67648,501 @@
      "width": 1960,
      "x": 3120,
      "y": 120
+    },
+    {
+     "height": 80,
+     "id": 58,
+     "name": "bridge-wood-vertical-grass-spare-2",
+     "properties": [
+      {
+       "name": "bank",
+       "type": "string",
+       "value": "grass"
+      },
+      {
+       "name": "category",
+       "type": "string",
+       "value": "bridge"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "wood"
+      },
+      {
+       "name": "orientation",
+       "type": "string",
+       "value": "vertical"
+      }
+     ],
+     "rotation": 0,
+     "type": "bridge",
+     "visible": true,
+     "width": 40,
+     "x": 480,
+     "y": 200
+    },
+    {
+     "height": 40,
+     "id": 59,
+     "name": "bridge-wood-horizontal-grass-spare-2",
+     "properties": [
+      {
+       "name": "bank",
+       "type": "string",
+       "value": "grass"
+      },
+      {
+       "name": "category",
+       "type": "string",
+       "value": "bridge"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "wood"
+      },
+      {
+       "name": "orientation",
+       "type": "string",
+       "value": "horizontal"
+      }
+     ],
+     "rotation": 0,
+     "type": "bridge",
+     "visible": true,
+     "width": 80,
+     "x": 720,
+     "y": 1000
+    },
+    {
+     "height": 40,
+     "id": 60,
+     "name": "bridge-wood-horizontal-rock-spare-2",
+     "properties": [
+      {
+       "name": "bank",
+       "type": "string",
+       "value": "rock"
+      },
+      {
+       "name": "category",
+       "type": "string",
+       "value": "bridge"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "wood"
+      },
+      {
+       "name": "orientation",
+       "type": "string",
+       "value": "horizontal"
+      }
+     ],
+     "rotation": 0,
+     "type": "bridge",
+     "visible": true,
+     "width": 80,
+     "x": 720,
+     "y": 1080
+    },
+    {
+     "height": 400,
+     "id": 61,
+     "name": "bridge-stone-wide-vertical-grass-spare-10",
+     "properties": [
+      {
+       "name": "bank",
+       "type": "string",
+       "value": "grass"
+      },
+      {
+       "name": "category",
+       "type": "string",
+       "value": "bridge"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "stone-wide"
+      },
+      {
+       "name": "orientation",
+       "type": "string",
+       "value": "vertical"
+      }
+     ],
+     "rotation": 0,
+     "type": "bridge",
+     "visible": true,
+     "width": 120,
+     "x": 680,
+     "y": 360
+    },
+    {
+     "height": 360,
+     "id": 62,
+     "name": "bridge-stone-wide-vertical-grass-spare-9",
+     "properties": [
+      {
+       "name": "bank",
+       "type": "string",
+       "value": "grass"
+      },
+      {
+       "name": "category",
+       "type": "string",
+       "value": "bridge"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "stone-wide"
+      },
+      {
+       "name": "orientation",
+       "type": "string",
+       "value": "vertical"
+      }
+     ],
+     "rotation": 0,
+     "type": "bridge",
+     "visible": true,
+     "width": 120,
+     "x": 920,
+     "y": 280
+    },
+    {
+     "height": 160,
+     "id": 63,
+     "name": "bridge-stone-vertical-rock-spare-4",
+     "properties": [
+      {
+       "name": "bank",
+       "type": "string",
+       "value": "rock"
+      },
+      {
+       "name": "category",
+       "type": "string",
+       "value": "bridge"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "stone"
+      },
+      {
+       "name": "orientation",
+       "type": "string",
+       "value": "vertical"
+      }
+     ],
+     "rotation": 0,
+     "type": "bridge",
+     "visible": true,
+     "width": 80,
+     "x": 800,
+     "y": 1160
+    },
+    {
+     "height": 280,
+     "id": 64,
+     "name": "bridge-stone-vertical-rock-spare-7",
+     "properties": [
+      {
+       "name": "bank",
+       "type": "string",
+       "value": "rock"
+      },
+      {
+       "name": "category",
+       "type": "string",
+       "value": "bridge"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "stone"
+      },
+      {
+       "name": "orientation",
+       "type": "string",
+       "value": "vertical"
+      }
+     ],
+     "rotation": 0,
+     "type": "bridge",
+     "visible": true,
+     "width": 80,
+     "x": 1040,
+     "y": 1160
+    },
+    {
+     "height": 80,
+     "id": 65,
+     "name": "bridge-stone-horizontal-grass-spare-7",
+     "properties": [
+      {
+       "name": "bank",
+       "type": "string",
+       "value": "grass"
+      },
+      {
+       "name": "category",
+       "type": "string",
+       "value": "bridge"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "stone"
+      },
+      {
+       "name": "orientation",
+       "type": "string",
+       "value": "horizontal"
+      }
+     ],
+     "rotation": 0,
+     "type": "bridge",
+     "visible": true,
+     "width": 280,
+     "x": 1560,
+     "y": 1600
+    },
+    {
+     "height": 160,
+     "id": 66,
+     "name": "bridge-stone-wide-vertical-rock-spare-4",
+     "properties": [
+      {
+       "name": "bank",
+       "type": "string",
+       "value": "rock"
+      },
+      {
+       "name": "category",
+       "type": "string",
+       "value": "bridge"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "stone-wide"
+      },
+      {
+       "name": "orientation",
+       "type": "string",
+       "value": "vertical"
+      }
+     ],
+     "rotation": 0,
+     "type": "bridge",
+     "visible": true,
+     "width": 120,
+     "x": 2040,
+     "y": 1600
+    },
+    {
+     "height": 200,
+     "id": 67,
+     "name": "bridge-stone-wide-vertical-rock-spare-5",
+     "properties": [
+      {
+       "name": "bank",
+       "type": "string",
+       "value": "rock"
+      },
+      {
+       "name": "category",
+       "type": "string",
+       "value": "bridge"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "stone-wide"
+      },
+      {
+       "name": "orientation",
+       "type": "string",
+       "value": "vertical"
+      }
+     ],
+     "rotation": 0,
+     "type": "bridge",
+     "visible": true,
+     "width": 120,
+     "x": 2160,
+     "y": 1600
+    },
+    {
+     "height": 240,
+     "id": 68,
+     "name": "bridge-stone-wide-vertical-rock-spare-6",
+     "properties": [
+      {
+       "name": "bank",
+       "type": "string",
+       "value": "rock"
+      },
+      {
+       "name": "category",
+       "type": "string",
+       "value": "bridge"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "stone-wide"
+      },
+      {
+       "name": "orientation",
+       "type": "string",
+       "value": "vertical"
+      }
+     ],
+     "rotation": 0,
+     "type": "bridge",
+     "visible": true,
+     "width": 120,
+     "x": 2280,
+     "y": 1600
+    },
+    {
+     "height": 280,
+     "id": 69,
+     "name": "bridge-stone-wide-vertical-rock-spare-7",
+     "properties": [
+      {
+       "name": "bank",
+       "type": "string",
+       "value": "rock"
+      },
+      {
+       "name": "category",
+       "type": "string",
+       "value": "bridge"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "stone-wide"
+      },
+      {
+       "name": "orientation",
+       "type": "string",
+       "value": "vertical"
+      }
+     ],
+     "rotation": 0,
+     "type": "bridge",
+     "visible": true,
+     "width": 120,
+     "x": 2400,
+     "y": 1600
+    },
+    {
+     "height": 80,
+     "id": 70,
+     "name": "bridge-stone-horizontal-rock-spare-5",
+     "properties": [
+      {
+       "name": "bank",
+       "type": "string",
+       "value": "rock"
+      },
+      {
+       "name": "category",
+       "type": "string",
+       "value": "bridge"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "stone"
+      },
+      {
+       "name": "orientation",
+       "type": "string",
+       "value": "horizontal"
+      }
+     ],
+     "rotation": 0,
+     "type": "bridge",
+     "visible": true,
+     "width": 200,
+     "x": 1120,
+     "y": 1920
+    },
+    {
+     "height": 120,
+     "id": 71,
+     "name": "bridge-stone-wide-horizontal-rock-spare-5",
+     "properties": [
+      {
+       "name": "bank",
+       "type": "string",
+       "value": "rock"
+      },
+      {
+       "name": "category",
+       "type": "string",
+       "value": "bridge"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "stone-wide"
+      },
+      {
+       "name": "orientation",
+       "type": "string",
+       "value": "horizontal"
+      }
+     ],
+     "rotation": 0,
+     "type": "bridge",
+     "visible": true,
+     "width": 200,
+     "x": 1000,
+     "y": 2000
+    },
+    {
+     "height": 120,
+     "id": 72,
+     "name": "bridge-stone-wide-horizontal-rock-spare-6",
+     "properties": [
+      {
+       "name": "bank",
+       "type": "string",
+       "value": "rock"
+      },
+      {
+       "name": "category",
+       "type": "string",
+       "value": "bridge"
+      },
+      {
+       "name": "level",
+       "type": "string",
+       "value": "stone-wide"
+      },
+      {
+       "name": "orientation",
+       "type": "string",
+       "value": "horizontal"
+      }
+     ],
+     "rotation": 0,
+     "type": "bridge",
+     "visible": true,
+     "width": 240,
+     "x": 1200,
+     "y": 2000
     }
    ]
   }

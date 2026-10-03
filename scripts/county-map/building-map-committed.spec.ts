@@ -9,6 +9,8 @@ import {
   parseTilesetDescription,
 } from '~/game/map/load-tiled-map';
 
+import { SPARE_BRIDGES } from './spare-bridges';
+
 /**
  * Tests against the **committed** `public/maps/buildings.tmj` itself. These
  * need no `.cd/` data, so they always run (CI included).
@@ -60,19 +62,22 @@ describe('public/maps/buildings.tmj', () => {
       ),
     }));
 
-    it('marks 57 prefabs: 42 bridges, 3 towers, 12 castles', () => {
+    it('marks 72 prefabs: 57 bridges (42 slots, 15 spare), 3 towers, 12 castles', () => {
       const count = (type: string) =>
         prefabs.filter((o) => o.type === type).length;
       expect([count('bridge'), count('tower'), count('castle')]).toEqual([
-        42, 3, 12,
+        57, 3, 12,
       ]);
-      expect(new Set(prefabs.map((o) => o.name)).size).toEqual(57);
+      expect(prefabs.filter((o) => o.properties.slot === undefined)).toHaveLength(
+        SPARE_BRIDGES.length
+      );
+      expect(new Set(prefabs.map((o) => o.name)).size).toEqual(72);
     });
 
-    it('splits the bridges into 28 grass-bank and 14 rock-bank', () => {
+    it('splits the bridges into 33 grass-bank and 24 rock-bank', () => {
       const bank = (value: string) =>
         prefabs.filter((o) => o.properties.bank === value).length;
-      expect([bank('grass'), bank('rock')]).toEqual([28, 14]);
+      expect([bank('grass'), bank('rock')]).toEqual([33, 24]);
     });
 
     it('places rects on tile boundaries, in bounds, overlapping nothing', () => {
@@ -92,6 +97,17 @@ describe('public/maps/buildings.tmj', () => {
             a.y < b.y + b.height &&
             b.y < a.y + a.height;
           expect(overlaps, `${a.name} vs ${b.name}`).toBe(false);
+        }
+      }
+    });
+
+    it('draws every spare bridge as intact tiles over its whole rect', () => {
+      const intact = tileData('intact');
+      for (const { rect } of SPARE_BRIDGES) {
+        for (let y = rect.y; y < rect.y + rect.height; y++) {
+          for (let x = rect.x; x < rect.x + rect.width; x++) {
+            expect(intact[y * 128 + x], `(${x}, ${y})`).not.toBe(0);
+          }
         }
       }
     });

@@ -26,6 +26,7 @@ import {
   isCountyName,
 } from './county-names';
 import { withPreviousCollision } from './collision-layer-merge';
+import { SPARE_BRIDGES } from './spare-bridges';
 import { withPreviousSpawns } from './spawns-layer-merge';
 
 const OUTPUT_DIR = path.join(process.cwd(), 'public', 'maps');
@@ -66,7 +67,8 @@ function conversionFor(name: string): Conversion | undefined {
       convert: (bytes) =>
         buildBuildingsTiledMap(
           parseBuildingMap(bytes),
-          parseBuildingPrefabs(readCdFile(DRACULA_EXE_CD_PATH))
+          parseBuildingPrefabs(readCdFile(DRACULA_EXE_CD_PATH)),
+          SPARE_BRIDGES
         ),
     };
   }

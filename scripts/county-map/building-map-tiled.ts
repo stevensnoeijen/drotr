@@ -7,6 +7,8 @@ import {
 
 import type { BuildingPrefab } from '../dracula-exe';
 
+import type { SpareBridge } from './spare-bridges';
+
 import {
   atlasIndexGid,
   buildTerrainTiledMap,
@@ -79,9 +81,10 @@ function gridData(
  */
 export function buildBuildingsTiledMap(
   map: BuildingMap,
-  prefabs: readonly BuildingPrefab[] = []
+  prefabs: readonly BuildingPrefab[] = [],
+  spareBridges: readonly SpareBridge[] = []
 ): TiledMap {
-  const prefabObjects = buildingPrefabObjects(prefabs);
+  const prefabObjects = buildingPrefabObjects(prefabs, spareBridges);
   return {
     ...buildTerrainTiledMap([
       tileLayer(1, 'terrain', interiorData(map)),
@@ -103,22 +106,45 @@ export const PREFABS_LAYER_NAME = 'prefabs';
  * source rectangle from `DRACULA.EXE` (tiles × 40, in pixels), with the
  * category as its Tiled class (`type`).
  *
+ * `spareBridges` follow the prefabs: bridges drawn in the map that no
+ * `DRACULA.EXE` slot covers.
+ *
  * Names are `castle-<level>`, `tower-<level>` and
  * `bridge-<level>-<orientation>-<bank>-<slot>`; the slot keeps bridge names
- * unique, since two slots can share a shape.
+ * unique, since two slots can share a shape. A spare bridge has no slot and
+ * is `bridge-<level>-<orientation>-<bank>-spare-<length>` instead, unique
+ * because no two spare bridges share a shape and length.
  *
  * String properties, in the alphabetical order Tiled writes them:
  * `bank` and `orientation` (bridges only), `category`, `level`, and `slot`
- * (an int).
+ * (an int; absent on a spare bridge).
  */
 export function buildingPrefabObjects(
-  prefabs: readonly BuildingPrefab[]
+  prefabs: readonly BuildingPrefab[],
+  spareBridges: readonly SpareBridge[] = []
 ): TiledObject[] {
-  return prefabs.map((prefab, i) => {
-    const { category, level, slot, rect, orientation, bank } = prefab;
+  const entries: {
+    category: BuildingPrefab['category'];
+    level: string;
+    slot?: number;
+    spareLength?: number;
+    rect: BuildingPrefab['rect'];
+    orientation?: string;
+    bank?: string;
+  }[] = [
+    ...prefabs,
+    ...spareBridges.map((bridge) => ({
+      category: 'bridge' as const,
+      spareLength: bridge.length,
+      ...bridge,
+    })),
+  ];
+  return entries.map((prefab, i) => {
+    const { category, level, slot, spareLength, rect, orientation, bank } =
+      prefab;
     const name =
       category === 'bridge'
-        ? `bridge-${level}-${orientation}-${bank}-${slot}`
+        ? `bridge-${level}-${orientation}-${bank}-${slot ?? `spare-${spareLength}`}`
         : `${category}-${level}`;
     const properties: TiledObject['properties'] = [
       ...(bank ? [{ name: 'bank', type: 'string' as const, value: bank }] : []),
@@ -127,7 +153,9 @@ export function buildingPrefabObjects(
       ...(orientation
         ? [{ name: 'orientation', type: 'string' as const, value: orientation }]
         : []),
-      { name: 'slot', type: 'int' as const, value: slot },
+      ...(slot !== undefined
+        ? [{ name: 'slot', type: 'int' as const, value: slot }]
+        : []),
     ].sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
     return {
       height: rect.height * COUNTY_TILE_SIZE,
