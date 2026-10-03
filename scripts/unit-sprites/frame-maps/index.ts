@@ -1,5 +1,6 @@
 import type { UnitType } from '../../../src/game/data/units';
 import type { UnitFrameMap } from '../frame-map';
+import { BOLT_FRAME_MAP } from './bolt';
 import { CANNON_FRAME_MAP } from './cannon';
 import { CATAPULT_FRAME_MAP } from './catapult';
 import { CROSSBOWSOLDIER_FRAME_MAP } from './crossbowsoldier';
@@ -15,4 +16,5 @@ export const FRAME_MAPS: Partial<Record<UnitType, UnitFrameMap>> = {
   juggernaut: JUGGERNAUT_FRAME_MAP,
   catapult: CATAPULT_FRAME_MAP,
   cannon: CANNON_FRAME_MAP,
+  bolt: BOLT_FRAME_MAP,
 };

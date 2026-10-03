@@ -36,6 +36,19 @@ interface UnitOptions {
  */
 let nextId = 1;
 
+/**
+ * What makes a unit a crossbow soldier for `fireProjectile`: its `Ranged`,
+ * plus the `unitType` and `renderable` `spawnUnit` gives every unit, which
+ * the fired bolt is drawn to scale against.
+ */
+function crossbow(projectileSpeed: number): Pick<Entity, 'ranged' | 'unitType' | 'renderable'> {
+  return {
+    ranged: { projectileSpeed, projectile: 'bolt' },
+    unitType: 'crossbowsoldier',
+    renderable: { shape: 'triangle', color: 0x66ccff, size: 6, extent: 8 },
+  };
+}
+
 function makeUnit(
   world: World<Entity>,
   {
@@ -68,7 +81,7 @@ function makeUnit(
     entity.attackCooldown = { duration: attackCooldown };
   }
   if (projectileSpeed !== undefined) {
-    entity.ranged = { projectileSpeed };
+    Object.assign(entity, crossbow(projectileSpeed));
   }
   return world.add(entity);
 }
@@ -607,7 +620,7 @@ describe('CombatSystem', () => {
 
     it('flags a swing for a ranged attacker when it fires', () => {
       const { world, attacker, system } = setupDuel({ gapCells: 3, attackRangeCells: 5 });
-      attacker.ranged = { projectileSpeed: 100 };
+      Object.assign(attacker, crossbow(100));
 
       run(system, world, 60);
       expect(attacker.attackSwing).toBeDefined();

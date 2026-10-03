@@ -5,14 +5,17 @@ import type { UnitManifest } from './unit-manifest';
 
 /**
  * The unit types the game renders as animated sprites from the shared unit
- * atlas. This is the single place that decides sprite vs. shape: every
- * other unit type (and every entity without a unit type, such as a fired
- * projectile) keeps its primitive shape. There is deliberately no other
- * switch — no URL or debug toggle, no per-entity flag, and no fallback to
- * the shape when a sprite unit's frames are missing. A unit is moved over by
- * packing its frames into the atlas and adding its type here.
+ * atlas, and so the ones `loadUnitSprites` loads. This is the single place
+ * that decides sprite vs. shape for a unit: every other unit type keeps its
+ * primitive shape. There is deliberately no other switch — no URL or debug
+ * toggle, no per-entity flag, and no fallback to the shape when a sprite
+ * unit's frames are missing. A unit is moved over by packing its frames into
+ * the atlas and adding its type here.
+ *
+ * It also lists the projectiles a ranged unit fires (`'bolt'`), which are
+ * always sprites: a fired projectile has no shape to fall back to.
  */
-export const SPRITE_UNIT_TYPES: readonly UnitType[] = ['swordsmen', 'crossbowsoldier', 'knight'];
+export const SPRITE_UNIT_TYPES: readonly UnitType[] = ['swordsmen', 'crossbowsoldier', 'knight', 'bolt'];
 
 /** Whether entities of `type` are drawn as sprites (see {@link SPRITE_UNIT_TYPES}). */
 export function isSpriteUnitType(type: UnitType | undefined): type is UnitType {

@@ -105,8 +105,8 @@ function unitPixelHash(unit: UnitType): string {
 }
 
 describe('committed unit pixels', () => {
-  // Pinned when the cannon joined the atlas; they only change if a
-  // unit's frame map or the packer's pixel output does.
+  // Pinned when the cannon joined the atlas (the bolt's when it did); they
+  // only change if a unit's frame map or the packer's pixel output does.
   it.each([
     ['swordsmen', '2f608953352bed924ee6ccf5548002dddb1c2701'],
     ['crossbowsoldier', '48264938f23e1bf0a3603ca75e717f55690ed5be'],
@@ -114,6 +114,7 @@ describe('committed unit pixels', () => {
     ['juggernaut', '186006382b1f75e1841d5520daba81eeaf2f1b13'],
     ['catapult', '4134a922e9f4f4b18efd752e9093ab7363e67271'],
     ['cannon', '78e7b786d65089a7a350f924f92d144c0658d58b'],
+    ['bolt', '8076f4fb3f8872a8ba41863f97721ce34612899d'],
   ] as const)('leaves the %s frames unchanged', (unit, hash) => {
     expect(unitPixelHash(unit)).toBe(hash);
   });
@@ -290,5 +291,32 @@ describe('committed cannon', () => {
   it('holds its single wreck frame once dead', () => {
     expect(manifest.actions.idle).toMatchObject({ frames: 1, fps: 0, loop: false });
     expect(manifest.actions.dead).toMatchObject({ frames: 1, fps: 2, loop: false, holdLast: true });
+  });
+});
+
+describe('committed bolt', () => {
+  const manifest = parseUnitManifest(readJson(unitManifestPath('bolt')));
+  const animations = sheet.animations as Record<string, string[]>;
+
+  it('is team-neutral, with a single colourway', () => {
+    expect(manifest.teams).toEqual(['neutral']);
+  });
+
+  it('only flies: a single still move frame in all eight directions', () => {
+    expect(manifest.actions).toEqual({ move: { frames: 1, fps: 0, loop: false } });
+    expect(manifest.frameSize).toEqual([14, 14]);
+    expect(manifest.anchor).toEqual([0.5, 0.5]);
+  });
+
+  it.each(DIRECTIONS)('resolves bolt.neutral.move.%s to exactly one frame of its own', (direction) => {
+    const names = animations[`bolt.neutral.move.${direction}`];
+    expect(names).toHaveLength(1);
+    const { frame } = sheet.frames[names[0]];
+    expect([frame.w, frame.h]).toEqual([14, 14]);
+    // Every direction has a frame of its own, not one shared with another.
+    const others = DIRECTIONS.filter((d) => d !== direction).map(
+      (d) => sheet.frames[animations[`bolt.neutral.move.${d}`][0]].frame
+    );
+    expect(others).not.toContainEqual(frame);
   });
 });

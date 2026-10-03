@@ -5,7 +5,13 @@ import type { Team } from '~/game/ecs/components';
 import { snapToFootprint } from '~/game/navigation/footprint';
 import { CELLS_PER_TILE, tilesToCells } from '~/lib/grid';
 import type { Point } from '~/lib/math/types';
-import { footprintOf, units, type UnitDefinition, type UnitType } from './units';
+import {
+  footprintOf,
+  isProjectileUnitType,
+  units,
+  type UnitDefinition,
+  type UnitType,
+} from './units';
 
 /** Per-team fill colour for a unit's shape, used by the (view-only) renderer. */
 const TEAM_COLOR: Record<Team, number> = {
@@ -94,12 +100,21 @@ export interface SpawnUnitOptions {
  * out against — so the rendered box always matches the cells the unit
  * actually reserves (`CellOccupancySystem`), making multi-cell occupancy
  * visible and debuggable rather than a one-cell dot.
+ *
+ * @throws {Error} for a projectile type such as `'bolt'` (see
+ * `PROJECTILE_UNIT_TYPES`): a projectile is never a unit, it only ever
+ * exists as what `fireProjectile` fires.
  */
 export function spawnUnit(
   world: World<Entity>,
   { type, team, position }: SpawnUnitOptions,
   cellSize: number
 ): Entity {
+  if (isProjectileUnitType(type)) {
+    throw new Error(
+      `Cannot spawn "${type}" as a unit: it is a projectile, which only exists once fired`
+    );
+  }
   const definition = units[type];
   const tileSize = cellSize * CELLS_PER_TILE;
   const footprint = footprintOf(definition);
@@ -147,9 +162,10 @@ export function spawnUnit(
   }
   // Marks this unit type's attacks as fired projectiles rather than instant
   // melee damage — read by `CombatSystem` to fire a travelling `Projectile`
-  // (`fireProjectile`) instead of applying damage directly.
+  // (`fireProjectile`) instead of applying damage directly. The crossbow
+  // soldier is the only ranged unit, and it fires bolts.
   if (definition.projectile) {
-    entity.ranged = { projectileSpeed: PROJECTILE_SPEED_TILES * tileSize };
+    entity.ranged = { projectileSpeed: PROJECTILE_SPEED_TILES * tileSize, projectile: 'bolt' };
   }
   // Only the player's own (blue) units can be click-selected; red is the
   // opposing side and has no `selectable` component at all — a query for

@@ -1,0 +1,7 @@
+{
+  "type": "bolt",
+  "size": { "width": 0.5, "height": 0.5 },
+  "shape": "square",
+  "health": 1,
+  "assets": null
+}

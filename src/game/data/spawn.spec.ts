@@ -215,6 +215,27 @@ describe('spawnUnit', () => {
     expect(world.entities[0].ranged).toBeDefined();
   });
 
+  it('arms a crossbowsoldier with bolts', () => {
+    const world = new World<Entity>();
+
+    const unit = spawnUnit(world, {
+      type: 'crossbowsoldier',
+      team: 'blue',
+      position: { x: 0, y: 0 },
+    }, DEFAULT_CELL_SIZE);
+
+    expect(unit.ranged?.projectile).toBe('bolt');
+  });
+
+  it('refuses to spawn a bolt, which only exists once fired, and adds nothing', () => {
+    const world = new World<Entity>();
+
+    expect(() =>
+      spawnUnit(world, { type: 'bolt', team: 'blue', position: { x: 0, y: 0 } }, DEFAULT_CELL_SIZE)
+    ).toThrow('Cannot spawn "bolt" as a unit: it is a projectile, which only exists once fired');
+    expect(world.entities).toHaveLength(0);
+  });
+
   it('is unaffected by later mutation of the caller-supplied position', () => {
     const world = new World<Entity>();
     const position = { x: 1, y: 2 };

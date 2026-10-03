@@ -147,10 +147,11 @@ function attack(
   self.attackSwing = { elapsed: 0 };
 
   if (self.ranged) {
-    // Guarded above: `self.ranged` is defined here, satisfying `RangedAttacker`.
+    // Guarded above: `self.ranged` is defined here. `spawnUnit` gives every
+    // unit a `unitType` and `renderable`, which complete `RangedAttacker`.
     fireProjectile(
       world,
-      self as typeof self & Required<Pick<Entity, 'ranged'>>,
+      self as typeof self & Required<Pick<Entity, 'ranged' | 'unitType' | 'renderable'>>,
       other,
       target.entityId,
       cellSize
