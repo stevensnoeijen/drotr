@@ -1,14 +1,16 @@
-import { World } from 'miniplex';
+import { World, type With } from 'miniplex';
 import { AnimatedSprite, Container, Graphics, type Spritesheet, type Ticker } from 'pixi.js';
 import { beforeAll, describe, expect, it } from 'vitest';
 
+import { fireProjectile, type RangedAttacker } from '~/game/combat/fire-projectile';
 import { spawnUnit, cellPosition } from '~/game/data/spawn';
 import type { UnitType } from '~/game/data/units';
 import type { Team } from '~/game/ecs/components';
 import type { Entity } from '~/game/ecs/entity';
 import { createQueries } from '~/game/ecs/world';
 import { committedAtlas, committedUnitSprites } from '~/test/unit-sprites-fixture';
-import { RenderSystem } from './render-system';
+import { RenderSystem, spriteScale } from './render-system';
+import { DIRECTIONS } from './sprites/animation-key';
 import type { UnitSprites } from './sprites/unit-sprites';
 
 let sheet: Spritesheet;
@@ -49,6 +51,28 @@ function advance(sprite: AnimatedSprite, frames: number): void {
 
 const animation = (key: string) => sheet.animations[key];
 
+/**
+ * Has a blue crossbow soldier at column 0 fire a bolt at a red swordsman at
+ * column 3, due east of it, as `CombatSystem` would. The bolt's view is the
+ * third one added.
+ */
+function fireBolt(world: World<Entity>, spawn: ReturnType<typeof setup>['spawn'], cellSize = 16) {
+  const shooter = spawn('crossbowsoldier', 'blue', cellSize, 0);
+  const target = spawn('swordsmen', 'red', cellSize, 3);
+  fireProjectile(
+    world,
+    shooter as RangedAttacker,
+    target as With<Entity, 'transform'>,
+    target.id!,
+    cellSize
+  );
+  const [bolt] = world.with('projectile');
+  return { shooter, target, bolt };
+}
+
+/** Index of the fired bolt's view, after its shooter's and target's. */
+const BOLT_VIEW = 2;
+
 describe('RenderSystem sprite views', () => {
   describe('view selection', () => {
     it('draws a swordsman as an animated sprite with no shape, facing or death mark', () => {
@@ -80,7 +104,7 @@ describe('RenderSystem sprite views', () => {
       const { parent, world } = setup();
       world.add({
         transform: { position: { x: 0, y: 0 }, rotation: 0 },
-        renderable: { shape: 'stripe', color: 0xffffff, size: 4 },
+        renderable: { shape: 'circle', color: 0xffffff, size: 4 },
       });
 
       const [shape] = viewOf(parent).children;
@@ -93,6 +117,120 @@ describe('RenderSystem sprite views', () => {
 
       expect(() => spawn()).toThrow('RenderSystem has no sprite data for "swordsmen" units');
       expect(parent.children).toHaveLength(0);
+    });
+  });
+
+  describe('fired projectiles', () => {
+    it('draws a bolt as a sprite alone: no shape, facing mark, selection marks or health bar', () => {
+      const { world, parent, spawn } = setup();
+      fireBolt(world, spawn);
+
+      const view = viewOf(parent, BOLT_VIEW);
+      expect(view.children).toHaveLength(1);
+      expect(view.children[0]).toBeInstanceOf(AnimatedSprite);
+      expect(spriteOf(parent, BOLT_VIEW).textures).toBe(animation('bolt.neutral.move.e'));
+      expect(spriteOf(parent, BOLT_VIEW).anchor.x).toBe(0.5);
+      expect(spriteOf(parent, BOLT_VIEW).anchor.y).toBe(0.5);
+    });
+
+    it.each([16, 20])(
+      'draws the bolt at its firer sprite\'s scale at cell size %i, at its original pixel size',
+      (cellSize) => {
+        const { world, parent, spawn } = setup();
+        fireBolt(world, spawn, cellSize);
+
+        const shooter = spriteOf(parent, 0);
+        const bolt = spriteOf(parent, BOLT_VIEW);
+        expect(bolt.scale.x).toBe(shooter.scale.x);
+        expect(bolt.scale.y).toBe(shooter.scale.y);
+        // A 14 px bolt frame covers 14/32 of the world length a 32 px
+        // crossbow soldier frame does.
+        expect(bolt.width / shooter.width).toBeCloseTo(14 / 32);
+        expect(shooter.width).toBe(cellSize);
+      }
+    );
+
+    it.each(DIRECTIONS.map((direction, i) => [direction, (i * Math.PI) / 4] as const))(
+      'shows the %s frame for rotation %f, never rotating the sprite',
+      (direction, rotation) => {
+        const { world, parent, spawn, system } = setup();
+        const { bolt } = fireBolt(world, spawn);
+
+        bolt.transform!.rotation = rotation;
+        system.sync();
+
+        const sprite = spriteOf(parent, BOLT_VIEW);
+        expect(sprite.textures).toBe(animation(`bolt.neutral.move.${direction}`));
+        expect(sprite.textures).toHaveLength(1);
+        expect(sprite.playing).toBe(false);
+        expect(sprite.rotation).toBe(0);
+        expect(viewOf(parent, BOLT_VIEW).rotation).toBe(0);
+      }
+    );
+
+    it('swaps the frame on the same sprite when a homing bolt turns', () => {
+      const { world, parent, spawn, system } = setup();
+      const { bolt } = fireBolt(world, spawn);
+      const sprite = spriteOf(parent, BOLT_VIEW);
+      expect(sprite.textures).toBe(animation('bolt.neutral.move.e'));
+
+      bolt.transform!.rotation = (3 * Math.PI) / 4;
+      system.sync();
+
+      expect(spriteOf(parent, BOLT_VIEW)).toBe(sprite);
+      expect(sprite.textures).toBe(animation('bolt.neutral.move.se'));
+
+      // A turn within the same 45° sector keeps the frame it has.
+      bolt.transform!.rotation = (3 * Math.PI) / 4 + 0.1;
+      system.sync();
+      expect(sprite.textures).toBe(animation('bolt.neutral.move.se'));
+    });
+
+    it('follows the bolt as it flies', () => {
+      const { world, parent, spawn, system } = setup();
+      const { bolt } = fireBolt(world, spawn);
+
+      bolt.transform!.position = { x: 30, y: 12 };
+      system.sync();
+
+      expect(viewOf(parent, BOLT_VIEW).position.x).toBe(30);
+      expect(viewOf(parent, BOLT_VIEW).position.y).toBe(12);
+    });
+
+    it('leaves no view or children behind once the bolt is removed', () => {
+      const { world, parent, spawn, system } = setup();
+      const { bolt } = fireBolt(world, spawn);
+      const view = viewOf(parent, BOLT_VIEW);
+      const sprite = spriteOf(parent, BOLT_VIEW);
+      const texture = sprite.texture;
+
+      world.remove(bolt);
+
+      expect(system.size).toBe(2);
+      expect(parent.children).toHaveLength(2);
+      expect(parent.children).not.toContain(view);
+      expect(view.destroyed).toBe(true);
+      expect(sprite.destroyed).toBe(true);
+      // The shared atlas texture survives for the next bolt.
+      expect(texture.destroyed).toBe(false);
+    });
+
+    it('throws rather than drawing a shape when there is no bolt sprite data', () => {
+      const withoutBolt: UnitSprites = new Map([...sprites].filter(([type]) => type !== 'bolt'));
+      const { world, parent, spawn } = setup({ sprites: withoutBolt });
+
+      expect(() => fireBolt(world, spawn)).toThrow('RenderSystem has no sprite data for "bolt"');
+      expect(parent.children).toHaveLength(2);
+    });
+
+    it("scales the bolt by its firer's own sprite fit", () => {
+      const { world, spawn } = setup();
+      const { bolt } = fireBolt(world, spawn, 20);
+      const crossbow = sprites.get('crossbowsoldier')!.manifest;
+
+      // The bolt is laid out in its firer's box, so the firer's frame fits
+      // it at the firer's own scale.
+      expect(spriteScale(bolt.renderable!, crossbow)).toBe(20 / 32);
     });
   });
 

@@ -1,3 +1,4 @@
+import type { ProjectileUnitType, UnitType } from '~/game/data/units';
 import type { Team } from '~/game/ecs/components/team';
 
 /**
@@ -9,6 +10,19 @@ import type { Team } from '~/game/ecs/components/team';
  * requires to move, hit-test and damage it.
  */
 export interface Projectile {
+  /**
+   * What was fired, copied from the firer's `Ranged`: the sprite the
+   * projectile is drawn as. Deliberately not the entity's `unitType`, which
+   * a projectile never has, so everything keyed on that (selection, hover,
+   * targeting, cell occupancy) keeps ignoring it.
+   */
+  type: ProjectileUnitType;
+  /**
+   * Unit type of the firer. The renderer draws the projectile at the same
+   * world-per-art-pixel scale as this unit's sprite, so the two match in
+   * size the way they do in the original art.
+   */
+  sourceUnitType: UnitType;
   /**
    * Team that fired this projectile. Not read for hit detection today (a
    * projectile only ever tracks the one `targetId` it was fired at), but

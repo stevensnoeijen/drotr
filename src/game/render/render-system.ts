@@ -4,7 +4,12 @@ import type { Query, With } from 'miniplex';
 import type { UnitType } from '~/game/data/units';
 import type { Entity } from '~/game/ecs/entity';
 import type { Renderable } from '~/game/ecs/components';
-import { animationKey, type AnimationKey } from './sprites/animation-key';
+import {
+  animationKey,
+  type AnimationKey,
+  type AnimationTeam,
+  type UnitAction,
+} from './sprites/animation-key';
 import { directionOf, unitActionOf } from './sprites/unit-animation';
 import { playableDirection, type UnitManifest } from './sprites/unit-manifest';
 import {
@@ -51,15 +56,16 @@ interface SpriteAnimation {
 
 /**
  * Per-entity view state the render system tracks beyond the Pixi container.
- * A view is one of two kinds, chosen once per entity by unit type (see
- * `SPRITE_UNIT_TYPES`):
+ * A view is one of two kinds, chosen once per entity:
  *
- * - a **sprite view** (`animation`) for sprite unit types: an animated
- *   sprite playing the animation derived from the entity's ECS state;
+ * - a **sprite view** (`animation`) for a fired projectile and for sprite
+ *   unit types (see `SPRITE_UNIT_TYPES`): an animated sprite playing the
+ *   animation derived from the entity's ECS state;
  * - a **shape view** (`shape`) for everything else: the primitive shape
  *   with its facing mark and, for units with health, its death mark.
  *
- * Both share the same overlays (selection marks, health bar) and z-order.
+ * Both share the same overlays (selection marks, health bar) and z-order;
+ * a projectile has none of the components that add them.
  */
 interface EntityView {
   /**
@@ -153,12 +159,6 @@ export function overlayExtent(renderable: Renderable): number {
   return renderable.extent ?? renderable.size;
 }
 
-/**
- * Width, relative to `size`, of a `stripe` shape's short axis — thin enough
- * to read as a travelling bolt's shaft rather than a bar.
- */
-const STRIPE_WIDTH_SCALE = 0.12;
-
 /** Draws a {@link Renderable}'s primitive shape into a fresh Graphics. */
 function drawRenderable({ shape, color, size }: Renderable): Graphics {
   const graphics = new Graphics();
@@ -166,9 +166,6 @@ function drawRenderable({ shape, color, size }: Renderable): Graphics {
     graphics.circle(0, 0, size);
   } else if (shape === 'triangle') {
     graphics.poly([0, -size, size, size, -size, size]);
-  } else if (shape === 'stripe') {
-    const halfWidth = size * STRIPE_WIDTH_SCALE;
-    graphics.rect(-halfWidth, -size, halfWidth * 2, size * 2);
   } else {
     graphics.rect(-size, -size, size * 2, size * 2);
   }
@@ -209,16 +206,49 @@ export function spriteScale(renderable: Renderable, manifest: UnitManifest): num
   return (2 * overlayExtent(renderable)) / Math.max(...manifest.frameSize);
 }
 
+/**
+ * The sprite type, team set and action a sprite entity shows. A projectile
+ * only ever flies, so it always plays its `move` frames, in its one
+ * (neutral) colourway; a unit's come from its own type, team and state.
+ */
+function spriteStateOf(entity: RenderableEntity): {
+  type: UnitType;
+  team: AnimationTeam;
+  action: UnitAction;
+} {
+  if (entity.projectile) {
+    return { type: entity.projectile.type, team: 'neutral', action: 'move' };
+  }
+  return {
+    type: entity.unitType!,
+    team: entity.team ?? 'neutral',
+    action: unitActionOf(entity),
+  };
+}
+
+/**
+ * Uniform scale of a fired projectile's sprite: the world-per-art-pixel
+ * factor of its firer's sprite, so the projectile is drawn at its original
+ * pixel size next to the unit that fired it (a 14 px bolt frame covers
+ * 14/32 of the world length a 32 px crossbow soldier frame does). `firer`
+ * is the firer's manifest, and `renderable` the projectile's, which
+ * `fireProjectile` lays out in the firer's box: fitting the firer's frame
+ * to that box is exactly the scale the firer itself is drawn at.
+ */
+export function projectileSpriteScale(renderable: Renderable, firer: UnitManifest): number {
+  return spriteScale(renderable, firer);
+}
+
 /** What a sprite entity should be showing right now, from its ECS state. */
 function currentAnimation(entity: RenderableEntity, data: UnitSpriteData) {
-  const action = unitActionOf(entity);
+  const { type, team, action } = spriteStateOf(entity);
   const playback = data.manifest.actions[action];
   // An action that lacks frames for the unit's facing (say, an attack drawn
   // for north only) plays its nearest available facing instead.
   const facing = directionOf(entity.transform.rotation);
   const key = animationKey(
-    entity.unitType!,
-    entity.team ?? 'neutral',
+    type,
+    team,
     action,
     playback ? playableDirection(playback, facing) : facing
   );
@@ -264,14 +294,21 @@ function syncAnimation(animation: SpriteAnimation, entity: RenderableEntity): vo
   animation.key = key;
 }
 
-/** Builds a sprite view's animated sprite, already playing its current animation. */
-function createSpriteAnimation(entity: RenderableEntity, data: UnitSpriteData): SpriteAnimation {
+/**
+ * Builds a sprite view's animated sprite at `scale`, already playing its
+ * current animation.
+ */
+function createSpriteAnimation(
+  entity: RenderableEntity,
+  data: UnitSpriteData,
+  scale: number
+): SpriteAnimation {
   // Built on the current animation's frames (an `AnimatedSprite` can't be
   // empty), then left to `syncAnimation` to apply its speed and playback.
   const { textures } = currentAnimation(entity, data);
   const sprite = new AnimatedSprite({ textures, autoPlay: false });
   sprite.anchor.set(...data.manifest.anchor);
-  sprite.scale.set(spriteScale(entity.renderable, data.manifest));
+  sprite.scale.set(scale);
   const animation: SpriteAnimation = { sprite, data, swing: undefined };
   syncAnimation(animation, entity);
   return animation;
@@ -290,8 +327,11 @@ function createSpriteAnimation(entity: RenderableEntity, data: UnitSpriteData): 
  * Entities whose unit type is in `SPRITE_UNIT_TYPES` get a sprite view —
  * an animated sprite fitted to their footprint box (see
  * {@link spriteScale}), playing the animation derived from their ECS state
- * (`animationKeyOf`). Every other entity gets a shape view: its primitive
- * shape, turned to face `Transform.rotation`. Both kinds share the same
+ * (`animationKeyOf`). A fired projectile gets a sprite view too, of its
+ * `projectile.type`, showing the frame for the direction it travels and
+ * drawn at its firer's scale (see {@link projectileSpriteScale}). Every
+ * other entity gets a shape view: its primitive shape, turned to face
+ * `Transform.rotation`. Both kinds share the same
  * selection marks, health bar and z-order (see `EntityView`). The sprite
  * textures belong to Pixi's `Assets` cache and are shared; views are only
  * ever destroyed with `{ children: true }`, never their textures.
@@ -306,18 +346,27 @@ export class RenderSystem {
       entity.health && entity.health.current <= 0 ? DEAD_Z_INDEX : ALIVE_Z_INDEX;
 
     const view: EntityView = { container };
-    if (isSpriteUnitType(entity.unitType)) {
-      view.animation = createSpriteAnimation(entity, this.spriteData(entity.unitType));
+    if (entity.projectile) {
+      const data = this.spriteData(entity.projectile.type);
+      const firer = this.spriteData(entity.projectile.sourceUnitType);
+      view.animation = createSpriteAnimation(
+        entity,
+        data,
+        projectileSpriteScale(entity.renderable, firer.manifest)
+      );
+      container.addChild(view.animation.sprite);
+    } else if (isSpriteUnitType(entity.unitType)) {
+      const data = this.spriteData(entity.unitType);
+      view.animation = createSpriteAnimation(
+        entity,
+        data,
+        spriteScale(entity.renderable, data.manifest)
+      );
       container.addChild(view.animation.sprite);
     } else {
       const shape = new Container();
       shape.addChild(drawRenderable(entity.renderable));
-      // A fired projectile (currently just the crossbow's bolt) is
-      // already drawn as a thin stripe pointing the way it's travelling — a
-      // separate facing mark would only clutter the tiny shape.
-      if (entity.renderable.shape !== 'stripe') {
-        shape.addChild(drawFacingMark(entity.renderable.size));
-      }
+      shape.addChild(drawFacingMark(entity.renderable.size));
       container.addChild(shape);
       view.shape = shape;
     }
@@ -408,9 +457,9 @@ export class RenderSystem {
   }
 
   /**
-   * The loaded sprite data for a sprite unit type. Missing data is a
-   * programming error (the caller didn't load or pass it in), never a
-   * reason to quietly draw the unit as a shape instead.
+   * The loaded sprite data for a sprite unit type or projectile. Missing
+   * data is a programming error (the caller didn't load or pass it in),
+   * never a reason to quietly draw the entity as a shape instead.
    */
   private spriteData(unitType: UnitType): UnitSpriteData {
     const data = this.sprites.get(unitType);

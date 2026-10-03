@@ -8,7 +8,7 @@ import {
 } from '~/test/unit-sprites-fixture';
 import { DIRECTIONS } from './animation-key';
 import { loadUnitSprites, publicUrl, unitSpritesFromAtlas, type UnitSpriteSources } from './load-unit-sprites';
-import { UNIT_ATLAS_PATH, unitManifestPath } from './unit-manifest';
+import { UNIT_ATLAS_PATH, actionDirections, unitManifestPath } from './unit-manifest';
 import { SPRITE_UNIT_TYPES } from './unit-sprites';
 
 /** The committed atlas, cut from its own texture source so tests can inspect it. */
@@ -43,9 +43,15 @@ describe('loadUnitSprites', () => {
     for (const unit of SPRITE_UNIT_TYPES) {
       const data = sprites.get(unit)!;
       expect(data.manifest).toEqual(committedManifest(unit));
-      expect(data.animations[`${unit}.red.attack.se`]).toHaveLength(
-        data.manifest.actions.attack!.frames
-      );
+      // Every action the manifest declares, in its first team and facing
+      // (a bolt has only a neutral move).
+      const team = data.manifest.teams[0];
+      for (const [action, declared] of Object.entries(data.manifest.actions)) {
+        const direction = actionDirections(declared)[0];
+        expect(data.animations[`${unit}.${team}.${action}.${direction}`]).toHaveLength(
+          declared.frames
+        );
+      }
     }
     expect(src.loadAtlas).toHaveBeenCalledWith(publicUrl(UNIT_ATLAS_PATH));
     for (const unit of SPRITE_UNIT_TYPES) {

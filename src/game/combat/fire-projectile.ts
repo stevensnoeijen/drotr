@@ -2,19 +2,18 @@ import type { With, World } from 'miniplex';
 
 import type { Entity } from '~/game/ecs/entity';
 import { allocateEntityId } from '~/game/data/spawn';
+import { units } from '~/game/data/units';
 import { quantizeAngle } from '~/lib/math/angle';
 
-/** An entity whose landed swing fires a projectile rather than hitting instantly. */
+/**
+ * An entity whose landed swing fires a projectile rather than hitting
+ * instantly. Its `unitType` and `renderable` (which `spawnUnit` gives every
+ * unit) are what the projectile is drawn to scale against.
+ */
 export type RangedAttacker = With<
   Entity,
-  'transform' | 'team' | 'damage' | 'attackRange' | 'ranged'
+  'transform' | 'team' | 'damage' | 'attackRange' | 'ranged' | 'unitType' | 'renderable'
 >;
-
-/** Half-length, in world units, a fired projectile's `stripe` is drawn at. */
-const PROJECTILE_SIZE = 8;
-
-/** Colour a fired projectile is drawn in — a crossbow bolt's own purple. */
-const PROJECTILE_COLOR = 0x9b59b6;
 
 /**
  * How many times the firer's attack range a bolt may fly before expiring as
@@ -41,6 +40,12 @@ const MAX_FLIGHT_RANGE_FACTOR = 3;
  * `cellSize`). It is deliberately more than the attack range itself, so a
  * target walking away mid-flight is still caught, while a bolt that somehow
  * can never arrive still expires eventually.
+ *
+ * The projectile is drawn as the sprite of `attacker.ranged.projectile`, at
+ * the firer's own sprite scale: its `renderable` is laid out in the firer's
+ * box (the same `size`, `extent` and colour), and `projectile.sourceUnitType`
+ * names whose frames that box is fitted to (see `RenderSystem`). It gets no
+ * `unitType`, so it is never selected, hovered, targeted or given a cell.
  */
 export function fireProjectile(
   world: World<Entity>,
@@ -61,7 +66,7 @@ export function fireProjectile(
       ? { x: (dx / distance) * speed, y: (dy / distance) * speed }
       : { x: 0, y: speed };
 
-  // Initial rotation matches the initial aim, so the `stripe` shape is drawn
+  // Initial rotation matches the initial aim, so the sprite shows the frame
   // pointing the way it travels from the first frame; `ProjectileSystem`
   // keeps it in step as it re-aims.
   const rotation = quantizeAngle(Math.atan2(dx, -dy));
@@ -72,11 +77,19 @@ export function fireProjectile(
     velocity,
     damage: { value: attacker.damage.value },
     projectile: {
+      type: attacker.ranged.projectile,
+      sourceUnitType: attacker.unitType,
       sourceTeam: attacker.team,
       targetId,
       maxRange: attacker.attackRange.value * cellSize * MAX_FLIGHT_RANGE_FACTOR,
       traveled: 0,
     },
-    renderable: { shape: 'stripe', color: PROJECTILE_COLOR, size: PROJECTILE_SIZE },
+    renderable: {
+      // Never drawn (a projectile is always a sprite), but required.
+      shape: units[attacker.ranged.projectile].shape,
+      color: attacker.renderable.color,
+      size: attacker.renderable.size,
+      extent: attacker.renderable.extent,
+    },
   });
 }

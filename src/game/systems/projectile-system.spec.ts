@@ -28,7 +28,14 @@ function makeProjectile(
     transform: { position: { x: 0, y: 0 }, rotation: 0 },
     velocity: { x: vx, y: 0 },
     damage: { value: damage },
-    projectile: { sourceTeam: 'blue', targetId, maxRange, traveled: 0 },
+    projectile: {
+      type: 'bolt',
+      sourceUnitType: 'crossbowsoldier',
+      sourceTeam: 'blue',
+      targetId,
+      maxRange,
+      traveled: 0,
+    },
   });
 }
 

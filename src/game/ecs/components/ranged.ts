@@ -1,3 +1,5 @@
+import type { ProjectileUnitType } from '~/game/data/units';
+
 /**
  * Marks a unit's attacks as fired projectiles that travel to the target
  * rather than landing instantly on swing — currently just the crossbow
@@ -10,4 +12,6 @@
 export interface Ranged {
   /** World units per second a projectile fired by this unit travels. */
   projectileSpeed: number;
+  /** What this unit fires, which decides the sprite the projectile is drawn as. */
+  projectile: ProjectileUnitType;
 }
