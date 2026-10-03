@@ -1,6 +1,6 @@
 ---
 name: plan-tickets
-description: "High-level ticket planning for stevensnoeijen/drotr: research the codebase, propose how to split a feature idea, a too-big issue, a parent issue or a whole milestone into small tickets that each deliver a change, confirm the plan with the user, then create or update the parent issue and outline sub-issues with their order, dependencies and Project Status, Model and Effort. Detailed per-ticket specs are left to refine-ticket. Triggers on: plan tickets, plan a feature, ticket planner, split issue #N, break down issue #N, create tickets for, re-plan #N, groom milestone, plan milestone."
+description: "High-level ticket planning for stevensnoeijen/drotr: research the codebase, propose how to split a feature idea, a too-big issue, or a parent issue into small tickets that each deliver a change, confirm the plan with the user, then create or update the parent issue and outline sub-issues with their order, dependencies and Project Status, Model and Effort. Detailed per-ticket specs are left to refine-ticket. Triggers on: plan tickets, plan a feature, ticket planner, split issue #N, break down issue #N, create tickets for, re-plan #N."
 license: MIT
 ---
 
@@ -47,7 +47,7 @@ dumps stay out of this context. Only the findings come back.
 
 ## 1. Identify the starting point
 
-The skill accepts four kinds of input. Work out which one it is. If it's
+The skill accepts three kinds of input. Work out which one it is. If it's
 unclear, ask.
 
 | Input | Example | What to fetch |
@@ -55,13 +55,12 @@ unclear, ask.
 | Free-form idea | "add fog of war" | Search existing issues for overlap (step 2). Nothing else yet. |
 | Existing too-big issue | `242`, or an issue URL | That issue, its parent and any sub-issues. |
 | Parent issue to re-plan | `171` | The parent, plus every sub-issue with state, body and Project fields. |
-| Milestone to groom | "phase 3" | Every open issue in that milestone (see below). |
 
 Fetch an issue with its relationships:
 
 ```
 gh issue view <number> --repo stevensnoeijen/drotr \
-  --json number,title,body,labels,milestone,url,state,parent,subIssues,blockedBy,blocking,comments
+  --json number,title,body,labels,url,state,parent,subIssues,blockedBy,blocking,comments
 ```
 
 `subIssues`, `blockedBy` and `blocking` are objects. Read `.nodes[]` from them.
@@ -74,15 +73,6 @@ gh api graphql -f query='{repository(owner:"stevensnoeijen",name:"drotr"){issue(
 ```
 
 Use the item whose `project.number` is 3.
-
-For a milestone:
-
-```
-gh api repos/stevensnoeijen/drotr/milestones?state=all \
-  --jq '.[] | "\(.number) \(.state) \(.title)"'
-gh issue list --repo stevensnoeijen/drotr --milestone "<title>" --state open \
-  --limit 200 --json number,title,body,labels
-```
 
 ## 2. Gather context (top level, cheap)
 
@@ -123,9 +113,6 @@ Dispatch one research subagent:
     `type:research` ticket).
 - Tell it not to talk to the user and not to write anything to GitHub or the
   working tree.
-
-For a milestone groom with several unrelated clusters of issues, one research
-subagent per cluster is fine. Run them in parallel.
 
 ## 4. Design the split
 
@@ -176,9 +163,9 @@ a decision. Plan the follow-ups that depend on it only as far as the research
 can't change them. Say in the plan which follow-ups are provisional and will
 be re-planned once the research lands.
 
-**Stay in phase.** Each ticket gets the milestone of the roadmap phase it
-belongs to. If the work needs something from a later phase, flag it to the
-user instead of planning around it.
+**Stay in phase.** Each ticket belongs to a roadmap phase in CLAUDE.md. If
+the work needs something from a later phase, flag it to the user instead of
+planning around it.
 
 **Group under a parent issue** whenever the plan has more than one ticket,
 the way #159, #170 and #171 do. The parent is a tracking issue: what the work
@@ -193,23 +180,6 @@ option of the chosen family that the Project's `Model` field offers (check
 with `gh project field-list 3 --owner stevensnoeijen --format json`).
 refine-ticket re-sets them once it has settled the ticket's detailed scope.
 
-### For a milestone groom
-
-Triage every open issue in the milestone into one of:
-
-- **ready**: scoped, one PR, delivers a change. No action.
-- **needs refinement**: right size and clear place in the plan, but the body
-  doesn't say what to build. Not changed here. List it for refine-ticket in
-  the report.
-- **too big**: gets split per the principles above.
-- **duplicate / superseded / out of phase**: propose closing, merging or
-  moving to another milestone.
-- **missing**: work the milestone's goal needs that no issue covers.
-
-Present the triage table first and let the user choose which issues to plan
-now. Then run steps 4–8 per issue or cluster, so each confirmation stays a
-reviewable size.
-
 ## 5. Propose the plan
 
 Present the plan in chat. Keep it scannable, not a wall of prose:
@@ -219,10 +189,10 @@ Present the plan in chat. Keep it scannable, not a wall of prose:
 2. **Dependency diagram** in a code block, like the one in #171's body.
 3. **Ticket table**, one row per ticket: placeholder id (`T1`, `T2`, … for
    new tickets, `#N` for existing ones), title, label (`type:feature`,
-   `type:chore` or `type:research`), milestone, what it delivers and how it's
+   `type:chore` or `type:research`), what it delivers and how it's
    verified, blocked by, dead code? (and consumed by), proposed Model/Effort.
-4. **Changes to existing issues** (re-plan and groom only): edits,
-   re-parenting, closures, milestone moves. Each one says why.
+4. **Changes to existing issues** (re-plan only): edits,
+   re-parenting, closures. Each one says why.
 5. **Open questions**: every planning decision that is the user's call.
 
 Then ask the open questions with `AskUserQuestion`. Ground every option in
@@ -302,13 +272,13 @@ Draft every body in the scratchpad directory, using the placeholder ids
 1. **Create the parent first** (if the plan has a new one):
    ```
    gh issue create --repo stevensnoeijen/drotr --title "<title>" \
-     --body-file <file> --milestone "<milestone>" --project drotr
+     --body-file <file> --project drotr
    ```
 2. **Create the sub-issues in dependency order**, blockers first, so
    `Blocked by` references point at real numbers:
    ```
    gh issue create --repo stevensnoeijen/drotr --title "<title>" \
-     --body-file <file> --label "<type:…>" --milestone "<milestone>" \
+     --body-file <file> --label "<type:…>" \
      --project drotr --parent <parent number>
    ```
    Keep a placeholder → number map as you go.
@@ -319,7 +289,7 @@ Draft every body in the scratchpad directory, using the placeholder ids
 4. **Add the native dependencies** to match the `Blocked by` lines:
    `gh issue edit <n> --repo stevensnoeijen/drotr --add-blocked-by <m>`.
 5. **Apply the confirmed changes to existing issues**: `gh issue edit` with
-   `--body-file`, `--parent` / `--remove-parent`, `--milestone`, and
+   `--body-file`, `--parent` / `--remove-parent`, and
    `gh issue close <n> --reason "not planned" --comment "Superseded by #<m>"`
    for confirmed closures. Nothing that wasn't in the confirmed plan.
 6. **Set the Project fields** on every created or edited ticket: `Status`
@@ -341,9 +311,9 @@ duplicates.
 
 ## 9. Verify and report
 
-Re-fetch the parent with `--json subIssues` (or each ticket for a groom) and
+Re-fetch the parent with `--json subIssues` and
 check that every planned ticket exists, sits under the right parent, and has
-its milestone, label and Project fields set.
+its label and Project fields set.
 
 Report to the user:
 
@@ -351,7 +321,6 @@ Report to the user:
 - Model/Effort/Status per ticket.
 - Which ticket(s) can start now (nothing blocking them). The next step for
   each is `refine-ticket <number>`, then `implement-ticket <number>`.
-- For a groom: the issues triaged as needing refinement.
 - Any provisional tickets that will need re-planning once a research ticket
   lands.
 
