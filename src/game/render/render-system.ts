@@ -283,10 +283,22 @@ function syncAnimation(animation: SpriteAnimation, entity: RenderableEntity): vo
   }
 
   const { sprite } = animation;
+  // Turning to track a target mid-swing changes the key (it includes the
+  // direction) but is still the same swing: carry on from the current frame
+  // in the new direction's textures instead of restarting the attack.
+  const keepFrame = action === 'attack' && !newSwing;
+  const frame = Math.min(sprite.currentFrame, textures.length - 1);
+  const wasPlaying = sprite.playing;
   sprite.textures = textures;
   sprite.animationSpeed = animationSpeed(playback.fps);
   sprite.loop = playback.loop;
-  if (textures.length > 1 && playback.fps > 0) {
+  if (keepFrame && animation.key !== undefined) {
+    if (wasPlaying) {
+      sprite.gotoAndPlay(frame);
+    } else {
+      sprite.gotoAndStop(frame);
+    }
+  } else if (textures.length > 1 && playback.fps > 0) {
     sprite.gotoAndPlay(0);
   } else {
     sprite.gotoAndStop(0);

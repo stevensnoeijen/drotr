@@ -395,6 +395,30 @@ describe('RenderSystem sprite views', () => {
       expect(sprite.playing).toBe(true);
     });
 
+    it('keeps the frame when the unit turns mid-swing, but restarts on a new swing', () => {
+      const { parent, spawn, system } = setup();
+      const entity = spawn('swordsmen', 'red');
+      entity.transform!.rotation = (3 * Math.PI) / 4; // southeast
+      entity.attackSwing = { elapsed: 0 };
+      system.sync();
+      const sprite = spriteOf(parent);
+      advance(sprite, 5);
+      expect(sprite.currentFrame).toBe(5);
+
+      // Turning south mid-swing swaps the textures but not the frame.
+      entity.transform!.rotation = Math.PI;
+      entity.attackSwing.elapsed = 0.3;
+      system.sync();
+      expect(sprite.textures).toBe(animation('swordsmen.red.attack.s'));
+      expect(sprite.currentFrame).toBe(5);
+      expect(sprite.playing).toBe(true);
+
+      // A new swing still starts from frame 0.
+      entity.attackSwing = { elapsed: 0 };
+      system.sync();
+      expect(sprite.currentFrame).toBe(0);
+    });
+
     it.each([
       ['blue', 0, 'n'],
       ['blue', Math.PI / 4, 'ne'],
