@@ -12,4 +12,10 @@
 export interface AttackSwing {
   /** Gametime seconds since the swing was taken. */
   elapsed: number;
+  /**
+   * Set while a ranged swing is winding up: the entity id of the target its
+   * projectile will be fired at once the swing reaches `Ranged.releaseTime`.
+   * Cleared when the shot is released.
+   */
+  pendingTargetId?: number;
 }

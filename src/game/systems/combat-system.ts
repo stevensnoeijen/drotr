@@ -94,9 +94,10 @@ export function isSettled(entity: Entity, cellSize: number): boolean {
  *
  * A `Ranged` attacker (currently just the crossbow soldier) does not
  * touch the target's HP here at all: once everything above has confirmed
- * this swing lands (in range, attacker settled), it fires a travelling
- * `Projectile` instead (`fireProjectile`), and `ProjectileSystem` is what
- * actually damages the target once that projectile arrives. The range gate
+ * this swing is taken (in range, attacker settled), it starts the swing and
+ * fires a travelling `Projectile` at its release time
+ * ({@link releaseProjectile}), and `ProjectileSystem` is what actually
+ * damages the target once that projectile arrives. The range gate
  * above is exactly what stops a crossbow soldier from firing at a target
  * beyond its `attackRange` (5 tiles, 10 half-tile cells) in the first place.
  */
@@ -141,28 +142,67 @@ function attack(
     return;
   }
 
-  // The swing is taken from here on (melee hit or projectile fired): flag it
-  // so the renderer can show an attack animation, restarting any swing that
-  // is still in progress.
-  self.attackSwing = { elapsed: 0 };
-
+  // The swing is taken from here on: flag it so the renderer can show an
+  // attack animation, restarting any swing that is still in progress.
   if (self.ranged) {
-    // Guarded above: `self.ranged` is defined here. `spawnUnit` gives every
-    // unit a `unitType` and `renderable`, which complete `RangedAttacker`.
-    fireProjectile(
-      world,
-      self as typeof self & Required<Pick<Entity, 'ranged' | 'unitType' | 'renderable'>>,
-      other,
-      target.entityId,
-      cellSize
-    );
+    // A ranged swing commits to its target now but looses the projectile
+    // later, when the swing reaches `ranged.releaseTime` (see
+    // {@link releaseProjectile}).
+    self.attackSwing = { elapsed: 0, pendingTargetId: target.entityId };
     return;
   }
+
+  self.attackSwing = { elapsed: 0 };
 
   // Clamped at zero: HP is the death predicate every other system reads
   // (`health.current <= 0`), and letting it run negative would make a
   // health-bar fraction and any future overkill accounting meaningless.
   other.health.current = Math.max(0, other.health.current - self.damage.value);
+}
+
+/**
+ * Looses a ranged swing's projectile once the swing has reached the
+ * attacker's `releaseTime`. The shot was committed to at swing start, so it
+ * is fired whenever the target is still alive, even if it has since left
+ * range or the attacker has begun to move; the projectile homes on the
+ * target's live position. A target that died or was removed during the
+ * wind-up gets no bolt: the swing is cleared on the spot, along with the
+ * stale `target`.
+ */
+function releaseProjectile(
+  world: World<Entity>,
+  queries: Queries,
+  self: AttackerEntity,
+  cellSize: number
+): void {
+  const swing = self.attackSwing;
+  if (!swing || swing.pendingTargetId === undefined || !self.ranged) {
+    return;
+  }
+  if (swing.elapsed < self.ranged.releaseTime) {
+    return;
+  }
+
+  const targetId = swing.pendingTargetId;
+  const other = findEntityById(queries.combatants, targetId);
+  if (!other || other.health.current <= 0) {
+    delete self.attackSwing;
+    if (self.target?.entityId === targetId) {
+      delete self.target;
+    }
+    return;
+  }
+
+  delete swing.pendingTargetId;
+  // `spawnUnit` gives every unit a `unitType` and `renderable`, which
+  // complete `RangedAttacker`.
+  fireProjectile(
+    world,
+    self as typeof self & Required<Pick<Entity, 'ranged' | 'unitType' | 'renderable'>>,
+    other,
+    targetId,
+    cellSize
+  );
 }
 
 /**
@@ -225,7 +265,8 @@ export function createCombatSystem(queries: Queries, cellSize: number): System {
       // elapse below starts again from zero rather than being aged at once.
       if (self.attackSwing) {
         self.attackSwing.elapsed += dt;
-        if (self.attackSwing.elapsed >= swingDuration(self)) {
+        releaseProjectile(world, queries, self, cellSize);
+        if (self.attackSwing && self.attackSwing.elapsed >= swingDuration(self)) {
           delete self.attackSwing;
         }
       }
@@ -241,6 +282,8 @@ export function createCombatSystem(queries: Queries, cellSize: number): System {
         cooldowns.set(self, cooldown);
       }
       cooldown.update();
+      // A release time of 0 fires in the tick the swing starts.
+      releaseProjectile(world, queries, self, cellSize);
     }
   };
 }
