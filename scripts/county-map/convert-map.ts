@@ -25,6 +25,7 @@ import {
   DRACULA_EXE_CD_PATH,
   isCountyName,
 } from './county-names';
+import { withPreviousCollision } from './collision-layer-merge';
 import { withPreviousSpawns } from './spawns-layer-merge';
 
 const OUTPUT_DIR = path.join(process.cwd(), 'public', 'maps');
@@ -105,8 +106,12 @@ export function convertMap(name: string): boolean {
   const destination = path.join(OUTPUT_DIR, fileName);
   let output: string;
   try {
+    const previous = readExisting(destination);
     output = serializeTiledMap(
-      withPreviousSpawns(convert(readCdFile(source)), readExisting(destination))
+      withPreviousCollision(
+        withPreviousSpawns(convert(readCdFile(source)), previous),
+        previous
+      )
     );
   } catch (error) {
     return fail(

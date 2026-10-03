@@ -41,6 +41,8 @@ import {
  *   `src/game/map/load-tiled-map.ts`); it's hidden only so it doesn't
  *   normally show up drawn over the terrain, and can still be switched on
  *   in the Tiled editor or through the engine's `tile-layers` debug option.
+ *   Hand-added blocked cells are kept across reruns by
+ *   `withPreviousCollision`.
  * - `constructions`: one point per place a bridge, tower or castle can be
  *   built, from `DRACULA.EXE` ({@link buildingSiteObjects}). The engine
  *   doesn't read it yet.

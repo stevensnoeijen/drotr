@@ -600,10 +600,15 @@ over into the new output rather than discarded (after the generated ones,
 given a fresh object id if its id clashes with one of theirs); everything
 else is regenerated. A file last saved from the Tiled editor is therefore
 rewritten in the converter's own formatting, with its hand-placed spawns
-intact. Hand edits to any *other* layer are not kept: several committed
-counties (braila, cuerta, giurgiu, hirsova, rasova, sibiu, snagov, tirgo)
-carry a few hand-added blocked cells in `collision`, which a rerun of the
-converter would drop.
+intact.
+
+Hand-added blocked cells in the `collision` layer are kept too: a rerun
+takes the union of the blocked cells in the existing file and the freshly
+built layer. Blocks derived from the `.MAP` data therefore still change
+with it, but a block added by hand (several committed counties carry a few:
+braila, cuerta, giurgiu, hirsova, rasova, sibiu, snagov, tirgo) can't be
+removed by the converter, and a cell hand-cleared in Tiled is blocked again
+on the next rerun. Hand edits to any other layer are not kept.
 
 All 12 counties convert in one go with:
 
