@@ -1,11 +1,14 @@
 import { describe, expect, it } from 'vitest';
 
+import { hasCdFile, readCdFile } from '../../src/test/cd-assets';
+
 import { buildDraculaExeBytes } from './dracula-exe-fixture';
 
 import {
   BUILDING_SITE_COUNTIES,
   BuildingSitesError,
   BuildingType,
+  parseBuildingPrefabs,
   parseBuildingSites,
 } from './building-sites';
 import { PeError } from './pe';
@@ -134,5 +137,89 @@ describe('parseBuildingSites', () => {
 
   it('rejects a buffer that is not a PE image', () => {
     expect(() => parseBuildingSites(new Uint8Array(1024))).toThrow(PeError);
+  });
+});
+
+describe('parseBuildingPrefabs', () => {
+  it('returns nothing for empty tables', () => {
+    expect(parseBuildingPrefabs(buildDraculaExeBytes())).toEqual([]);
+  });
+
+  it('keeps each prefab source rect, level, orientation and bank, bridges first', () => {
+    const prefabs = parseBuildingPrefabs(
+      buildDraculaExeBytes({
+        prefabs: [
+          { type: Fortification, slot: 5, rect: [89, 85, 110, 106] },
+          { type: Tower, slot: 1, rect: [26, 3, 28, 6] },
+          { type: Bridge, slot: 4, rect: [30, 7, 31, 11] },
+          { type: Bridge, slot: 21, rect: [40, 2, 45, 3] },
+          { type: Stronghold, slot: 3, rect: [50, 93, 80, 122] },
+        ],
+      })
+    );
+    expect(prefabs).toEqual([
+      {
+        category: 'bridge',
+        level: 'wood',
+        type: Bridge,
+        slot: 4,
+        rect: { x: 30, y: 7, width: 1, height: 4 },
+        orientation: 'vertical',
+        bank: 'rock',
+      },
+      {
+        category: 'bridge',
+        level: 'wood',
+        type: Bridge,
+        slot: 21,
+        rect: { x: 40, y: 2, width: 5, height: 1 },
+        orientation: 'horizontal',
+        bank: 'grass',
+      },
+      {
+        category: 'tower',
+        level: 'rock-1',
+        type: Tower,
+        slot: 1,
+        rect: { x: 26, y: 3, width: 2, height: 3 },
+      },
+      {
+        category: 'castle',
+        level: 'rock-3',
+        type: Fortification,
+        slot: 5,
+        rect: { x: 89, y: 85, width: 21, height: 21 },
+      },
+      {
+        category: 'castle',
+        level: '5-moated',
+        type: Stronghold,
+        slot: 3,
+        rect: { x: 50, y: 93, width: 30, height: 29 },
+      },
+    ]);
+  });
+
+  it('rejects a tower in an unknown slot', () => {
+    const bytes = buildDraculaExeBytes({
+      prefabs: [{ type: Tower, slot: 3, rect: [0, 0, 2, 2] }],
+    });
+    expect(() => parseBuildingPrefabs(bytes)).toThrow(BuildingSitesError);
+  });
+
+  it('rejects a buffer that is not a PE image', () => {
+    expect(() => parseBuildingPrefabs(new Uint8Array(1024))).toThrow(PeError);
+  });
+
+  describe.skipIf(!hasCdFile('DRACULA.EXE'))('real DRACULA.EXE', () => {
+    it('holds 57 prefabs: 42 bridges (28 grass, 14 rock), 3 towers, 12 castles', () => {
+      const prefabs = parseBuildingPrefabs(readCdFile('DRACULA.EXE'));
+      expect(prefabs).toHaveLength(57);
+      const bridges = prefabs.filter((p) => p.category === 'bridge');
+      expect(bridges.filter((p) => p.bank === 'grass')).toHaveLength(28);
+      expect(bridges.filter((p) => p.bank === 'rock')).toHaveLength(14);
+      expect(prefabs.filter((p) => p.category === 'tower')).toHaveLength(3);
+      expect(prefabs.filter((p) => p.category === 'castle')).toHaveLength(12);
+    });
   });
 });

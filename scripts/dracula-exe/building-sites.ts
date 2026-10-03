@@ -343,3 +343,101 @@ export function parseBuildingSites(
     BUILDING_SITE_COUNTIES.map((county, c) => [county, groupSites(raw[c])])
   ) as Record<BuildingSiteCounty, BuildingSite[]>;
 }
+
+/**
+ * Bridge slots whose end caps are drawn for rock ground. Every other bridge
+ * slot has grass-bank caps. Each bridge shape exists twice in
+ * `BUILDING.MAP`, once per bank type: the deck tiles are identical and only
+ * the end caps differ (stone vertical: grass 1225/1229, rock 1064/1066; wood
+ * vertical: 1207/1209 vs 920/921; wood horizontal: 1210/1212 vs 922/923;
+ * stone horizontal: 1238/1254 vs 1241/1257). The county sites that use these
+ * slots all meet rock or cliff terrain at both ends.
+ */
+const ROCK_BANK_BRIDGE_SLOTS: ReadonlySet<number> = new Set([
+  3, 4, 5, 6, 17, 18, 19, 23, 24, 25, 38, 39, 40, 41,
+]);
+
+/** What a bridge's end caps sit on. */
+export type BridgeBank = 'grass' | 'rock';
+
+/** One building prefab: where its art sits in `BUILDING.MAP`. */
+export interface BuildingPrefab {
+  readonly category: BuildingCategory;
+  /** Level id, as used by the county `constructions` layer. */
+  readonly level: string;
+  readonly type: BuildingType;
+  readonly slot: number;
+  /** The prefab's source rectangle, in `BUILDING.MAP` tiles. */
+  readonly rect: TileRect;
+  /** Bridges only. */
+  readonly orientation?: 'vertical' | 'horizontal';
+  /** Bridges only. */
+  readonly bank?: BridgeBank;
+}
+
+/**
+ * Reads every non-empty prefab (bridges, then towers, then castles, each in
+ * table order) with its source rectangle in `BUILDING.MAP`.
+ *
+ * @throws {PeError} if the bytes aren't a PE image holding the tables.
+ * @throws {BuildingSitesError} if a prefab has a level this reader doesn't know.
+ */
+export function parseBuildingPrefabs(exe: Uint8Array): BuildingPrefab[] {
+  const image = parsePe(exe);
+  const count = TYPE_COUNT * SLOTS_PER_TYPE;
+  const vas = BUILDING_SITE_TABLE_VAS;
+  const x0 = readVa(image, vas.prefabX0, count);
+  const y0 = readVa(image, vas.prefabY0, count);
+  const x1 = readVa(image, vas.prefabX1, count);
+  const y1 = readVa(image, vas.prefabY1, count);
+
+  const prefabs: BuildingPrefab[] = [];
+  const order = [
+    BuildingType.Bridge,
+    BuildingType.Tower,
+    BuildingType.Fortification,
+    BuildingType.Stronghold,
+  ];
+  for (const type of order) {
+    for (let slot = 0; slot < SLOTS_PER_TYPE; slot++) {
+      const i = type * SLOTS_PER_TYPE + slot;
+      const width = x1[i] - x0[i];
+      const height = y1[i] - y0[i];
+      if (width <= 0 || height <= 0) {
+        continue;
+      }
+      const rect = { x: x0[i], y: y0[i], width, height };
+      if (type === BuildingType.Bridge) {
+        const across = Math.min(width, height);
+        const level = BRIDGE_LEVELS[across];
+        if (level === undefined) {
+          throw new BuildingSitesError(
+            `Bridge slot ${slot} is ${across} tiles wide; expected 1 to 3`
+          );
+        }
+        prefabs.push({
+          category: 'bridge',
+          level,
+          type,
+          slot,
+          rect,
+          orientation: width < height ? 'vertical' : 'horizontal',
+          bank: ROCK_BANK_BRIDGE_SLOTS.has(slot) ? 'rock' : 'grass',
+        });
+      } else if (type === BuildingType.Tower) {
+        const level = TOWER_LEVELS[slot];
+        if (level === undefined) {
+          throw new BuildingSitesError(`Unknown tower slot ${slot}`);
+        }
+        prefabs.push({ category: 'tower', level, type, slot, rect });
+      } else {
+        const level = CASTLE_LEVELS[`${type}:${slot}`];
+        if (level === undefined) {
+          throw new BuildingSitesError(`Unknown castle type ${type} slot ${slot}`);
+        }
+        prefabs.push({ category: 'castle', level, type, slot, rect });
+      }
+    }
+  }
+  return prefabs;
+}
