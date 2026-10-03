@@ -1,17 +1,7 @@
 {
   "type": "juggernaut",
   "size": { "width": 1.5, "height": 1.5 },
-  "footprint": { "width": 3, "height": 3 },
   "shape": "square",
   "health": 15,
-  "attackDamage": 4,
-  "accuracy": 0,
-  "defence": 5,
-  "stamina": 8,
-  "speed": 1,
-  "movementSpeed": 1,
-  "attackCooldown": 1,
-  "range": 1,
-  "aggroRange": 3,
   "assets": null
 }

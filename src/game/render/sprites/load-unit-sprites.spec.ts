@@ -7,7 +7,7 @@ import {
   readPublicJson,
 } from '~/test/unit-sprites-fixture';
 import { DIRECTIONS } from './animation-key';
-import { loadUnitSprites, publicUrl, type UnitSpriteSources } from './load-unit-sprites';
+import { loadUnitSprites, publicUrl, unitSpritesFromAtlas, type UnitSpriteSources } from './load-unit-sprites';
 import { UNIT_ATLAS_PATH, unitManifestPath } from './unit-manifest';
 import { SPRITE_UNIT_TYPES } from './unit-sprites';
 
@@ -43,7 +43,7 @@ describe('loadUnitSprites', () => {
     for (const unit of SPRITE_UNIT_TYPES) {
       const data = sprites.get(unit)!;
       expect(data.manifest).toEqual(committedManifest(unit));
-      expect(data.animations[`${unit}.red.attack.${unit === 'juggernaut' ? 'n' : 'se'}`]).toHaveLength(
+      expect(data.animations[`${unit}.red.attack.se`]).toHaveLength(
         data.manifest.actions.attack!.frames
       );
     }
@@ -99,7 +99,9 @@ describe('loadUnitSprites', () => {
     const sheet = atlas();
     expect(sheet.animations['juggernaut.red.attack.n']).toBeDefined();
     expect(sheet.animations['juggernaut.red.attack.s']).toBeUndefined();
-    await expect(loadUnitSprites(sources({ loadAtlas: async () => sheet }))).resolves.toBeDefined();
+    expect(() =>
+      unitSpritesFromAtlas(sheet.animations, new Map([['juggernaut', committedManifest('juggernaut')]]))
+    ).not.toThrow();
   });
 
   it('rejects when an animation has fewer frames than the manifest declares', async () => {

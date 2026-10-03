@@ -94,8 +94,9 @@ export const units: Record<UnitType, UnitDefinition> = {
   // rather than grinding.
   knight: knightData as UnitDefinition,
   crossbowsoldier: crossbowsoldierData as UnitDefinition,
-  // A battering ram with its crew: the slowest and bulkiest unit, one and a
-  // half tiles across (a 3x3 block of cells), that trades speed for bulk.
+  // A battering ram with its crew. Only the minimum for now (type, size,
+  // shape, health) so `#/unit-preview` can list its atlas sprites: combat
+  // stats, a footprint and in-game sprites land in #182.
   juggernaut: juggernautData as UnitDefinition,
 };
 

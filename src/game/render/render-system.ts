@@ -213,8 +213,8 @@ export function spriteScale(renderable: Renderable, manifest: UnitManifest): num
 function currentAnimation(entity: RenderableEntity, data: UnitSpriteData) {
   const action = unitActionOf(entity);
   const playback = data.manifest.actions[action];
-  // An action that lacks frames for the unit's facing (the juggernaut only
-  // attacks north) plays its nearest available facing instead.
+  // An action that lacks frames for the unit's facing (say, an attack drawn
+  // for north only) plays its nearest available facing instead.
   const facing = directionOf(entity.transform.rotation);
   const key = animationKey(
     entity.unitType!,

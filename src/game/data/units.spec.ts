@@ -150,8 +150,4 @@ describe('footprintOf', () => {
   it('gives the knight its authored 2x2 block', () => {
     expect(footprintOf(units.knight)).toEqual({ width: 2, height: 2 });
   });
-
-  it('gives the juggernaut a 3x3 block matching its 1.5 tile size', () => {
-    expect(footprintOf(units.juggernaut)).toEqual({ width: 3, height: 3 });
-  });
 });

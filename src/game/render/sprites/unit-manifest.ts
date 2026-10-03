@@ -31,8 +31,8 @@ import {
  *   move cycle). `frames` is the per-direction frame count and is the same for
  *   every direction and team.
  * - `directions` (optional) lists the facings an action has frames for, when
- *   that is fewer than all eight (the juggernaut only attacks north, at the
- *   castle doors). Omitted means every direction. A unit facing another way
+ *   that is fewer than all eight (the juggernaut's attack art is north only, at
+ *   the castle doors; it is drawn in-game from #182 on). Omitted means every direction. A unit facing another way
  *   plays {@link playableDirection} instead.
  * - `hitFrame` (attack only, optional) is the 0-based frame index at which
  *   damage lands, so the renderer can line the swing up with `CombatSystem`,
