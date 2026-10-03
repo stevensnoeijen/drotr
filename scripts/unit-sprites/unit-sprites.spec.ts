@@ -104,6 +104,23 @@ describe('packUnitAtlas', () => {
     expect(at(1, 0)).toEqual([4, 251, 7, 255]);
   });
 
+  it('clears erased atlas pixels and leaves their neighbours alone', () => {
+    const erased = packUnitAtlas(syntheticImage(), [
+      { ...syntheticMap(), erase: [[3, 0]] },
+    ]);
+    const { frame } = erased.sheet.frames['swordsmen.red.move.s_02'];
+    const at = (dx: number, dy: number) =>
+      Array.from(
+        erased.rgba.subarray(
+          ((frame.y + dy) * erased.width + frame.x + dx) * 4,
+          ((frame.y + dy) * erased.width + frame.x + dx) * 4 + 4
+        )
+      );
+    expect(at(1, 0)).toEqual([0, 0, 0, 0]);
+    // Atlas pixel (3, 1) has index 1 * 8 + 3 + 1 = 12.
+    expect(at(1, 1)).toEqual([12, 243, 7, 255]);
+  });
+
   it('emits a manifest that validates against the contract', () => {
     expect(Object.keys(packed.manifests)).toEqual(['swordsmen']);
     expect(validateUnitManifest(packed.manifests.swordsmen)).toEqual([]);

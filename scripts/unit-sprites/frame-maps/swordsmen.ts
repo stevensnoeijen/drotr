@@ -101,6 +101,20 @@ export const SWORDSMEN_FRAME_MAP: UnitFrameMap = {
   // 300 s DEATH_REMOVAL_DELAY_SECONDS. Frames are 32x32 and the figure is
   // centred in them (opaque pixels centre on about (15.5, 15)), so the
   // anchor stays at the frame centre.
+  // Red attack sword tips that reach one or two pixels into the bottom edge
+  // of the frame above them in the atlas (n frame 11 gets ne frame 11's
+  // tip, ne 11 gets e 11's, e 4 gets se 4's), plus one isolated pixel on
+  // the bottom edge of se frame 10. None of these rows is shared with
+  // another frame, so clearing them only touches the frame they leak into.
+  erase: [
+    [586, 6241],
+    [587, 6241],
+    [596, 6272],
+    [596, 6273],
+    [366, 6305],
+    [367, 6305],
+    [566, 6337],
+  ],
   playback: {
     idle: { fps: 0, loop: false },
     move: { fps: 10, loop: true },
