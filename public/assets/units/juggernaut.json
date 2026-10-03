@@ -27,7 +27,10 @@
       "frames": 8,
       "fps": 16,
       "loop": false,
-      "hitFrame": 4
+      "hitFrame": 4,
+      "directions": [
+        "n"
+      ]
     },
     "dead": {
       "frames": 4,

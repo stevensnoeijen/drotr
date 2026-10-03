@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import {
+  actionDirections,
   parseUnitManifest,
+  playableDirection,
   unitManifestPath,
   UNIT_ATLAS_PATH,
   validateUnitManifest,
@@ -119,5 +121,35 @@ describe('validateUnitManifest', () => {
     expect(validateUnitManifest({ ...base, atlas: '' })).toEqual([
       'atlas must be a non-empty string',
     ]);
+  });
+});
+
+describe('action directions', () => {
+  it('accepts an action limited to some directions', () => {
+    const m = valid();
+    (m.actions.attack as { directions?: string[] }).directions = ['n'];
+    expect(validateUnitManifest(m)).toEqual([]);
+  });
+
+  it.each([[[]], [['up']], [['n', 'n']], ['n']])('rejects directions %j', (directions) => {
+    const m = valid();
+    (m.actions.attack as { directions?: unknown }).directions = directions;
+    expect(validateUnitManifest(m).join()).toContain('directions');
+  });
+
+  it('lists every direction for an action that does not limit them', () => {
+    expect(actionDirections({})).toHaveLength(8);
+    expect(actionDirections({ directions: ['n'] })).toEqual(['n']);
+  });
+
+  it('keeps a direction the action has, else picks the nearest one it has', () => {
+    expect(playableDirection({}, 'sw')).toBe('sw');
+    expect(playableDirection({ directions: ['n'] }, 'n')).toBe('n');
+    expect(playableDirection({ directions: ['n'] }, 's')).toBe('n');
+    expect(playableDirection({ directions: ['n', 's'] }, 'se')).toBe('s');
+    // Wraps around the compass: nw is next to n, not seven steps away.
+    expect(playableDirection({ directions: ['n', 'e'] }, 'nw')).toBe('n');
+    // A tie goes to the earlier direction.
+    expect(playableDirection({ directions: ['n', 's'] }, 'e')).toBe('n');
   });
 });

@@ -18,9 +18,9 @@ import {
  * - Red: move at y 8256, x 0–383 (6 frames); attack in the single row at
  *   y 8192, x 0–511 (8 frames); dead at y 8855, x 256–511 (4 frames).
  *
- * The art has no attack frames for any direction but north (the original
- * animation model names them but there is nothing behind the names), so
- * every direction plays the north swing. The dead block's eighth row ends
+ * The art has attack frames for north only (the ram only ever strikes the
+ * castle doors, which face north), so the attack action declares just `n`
+ * and a ram facing another way plays the north swing. The dead block's eighth row ends
  * on the atlas's last pixel row, which fixes its origin at y 8855.
  */
 
@@ -47,8 +47,13 @@ export const IDLE_PICK = {
 const SIZE = [64, 64] as const;
 const blueMove = frameBlock(0, rows(7488), 6, SIZE);
 const redMove = frameBlock(0, rows(8256), 6, SIZE);
-const blueAttack: FrameMapAnimation = frameBlock(0, sameRow(8128), 8, SIZE);
-const redAttack: FrameMapAnimation = frameBlock(0, sameRow(8192), 8, SIZE);
+/** Attack has frames for north only: the ram strikes at the castle doors. */
+const northOnly = (animation: FrameMapAnimation): FrameMapAnimation => ({
+  ...animation,
+  directions: ['n'],
+});
+const blueAttack = northOnly(frameBlock(0, sameRow(8128), 8, SIZE));
+const redAttack = northOnly(frameBlock(0, sameRow(8192), 8, SIZE));
 
 export const JUGGERNAUT_FRAME_MAP: UnitFrameMap = {
   unit: 'juggernaut',

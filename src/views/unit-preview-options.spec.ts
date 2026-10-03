@@ -159,3 +159,39 @@ describe('previewZoom', () => {
     expect(previewZoom(384, [1000, 1000])).toBe(1);
   });
 });
+
+describe('per-action directions', () => {
+  const ram: UnitManifest = {
+    frameSize: [64, 64],
+    anchor: [0.5, 0.5],
+    teams: ['red'],
+    actions: {
+      move: { frames: 6, fps: 6, loop: true },
+      attack: { frames: 8, fps: 16, loop: false, directions: ['n'] },
+    },
+  };
+
+  it('offers only the directions of the chosen action', () => {
+    expect(animationOptions(ram, 'attack').directions).toEqual(['n']);
+    expect(animationOptions(ram, 'move').directions).toHaveLength(8);
+    expect(animationOptions(ram).directions).toHaveLength(8);
+  });
+
+  it('falls back to an available direction when the action lacks the requested one', () => {
+    const selection = resolveSelection(['juggernaut'], { juggernaut: ram }, {
+      unit: 'juggernaut',
+      action: 'attack',
+      direction: 'sw',
+    });
+    expect(selection?.direction).toBe('n');
+  });
+
+  it('keeps the requested direction for an action that has it', () => {
+    const selection = resolveSelection(['juggernaut'], { juggernaut: ram }, {
+      unit: 'juggernaut',
+      action: 'move',
+      direction: 'sw',
+    });
+    expect(selection?.direction).toBe('sw');
+  });
+});

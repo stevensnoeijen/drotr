@@ -7,12 +7,12 @@ import { describe, expect, it } from 'vitest';
 
 import type { UnitType } from '~/game/data/units';
 import {
-  DIRECTIONS,
   animationKey,
   frameName,
 } from '~/game/render/sprites/animation-key';
 import {
   UNIT_ATLAS_PATH,
+  actionDirections,
   parseUnitManifest,
   unitManifestPath,
   validateUnitManifest,
@@ -127,8 +127,9 @@ describe.each(units)('committed %s manifest', (unit) => {
     const { teams, actions, frameSize } = parseUnitManifest(manifest);
     let expected = 0;
     for (const team of teams) {
-      for (const [action, { frames: count }] of Object.entries(actions)) {
-        for (const direction of DIRECTIONS) {
+      for (const [action, declared] of Object.entries(actions)) {
+        const count = declared.frames;
+        for (const direction of actionDirections(declared)) {
           const key = animationKey(
             unit,
             team,
@@ -169,5 +170,25 @@ describe.each(['swordsmen', 'crossbowsoldier', 'knight', 'juggernaut'] as const)
   it('finishes dying and holds its last frame before the corpse is removed', () => {
     expect(actions.dead!.holdLast).toBe(true);
     expect(seconds('dead')).toBeLessThan(DEATH_REMOVAL_DELAY_SECONDS);
+  });
+});
+
+describe('committed juggernaut attack', () => {
+  const { actions } = parseUnitManifest(readJson(unitManifestPath('juggernaut')));
+
+  it('has frames for north only', () => {
+    expect(actions.attack!.directions).toEqual(['n']);
+    for (const team of ['blue', 'red']) {
+      expect((sheet.animations as Record<string, string[]>)[`juggernaut.${team}.attack.n`]).toHaveLength(
+        actions.attack!.frames
+      );
+      expect((sheet.animations as Record<string, string[]>)[`juggernaut.${team}.attack.e`]).toBeUndefined();
+    }
+  });
+
+  it('leaves its other actions in all eight directions', () => {
+    for (const action of ['idle', 'move', 'dead'] as const) {
+      expect(actions[action]!.directions).toBeUndefined();
+    }
   });
 });

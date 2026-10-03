@@ -192,6 +192,24 @@ describe('RenderSystem sprite views', () => {
       expect(sprite.playing).toBe(true);
     });
 
+    it('plays the nearest available facing for an action without frames for the current one', () => {
+      const { parent, spawn, system } = setup();
+      const entity = spawn('juggernaut', 'red', 16);
+      entity.transform!.rotation = Math.PI; // south
+      entity.attackSwing = { elapsed: 0 };
+      system.sync();
+      const sprite = spriteOf(parent);
+
+      // The juggernaut only attacks north, so it swings north...
+      expect(sprite.textures).toBe(animation('juggernaut.red.attack.n'));
+
+      // ...but still walks and idles facing south.
+      delete entity.attackSwing;
+      entity.velocity = { x: 0, y: 1 };
+      system.sync();
+      expect(sprite.textures).toBe(animation('juggernaut.red.move.s'));
+    });
+
     it('restarts the attack on every new swing and holds its last frame in between', () => {
       const { parent, spawn, system } = setup();
       const entity = spawn('swordsmen', 'red');

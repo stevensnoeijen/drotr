@@ -3,12 +3,12 @@ import { Link } from 'react-router';
 
 import { UNIT_TYPES, type UnitType } from '~/game/data/units';
 import {
-  DIRECTIONS,
   UNIT_ACTIONS,
   animationKey,
   type Direction,
 } from '~/game/render/sprites/animation-key';
 import {
+  actionDirections,
   parseUnitManifest,
   unitManifestPath,
   UNIT_ATLAS_PATH,
@@ -315,7 +315,7 @@ export default function UnitSprites({
           {state.manifest.teams.flatMap((team) =>
             UNIT_ACTIONS.filter((a) => state.manifest.actions[a]).flatMap(
               (action) =>
-                DIRECTIONS.map((direction) => {
+                actionDirections(state.manifest.actions[action]!).map((direction) => {
                   const key = animationKey(unit, team, action, direction);
                   const { fps } = state.manifest.actions[action]!;
                   const names = state.sheet.json.animations?.[key] ?? [];

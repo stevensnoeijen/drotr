@@ -250,7 +250,8 @@ export default function UnitPreview() {
     setPlayback({ frame: sprite.currentFrame, playing: false });
   };
 
-  const options = manifest && animationOptions(manifest);
+  const options =
+    manifest && selection && animationOptions(manifest, selection.action);
   const select = 'rounded bg-neutral-800 px-2 py-1 text-sm';
   const button = 'rounded bg-neutral-700 px-2 py-1 text-sm disabled:opacity-40';
 

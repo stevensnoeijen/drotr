@@ -43,7 +43,7 @@ describe('loadUnitSprites', () => {
     for (const unit of SPRITE_UNIT_TYPES) {
       const data = sprites.get(unit)!;
       expect(data.manifest).toEqual(committedManifest(unit));
-      expect(data.animations[`${unit}.red.attack.se`]).toHaveLength(
+      expect(data.animations[`${unit}.red.attack.${unit === 'juggernaut' ? 'n' : 'se'}`]).toHaveLength(
         data.manifest.actions.attack!.frames
       );
     }
@@ -92,6 +92,14 @@ describe('loadUnitSprites', () => {
     await expect(loadUnitSprites(src)).rejects.toThrow(
       "The unit atlas doesn't match the swordsmen manifest: swordsmen.red.dead.sw is missing"
     );
+  });
+
+  it('does not require frames for directions an action does not declare', async () => {
+    // The juggernaut attacks north only; its other attack keys are absent.
+    const sheet = atlas();
+    expect(sheet.animations['juggernaut.red.attack.n']).toBeDefined();
+    expect(sheet.animations['juggernaut.red.attack.s']).toBeUndefined();
+    await expect(loadUnitSprites(sources({ loadAtlas: async () => sheet }))).resolves.toBeDefined();
   });
 
   it('rejects when an animation has fewer frames than the manifest declares', async () => {

@@ -1,8 +1,10 @@
 import type { UnitType } from '~/game/data/units';
 import {
   ANIMATION_TEAMS,
+  DIRECTIONS,
   UNIT_ACTIONS,
   type AnimationTeam,
+  type Direction,
   type UnitAction,
 } from './animation-key';
 
@@ -28,6 +30,10 @@ import {
  * - Single-frame actions are valid (`idle` reuses the most static frame of the
  *   move cycle). `frames` is the per-direction frame count and is the same for
  *   every direction and team.
+ * - `directions` (optional) lists the facings an action has frames for, when
+ *   that is fewer than all eight (the juggernaut only attacks north, at the
+ *   castle doors). Omitted means every direction. A unit facing another way
+ *   plays {@link playableDirection} instead.
  * - `hitFrame` (attack only, optional) is the 0-based frame index at which
  *   damage lands, so the renderer can line the swing up with `CombatSystem`,
  *   which applies damage the instant the attack cooldown elapses. It must be
@@ -40,10 +46,39 @@ export interface ActionManifest {
   /** Playback speed; `0` is allowed for single-frame actions. */
   fps: number;
   loop: boolean;
+  /** The facings this action has frames for; omitted means all of {@link DIRECTIONS}. */
+  directions?: Direction[];
   /** Attack only: frame index at which damage lands. */
   hitFrame?: number;
   /** Keep showing the final frame once finished (e.g. a corpse). */
   holdLast?: boolean;
+}
+
+/** The facings `action` has frames for: its `directions`, else all eight. */
+export function actionDirections(
+  action: Pick<ActionManifest, 'directions'>
+): readonly Direction[] {
+  return action.directions ?? DIRECTIONS;
+}
+
+/**
+ * The facing to show for `direction` in `action`: `direction` itself when
+ * the action has frames for it, otherwise the nearest facing it does have
+ * (the first on a tie), so a unit never lacks a frame to draw.
+ */
+export function playableDirection(
+  action: Pick<ActionManifest, 'directions'>,
+  direction: Direction
+): Direction {
+  const available = actionDirections(action);
+  if (available.includes(direction)) return direction;
+  const count = DIRECTIONS.length;
+  const from = DIRECTIONS.indexOf(direction);
+  const distance = (d: Direction) => {
+    const delta = Math.abs(DIRECTIONS.indexOf(d) - from);
+    return Math.min(delta, count - delta);
+  };
+  return available.reduce((best, d) => (distance(d) < distance(best) ? d : best));
 }
 
 export interface UnitManifest {
@@ -85,7 +120,7 @@ function validateAction(name: string, a: unknown, errors: string[]): void {
     return;
   }
   for (const k of Object.keys(a)) {
-    if (!['frames', 'fps', 'loop', 'hitFrame', 'holdLast'].includes(k)) {
+    if (!['frames', 'fps', 'loop', 'hitFrame', 'holdLast', 'directions'].includes(k)) {
       errors.push(`${at}.${k} is not a known field`);
     }
   }
@@ -97,6 +132,17 @@ function validateAction(name: string, a: unknown, errors: string[]): void {
   if (typeof a.loop !== 'boolean') errors.push(`${at}.loop must be a boolean`);
   if (a.holdLast !== undefined && typeof a.holdLast !== 'boolean') {
     errors.push(`${at}.holdLast must be a boolean`);
+  }
+  if (a.directions !== undefined) {
+    const listed = a.directions;
+    if (
+      !Array.isArray(listed) ||
+      listed.length === 0 ||
+      !listed.every((d) => (DIRECTIONS as readonly unknown[]).includes(d)) ||
+      new Set(listed).size !== listed.length
+    ) {
+      errors.push(`${at}.directions must be a non-empty list of distinct directions`);
+    }
   }
   // `dead` is the dying sequence: it plays once and stays on the corpse.
   if (name === 'dead' && a.loop === true) {
