@@ -14,7 +14,10 @@ import { frameBlock, type UnitFrameMap } from '../frame-map';
  * - dead: the scattered wreck, column x 576–639 of the catapult's block
  *   (rows from y 5696, 5696 + 64·n).
  *
- * The art has no move and no attack frames, so neither is declared.
+ * The art has no move and no attack frames. A cannon never walks and its
+ * firing is not animated, so move and attack reuse the idle frame per
+ * direction: the packer dedupes identical source rects, so they name the
+ * same atlas frames and add nothing to the image.
  */
 
 const rows = (y: number): Record<Direction, number> =>
@@ -24,6 +27,7 @@ const rows = (y: number): Record<Direction, number> =>
   >;
 
 const SIZE = [64, 64] as const;
+const idle = frameBlock(512, rows(4672), 1, SIZE);
 
 export const CANNON_FRAME_MAP: UnitFrameMap = {
   unit: 'cannon',
@@ -33,17 +37,22 @@ export const CANNON_FRAME_MAP: UnitFrameMap = {
   anchor: [0.5, 0.5],
   // Team: the art has one colourway (bare metal and timber, no team colour
   // to key on), so the cannon is team-neutral instead of tinted per team.
-  // Static emplacement: it has no move frames (it never walks) and no attack
-  // frames (firing is not animated in the art), so only idle and dead are
-  // declared. Idle is a single frame, so no playback. Dead: the single wreck
-  // frame at 2 fps (0.5 s), then holdLast keeps it on screen.
+  // Static emplacement: move and attack are declared so the unit can be given
+  // any order, but with only the idle frame there is nothing to play, so all
+  // three are single-frame, 0 fps. Attack's hitFrame 0 is that one frame.
+  // Dead: the single wreck frame at 2 fps (0.5 s), then holdLast keeps it on
+  // screen.
   playback: {
     idle: { fps: 0, loop: false },
+    move: { fps: 0, loop: false },
+    attack: { fps: 0, loop: false, hitFrame: 0 },
     dead: { fps: 2, loop: false, holdLast: true },
   },
   teams: {
     neutral: {
-      idle: frameBlock(512, rows(4672), 1, SIZE),
+      idle,
+      move: idle,
+      attack: idle,
       dead: frameBlock(576, rows(5696), 1, SIZE),
     },
   },

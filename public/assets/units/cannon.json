@@ -17,6 +17,17 @@
       "fps": 0,
       "loop": false
     },
+    "move": {
+      "frames": 1,
+      "fps": 0,
+      "loop": false
+    },
+    "attack": {
+      "frames": 1,
+      "fps": 0,
+      "loop": false,
+      "hitFrame": 0
+    },
     "dead": {
       "frames": 1,
       "fps": 2,
