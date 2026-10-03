@@ -413,24 +413,36 @@ colour of the prefab's tiles: brown is wood, grey is stone. Wood bridges
 are always 1 tile wide, so only one small unit can cross. Stone bridges
 are 2 or 3 tiles wide.
 
-| slots | material | orientation | width | lengths |
-|---|---|---|---|---|
-| 0–2 | wood | vertical | 1 | 3, 4, 5 |
-| 3–6 | wood | vertical | 1 | 2, 3, 4, 5 |
-| 7–10 | stone | vertical | 2 | 3, 4, 5, 6 |
-| 11–16 | stone | vertical | 3 | 4, 5, 6, 7, 8, 11 |
-| 17–19 | stone (alt. art) | vertical | 2 | 3, 5, 6 |
-| 20–25 | wood | horizontal | 1 | 3, 5, 5, 3, 5, 5 |
-| 26–29 | stone | horizontal | 2 | 3, 4, 5, 6 |
-| 30–37 | stone | horizontal | 3 | 4, 5, 6, 7, 8, 9, 10, 11 |
-| 38–40 | stone (alt. art) | horizontal | 2 | 3, 4, 6 |
-| 41 | stone (alt. art) | horizontal | 3 | 4 |
+| slots | material | orientation | bank | width | lengths |
+|---|---|---|---|---|---|
+| 0–2 | wood | vertical | grass | 1 | 3, 4, 5 |
+| 3–6 | wood | vertical | rock | 1 | 2, 3, 4, 5 |
+| 7–10 | stone | vertical | grass | 2 | 3, 4, 5, 6 |
+| 11–16 | stone | vertical | grass | 3 | 4, 5, 6, 7, 8, 11 |
+| 17–19 | stone | vertical | rock | 2 | 3, 5, 6 |
+| 20–22 | wood | horizontal | grass | 1 | 3, 5, 5 |
+| 23–25 | wood | horizontal | rock | 1 | 3, 5, 5 |
+| 26–29 | stone | horizontal | grass | 2 | 3, 4, 5, 6 |
+| 30–37 | stone | horizontal | grass | 3 | 4, 5, 6, 7, 8, 9, 10, 11 |
+| 38–40 | stone | horizontal | rock | 2 | 3, 4, 6 |
+| 41 | stone | horizontal | rock | 3 | 4 |
 
-Not yet explained: why wood has two runs per orientation (slots 0–2 vs
-3–6, and 20–25), and what the "alt. art" stone runs are for. They use
-slightly darker tiles, maybe a different bank style or a ruined state. A
-bridge site is the top-left of its footprint on the near bank, and the
-footprint spans the water.
+Most shapes exist twice, as a **grass-bank** and a **rock-bank** copy. The
+deck tiles are identical and only the end caps differ: stone vertical
+grass caps 1225/1229 vs rock caps 1064/1066, wood vertical 1207/1209 vs
+920/921, wood horizontal 1210/1212 vs 922/923, stone horizontal 1238/1254
+vs 1241/1257. The county sites that use the rock-bank slots all meet
+rock or cliff terrain at both ends. So the second wood run and the "alt.
+art" stone runs are bank variants. They are not the damaged state of the
+other slots: a rock-bank bridge has its own `intact` art, and the `ruined`
+layer holds something only inside stone-wide bridges, grass and rock alike
+(see "Bridge art in the three layers" below). The rock-bank slots are a fixed table in
+`scripts/dracula-exe/building-sites.ts`. A bridge site is the top-left of
+its footprint on the near bank, and the footprint spans the water.
+
+Slots 21 and 22 are both 5×1 on grass. Slot 21's rect (and rock slot
+24's) is 5 long, but the bridge art is 4 long plus one stray neighbouring
+tile. The `prefabs` layer keeps the rect as the executable defines it.
 
 ### Extracting
 
@@ -710,6 +722,84 @@ but starts them hidden; to see the buildings intact or ruined, toggle
   "Open questions for later" below) — so a unit can walk straight through
   a building until a follow-up fills this in.
 - **`spawns`** — an empty object layer (the loader requires one).
+- **`prefabs`** — one rectangle object per building prefab, marking where
+  its art sits in this map, so it can be copied onto a county construction
+  site. The rect is exactly the prefab's source rectangle from
+  `DRACULA.EXE` (see "Prefab footprints" above), in pixels (tiles × 40),
+  and the object's class (`type`) is its category, so the `tile-layers`
+  debug colours apply. 72 objects: 57 bridges (42 from slots, 15 spare), 3 towers, 12
+  castles. No two rects overlap. Names:
+  - `castle-<level>`, e.g. `castle-5-moated`;
+  - `tower-<level>`, e.g. `tower-rock-1`;
+  - `bridge-<level>-<orientation>-<bank>-<slot>`, e.g.
+    `bridge-stone-vertical-grass-9`. The slot keeps names unique, since
+    two slots can share a shape;
+  - `bridge-<level>-<orientation>-<bank>-spare-<length>` for a spare
+    bridge (below), e.g. `bridge-stone-wide-vertical-rock-spare-5`.
+
+  The levels are the ones the county `constructions` layer uses. String
+  properties: `category`, `level`, `slot` (an int), and for bridges
+  `orientation` (`vertical` | `horizontal`) and `bank` (`grass` | `rock`).
+  A spare bridge has no `slot`.
+  `castle-rock-3` is marked although no county places it. A bridge prefab
+  is identified by slot; the county layer doesn't carry the slot, so
+  resolving a site's level to a slot is up to whoever places the building.
+  The rects mark where a bridge's tiles sit, in all three layers alike.
+  `BUILDING.MAP` has no separate damaged-bridge prefabs; what its `ruined`
+  layer holds for bridges is described under "Bridge art in the three
+  layers" below.
+
+  **Spare bridges**: 15 complete bridges that no executable slot points at
+  (217 `intact` cells lie outside every slot rect). They are found by
+  grouping the intact overlay's bridge tiles into connected pieces and
+  dropping the cells inside slot rects, and are listed in
+  `scripts/county-map/spare-bridges.ts`, each with both end caps and a full
+  deck. Bank follows the end caps as for slot bridges. They are: three
+  2-tile wood bridges (one vertical grass at x 12, y 5; horizontal grass at
+  x 18, y 25; horizontal rock at x 18, y 27), stone-wide vertical grass
+  bridges of length 10 (x 17–19, y 9–18) and 9 (x 23–25, y 7–15), stone
+  vertical rock bridges of length 4 (x 20–21, y 29–32) and 7 (x 26–27,
+  y 29–35), a length-7 stone horizontal grass bridge (x 39–45, y 40–41),
+  four stone-wide vertical rock bridges of lengths 4–7 side by side (x 51–62,
+  y 40–46), and three rock horizontal bridges (stone, length 5, x 28–32,
+  y 48–49; stone-wide, lengths 5 and 6, x 25–29 and x 30–35, y 50–52).
+  Their `ruined` cells follow the same rule as slot bridges (below). Nine `intact` cells are neither inside a rect nor part of a bridge, and
+  stay unmarked: single tile 1386 cells at (18, 33) and (18, 36), tile 2
+  at x 21, y 56–58, and four tile 1382 cells at x 29–31, y 92–93.
+
+The converter also reads `DRACULA.EXE` for the `prefabs` layer.
+
+#### Bridge art in the three layers
+
+A bridge looks different in each of the three layers. Slot and spare
+bridges are alike, and so are grass and rock banks, apart from the end
+caps. Taking a stone-wide bridge (3 across):
+
+| layer | what it holds for a bridge |
+|---|---|
+| `terrain` | a clean bridge: end caps 1216–1223, deck tile 325 |
+| `intact` | a dark, scorched-looking deck: end caps 1224–1231, deck tile 357 |
+| `ruined` | tile 389 (a brown dirt strip) down the middle column only, from the second cell to the second-last. Nothing on the end caps or edge columns |
+
+Only stone-wide bridges have any `ruined` cells (slots 11–16, 30–37 and 41,
+and the spare stone-wide ones). Wood bridges and 2-wide stone bridges have
+none. All these tiles are fully opaque, so none of this is a compositing
+artefact. No county map uses any of these bridge tiles, so counties give no
+reference for how a bridge should look.
+
+What the three states mean is **not settled**. The leading interpretation,
+which is a hypothesis and not something the data shows:
+
+- A ruined bridge is mostly gone. Its `ruined` cells are the debris or
+  remains left in the river, which is why they are a strip and not a whole
+  deck.
+- On a county site the ground under a bridge is water. So the clean
+  `terrain` bridge is only a backdrop in `buildings.tmj`, and the `intact`
+  dark deck may simply be how a normal bridge looks over water.
+
+The work that places buildings on county sites (#316) and the later
+damaged-bridge work should check this by rendering both states over county
+water, and settle which layer a placed bridge copies.
 
 In the engine it is the `buildings` map; view it with the `empty`
 scenario, which spawns nothing and is allowed on every map
@@ -717,11 +807,9 @@ scenario, which spawns nothing and is allowed on every map
 
 ## Open questions for later
 
-- The individual compounds in `BUILDING.MAP` (and its loose wall pieces)
-  need their bounding boxes extracted (e.g. connected-component analysis
-  on the interior grid) so each prefab can be cut out and placed
-  independently, in all three states. Today `buildings.tmj` is the whole
-  file as-is.
+- Placing the prefabs onto county construction sites. `buildings.tmj` now
+  marks where each prefab sits (the `prefabs` layer), but nothing copies
+  them yet, and building collision is still undetermined.
 - What `BUILDING.MAP`'s flag grids (3–14, `hi` values `4, 8, 12, 16, 32,
   64, 128, 256`) mean, and which flag region belongs to which building
   (same coordinates? a lookup by index?). They come in three runs of four
@@ -729,8 +817,6 @@ scenario, which spawns nothing and is allowed on every map
   building's placement *into* a county map is recorded anywhere. It isn't
   in the county file itself: no county contains any prefab building tile
   (see "Buildable locations" above).
-- Bridge slot details (see "Bridges" above): why wood bridges come in two
-  runs per direction, and what the darker "alt. art" stone runs are.
 - What the Section B `hi` bits *other than* bit 2 mean, including what
   bit 8 (`256`) marks on the water blobs and cliff-rim subcells it occurs
   on. `BUILDING.MAP`

@@ -4,7 +4,7 @@
  * - a county, `COUNTIES/<NAME>.MAP`, into `<name>.tmj`, via
  *   `src/lib/county-map` and `./county-map-tiled.ts`;
  * - the building library, `COUNTIES/BUILDING.MAP`, as-is into
- *   `buildings.tmj`, via `src/lib/building-map` and
+ *   `buildings.tmj` (plus a `prefabs` layer read from `DRACULA.EXE`), via `src/lib/building-map` and
  *   `./building-map-tiled.ts`.
  *
  * Run with `npm run convert:map -- <NAME>`, e.g. `npm run convert:map --
