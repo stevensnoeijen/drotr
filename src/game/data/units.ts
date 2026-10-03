@@ -6,6 +6,7 @@ import knightData from './units/knight.json';
 import juggernautData from './units/juggernaut.json';
 import catapultData from './units/catapult.json';
 import cannonData from './units/cannon.json';
+import boltData from './units/bolt.json';
 
 /**
  * The kinds of unit in the game. Names and starting HP match
@@ -13,9 +14,27 @@ import cannonData from './units/cannon.json';
  * so `unitType` stays stable as real sprites replace these primitives in
  * the asset-integration phase (see `SPRITE_UNIT_TYPES` for which units
  * already have).
+ *
+ * The roster also holds the projectiles (see {@link PROJECTILE_UNIT_TYPES}),
+ * which are not units: they are listed here only so their sprites go through
+ * the unit sprite pipeline (frame map, shared atlas, manifest) like any
+ * unit's. They are never spawned as units.
  */
-export const UNIT_TYPES = ['swordsmen', 'knight', 'crossbowsoldier', 'juggernaut', 'catapult', 'cannon'] as const;
+export const UNIT_TYPES = ['swordsmen', 'knight', 'crossbowsoldier', 'juggernaut', 'catapult', 'cannon', 'bolt'] as const;
 export type UnitType = (typeof UNIT_TYPES)[number];
+
+/**
+ * The {@link UNIT_TYPES} that are fired projectiles rather than units: a
+ * crossbow's bolt. One only ever exists as a fired `Projectile` entity (see
+ * `fireProjectile`), which has no `unitType`; `spawnUnit` refuses them.
+ */
+export const PROJECTILE_UNIT_TYPES = ['bolt'] as const satisfies readonly UnitType[];
+export type ProjectileUnitType = (typeof PROJECTILE_UNIT_TYPES)[number];
+
+/** Whether `type` is a projectile (see {@link PROJECTILE_UNIT_TYPES}), not a unit. */
+export function isProjectileUnitType(type: UnitType): type is ProjectileUnitType {
+  return (PROJECTILE_UNIT_TYPES as readonly UnitType[]).includes(type);
+}
 
 /**
  * Static, per-type unit data. Core fields (type, shape, health) are present
@@ -108,6 +127,10 @@ export const units: Record<UnitType, UnitDefinition> = {
   // size, shape, health) so `#/unit-preview` can list its atlas sprites:
   // combat stats, in-game sprites and scenarios land in #184.
   cannon: cannonData as UnitDefinition,
+  // A crossbow bolt: a projectile, not a unit (see `PROJECTILE_UNIT_TYPES`).
+  // Only the minimum the type requires: one cell in size, no combat stats,
+  // and a placeholder health, since a bolt is never spawned as a unit.
+  bolt: boltData as UnitDefinition,
 };
 
 /** Every unit not given an explicit `footprint` occupies exactly one cell. */
