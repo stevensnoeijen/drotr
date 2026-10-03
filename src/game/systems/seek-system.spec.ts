@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 
 import { createQueries } from '~/game/ecs/world';
 import type { Entity } from '~/game/ecs/entity';
+import { anchorCellAt, footprintCentre } from '~/game/navigation/footprint';
 import { OccupancyGrid } from '~/game/navigation/occupancy-grid';
 import { cellCentreCoordinate } from '~/lib/grid';
 import { createSeekSystem, PURSUIT_REPATH_INTERVAL } from './seek-system';
@@ -543,6 +544,86 @@ describe('createSeekSystem', () => {
       expect(self.moveTarget).toBeUndefined();
       expect(self.velocity).toEqual({ x: 0, y: 0 });
       expect(self.transform.rotation).toBeCloseTo(Math.PI / 2);
+    });
+  });
+  describe('a multi-cell unit routing around walls', () => {
+    const TWO_BY_TWO = { width: 2, height: 2 };
+
+    /** A wall down column 5 with a one-cell gap at row 2, plus `wideGap` rows. */
+    const wall = (wideGap: boolean) =>
+      gridFrom(
+        [
+          '.....#....',
+          '.....#....',
+          '..........',
+          '.....#....',
+          '.....#....',
+          wideGap ? '..........' : '.....#....',
+          wideGap ? '..........' : '.....#....',
+          '.....#....',
+        ].join('\n')
+      );
+
+    /** A knight on the west side of the wall, and an enemy across it whose
+    // attack cell (anchor 6,2) has a clear single-cell line through the gap. */
+    function setup(grid: ReturnType<typeof gridFrom>) {
+      const world = new World<Entity>();
+      const queries = createQueries(world);
+      const system = createSeekSystem(queries, CELL_SIZE, grid);
+
+      world.add({
+        id: 1,
+        transform: { position: { ...centre(7, 1) }, rotation: 0 },
+        team: 'red' as const,
+        health: { current: 10, max: 10 },
+      });
+      const knight = world.add({
+        id: 2,
+        transform: { position: footprintCentre(3, 2, TWO_BY_TWO, CELL_SIZE), rotation: 0 },
+        velocity: { x: 0, y: 0 },
+        moveSpeed: { value: CELL_SIZE },
+        attackRange: { value: 1 },
+        footprint: TWO_BY_TWO,
+        team: 'blue' as const,
+        health: { current: 10, max: 10 },
+        target: { entityId: 1 },
+      });
+
+      return { world, system, knight };
+    }
+
+    it('does not walk straight at a target through a gap its block cannot fit', () => {
+      const { world, system, knight } = setup(wall(false));
+
+      system(world, 1 / 60);
+
+      // A single cell would have a clear line through the one-cell gap; the
+      // block does not, so it is routed — and there is no route to take.
+      expect(knight.moveTarget).toBeUndefined();
+      expect(knight.movePath).toBeUndefined();
+      expect(knight.velocity).toEqual({ x: 0, y: 0 });
+    });
+
+    it('routes the block through the wider detour instead', () => {
+      const grid = wall(true);
+      const { world, system, knight } = setup(grid);
+
+      system(world, 1 / 60);
+
+      expect(knight.moveTarget).toBeUndefined();
+      const waypoints = knight.movePath?.waypoints ?? [];
+      expect(waypoints.length).toBeGreaterThan(0);
+      for (const waypoint of waypoints) {
+        const anchor = anchorCellAt(waypoint.x, waypoint.y, TWO_BY_TWO, CELL_SIZE);
+        for (const [dx, dy] of [
+          [0, 0],
+          [1, 0],
+          [0, 1],
+          [1, 1],
+        ]) {
+          expect(grid.collision[(anchor.y + dy) * grid.width + anchor.x + dx]).toBe(0);
+        }
+      }
     });
   });
 });
