@@ -24639,6 +24639,1766 @@
         "w": 64,
         "h": 64
       }
+    },
+    "catapult.neutral.move.n_01": {
+      "frame": {
+        "x": 0,
+        "y": 8676,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.move.ne_01": {
+      "frame": {
+        "x": 0,
+        "y": 8742,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.move.e_01": {
+      "frame": {
+        "x": 0,
+        "y": 8808,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.move.se_01": {
+      "frame": {
+        "x": 0,
+        "y": 8874,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.move.s_01": {
+      "frame": {
+        "x": 0,
+        "y": 8940,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.move.sw_01": {
+      "frame": {
+        "x": 0,
+        "y": 9006,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.move.w_01": {
+      "frame": {
+        "x": 0,
+        "y": 9072,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.move.nw_01": {
+      "frame": {
+        "x": 0,
+        "y": 9138,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.attack.n_01": {
+      "frame": {
+        "x": 0,
+        "y": 8676,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.attack.n_02": {
+      "frame": {
+        "x": 0,
+        "y": 9204,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.attack.n_03": {
+      "frame": {
+        "x": 66,
+        "y": 9204,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.attack.n_04": {
+      "frame": {
+        "x": 132,
+        "y": 9204,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.attack.n_05": {
+      "frame": {
+        "x": 198,
+        "y": 9204,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.attack.n_06": {
+      "frame": {
+        "x": 264,
+        "y": 9204,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.attack.n_07": {
+      "frame": {
+        "x": 330,
+        "y": 9204,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.attack.n_08": {
+      "frame": {
+        "x": 396,
+        "y": 9204,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.attack.ne_01": {
+      "frame": {
+        "x": 0,
+        "y": 8742,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.attack.ne_02": {
+      "frame": {
+        "x": 0,
+        "y": 9270,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.attack.ne_03": {
+      "frame": {
+        "x": 66,
+        "y": 9270,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.attack.ne_04": {
+      "frame": {
+        "x": 132,
+        "y": 9270,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.attack.ne_05": {
+      "frame": {
+        "x": 198,
+        "y": 9270,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.attack.ne_06": {
+      "frame": {
+        "x": 264,
+        "y": 9270,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.attack.ne_07": {
+      "frame": {
+        "x": 330,
+        "y": 9270,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.attack.ne_08": {
+      "frame": {
+        "x": 396,
+        "y": 9270,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.attack.e_01": {
+      "frame": {
+        "x": 0,
+        "y": 8808,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.attack.e_02": {
+      "frame": {
+        "x": 0,
+        "y": 9336,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.attack.e_03": {
+      "frame": {
+        "x": 66,
+        "y": 9336,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.attack.e_04": {
+      "frame": {
+        "x": 132,
+        "y": 9336,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.attack.e_05": {
+      "frame": {
+        "x": 198,
+        "y": 9336,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.attack.e_06": {
+      "frame": {
+        "x": 264,
+        "y": 9336,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.attack.e_07": {
+      "frame": {
+        "x": 330,
+        "y": 9336,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.attack.e_08": {
+      "frame": {
+        "x": 396,
+        "y": 9336,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.attack.se_01": {
+      "frame": {
+        "x": 0,
+        "y": 8874,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.attack.se_02": {
+      "frame": {
+        "x": 0,
+        "y": 9402,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.attack.se_03": {
+      "frame": {
+        "x": 66,
+        "y": 9402,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.attack.se_04": {
+      "frame": {
+        "x": 132,
+        "y": 9402,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.attack.se_05": {
+      "frame": {
+        "x": 198,
+        "y": 9402,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.attack.se_06": {
+      "frame": {
+        "x": 264,
+        "y": 9402,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.attack.se_07": {
+      "frame": {
+        "x": 330,
+        "y": 9402,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.attack.se_08": {
+      "frame": {
+        "x": 396,
+        "y": 9402,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.attack.s_01": {
+      "frame": {
+        "x": 0,
+        "y": 8940,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.attack.s_02": {
+      "frame": {
+        "x": 0,
+        "y": 9468,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.attack.s_03": {
+      "frame": {
+        "x": 66,
+        "y": 9468,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.attack.s_04": {
+      "frame": {
+        "x": 132,
+        "y": 9468,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.attack.s_05": {
+      "frame": {
+        "x": 198,
+        "y": 9468,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.attack.s_06": {
+      "frame": {
+        "x": 264,
+        "y": 9468,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.attack.s_07": {
+      "frame": {
+        "x": 330,
+        "y": 9468,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.attack.s_08": {
+      "frame": {
+        "x": 396,
+        "y": 9468,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.attack.sw_01": {
+      "frame": {
+        "x": 0,
+        "y": 9006,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.attack.sw_02": {
+      "frame": {
+        "x": 0,
+        "y": 9534,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.attack.sw_03": {
+      "frame": {
+        "x": 66,
+        "y": 9534,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.attack.sw_04": {
+      "frame": {
+        "x": 132,
+        "y": 9534,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.attack.sw_05": {
+      "frame": {
+        "x": 198,
+        "y": 9534,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.attack.sw_06": {
+      "frame": {
+        "x": 264,
+        "y": 9534,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.attack.sw_07": {
+      "frame": {
+        "x": 330,
+        "y": 9534,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.attack.sw_08": {
+      "frame": {
+        "x": 396,
+        "y": 9534,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.attack.w_01": {
+      "frame": {
+        "x": 0,
+        "y": 9072,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.attack.w_02": {
+      "frame": {
+        "x": 0,
+        "y": 9600,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.attack.w_03": {
+      "frame": {
+        "x": 66,
+        "y": 9600,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.attack.w_04": {
+      "frame": {
+        "x": 132,
+        "y": 9600,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.attack.w_05": {
+      "frame": {
+        "x": 198,
+        "y": 9600,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.attack.w_06": {
+      "frame": {
+        "x": 264,
+        "y": 9600,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.attack.w_07": {
+      "frame": {
+        "x": 330,
+        "y": 9600,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.attack.w_08": {
+      "frame": {
+        "x": 396,
+        "y": 9600,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.attack.nw_01": {
+      "frame": {
+        "x": 0,
+        "y": 9138,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.attack.nw_02": {
+      "frame": {
+        "x": 0,
+        "y": 9666,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.attack.nw_03": {
+      "frame": {
+        "x": 66,
+        "y": 9666,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.attack.nw_04": {
+      "frame": {
+        "x": 132,
+        "y": 9666,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.attack.nw_05": {
+      "frame": {
+        "x": 198,
+        "y": 9666,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.attack.nw_06": {
+      "frame": {
+        "x": 264,
+        "y": 9666,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.attack.nw_07": {
+      "frame": {
+        "x": 330,
+        "y": 9666,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.attack.nw_08": {
+      "frame": {
+        "x": 396,
+        "y": 9666,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.dead.n_01": {
+      "frame": {
+        "x": 0,
+        "y": 9732,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.dead.ne_01": {
+      "frame": {
+        "x": 0,
+        "y": 9798,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.dead.e_01": {
+      "frame": {
+        "x": 0,
+        "y": 9864,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.dead.se_01": {
+      "frame": {
+        "x": 0,
+        "y": 9930,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.dead.s_01": {
+      "frame": {
+        "x": 0,
+        "y": 9996,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.dead.sw_01": {
+      "frame": {
+        "x": 0,
+        "y": 10062,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.dead.w_01": {
+      "frame": {
+        "x": 0,
+        "y": 10128,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.dead.nw_01": {
+      "frame": {
+        "x": 0,
+        "y": 10194,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.idle.n_01": {
+      "frame": {
+        "x": 0,
+        "y": 8676,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.idle.ne_01": {
+      "frame": {
+        "x": 0,
+        "y": 8742,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.idle.e_01": {
+      "frame": {
+        "x": 0,
+        "y": 8808,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.idle.se_01": {
+      "frame": {
+        "x": 0,
+        "y": 8874,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.idle.s_01": {
+      "frame": {
+        "x": 0,
+        "y": 8940,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.idle.sw_01": {
+      "frame": {
+        "x": 0,
+        "y": 9006,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.idle.w_01": {
+      "frame": {
+        "x": 0,
+        "y": 9072,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
+    },
+    "catapult.neutral.idle.nw_01": {
+      "frame": {
+        "x": 0,
+        "y": 9138,
+        "w": 64,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 64,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 64
+      }
     }
   },
   "animations": {
@@ -26357,6 +28117,158 @@
     ],
     "juggernaut.red.idle.nw": [
       "juggernaut.red.idle.nw_01"
+    ],
+    "catapult.neutral.move.n": [
+      "catapult.neutral.move.n_01"
+    ],
+    "catapult.neutral.move.ne": [
+      "catapult.neutral.move.ne_01"
+    ],
+    "catapult.neutral.move.e": [
+      "catapult.neutral.move.e_01"
+    ],
+    "catapult.neutral.move.se": [
+      "catapult.neutral.move.se_01"
+    ],
+    "catapult.neutral.move.s": [
+      "catapult.neutral.move.s_01"
+    ],
+    "catapult.neutral.move.sw": [
+      "catapult.neutral.move.sw_01"
+    ],
+    "catapult.neutral.move.w": [
+      "catapult.neutral.move.w_01"
+    ],
+    "catapult.neutral.move.nw": [
+      "catapult.neutral.move.nw_01"
+    ],
+    "catapult.neutral.attack.n": [
+      "catapult.neutral.attack.n_01",
+      "catapult.neutral.attack.n_02",
+      "catapult.neutral.attack.n_03",
+      "catapult.neutral.attack.n_04",
+      "catapult.neutral.attack.n_05",
+      "catapult.neutral.attack.n_06",
+      "catapult.neutral.attack.n_07",
+      "catapult.neutral.attack.n_08"
+    ],
+    "catapult.neutral.attack.ne": [
+      "catapult.neutral.attack.ne_01",
+      "catapult.neutral.attack.ne_02",
+      "catapult.neutral.attack.ne_03",
+      "catapult.neutral.attack.ne_04",
+      "catapult.neutral.attack.ne_05",
+      "catapult.neutral.attack.ne_06",
+      "catapult.neutral.attack.ne_07",
+      "catapult.neutral.attack.ne_08"
+    ],
+    "catapult.neutral.attack.e": [
+      "catapult.neutral.attack.e_01",
+      "catapult.neutral.attack.e_02",
+      "catapult.neutral.attack.e_03",
+      "catapult.neutral.attack.e_04",
+      "catapult.neutral.attack.e_05",
+      "catapult.neutral.attack.e_06",
+      "catapult.neutral.attack.e_07",
+      "catapult.neutral.attack.e_08"
+    ],
+    "catapult.neutral.attack.se": [
+      "catapult.neutral.attack.se_01",
+      "catapult.neutral.attack.se_02",
+      "catapult.neutral.attack.se_03",
+      "catapult.neutral.attack.se_04",
+      "catapult.neutral.attack.se_05",
+      "catapult.neutral.attack.se_06",
+      "catapult.neutral.attack.se_07",
+      "catapult.neutral.attack.se_08"
+    ],
+    "catapult.neutral.attack.s": [
+      "catapult.neutral.attack.s_01",
+      "catapult.neutral.attack.s_02",
+      "catapult.neutral.attack.s_03",
+      "catapult.neutral.attack.s_04",
+      "catapult.neutral.attack.s_05",
+      "catapult.neutral.attack.s_06",
+      "catapult.neutral.attack.s_07",
+      "catapult.neutral.attack.s_08"
+    ],
+    "catapult.neutral.attack.sw": [
+      "catapult.neutral.attack.sw_01",
+      "catapult.neutral.attack.sw_02",
+      "catapult.neutral.attack.sw_03",
+      "catapult.neutral.attack.sw_04",
+      "catapult.neutral.attack.sw_05",
+      "catapult.neutral.attack.sw_06",
+      "catapult.neutral.attack.sw_07",
+      "catapult.neutral.attack.sw_08"
+    ],
+    "catapult.neutral.attack.w": [
+      "catapult.neutral.attack.w_01",
+      "catapult.neutral.attack.w_02",
+      "catapult.neutral.attack.w_03",
+      "catapult.neutral.attack.w_04",
+      "catapult.neutral.attack.w_05",
+      "catapult.neutral.attack.w_06",
+      "catapult.neutral.attack.w_07",
+      "catapult.neutral.attack.w_08"
+    ],
+    "catapult.neutral.attack.nw": [
+      "catapult.neutral.attack.nw_01",
+      "catapult.neutral.attack.nw_02",
+      "catapult.neutral.attack.nw_03",
+      "catapult.neutral.attack.nw_04",
+      "catapult.neutral.attack.nw_05",
+      "catapult.neutral.attack.nw_06",
+      "catapult.neutral.attack.nw_07",
+      "catapult.neutral.attack.nw_08"
+    ],
+    "catapult.neutral.dead.n": [
+      "catapult.neutral.dead.n_01"
+    ],
+    "catapult.neutral.dead.ne": [
+      "catapult.neutral.dead.ne_01"
+    ],
+    "catapult.neutral.dead.e": [
+      "catapult.neutral.dead.e_01"
+    ],
+    "catapult.neutral.dead.se": [
+      "catapult.neutral.dead.se_01"
+    ],
+    "catapult.neutral.dead.s": [
+      "catapult.neutral.dead.s_01"
+    ],
+    "catapult.neutral.dead.sw": [
+      "catapult.neutral.dead.sw_01"
+    ],
+    "catapult.neutral.dead.w": [
+      "catapult.neutral.dead.w_01"
+    ],
+    "catapult.neutral.dead.nw": [
+      "catapult.neutral.dead.nw_01"
+    ],
+    "catapult.neutral.idle.n": [
+      "catapult.neutral.idle.n_01"
+    ],
+    "catapult.neutral.idle.ne": [
+      "catapult.neutral.idle.ne_01"
+    ],
+    "catapult.neutral.idle.e": [
+      "catapult.neutral.idle.e_01"
+    ],
+    "catapult.neutral.idle.se": [
+      "catapult.neutral.idle.se_01"
+    ],
+    "catapult.neutral.idle.s": [
+      "catapult.neutral.idle.s_01"
+    ],
+    "catapult.neutral.idle.sw": [
+      "catapult.neutral.idle.sw_01"
+    ],
+    "catapult.neutral.idle.w": [
+      "catapult.neutral.idle.w_01"
+    ],
+    "catapult.neutral.idle.nw": [
+      "catapult.neutral.idle.nw_01"
     ]
   },
   "meta": {
@@ -26365,7 +28277,7 @@
     "format": "RGBA8888",
     "size": {
       "w": 526,
-      "h": 8674
+      "h": 10258
     },
     "scale": 1
   }

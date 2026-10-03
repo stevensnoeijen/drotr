@@ -104,12 +104,14 @@ function unitPixelHash(unit: UnitType): string {
 }
 
 describe('committed unit pixels', () => {
-  // Pinned when the juggernaut joined the atlas; they only change if a
+  // Pinned when the catapult joined the atlas; they only change if a
   // unit's frame map or the packer's pixel output does.
   it.each([
     ['swordsmen', '2f608953352bed924ee6ccf5548002dddb1c2701'],
     ['crossbowsoldier', '48264938f23e1bf0a3603ca75e717f55690ed5be'],
     ['knight', 'ac648223925c710a9f981234d40f0b356dd4eba9'],
+    ['juggernaut', '186006382b1f75e1841d5520daba81eeaf2f1b13'],
+    ['catapult', '4134a922e9f4f4b18efd752e9093ab7363e67271'],
   ] as const)('leaves the %s frames unchanged', (unit, hash) => {
     expect(unitPixelHash(unit)).toBe(hash);
   });
@@ -157,7 +159,7 @@ describe.each(units)('committed %s manifest', (unit) => {
   });
 });
 
-describe.each(['swordsmen', 'crossbowsoldier', 'knight', 'juggernaut'] as const)('committed %s timing', (unit) => {
+describe.each(['swordsmen', 'crossbowsoldier', 'knight', 'juggernaut', 'catapult'] as const)('committed %s timing', (unit) => {
   const { actions } = parseUnitManifest(readJson(unitManifestPath(unit)));
   const seconds = (action: 'attack' | 'dead') =>
     actions[action]!.frames / actions[action]!.fps;
@@ -190,5 +192,47 @@ describe('committed juggernaut attack', () => {
     for (const action of ['idle', 'move', 'dead'] as const) {
       expect(actions[action]!.directions).toBeUndefined();
     }
+  });
+});
+
+describe('committed catapult', () => {
+  const manifest = parseUnitManifest(readJson(unitManifestPath('catapult')));
+  const animations = sheet.animations as Record<string, string[]>;
+
+  it('is team-neutral, with a single colourway', () => {
+    expect(manifest.teams).toEqual(['neutral']);
+  });
+
+  it('resolves every declared animation to a non-empty frame list', () => {
+    for (const [action, declared] of Object.entries(manifest.actions)) {
+      for (const direction of actionDirections(declared)) {
+        const names = animations[`catapult.neutral.${action}.${direction}`];
+        expect(names?.length, `${action}.${direction}`).toBeGreaterThan(0);
+      }
+    }
+  });
+
+  it('declares all four actions in all eight directions', () => {
+    expect(Object.keys(manifest.actions)).toEqual(['idle', 'move', 'attack', 'dead']);
+    for (const declared of Object.values(manifest.actions)) {
+      expect(declared.directions).toBeUndefined();
+    }
+  });
+
+  it('has no move cycle: move and idle show the ready frame of the swing', () => {
+    expect(manifest.actions.move!.frames).toBe(1);
+    const rect = (key: string) => {
+      expect(animations[key], key).toHaveLength(1);
+      return sheet.frames[animations[key][0]].frame;
+    };
+    for (const direction of ['n', 'e', 's', 'w'] as const) {
+      const ready = sheet.frames[animations[`catapult.neutral.attack.${direction}`][0]].frame;
+      expect(rect(`catapult.neutral.idle.${direction}`)).toEqual(ready);
+      expect(rect(`catapult.neutral.move.${direction}`)).toEqual(ready);
+    }
+  });
+
+  it('holds its single debris frame once dead', () => {
+    expect(manifest.actions.dead).toMatchObject({ frames: 1, fps: 2, loop: false, holdLast: true });
   });
 });
