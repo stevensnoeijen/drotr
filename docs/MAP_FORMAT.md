@@ -434,7 +434,7 @@ grass caps 1225/1229 vs rock caps 1064/1066, wood vertical 1207/1209 vs
 vs 1241/1257. The county sites that use the rock-bank slots all meet
 rock or cliff terrain at both ends. So the second wood run and the "alt.
 art" stone runs are bank variants, not damaged art (the `ruined` layer is
-empty inside every bridge rect). The rock-bank slots are a fixed table in
+empty inside every slot bridge rect). The rock-bank slots are a fixed table in
 `scripts/dracula-exe/building-sites.ts`. A bridge site is the top-left of
 its footprint on the near bank, and the footprint spans the water.
 
@@ -725,28 +725,44 @@ but starts them hidden; to see the buildings intact or ruined, toggle
   site. The rect is exactly the prefab's source rectangle from
   `DRACULA.EXE` (see "Prefab footprints" above), in pixels (tiles × 40),
   and the object's class (`type`) is its category, so the `tile-layers`
-  debug colours apply. 57 objects: 42 bridges, 3 towers, 12 castles. No two
-  rects overlap. Names:
+  debug colours apply. 72 objects: 57 bridges (42 from slots, 15 spare), 3 towers, 12
+  castles. No two rects overlap. Names:
   - `castle-<level>`, e.g. `castle-5-moated`;
   - `tower-<level>`, e.g. `tower-rock-1`;
   - `bridge-<level>-<orientation>-<bank>-<slot>`, e.g.
     `bridge-stone-vertical-grass-9`. The slot keeps names unique, since
-    two slots can share a shape.
+    two slots can share a shape;
+  - `bridge-<level>-<orientation>-<bank>-spare-<length>` for a spare
+    bridge (below), e.g. `bridge-stone-wide-vertical-rock-spare-5`.
 
   The levels are the ones the county `constructions` layer uses. String
   properties: `category`, `level`, `slot` (an int), and for bridges
   `orientation` (`vertical` | `horizontal`) and `bank` (`grass` | `rock`).
+  A spare bridge has no `slot`.
   `castle-rock-3` is marked although no county places it. A bridge prefab
   is identified by slot; the county layer doesn't carry the slot, so
   resolving a site's level to a slot is up to whoever places the building.
   Only intact art is marked: `BUILDING.MAP` has no damaged or destroyed
   bridge art.
 
-  Spare pieces outside every rect stay unmarked: 217 `intact` and 45
-  `ruined` cells, almost all unused bridge pieces (e.g. a complete 2×9
-  stone bridge at x 24–25, y 7–15, and rock-bank stone bridges of lengths
-  4–7 at x 52–62, y 40–46), plus about 10 cells one tile off the edge of
-  castles `3`, `4` and `5-unmoated`.
+  **Spare bridges**: 15 complete bridges that no executable slot points at
+  (217 `intact` cells lie outside every slot rect). They are found by
+  grouping the intact overlay's bridge tiles into connected pieces and
+  dropping the cells inside slot rects, and are listed in
+  `scripts/county-map/spare-bridges.ts`, each with both end caps and a full
+  deck. Bank follows the end caps as for slot bridges. They are: three
+  2-tile wood bridges (one vertical grass at x 12, y 5; horizontal grass at
+  x 18, y 25; horizontal rock at x 18, y 27), stone-wide vertical grass
+  bridges of length 10 (x 17–19, y 9–18) and 9 (x 23–25, y 7–15), stone
+  vertical rock bridges of length 4 (x 20–21, y 29–32) and 7 (x 26–27,
+  y 29–35), a length-7 stone horizontal grass bridge (x 39–45, y 40–41),
+  four stone-wide vertical rock bridges of lengths 4–7 side by side (x 51–62,
+  y 40–46), and three rock horizontal bridges (stone, length 5, x 28–32,
+  y 48–49; stone-wide, lengths 5 and 6, x 25–29 and x 30–35, y 50–52).
+  Their `ruined` overlay, where there is one, is a line of tile 389 down
+  the deck. Nine `intact` cells are neither inside a rect nor part of a bridge, and
+  stay unmarked: single tile 1386 cells at (18, 33) and (18, 36), tile 2
+  at x 21, y 56–58, and four tile 1382 cells at x 29–31, y 92–93.
 
 The converter also reads `DRACULA.EXE` for the `prefabs` layer.
 
