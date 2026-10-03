@@ -1,0 +1,7 @@
+{
+  "type": "catapult",
+  "size": { "width": 1.5, "height": 1.5 },
+  "shape": "square",
+  "health": 21,
+  "assets": null
+}
