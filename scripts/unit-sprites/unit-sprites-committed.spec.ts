@@ -104,7 +104,7 @@ function unitPixelHash(unit: UnitType): string {
 }
 
 describe('committed unit pixels', () => {
-  // Pinned when the catapult joined the atlas; they only change if a
+  // Pinned when the cannon joined the atlas; they only change if a
   // unit's frame map or the packer's pixel output does.
   it.each([
     ['swordsmen', '2f608953352bed924ee6ccf5548002dddb1c2701'],
@@ -112,6 +112,7 @@ describe('committed unit pixels', () => {
     ['knight', 'ac648223925c710a9f981234d40f0b356dd4eba9'],
     ['juggernaut', '186006382b1f75e1841d5520daba81eeaf2f1b13'],
     ['catapult', '4134a922e9f4f4b18efd752e9093ab7363e67271'],
+    ['cannon', 'd64acd2a669542a79a08f90535e3c59ba3d5af9d'],
   ] as const)('leaves the %s frames unchanged', (unit, hash) => {
     expect(unitPixelHash(unit)).toBe(hash);
   });
@@ -233,6 +234,42 @@ describe('committed catapult', () => {
   });
 
   it('holds its single debris frame once dead', () => {
+    expect(manifest.actions.dead).toMatchObject({ frames: 1, fps: 2, loop: false, holdLast: true });
+  });
+});
+
+describe('committed cannon', () => {
+  const manifest = parseUnitManifest(readJson(unitManifestPath('cannon')));
+  const animations = sheet.animations as Record<string, string[]>;
+
+  it('is team-neutral, with a single colourway', () => {
+    expect(manifest.teams).toEqual(['neutral']);
+  });
+
+  it('is a static emplacement: only idle and dead, in all eight directions', () => {
+    expect(Object.keys(manifest.actions)).toEqual(['idle', 'dead']);
+    for (const declared of Object.values(manifest.actions)) {
+      expect(declared.directions).toBeUndefined();
+    }
+  });
+
+  it('resolves every declared animation to a non-empty frame list', () => {
+    for (const [action, declared] of Object.entries(manifest.actions)) {
+      for (const direction of actionDirections(declared)) {
+        const names = animations[`cannon.neutral.${action}.${direction}`];
+        expect(names?.length, `${action}.${direction}`).toBeGreaterThan(0);
+      }
+    }
+  });
+
+  it('packs no move or attack animation', () => {
+    for (const key of Object.keys(animations)) {
+      expect(key).not.toMatch(/^cannon\.[a-z]+\.(move|attack)\./);
+    }
+  });
+
+  it('shows its barrel in idle and holds its single wreck frame once dead', () => {
+    expect(manifest.actions.idle).toMatchObject({ frames: 1, fps: 0, loop: false });
     expect(manifest.actions.dead).toMatchObject({ frames: 1, fps: 2, loop: false, holdLast: true });
   });
 });
