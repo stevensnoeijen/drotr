@@ -19,9 +19,12 @@ import type { Scenario } from './types';
  * PixiJS's own per-unit draw/health-bar cost, which a headless simulation
  * can't include.
  */
-// The juggernaut and catapult have no combat stats yet, so they are not part
-// of the roster.
-const UNIT_COUNTS: Record<Exclude<UnitType, 'juggernaut' | 'catapult'>, number> = {
+// The juggernaut, catapult and cannon have no combat stats yet, so they are
+// not part of the roster.
+const UNIT_COUNTS: Record<
+  Exclude<UnitType, 'juggernaut' | 'catapult' | 'cannon'>,
+  number
+> = {
   swordsmen: 60,
   knight: 60,
   crossbowsoldier: 60,

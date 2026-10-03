@@ -7,6 +7,7 @@ import { describe, expect, it } from 'vitest';
 
 import type { UnitType } from '~/game/data/units';
 import {
+  DIRECTIONS,
   animationKey,
   frameName,
 } from '~/game/render/sprites/animation-key';
@@ -104,7 +105,7 @@ function unitPixelHash(unit: UnitType): string {
 }
 
 describe('committed unit pixels', () => {
-  // Pinned when the catapult joined the atlas; they only change if a
+  // Pinned when the cannon joined the atlas; they only change if a
   // unit's frame map or the packer's pixel output does.
   it.each([
     ['swordsmen', '2f608953352bed924ee6ccf5548002dddb1c2701'],
@@ -112,6 +113,7 @@ describe('committed unit pixels', () => {
     ['knight', 'ac648223925c710a9f981234d40f0b356dd4eba9'],
     ['juggernaut', '186006382b1f75e1841d5520daba81eeaf2f1b13'],
     ['catapult', '4134a922e9f4f4b18efd752e9093ab7363e67271'],
+    ['cannon', '78e7b786d65089a7a350f924f92d144c0658d58b'],
   ] as const)('leaves the %s frames unchanged', (unit, hash) => {
     expect(unitPixelHash(unit)).toBe(hash);
   });
@@ -233,6 +235,60 @@ describe('committed catapult', () => {
   });
 
   it('holds its single debris frame once dead', () => {
+    expect(manifest.actions.dead).toMatchObject({ frames: 1, fps: 2, loop: false, holdLast: true });
+  });
+});
+
+describe('committed cannon', () => {
+  const manifest = parseUnitManifest(readJson(unitManifestPath('cannon')));
+  const animations = sheet.animations as Record<string, string[]>;
+
+  it('is team-neutral, with a single colourway', () => {
+    expect(manifest.teams).toEqual(['neutral']);
+  });
+
+  it('declares all four actions in all eight directions', () => {
+    expect(Object.keys(manifest.actions)).toEqual(['idle', 'move', 'attack', 'dead']);
+    for (const declared of Object.values(manifest.actions)) {
+      expect(declared.directions).toBeUndefined();
+    }
+  });
+
+  it('resolves every declared animation to a non-empty frame list', () => {
+    for (const [action, declared] of Object.entries(manifest.actions)) {
+      for (const direction of actionDirections(declared)) {
+        const names = animations[`cannon.neutral.${action}.${direction}`];
+        expect(names?.length, `${action}.${direction}`).toBeGreaterThan(0);
+      }
+    }
+  });
+
+  it('plays the idle frame for move and attack, adding no frames to the atlas', () => {
+    const rect = (key: string) => {
+      expect(animations[key], key).toHaveLength(1);
+      return sheet.frames[animations[key][0]].frame;
+    };
+    const rects = new Set<string>();
+    for (const direction of DIRECTIONS) {
+      const idle = rect(`cannon.neutral.idle.${direction}`);
+      expect(rect(`cannon.neutral.move.${direction}`)).toEqual(idle);
+      expect(rect(`cannon.neutral.attack.${direction}`)).toEqual(idle);
+      rects.add(JSON.stringify(idle));
+      rects.add(JSON.stringify(rect(`cannon.neutral.dead.${direction}`)));
+    }
+    // Eight idle rects and eight wreck rects back all 32 animations.
+    expect(rects.size).toBe(16);
+  });
+
+  it('makes move and attack single, static frames, like idle', () => {
+    for (const action of ['idle', 'move'] as const) {
+      expect(manifest.actions[action]).toEqual({ frames: 1, fps: 0, loop: false });
+    }
+    expect(manifest.actions.attack).toEqual({ frames: 1, fps: 0, loop: false, hitFrame: 0 });
+  });
+
+  it('holds its single wreck frame once dead', () => {
+    expect(manifest.actions.idle).toMatchObject({ frames: 1, fps: 0, loop: false });
     expect(manifest.actions.dead).toMatchObject({ frames: 1, fps: 2, loop: false, holdLast: true });
   });
 });

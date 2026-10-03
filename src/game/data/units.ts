@@ -5,6 +5,7 @@ import crossbowsoldierData from './units/crossbowsoldier.json';
 import knightData from './units/knight.json';
 import juggernautData from './units/juggernaut.json';
 import catapultData from './units/catapult.json';
+import cannonData from './units/cannon.json';
 
 /**
  * The kinds of unit in the game. Names and starting HP match
@@ -13,7 +14,7 @@ import catapultData from './units/catapult.json';
  * the asset-integration phase (see `SPRITE_UNIT_TYPES` for which units
  * already have).
  */
-export const UNIT_TYPES = ['swordsmen', 'knight', 'crossbowsoldier', 'juggernaut', 'catapult'] as const;
+export const UNIT_TYPES = ['swordsmen', 'knight', 'crossbowsoldier', 'juggernaut', 'catapult', 'cannon'] as const;
 export type UnitType = (typeof UNIT_TYPES)[number];
 
 /**
@@ -103,6 +104,10 @@ export const units: Record<UnitType, UnitDefinition> = {
   // `#/unit-preview` can list its atlas sprites: combat stats, in-game
   // sprites and scenarios land in #183.
   catapult: catapultData as UnitDefinition,
+  // A field cannon, a static emplacement. Only the minimum for now (type,
+  // size, shape, health) so `#/unit-preview` can list its atlas sprites:
+  // combat stats, in-game sprites and scenarios land in #184.
+  cannon: cannonData as UnitDefinition,
 };
 
 /** Every unit not given an explicit `footprint` occupies exactly one cell. */

@@ -129,6 +129,7 @@ describe('unitSizeInTiles', () => {
     ['knight', 1],
     ['juggernaut', 1.5],
     ['catapult', 1.5],
+    ['cannon', 1],
   ] as const)('sizes a %s at %s x %s tiles', (type, tiles) => {
     expect(unitSizeInTiles(units[type])).toEqual({ width: tiles, height: tiles });
   });
