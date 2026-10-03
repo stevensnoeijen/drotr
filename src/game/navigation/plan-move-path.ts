@@ -54,19 +54,27 @@ export interface PlannedMovePath {
  * only the leg granularity is.
  *
  * `footprint` is the unit's block size in cells (see `footprintOf`),
- * defaulting to a single cell. The search itself still runs over `grid`'s
- * plain, single-cell terrain — a multi-cell unit can still be routed through
- * a corridor narrower than its own block, and will then stall against
- * occupancy; clearance-aware routing for wide units is a separate,
- * out-of-scope concern (see `CellOccupancySystem`'s leading-edge check,
- * which is what actually stops it there). What this does account for is the
- * *anchor convention*: `from`/`to` are shifted by {@link footprintShift}
- * before being floored to a cell, and every resulting waypoint is shifted
- * back by the same amount — so a path for a 2x2 unit is planned by its
- * block's anchor (top-left) cell but its waypoints are still block centres
- * (cell corners), never `(cell + 0.5) * cellSize` cell centres. Reduces
- * exactly to the original cell-centre behaviour when `footprint` is 1x1,
- * since its shift is zero on both axes.
+ * defaulting to a single cell. For anything larger, `grid` must be the
+ * unit's **block grid** — a grid over *anchor* cells in which an anchor is
+ * blocked whenever any cell of the block it anchors is (see
+ * `blockAnchorGrid` in `./block-grid`; `planMoveOrder` builds the cached terrain one,
+ * `OccupancyGrid.asBlockedGridExcluding` the one that also counts other
+ * units). Every cell A* then expands is a placement where the whole block
+ * fits, so a wide unit is only ever routed through gaps it can pass, and an
+ * order with no such route comes back `'unreachable'` rather than as a path
+ * the unit would stall on. A blocked destination relocates to the nearest
+ * anchor whose whole block is free, for the same reason. The planner cannot
+ * tell the two kinds of grid apart, so passing plain terrain together with a
+ * multi-cell `footprint` silently reverts to single-cell routing.
+ *
+ * What this function itself accounts for is the *anchor convention*:
+ * `from`/`to` are shifted by {@link footprintShift} before being floored to a
+ * cell, and every resulting waypoint is shifted back by the same amount — so
+ * a path for a 2x2 unit is planned by its block's anchor (top-left) cell but
+ * its waypoints are still block centres (cell corners), never
+ * `(cell + 0.5) * cellSize` cell centres. Reduces exactly to the original
+ * cell-centre behaviour when `footprint` is 1x1, since its shift is zero on
+ * both axes and its block grid is the input grid.
  */
 export function planMovePath(
   grid: GridLike,
