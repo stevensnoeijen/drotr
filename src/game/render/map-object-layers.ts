@@ -1,5 +1,6 @@
 import { Container, Graphics, Text } from 'pixi.js';
 
+import { parseFootprints, type TileRect } from '~/game/map/construction-sites';
 import type { MapObject, MapObjectLayer } from '~/game/map/load-tiled-map';
 
 /**
@@ -23,9 +24,6 @@ const LABEL_FONT_SIZE = 14;
 const RECT_LABEL_INSET = 2;
 const FOOTPRINT_FILL_ALPHA = 0.15;
 
-/** Property-name prefix of a construction level's footprint. */
-export const FOOTPRINT_PROPERTY_PREFIX = 'footprint:';
-
 const COLOURS: Readonly<Record<string, number>> = {
   spawns: 0xffe14d,
   castle: 0xff4d4d,
@@ -39,32 +37,12 @@ export function objectColour(object: Pick<MapObject, 'type'>, layerName: string)
   return COLOURS[object.type] ?? COLOURS[layerName] ?? DEFAULT_COLOUR;
 }
 
-/** A tile rectangle, in tiles. */
-export interface TileRect {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-}
-
 /**
  * Every `footprint:<level>` property of `object`, parsed. A value that isn't
  * four comma-separated numbers is skipped.
  */
 export function objectFootprints(object: Pick<MapObject, 'properties'>): TileRect[] {
-  const out: TileRect[] = [];
-  for (const [name, value] of Object.entries(object.properties)) {
-    if (!name.startsWith(FOOTPRINT_PROPERTY_PREFIX) || typeof value !== 'string') {
-      continue;
-    }
-    const parts = value.split(',').map(Number);
-    if (parts.length !== 4 || parts.some((part) => !Number.isFinite(part))) {
-      continue;
-    }
-    const [x, y, width, height] = parts;
-    out.push({ x, y, width, height });
-  }
-  return out;
+  return Object.values(parseFootprints(object.properties));
 }
 
 /**
