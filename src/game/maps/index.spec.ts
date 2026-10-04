@@ -46,9 +46,14 @@ describe('resolveMap', () => {
     expect(fagaras?.allowedScenarioIds).toEqual(['knights']);
   });
 
+  it('allows only the buildings test scenario on braila', () => {
+    const braila = maps.find((m) => m.id === 'braila');
+    expect(braila?.allowedScenarioIds).toEqual(['test-buildings']);
+  });
+
   it('registers the converted county maps without spawns with an empty scenario allowlist', () => {
     const counties = maps.filter(
-      (m) => !['test', 'fagaras', 'buildings'].includes(m.id)
+      (m) => !['test', 'fagaras', 'braila', 'buildings'].includes(m.id)
     );
     expect(counties.length).toBeGreaterThan(0);
     for (const county of counties) {

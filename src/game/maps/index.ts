@@ -78,8 +78,9 @@ export const maps: readonly MapDefinition[] = [
     description:
       'The Braila county map, converted from the original .MAP file.',
     mapSource: `${import.meta.env.BASE_URL}maps/braila.tmj`,
-    // No spawn points yet, so only `empty` (allowed on every map) applies.
-    allowedScenarioIds: [],
+    // No spawn points yet, so unit-placing scenarios don't apply; `empty`
+    // (allowed on every map) does, as does the one that draws buildings.
+    allowedScenarioIds: ['test-buildings'],
   },
   {
     id: 'giurgiu',
