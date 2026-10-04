@@ -7,6 +7,8 @@ import { SystemRunner } from '~/game/ecs/system';
 import { findEntityById, queries, world } from '~/game/ecs/world';
 import type { Entity } from '~/game/ecs/entity';
 import type { MapDefinition } from '~/game/maps';
+import { placementsFor, stampBuildings, validatePlacements } from '~/game/map/building-placement';
+import { loadBuildingsMap } from '~/game/map/buildings-map';
 import { loadTiledMap, type ParsedMap } from '~/game/map/load-tiled-map';
 import { mapLayerInfo, type TileLayerInfo } from '~/game/map/tile-layer-visibility';
 import { applyViewportBounds, createGameViewport } from '~/game/render/create-game-viewport';
@@ -274,6 +276,18 @@ export default function GameCanvas({
       if (mapSource) {
         try {
           map = await loadTiledMap(mapSource);
+          const placements = placementsFor(scenarioRef.current, map);
+          if (placements.length > 0) {
+            const buildingsMap = await loadBuildingsMap();
+            const placementError = validatePlacements(map, placements, buildingsMap);
+            if (placementError) {
+              if (!cancelled) {
+                onErrorRef.current?.(placementError);
+              }
+              return;
+            }
+            map = stampBuildings(map, buildingsMap, placements);
+          }
           const terrain = await createMapRenderSystem(map);
           if (cancelled) {
             terrain.dispose();

@@ -1,6 +1,7 @@
 import type { World } from 'miniplex';
 
 import type { Entity } from '~/game/ecs/entity';
+import type { BuildingPlacement } from '~/game/map/building-placement';
 import type { ParsedMap } from '~/game/map/load-tiled-map';
 
 /**
@@ -43,6 +44,15 @@ export interface Scenario {
    * silently spawn nothing (or throw) for a map that doesn't fit.
    */
   validateMap?(map?: ParsedMap): string | undefined;
+  /**
+   * Buildings to draw onto the loaded map's construction sites before it is
+   * rendered, as a list or as a function of the loaded map. The map's own
+   * terrain shows through the gaps in a building's art. Pair with a
+   * {@link validateMap} that reports an unusable placement (see
+   * `validatePlacements` in `~/game/map/building-placement`) so the picker
+   * rejects a map that lacks the sites. Collision is left as the map has it.
+   */
+  buildings?: BuildingPlacement[] | ((map: ParsedMap) => BuildingPlacement[]);
   /**
    * Bypasses a map's `allowedScenarioIds` allowlist (see
    * `MapDefinition`), so this scenario is compatible with every map, including

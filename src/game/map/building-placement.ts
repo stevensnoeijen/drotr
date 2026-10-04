@@ -186,3 +186,15 @@ export function stampBuildings(
     ),
   };
 }
+
+/**
+ * The placements a scenario declares for `map`: its `buildings` list, or the
+ * result of calling it with the map. Empty when it declares none.
+ */
+export function placementsFor(
+  scenario: { buildings?: BuildingPlacement[] | ((map: ParsedMap) => BuildingPlacement[]) },
+  map: ParsedMap
+): BuildingPlacement[] {
+  const { buildings } = scenario;
+  return typeof buildings === 'function' ? buildings(map) : (buildings ?? []);
+}
