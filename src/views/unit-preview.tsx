@@ -19,7 +19,13 @@ import {
   type UnitManifest,
 } from '~/game/render/sprites/unit-manifest';
 import { animationSpeed } from '~/game/render/sprites/unit-sprites';
-import { createProjectileDemo, type ProjectileDemo } from './projectile-demo';
+import { spriteScale } from '~/game/render/render-system';
+import {
+  DEMO_FIRER_RENDERABLE,
+  DEMO_ZOOM,
+  createProjectileDemo,
+  demoFlight,
+} from './projectile-demo';
 import {
   animationOptions,
   atlasUnits,
@@ -122,62 +128,6 @@ function usePixiStage(enabled: boolean) {
   return { hostRef, stage };
 }
 
-/** Demo world units are small, so the demo stage is drawn zoomed in. */
-const DEMO_ZOOM = 4;
-
-/** Units whose preview comes with the launch demo: the rock and its impact. */
-const DEMO_UNITS: readonly UnitType[] = ['rock', 'impact-dirt'];
-
-/**
- * Launches a rock along its arc into the dirt burst, through the game's own
- * projectile, effect and render systems (see `createProjectileDemo`).
- */
-function ProjectileDemoPanel({
-  sheet,
-  manifests,
-}: {
-  sheet: Spritesheet;
-  manifests: Partial<Record<UnitType, UnitManifest>>;
-}) {
-  const { hostRef, stage } = usePixiStage(true);
-  const demoRef = useRef<ProjectileDemo>(undefined);
-
-  useEffect(() => {
-    if (!stage) return;
-    const sprites = unitSpritesFromAtlas(
-      sheet.animations,
-      new Map(Object.entries(manifests) as [UnitType, UnitManifest][])
-    );
-    stage.scale.set(DEMO_ZOOM);
-    const demo = createProjectileDemo(sprites, stage);
-    demoRef.current = demo;
-    let last = performance.now();
-    let frame = requestAnimationFrame(function tick(now) {
-      demo.step(Math.min((now - last) / 1000, 0.1));
-      last = now;
-      frame = requestAnimationFrame(tick);
-    });
-    return () => {
-      cancelAnimationFrame(frame);
-      demoRef.current = undefined;
-      demo.dispose();
-    };
-  }, [stage, sheet, manifests]);
-
-  return (
-    <div className="mt-6">
-      <h2 className="mb-2 text-sm text-neutral-400">Rock launch</h2>
-      <button
-        className="mb-2 rounded bg-neutral-700 px-2 py-1 text-sm"
-        onClick={() => demoRef.current?.launch()}
-      >
-        Launch rock
-      </button>
-      <div ref={hostRef} className="block [image-rendering:pixelated]" />
-    </div>
-  );
-}
-
 interface Playback {
   frame: number;
   playing: boolean;
@@ -218,6 +168,12 @@ export default function UnitPreview() {
 
   const { hostRef, stage } = usePixiStage(ready !== undefined);
   const spriteRef = useRef<AnimatedSprite>(undefined);
+  // Catapult attack demo: the attack animation launches a rock, optionally
+  // ending in the dirt burst. Only applies to the catapult's attack.
+  const [fireRock, setFireRock] = useState(false);
+  const [dirtImpact, setDirtImpact] = useState(true);
+  const isCatapult = selection?.unit === 'catapult';
+  const demoOn = fireRock && isCatapult && selection?.action === 'attack';
   const [playback, setPlayback] = useState<Playback>({
     frame: 0,
     playing: false,
@@ -240,18 +196,33 @@ export default function UnitPreview() {
     if (!textures) return;
     const [w, h] = manifest.frameSize;
     const [ax, ay] = manifest.anchor;
-    const zoom = previewZoom(CANVAS_SIZE, manifest.frameSize);
-    const { fps } = manifest.actions[selection.action]!;
+    const { fps, hitFrame = 0 } = manifest.actions[selection.action]!;
+
+    // With the firing demo on, the view is zoomed out to fit the whole
+    // flight, and the catapult is drawn at the scale it has in the game's
+    // world, at its launch point.
+    const flight = demoOn ? demoFlight(selection.direction) : undefined;
+    const zoom = flight
+      ? DEMO_ZOOM * spriteScale(DEMO_FIRER_RENDERABLE, manifest)
+      : previewZoom(CANVAS_SIZE, manifest.frameSize);
 
     const view = new Container();
-    view.position.set(CANVAS_SIZE / 2, CANVAS_SIZE / 2);
+    view.position.set(
+      CANVAS_SIZE / 2 + (flight ? flight.from.x * DEMO_ZOOM : 0),
+      CANVAS_SIZE / 2 + (flight ? flight.from.y * DEMO_ZOOM : 0)
+    );
     view.scale.set(zoom);
 
     const sprite = new AnimatedSprite({ textures, autoPlay: false });
     sprite.anchor.set(ax, ay);
     sprite.animationSpeed = animationSpeed(fps);
     sprite.loop = selection.loop;
-    sprite.onFrameChange = (frame) => setPlayback((p) => ({ ...p, frame }));
+    // Launched when the swing releases, so a looping attack re-fires each cycle.
+    let demo: ReturnType<typeof createProjectileDemo> | undefined;
+    sprite.onFrameChange = (frame) => {
+      setPlayback((p) => ({ ...p, frame }));
+      if (frame === hitFrame) demo?.launch();
+    };
     sprite.onComplete = () => setPlayback((p) => ({ ...p, playing: false }));
     view.addChild(sprite);
 
@@ -267,17 +238,44 @@ export default function UnitPreview() {
     view.addChild(overlay);
     stage.addChild(view);
 
+    // The rock and its impact live in world units around the view's centre,
+    // added after the catapult so they draw over it.
+    let worldLayer: Container | undefined;
+    let frameRequest = 0;
+    if (flight) {
+      worldLayer = new Container();
+      worldLayer.position.set(CANVAS_SIZE / 2, CANVAS_SIZE / 2);
+      worldLayer.scale.set(DEMO_ZOOM);
+      stage.addChild(worldLayer);
+      // The catapult's sprite data is only needed here, for the scale.
+      const sprites = unitSpritesFromAtlas(
+        ready.sheet.animations,
+        new Map(Object.entries(ready.manifests) as [UnitType, UnitManifest][])
+      );
+      const running = createProjectileDemo(sprites, worldLayer, { ...flight, impact: dirtImpact });
+      demo = running;
+      let last = performance.now();
+      frameRequest = requestAnimationFrame(function tick(now) {
+        running.step(Math.min((now - last) / 1000, 0.1));
+        last = now;
+        frameRequest = requestAnimationFrame(tick);
+      });
+    }
+
     spriteRef.current = sprite;
     sprite.gotoAndStop(0);
     if (textures.length > 1 && fps > 0) sprite.play();
 
     return () => {
+      cancelAnimationFrame(frameRequest);
+      demo?.dispose();
+      worldLayer?.destroy({ children: true });
       spriteRef.current = undefined;
       view.destroy({ children: true });
     };
     // `selection` is rebuilt every render; its fields are the real inputs.
     // oxlint-disable-next-line react-hooks/exhaustive-deps
-  }, [stage, ready, manifest, key, selection?.loop]);
+  }, [stage, ready, manifest, key, selection?.loop, demoOn, dirtImpact]);
 
   const update = (change: Partial<AnimationSelection>) =>
     setRequested((r) => ({ ...r, ...selection, ...change }));
@@ -386,6 +384,28 @@ export default function UnitPreview() {
             />
             Loop
           </label>
+          {isCatapult && (
+            <>
+              <label className="flex items-center gap-1 text-sm">
+                <input
+                  type="checkbox"
+                  checked={fireRock}
+                  disabled={selection.action !== 'attack'}
+                  onChange={(e) => setFireRock(e.target.checked)}
+                />
+                Attack with projectile
+              </label>
+              <label className="flex items-center gap-1 text-sm">
+                <input
+                  type="checkbox"
+                  checked={dirtImpact}
+                  disabled={!demoOn}
+                  onChange={(e) => setDirtImpact(e.target.checked)}
+                />
+                Dirt impact
+              </label>
+            </>
+          )}
           <button className={button} onClick={() => step(-1)}>
             ◀ Step
           </button>
@@ -412,9 +432,6 @@ export default function UnitPreview() {
             {manifest.anchor.join(', ')}
           </dd>
         </dl>
-      )}
-      {ready && selection && DEMO_UNITS.includes(selection.unit) && (
-        <ProjectileDemoPanel sheet={ready.sheet} manifests={ready.manifests} />
       )}
     </div>
   );
