@@ -260,3 +260,17 @@ describe('the rock', () => {
     }
   });
 });
+
+describe('the impact-dirt effect', () => {
+  it('is listed from the committed atlas, as an 8-frame neutral move', () => {
+    const animations = committedAtlasData().animations!;
+    expect(atlasUnits(Object.keys(animations))).toContain('impact-dirt');
+
+    const manifest = committedManifest('impact-dirt');
+    const selection = resolveSelection(['impact-dirt'], { 'impact-dirt': manifest }, { unit: 'impact-dirt' })!;
+    expect(selection).toMatchObject({ unit: 'impact-dirt', team: 'neutral', action: 'move' });
+    const names =
+      animations[animationKey(selection.unit, selection.team, selection.action, selection.direction)];
+    expect(names).toHaveLength(8);
+  });
+});

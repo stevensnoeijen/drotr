@@ -11,7 +11,7 @@ import {
 
 import type { UnitType } from '~/game/data/units';
 import { animationKey } from '~/game/render/sprites/animation-key';
-import { publicUrl } from '~/game/render/sprites/load-unit-sprites';
+import { publicUrl, unitSpritesFromAtlas } from '~/game/render/sprites/load-unit-sprites';
 import {
   UNIT_ATLAS_PATH,
   parseUnitManifest,
@@ -19,7 +19,7 @@ import {
   type UnitManifest,
 } from '~/game/render/sprites/unit-manifest';
 import { animationSpeed } from '~/game/render/sprites/unit-sprites';
-
+import { createProjectileDemo, type ProjectileDemo } from './projectile-demo';
 import {
   animationOptions,
   atlasUnits,
@@ -120,6 +120,62 @@ function usePixiStage(enabled: boolean) {
     };
   }, [enabled]);
   return { hostRef, stage };
+}
+
+/** Demo world units are small, so the demo stage is drawn zoomed in. */
+const DEMO_ZOOM = 4;
+
+/** Units whose preview comes with the launch demo: the rock and its impact. */
+const DEMO_UNITS: readonly UnitType[] = ['rock', 'impact-dirt'];
+
+/**
+ * Launches a rock along its arc into the dirt burst, through the game's own
+ * projectile, effect and render systems (see `createProjectileDemo`).
+ */
+function ProjectileDemoPanel({
+  sheet,
+  manifests,
+}: {
+  sheet: Spritesheet;
+  manifests: Partial<Record<UnitType, UnitManifest>>;
+}) {
+  const { hostRef, stage } = usePixiStage(true);
+  const demoRef = useRef<ProjectileDemo>(undefined);
+
+  useEffect(() => {
+    if (!stage) return;
+    const sprites = unitSpritesFromAtlas(
+      sheet.animations,
+      new Map(Object.entries(manifests) as [UnitType, UnitManifest][])
+    );
+    stage.scale.set(DEMO_ZOOM);
+    const demo = createProjectileDemo(sprites, stage);
+    demoRef.current = demo;
+    let last = performance.now();
+    let frame = requestAnimationFrame(function tick(now) {
+      demo.step(Math.min((now - last) / 1000, 0.1));
+      last = now;
+      frame = requestAnimationFrame(tick);
+    });
+    return () => {
+      cancelAnimationFrame(frame);
+      demoRef.current = undefined;
+      demo.dispose();
+    };
+  }, [stage, sheet, manifests]);
+
+  return (
+    <div className="mt-6">
+      <h2 className="mb-2 text-sm text-neutral-400">Rock launch</h2>
+      <button
+        className="mb-2 rounded bg-neutral-700 px-2 py-1 text-sm"
+        onClick={() => demoRef.current?.launch()}
+      >
+        Launch rock
+      </button>
+      <div ref={hostRef} className="block [image-rendering:pixelated]" />
+    </div>
+  );
 }
 
 interface Playback {
@@ -356,6 +412,9 @@ export default function UnitPreview() {
             {manifest.anchor.join(', ')}
           </dd>
         </dl>
+      )}
+      {ready && selection && DEMO_UNITS.includes(selection.unit) && (
+        <ProjectileDemoPanel sheet={ready.sheet} manifests={ready.manifests} />
       )}
     </div>
   );
