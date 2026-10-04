@@ -136,21 +136,24 @@ describe('perception + seek + move + combat integration', () => {
     );
     const walker = spawnUnit(
       world,
-      { type: 'swordsmen', team: 'red', position: cellPosition(6, 2, DEFAULT_CELL_SIZE) },
+      { type: 'swordsmen', team: 'red', position: cellPosition(3, 2, DEFAULT_CELL_SIZE) },
       DEFAULT_CELL_SIZE
     );
     shooter.target = { entityId: walker.id! };
 
+    // The shooter's 2 s cycle fires its first bolt 2.75 s in, so the walker
+    // starts close and has a long way to go: still walking, and within
+    // range, when that first swing starts.
     // A player-style move order, which outranks auto-seeking: the swordsman
     // walks away from the shooter through the real movement systems.
     const startX = walker.transform!.position.x;
     walker.moveTarget = {
-      position: { x: startX + 8 * DEFAULT_CELL_SIZE, y: walker.transform!.position.y },
+      position: { x: startX + 12 * DEFAULT_CELL_SIZE, y: walker.transform!.position.y },
     };
 
     let sawWalking = false;
     let firedWhileWalking = false;
-    for (let i = 0; i < 300; i++) {
+    for (let i = 0; i < 600; i++) {
       tick();
       projectile(world, DT);
       const walking = walker.velocity!.x !== 0 || walker.velocity!.y !== 0;

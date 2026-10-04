@@ -109,7 +109,7 @@ describe('committed unit pixels', () => {
   // only change if a unit's frame map or the packer's pixel output does.
   it.each([
     ['swordsmen', '2f608953352bed924ee6ccf5548002dddb1c2701'],
-    ['crossbowsoldier', '48264938f23e1bf0a3603ca75e717f55690ed5be'],
+    ['crossbowsoldier', 'a05c89f35ce4e375bb1e8a3b2ae80a3158d1e664'],
     ['knight', 'ac648223925c710a9f981234d40f0b356dd4eba9'],
     ['juggernaut', '186006382b1f75e1841d5520daba81eeaf2f1b13'],
     ['catapult', '4134a922e9f4f4b18efd752e9093ab7363e67271'],
@@ -168,7 +168,11 @@ describe.each(['swordsmen', 'crossbowsoldier', 'knight', 'juggernaut', 'catapult
     actions[action]!.frames / actions[action]!.fps;
 
   it('plays the attack within one swing and lands the hit on a real frame', () => {
-    expect(seconds('attack')).toBeLessThanOrEqual(MAX_SWING_SECONDS);
+    // A ranged unit's swing is its whole attack cooldown, not the melee cap.
+    const swingSeconds = unitDefinitions[unit].projectile
+      ? unitDefinitions[unit].attackCooldown!
+      : MAX_SWING_SECONDS;
+    expect(seconds('attack')).toBeLessThanOrEqual(swingSeconds);
     expect(actions.attack!.hitFrame).toBeLessThan(actions.attack!.frames);
   });
 

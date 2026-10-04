@@ -236,7 +236,7 @@ describe('spawnUnit', () => {
       position: { x: 0, y: 0 },
     }, DEFAULT_CELL_SIZE);
 
-    expect(unit.ranged?.releaseTime).toBe(0.125);
+    expect(unit.ranged?.releaseTime).toBe(units.crossbowsoldier.attackReleaseTime);
   });
 
   it('refuses to spawn a bolt, which only exists once fired, and adds nothing', () => {
