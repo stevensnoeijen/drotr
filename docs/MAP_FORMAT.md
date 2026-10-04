@@ -797,9 +797,10 @@ which is a hypothesis and not something the data shows:
   `terrain` bridge is only a backdrop in `buildings.tmj`, and the `intact`
   dark deck may simply be how a normal bridge looks over water.
 
-The work that places buildings on county sites (#316) and the later
-damaged-bridge work should check this by rendering both states over county
-water, and settle which layer a placed bridge copies.
+Placing a building on a county site copies the prefab's `intact` layer
+(see `stampBuildings` in `src/game/map/building-placement.ts`), bridges
+included; the `ruined` state is not placed. The later damaged-bridge work
+should check this hypothesis by rendering both states over county water.
 
 In the engine it is the `buildings` map; view it with the `empty`
 scenario, which spawns nothing and is allowed on every map
@@ -807,9 +808,10 @@ scenario, which spawns nothing and is allowed on every map
 
 ## Open questions for later
 
-- Placing the prefabs onto county construction sites. `buildings.tmj` now
-  marks where each prefab sits (the `prefabs` layer), but nothing copies
-  them yet, and building collision is still undetermined.
+- Building collision. Scenarios can place prefabs onto county construction
+  sites (the `buildings` hook on a scenario), but placing one does not touch
+  the collision layer, and what a building should block is still
+  undetermined.
 - What `BUILDING.MAP`'s flag grids (3–14, `hi` values `4, 8, 12, 16, 32,
   64, 128, 256`) mean, and which flag region belongs to which building
   (same coordinates? a lookup by index?). They come in three runs of four
