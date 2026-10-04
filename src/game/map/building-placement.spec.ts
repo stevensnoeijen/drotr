@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { resolvePlacement, validatePlacements } from './building-placement';
+import { resolvePlacement, stampBuildings, validatePlacements } from './building-placement';
 import type { BuildingPrefab, ConstructionSite } from './construction-sites';
 import type { ParsedMap } from './load-tiled-map';
 
@@ -173,5 +173,132 @@ describe('validatePlacements', () => {
       ])
     ).toMatch(/tower-2/);
     expect(validatePlacements(undefined, [{ site: 'tower-1', level: 'grass' }])).toBeDefined();
+  });
+});
+
+describe('stampBuildings', () => {
+  const tileset = {
+    firstgid: 1,
+    tileWidth: 40,
+    tileHeight: 40,
+    tileCount: 100,
+    columns: 10,
+    imageUrl: '',
+  };
+
+  /** A 6x4 county with terrain gid 1 everywhere and one 2x2 tower site at (2,1). */
+  function countyMap(): ParsedMap {
+    return {
+      width: 6,
+      height: 4,
+      tileSize: 40,
+      collision: new Uint8Array(24),
+      spawns: [],
+      tileset,
+      tileLayers: [
+        { name: 'terrain', visible: true, data: Array<number>(24).fill(1) },
+        { name: 'ruined', visible: false, data: Array<number>(24).fill(7) },
+      ],
+      objectLayers: [
+        {
+          name: 'constructions',
+          visible: true,
+          objects: [
+            {
+              name: 'tower-1',
+              type: 'tower',
+              x: 0,
+              y: 0,
+              width: 0,
+              height: 0,
+              point: true,
+              properties: { levels: 'grass', 'footprint:grass': '2,1,2,2' },
+            },
+          ],
+        },
+      ],
+    };
+  }
+
+  /** A 4x4 buildings map whose tower prefab sits at (1,2) with one empty intact cell. */
+  function buildingsMap(): ParsedMap {
+    const intact = Array<number>(16).fill(0);
+    // Prefab rect (1,2) 2x2: cells (1,2) (2,2) (1,3) (2,3).
+    intact[2 * 4 + 1] = 50;
+    intact[2 * 4 + 2] = 0;
+    intact[3 * 4 + 1] = 52 + 0x80000000;
+    intact[3 * 4 + 2] = 53;
+    // A stray gid outside the prefab must not be copied.
+    intact[0] = 99;
+    return {
+      width: 4,
+      height: 4,
+      tileSize: 40,
+      collision: new Uint8Array(16),
+      spawns: [],
+      tileset,
+      tileLayers: [{ name: 'intact', visible: true, data: intact }],
+      objectLayers: [
+        {
+          name: 'prefabs',
+          visible: true,
+          objects: [
+            {
+              name: 'tower-grass',
+              type: 'tower',
+              x: 40,
+              y: 80,
+              width: 80,
+              height: 80,
+              point: false,
+              properties: { category: 'tower', level: 'grass' },
+            },
+          ],
+        },
+      ],
+    };
+  }
+
+  const placements = [{ site: 'tower-1', level: 'grass' }];
+
+  it('overwrites terrain with non-empty intact gids and keeps terrain under empty ones', () => {
+    const stamped = stampBuildings(countyMap(), buildingsMap(), placements);
+    const terrain = stamped.tileLayers[0].data;
+    expect(terrain[1 * 6 + 2]).toBe(50);
+    expect(terrain[1 * 6 + 3]).toBe(1);
+    expect(terrain[2 * 6 + 2]).toBe(52 + 0x80000000);
+    expect(terrain[2 * 6 + 3]).toBe(53);
+  });
+
+  it('leaves every cell outside the footprint, and the other layers, unchanged', () => {
+    const county = countyMap();
+    const stamped = stampBuildings(county, buildingsMap(), placements);
+    const inside = new Set([1 * 6 + 2, 1 * 6 + 3, 2 * 6 + 2, 2 * 6 + 3]);
+    stamped.tileLayers[0].data.forEach((gid, i) => {
+      if (!inside.has(i)) {
+        expect(gid).toBe(1);
+      }
+    });
+    expect(stamped.tileLayers[1]).toBe(county.tileLayers[1]);
+    expect(stamped.collision).toBe(county.collision);
+  });
+
+  it('does not mutate the input map', () => {
+    const county = countyMap();
+    const before = [...county.tileLayers[0].data];
+    const stamped = stampBuildings(county, buildingsMap(), placements);
+    expect(stamped).not.toBe(county);
+    expect(county.tileLayers[0].data).toEqual(before);
+  });
+
+  it('returns the map as it is for no placements', () => {
+    const county = countyMap();
+    expect(stampBuildings(county, buildingsMap(), [])).toBe(county);
+  });
+
+  it('throws on a placement that does not resolve', () => {
+    expect(() =>
+      stampBuildings(countyMap(), buildingsMap(), [{ site: 'tower-9', level: 'grass' }])
+    ).toThrow(/tower-9/);
   });
 });

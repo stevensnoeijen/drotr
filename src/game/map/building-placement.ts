@@ -116,3 +116,73 @@ export function validatePlacements(
   }
   return undefined;
 }
+
+function requireTileLayer(map: Pick<ParsedMap, 'tileLayers'>, name: string): number {
+  const index = map.tileLayers.findIndex((layer) => layer.name === name);
+  if (index < 0) {
+    throw new Error(`Map has no "${name}" tile layer`);
+  }
+  return index;
+}
+
+/**
+ * A copy of `map` with each placement's prefab drawn onto its construction
+ * site: the prefab's non-empty `intact` gids (from `buildingsMap`, the
+ * parsed `buildings.tmj`) overwrite the county's `terrain` gids across the
+ * site's footprint. Where the prefab's `intact` cell is empty the county's
+ * own terrain stays, and nothing outside a footprint changes. Both maps
+ * share one tileset, so gids copy as they are, flip flags included. Neither
+ * input is mutated, and collision is left alone.
+ *
+ * Throws when a placement can't be resolved (see {@link resolvePlacement}),
+ * which a scenario's `validateMap` should have caught first.
+ */
+export function stampBuildings(
+  map: ParsedMap,
+  buildingsMap: ParsedMap,
+  placements: readonly BuildingPlacement[]
+): ParsedMap {
+  if (placements.length === 0) {
+    return map;
+  }
+
+  const sites = parseConstructionSites(map);
+  const prefabs = parseBuildingPrefabs(buildingsMap);
+  const terrainIndex = requireTileLayer(map, 'terrain');
+  const intact = buildingsMap.tileLayers[requireTileLayer(buildingsMap, 'intact')].data;
+  const terrain = [...map.tileLayers[terrainIndex].data];
+
+  for (const placement of placements) {
+    const resolved = resolvePlacement(sites, prefabs, placement);
+    if (resolved.error) {
+      throw new Error(resolved.error);
+    }
+    const { footprint, prefab } = resolved;
+    if (!prefab) {
+      throw new Error(`No prefab resolved for site "${placement.site}"`);
+    }
+    if (
+      footprint.x < 0 ||
+      footprint.y < 0 ||
+      footprint.x + footprint.width > map.width ||
+      footprint.y + footprint.height > map.height
+    ) {
+      throw new Error(`Construction site "${placement.site}" lies outside the map`);
+    }
+    for (let dy = 0; dy < footprint.height; dy++) {
+      for (let dx = 0; dx < footprint.width; dx++) {
+        const gid = intact[(prefab.rect.y + dy) * buildingsMap.width + prefab.rect.x + dx];
+        if (gid !== 0) {
+          terrain[(footprint.y + dy) * map.width + footprint.x + dx] = gid;
+        }
+      }
+    }
+  }
+
+  return {
+    ...map,
+    tileLayers: map.tileLayers.map((layer, index) =>
+      index === terrainIndex ? { ...layer, data: terrain } : layer
+    ),
+  };
+}
