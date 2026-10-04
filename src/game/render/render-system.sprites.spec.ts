@@ -9,6 +9,7 @@ import type { Team } from '~/game/ecs/components';
 import type { Entity } from '~/game/ecs/entity';
 import { createQueries } from '~/game/ecs/world';
 import { committedAtlas, committedUnitSprites } from '~/test/unit-sprites-fixture';
+import { arcOffset } from './projectile-arc';
 import { RenderSystem, spriteScale } from './render-system';
 import { DIRECTIONS } from './sprites/animation-key';
 import type { UnitSprites } from './sprites/unit-sprites';
@@ -195,6 +196,64 @@ describe('RenderSystem sprite views', () => {
 
       expect(viewOf(parent, BOLT_VIEW).position.x).toBe(30);
       expect(viewOf(parent, BOLT_VIEW).position.y).toBe(12);
+    });
+
+    describe('flight arc', () => {
+      /** Fires a rock (from a crossbow soldier's box) due east, 3 cells away. */
+      function fireRock(world: World<Entity>, spawn: ReturnType<typeof setup>['spawn']) {
+        const shooter = spawn('crossbowsoldier', 'blue', 16, 0);
+        shooter.ranged!.projectile = 'rock';
+        const target = spawn('swordsmen', 'red', 16, 3);
+        fireProjectile(
+          world,
+          shooter as RangedAttacker,
+          target as With<Entity, 'transform'>,
+          target.id!,
+          16
+        );
+        const [rock] = world.with('projectile');
+        return rock;
+      }
+
+      it('draws a rock as its own sprite at the firer scale', () => {
+        const { world, parent, spawn } = setup();
+        fireRock(world, spawn);
+
+        expect(spriteOf(parent, BOLT_VIEW).textures).toBe(animation('rock.neutral.move.e'));
+        expect(spriteOf(parent, BOLT_VIEW).scale.x).toBe(spriteOf(parent, 0).scale.x);
+      });
+
+      it('lifts a rock off the ground line by the arc offset, leaving its position alone', () => {
+        const { world, parent, spawn, system } = setup();
+        const rock = fireRock(world, spawn);
+        const { launchDistance } = rock.projectile!;
+        const sprite = spriteOf(parent, BOLT_VIEW);
+
+        system.sync();
+        expect(sprite.y).toBeCloseTo(0);
+
+        rock.projectile!.traveled = launchDistance / 2;
+        const position = { ...rock.transform!.position };
+        system.sync();
+        expect(sprite.y).toBeCloseTo(-arcOffset(0.5, launchDistance));
+        expect(sprite.y).toBeLessThan(0);
+        expect(rock.transform!.position).toEqual(position);
+        expect(viewOf(parent, BOLT_VIEW).position.y).toBe(position.y);
+
+        rock.projectile!.traveled = launchDistance;
+        system.sync();
+        expect(sprite.y).toBeCloseTo(0);
+      });
+
+      it('never lifts a bolt', () => {
+        const { world, parent, spawn, system } = setup();
+        const { bolt } = fireBolt(world, spawn);
+
+        bolt.projectile!.traveled = bolt.projectile!.launchDistance / 2;
+        system.sync();
+
+        expect(spriteOf(parent, BOLT_VIEW).y).toBe(0);
+      });
     });
 
     it('leaves no view or children behind once the bolt is removed', () => {

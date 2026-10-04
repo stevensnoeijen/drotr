@@ -34,6 +34,7 @@ function makeProjectile(
       sourceTeam: 'blue',
       targetId,
       maxRange,
+      launchDistance: maxRange,
       traveled: 0,
     },
   });

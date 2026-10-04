@@ -3,13 +3,14 @@ import type { Query, With } from 'miniplex';
 
 import type { UnitType } from '~/game/data/units';
 import type { Entity } from '~/game/ecs/entity';
-import type { Renderable } from '~/game/ecs/components';
+import type { Projectile, Renderable } from '~/game/ecs/components';
 import {
   animationKey,
   type AnimationKey,
   type AnimationTeam,
   type UnitAction,
 } from './sprites/animation-key';
+import { arcOffset, flightProgress, isArcingProjectile } from './projectile-arc';
 import { directionOf, unitActionOf } from './sprites/unit-animation';
 import { playableDirection, type UnitManifest } from './sprites/unit-manifest';
 import {
@@ -237,6 +238,20 @@ function spriteStateOf(entity: RenderableEntity): {
  */
 export function projectileSpriteScale(renderable: Renderable, firer: UnitManifest): number {
   return spriteScale(renderable, firer);
+}
+
+/**
+ * How far above its ground position a flying projectile is drawn, in world
+ * units: 0 for one that flies flat (a bolt), the fake arc for one that lobs.
+ */
+function projectileLift(projectile: Projectile): number {
+  if (!isArcingProjectile(projectile.type)) {
+    return 0;
+  }
+  return arcOffset(
+    flightProgress(projectile.traveled, projectile.launchDistance),
+    projectile.launchDistance
+  );
 }
 
 /** What a sprite entity should be showing right now, from its ECS state. */
@@ -507,6 +522,9 @@ export class RenderSystem {
       }
       if (view.animation) {
         syncAnimation(view.animation, entity);
+        // A lobbed projectile is drawn lifted off its ground position; the
+        // simulated position (the container's) stays on the ground line.
+        view.animation.sprite.y = entity.projectile ? -projectileLift(entity.projectile) : 0;
       }
 
       if (view.selectionMarks) {

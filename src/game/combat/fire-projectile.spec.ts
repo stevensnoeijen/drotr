@@ -42,6 +42,7 @@ describe('fireProjectile', () => {
       sourceTeam: 'blue',
       targetId: 2,
       maxRange: 15 * DEFAULT_CELL_SIZE,
+      launchDistance: 100,
       traveled: 0,
     });
     // Aimed straight up (target due north) at the firer's projectile speed.
