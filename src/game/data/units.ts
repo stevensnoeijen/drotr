@@ -7,6 +7,8 @@ import juggernautData from './units/juggernaut.json';
 import catapultData from './units/catapult.json';
 import cannonData from './units/cannon.json';
 import boltData from './units/bolt.json';
+import rockData from './units/rock.json';
+import impactDirtData from './units/impact-dirt.json';
 
 /**
  * The kinds of unit in the game. Names and starting HP match
@@ -19,17 +21,33 @@ import boltData from './units/bolt.json';
  * which are not units: they are listed here only so their sprites go through
  * the unit sprite pipeline (frame map, shared atlas, manifest) like any
  * unit's. They are never spawned as units.
+ *
+ * The same goes for the effects (see {@link EFFECT_UNIT_TYPES}).
  */
-export const UNIT_TYPES = ['swordsmen', 'knight', 'crossbowsoldier', 'juggernaut', 'catapult', 'cannon', 'bolt'] as const;
+export const UNIT_TYPES = ['swordsmen', 'knight', 'crossbowsoldier', 'juggernaut', 'catapult', 'cannon', 'bolt', 'rock', 'impact-dirt'] as const;
 export type UnitType = (typeof UNIT_TYPES)[number];
 
 /**
  * The {@link UNIT_TYPES} that are fired projectiles rather than units: a
- * crossbow's bolt. One only ever exists as a fired `Projectile` entity (see
+ * crossbow's bolt or a catapult's rock. One only ever exists as a fired `Projectile` entity (see
  * `fireProjectile`), which has no `unitType`; `spawnUnit` refuses them.
  */
-export const PROJECTILE_UNIT_TYPES = ['bolt'] as const satisfies readonly UnitType[];
+export const PROJECTILE_UNIT_TYPES = ['bolt', 'rock'] as const satisfies readonly UnitType[];
 export type ProjectileUnitType = (typeof PROJECTILE_UNIT_TYPES)[number];
+
+/**
+ * The {@link UNIT_TYPES} that are short-lived visual effects rather than
+ * units: the dirt burst a rock leaves where it lands. One only ever exists as
+ * an `Effect` entity (see `spawnEffect`), which has no `unitType`;
+ * `spawnUnit` refuses them.
+ */
+export const EFFECT_UNIT_TYPES = ['impact-dirt'] as const satisfies readonly UnitType[];
+export type EffectUnitType = (typeof EFFECT_UNIT_TYPES)[number];
+
+/** Whether `type` is an effect (see {@link EFFECT_UNIT_TYPES}), not a unit. */
+export function isEffectUnitType(type: UnitType): type is EffectUnitType {
+  return (EFFECT_UNIT_TYPES as readonly UnitType[]).includes(type);
+}
 
 /** Whether `type` is a projectile (see {@link PROJECTILE_UNIT_TYPES}), not a unit. */
 export function isProjectileUnitType(type: UnitType): type is ProjectileUnitType {
@@ -98,12 +116,13 @@ export interface UnitDefinition {
   /** Detection/aggro range in map tiles, converted to cells by `spawnUnit`. */
   aggroRange?: number;
   /**
-   * Whether this unit type fights with a fired projectile rather than
-   * instant melee damage — read by `CombatSystem` to fire a travelling
-   * `Projectile` via `fireProjectile` once a swing lands. `crossbowsoldier`
-   * is the only unit that sets this so far.
+   * The projectile this unit type fights with, rather than instant melee
+   * damage — `spawnUnit` copies it to `Ranged.projectile`, and
+   * `CombatSystem` fires a travelling `Projectile` of this type via
+   * `fireProjectile` once a swing lands. `crossbowsoldier` fires bolts and
+   * `catapult` rocks; omitted for melee units.
    */
-  projectile?: boolean;
+  projectile?: ProjectileUnitType;
   /**
    * Seconds into the attack swing at which a projectile unit looses its
    * shot, matching the attack animation's release frame (`hitFrame / fps`
@@ -137,6 +156,11 @@ export const units: Record<UnitType, UnitDefinition> = {
   // Only the minimum the type requires: one cell in size, no combat stats,
   // and a placeholder health, since a bolt is never spawned as a unit.
   bolt: boltData as UnitDefinition,
+  // A catapult's rock: a projectile like the bolt, with the same minimal data.
+  rock: rockData as UnitDefinition,
+  // A dirt burst: an effect, not a unit (see `EFFECT_UNIT_TYPES`), with the
+  // same minimal data as the projectiles.
+  'impact-dirt': impactDirtData as UnitDefinition,
 };
 
 /** Every unit not given an explicit `footprint` occupies exactly one cell. */

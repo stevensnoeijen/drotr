@@ -1,0 +1,7 @@
+{
+  "type": "rock",
+  "size": { "width": 0.5, "height": 0.5 },
+  "shape": "circle",
+  "health": 1,
+  "assets": null
+}

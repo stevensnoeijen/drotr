@@ -12,10 +12,10 @@ import type { UnitManifest } from './unit-manifest';
  * unit's frames are missing. A unit is moved over by packing its frames into
  * the atlas and adding its type here.
  *
- * It also lists the projectiles a ranged unit fires (`'bolt'`), which are
+ * It also lists the projectiles a ranged unit fires (`'bolt'`, `'rock'`) and the effects (`'impact-dirt'`), which are
  * always sprites: a fired projectile has no shape to fall back to.
  */
-export const SPRITE_UNIT_TYPES: readonly UnitType[] = ['swordsmen', 'crossbowsoldier', 'knight', 'bolt'];
+export const SPRITE_UNIT_TYPES: readonly UnitType[] = ['swordsmen', 'crossbowsoldier', 'knight', 'bolt', 'rock', 'impact-dirt'];
 
 /** Whether entities of `type` are drawn as sprites (see {@link SPRITE_UNIT_TYPES}). */
 export function isSpriteUnitType(type: UnitType | undefined): type is UnitType {

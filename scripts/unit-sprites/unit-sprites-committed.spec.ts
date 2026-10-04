@@ -18,6 +18,7 @@ import {
   unitManifestPath,
   validateUnitManifest,
 } from '~/game/render/sprites/unit-manifest';
+import { EFFECT_ANIMATIONS } from '~/game/data/effects';
 import { MAX_SWING_SECONDS } from '~/game/systems/combat-system';
 import { DEATH_REMOVAL_DELAY_SECONDS } from '~/game/systems/death-system';
 import { TEAL_COLOR_KEY } from '~/lib/art/rgba';
@@ -115,6 +116,8 @@ describe('committed unit pixels', () => {
     ['catapult', '4134a922e9f4f4b18efd752e9093ab7363e67271'],
     ['cannon', '78e7b786d65089a7a350f924f92d144c0658d58b'],
     ['bolt', '8076f4fb3f8872a8ba41863f97721ce34612899d'],
+    ['rock', '2d1fdc43237a6b790a54fdf59657ca3b9aa39874'],
+    ['impact-dirt', '7ed9768be1d87c72624780807ac34607c963a893'],
   ] as const)('leaves the %s frames unchanged', (unit, hash) => {
     expect(unitPixelHash(unit)).toBe(hash);
   });
@@ -169,8 +172,10 @@ describe.each(['swordsmen', 'crossbowsoldier', 'knight', 'juggernaut', 'catapult
 
   it('plays the attack within one swing and lands the hit on a real frame', () => {
     // A ranged unit's swing is its whole attack cooldown, not the melee cap.
+    // A unit with a projectile but no combat stats yet (the catapult) keeps
+    // the melee cap.
     const swingSeconds = unitDefinitions[unit].projectile
-      ? unitDefinitions[unit].attackCooldown!
+      ? (unitDefinitions[unit].attackCooldown ?? MAX_SWING_SECONDS)
       : MAX_SWING_SECONDS;
     expect(seconds('attack')).toBeLessThanOrEqual(swingSeconds);
     expect(actions.attack!.hitFrame).toBeLessThan(actions.attack!.frames);
@@ -336,5 +341,52 @@ describe('committed bolt', () => {
       (d) => sheet.frames[animations[`bolt.neutral.move.${d}`][0]].frame
     );
     expect(others).not.toContainEqual(frame);
+  });
+});
+
+describe('committed rock', () => {
+  const manifest = parseUnitManifest(readJson(unitManifestPath('rock')));
+  const animations = sheet.animations as Record<string, string[]>;
+
+  it('only flies: a single still, team-neutral move frame', () => {
+    expect(manifest.teams).toEqual(['neutral']);
+    expect(manifest.actions).toEqual({ move: { frames: 1, fps: 0, loop: false } });
+    expect(manifest.frameSize).toEqual([8, 8]);
+    expect(manifest.anchor).toEqual([0.5, 0.5]);
+  });
+
+  it('reuses one 8x8 frame for all eight directions', () => {
+    const frames = DIRECTIONS.map((direction) => {
+      const names = animations[`rock.neutral.move.${direction}`];
+      expect(names).toHaveLength(1);
+      const { frame } = sheet.frames[names[0]];
+      expect([frame.w, frame.h]).toEqual([8, 8]);
+      return frame;
+    });
+    expect(new Set(frames.map((f) => `${f.x},${f.y}`)).size).toBe(1);
+  });
+});
+
+describe('committed impact-dirt', () => {
+  const manifest = parseUnitManifest(readJson(unitManifestPath('impact-dirt')));
+  const animations = sheet.animations as Record<string, string[]>;
+
+  it('plays its frames once, at the speed the effect lifetime assumes', () => {
+    expect(manifest.teams).toEqual(['neutral']);
+    expect(manifest.actions).toEqual({
+      move: { frames: EFFECT_ANIMATIONS['impact-dirt'].frames, fps: EFFECT_ANIMATIONS['impact-dirt'].fps, loop: false },
+    });
+    expect(manifest.frameSize).toEqual([64, 64]);
+  });
+
+  it('has eight distinct frames, shared by every direction', () => {
+    const names = animations['impact-dirt.neutral.move.n'];
+    expect(names).toHaveLength(8);
+    const spots = names.map((n) => `${sheet.frames[n].frame.x},${sheet.frames[n].frame.y}`);
+    expect(new Set(spots).size).toBe(8);
+    for (const direction of DIRECTIONS) {
+      const other = animations[`impact-dirt.neutral.move.${direction}`];
+      expect(other.map((n) => sheet.frames[n].frame)).toEqual(names.map((n) => sheet.frames[n].frame));
+    }
   });
 });

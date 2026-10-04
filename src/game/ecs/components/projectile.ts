@@ -40,6 +40,13 @@ export interface Projectile {
    * reaches a target that retreats mid-flight.
    */
   maxRange: number;
+  /**
+   * Distance, in world units, from the firer to the target at the moment of
+   * firing. Only the renderer reads it, to tell how far along its flight a
+   * lobbed projectile is (see `projectile-arc.ts`); the simulation never
+   * does.
+   */
+  launchDistance: number;
   /** World units travelled so far, advanced by `ProjectileSystem` each tick. */
   traveled: number;
 }

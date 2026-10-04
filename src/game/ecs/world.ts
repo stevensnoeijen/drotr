@@ -72,6 +72,11 @@ export function createQueries(world: World<Entity>) {
      * iterates this to move, hit-test and expire each one.
      */
     projectiles: world.with('transform', 'velocity', 'damage', 'projectile'),
+    /**
+     * Short-lived visual effects, aged and removed by
+     * {@link file://../systems/effect-system.ts#createEffectSystem}.
+     */
+    effects: world.with('transform', 'effect'),
   } as const;
 }
 

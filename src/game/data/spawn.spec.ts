@@ -239,12 +239,42 @@ describe('spawnUnit', () => {
     expect(unit.ranged?.releaseTime).toBe(units.crossbowsoldier.attackReleaseTime);
   });
 
+  it('arms a catapult with rocks', () => {
+    const world = new World<Entity>();
+
+    const unit = spawnUnit(world, {
+      type: 'catapult',
+      team: 'blue',
+      position: { x: 0, y: 0 },
+    }, DEFAULT_CELL_SIZE);
+
+    expect(unit.ranged?.projectile).toBe('rock');
+  });
+
+  it('refuses to spawn a rock, which only exists once fired, and adds nothing', () => {
+    const world = new World<Entity>();
+
+    expect(() =>
+      spawnUnit(world, { type: 'rock', team: 'blue', position: { x: 0, y: 0 } }, DEFAULT_CELL_SIZE)
+    ).toThrow('Cannot spawn "rock" as a unit: it is a projectile, which only exists once fired');
+    expect(world.entities).toHaveLength(0);
+  });
+
   it('refuses to spawn a bolt, which only exists once fired, and adds nothing', () => {
     const world = new World<Entity>();
 
     expect(() =>
       spawnUnit(world, { type: 'bolt', team: 'blue', position: { x: 0, y: 0 } }, DEFAULT_CELL_SIZE)
     ).toThrow('Cannot spawn "bolt" as a unit: it is a projectile, which only exists once fired');
+    expect(world.entities).toHaveLength(0);
+  });
+
+  it('refuses to spawn an effect, which only exists once spawned as one, and adds nothing', () => {
+    const world = new World<Entity>();
+
+    expect(() =>
+      spawnUnit(world, { type: 'impact-dirt', team: 'blue', position: { x: 0, y: 0 } }, DEFAULT_CELL_SIZE)
+    ).toThrow('Cannot spawn "impact-dirt" as a unit: it is an effect');
     expect(world.entities).toHaveLength(0);
   });
 

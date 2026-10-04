@@ -32,6 +32,7 @@ import { createMoveTargetSystem } from '~/game/systems/move-target-system';
 import { createMoveVelocitySystem } from '~/game/systems/move-velocity-system';
 import { createPendingMoveOrderSystem } from '~/game/systems/pending-move-order-system';
 import { createPerceptionSystem, runPerceptionScan } from '~/game/systems/perception-system';
+import { createEffectSystem } from '~/game/systems/effect-system';
 import { createProjectileSystem } from '~/game/systems/projectile-system';
 import { createSeekSystem } from '~/game/systems/seek-system';
 import { createSelectionBoxSystem, SelectionBoxDrag } from '~/game/systems/selection-box-system';
@@ -470,6 +471,9 @@ export default function GameCanvas({
       // or that are still in flight from an earlier tick, so a killing hit
       // is reflected in `health.current` before DeathSystem marks the frame.
       runner.add(createProjectileSystem(queries));
+      // After the projectiles, so an impact effect spawned this tick starts
+      // aging from the next one.
+      runner.add(createEffectSystem(queries));
       // Last of all: marks anything the combat pass just brought to 0 HP,
       // and removes anything whose removal delay elapsed this tick — after
       // every system above has had its chance to read `health.current` for

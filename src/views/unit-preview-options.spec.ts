@@ -244,3 +244,33 @@ describe('a projectile like the bolt', () => {
     expect(new Set(frames).size).toBe(DIRECTIONS.length);
   });
 });
+
+describe('the rock', () => {
+  it('is listed from the committed atlas, as a neutral move in every direction', () => {
+    const animations = committedAtlasData().animations!;
+    expect(atlasUnits(Object.keys(animations))).toContain('rock');
+
+    const manifest = committedManifest('rock');
+    for (const direction of DIRECTIONS) {
+      const selection = resolveSelection(['rock'], { rock: manifest }, { unit: 'rock', direction })!;
+      expect(selection).toMatchObject({ unit: 'rock', team: 'neutral', action: 'move', direction });
+      const names =
+        animations[animationKey(selection.unit, selection.team, selection.action, selection.direction)];
+      expect(names).toHaveLength(1);
+    }
+  });
+});
+
+describe('the impact-dirt effect', () => {
+  it('is listed from the committed atlas, as an 8-frame neutral move', () => {
+    const animations = committedAtlasData().animations!;
+    expect(atlasUnits(Object.keys(animations))).toContain('impact-dirt');
+
+    const manifest = committedManifest('impact-dirt');
+    const selection = resolveSelection(['impact-dirt'], { 'impact-dirt': manifest }, { unit: 'impact-dirt' })!;
+    expect(selection).toMatchObject({ unit: 'impact-dirt', team: 'neutral', action: 'move' });
+    const names =
+      animations[animationKey(selection.unit, selection.team, selection.action, selection.direction)];
+    expect(names).toHaveLength(8);
+  });
+});

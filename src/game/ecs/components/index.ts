@@ -3,6 +3,7 @@ export type { AttackCooldown } from '~/game/ecs/components/attack-cooldown';
 export type { AttackRange } from '~/game/ecs/components/attack-range';
 export type { AttackSwing } from '~/game/ecs/components/attack-swing';
 export type { CellOccupancy } from '~/game/ecs/components/cell-occupancy';
+export type { Effect } from '~/game/ecs/components/effect';
 export type { Damage } from '~/game/ecs/components/damage';
 export type { Dead } from '~/game/ecs/components/dead';
 export type { Footprint } from '~/game/ecs/components/footprint';

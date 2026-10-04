@@ -82,6 +82,7 @@ export function fireProjectile(
       sourceTeam: attacker.team,
       targetId,
       maxRange: attacker.attackRange.value * cellSize * MAX_FLIGHT_RANGE_FACTOR,
+      launchDistance: distance,
       traveled: 0,
     },
     renderable: {
