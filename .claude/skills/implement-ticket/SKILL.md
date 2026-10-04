@@ -151,4 +151,5 @@ back to do that before proceeding. Do not push or open the PR yourself
 either. Show the user a summary
 of what it did and explicitly ask for approval to push the branch and open
 the PR. Only run `git push`/`gh pr create` (or resume the subagent to do so)
-after they confirm.
+after they confirm. The PR title must be prefixed with the ticket id:
+`gh pr create --title "#<issue-number> <title>" --body "..."`.
