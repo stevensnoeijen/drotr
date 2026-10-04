@@ -1,5 +1,5 @@
 import { spawnUnit } from '~/game/data/spawn';
-import type { ProjectileUnitType, UnitType } from '~/game/data/units';
+import type { EffectUnitType, ProjectileUnitType, UnitType } from '~/game/data/units';
 import type { ParsedMap } from '~/game/map/load-tiled-map';
 import { CELLS_PER_TILE, cellSizeOf } from '~/lib/grid';
 import type { Scenario } from './types';
@@ -20,9 +20,9 @@ import type { Scenario } from './types';
  * can't include.
  */
 // The juggernaut, catapult and cannon have no combat stats yet, so they are
-// not part of the roster; a bolt is a projectile, never spawned as a unit.
+// not part of the roster; a projectile or an effect is never spawned as a unit.
 const UNIT_COUNTS: Record<
-  Exclude<UnitType, 'juggernaut' | 'catapult' | 'cannon' | ProjectileUnitType>,
+  Exclude<UnitType, 'juggernaut' | 'catapult' | 'cannon' | ProjectileUnitType | EffectUnitType>,
   number
 > = {
   swordsmen: 60,

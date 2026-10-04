@@ -1,5 +1,7 @@
 import type { World } from 'miniplex';
 
+import { spawnEffect } from '~/game/combat/spawn-effect';
+import { IMPACT_EFFECTS } from '~/game/data/effects';
 import type { Entity } from '~/game/ecs/entity';
 import type { Queries } from '~/game/ecs/world';
 import { findEntityById } from '~/game/ecs/world';
@@ -19,7 +21,8 @@ const HIT_EPSILON = 0.01;
 /**
  * Advances every fired `Projectile` (`queries.projectiles`) one fixed step:
  * moves it toward wherever it was aimed, and removes it the instant one of
- * three things happens —
+ * three things happens (a hit by a projectile with an impact effect, such as
+ * the rock, also spawns that effect where it lands) —
  *
  * - it reaches its target this tick, in which case `Damage` is applied to
  *   the target's `health.current` exactly once, on the tick it lands (never
@@ -90,6 +93,16 @@ export function createProjectileSystem(queries: Queries): System {
       // expiry check below and is wrongly scored a miss instead of a hit.
       if (distance <= step + HIT_EPSILON) {
         target.health.current = Math.max(0, target.health.current - entity.damage.value);
+        // Only the rock leaves a mark; a bolt just vanishes.
+        const impact = IMPACT_EFFECTS[entity.projectile.type];
+        if (impact && entity.renderable) {
+          spawnEffect(world, {
+            type: impact,
+            position: target.transform.position,
+            sourceUnitType: entity.projectile.sourceUnitType,
+            renderable: entity.renderable,
+          });
+        }
         world.remove(entity);
         continue;
       }

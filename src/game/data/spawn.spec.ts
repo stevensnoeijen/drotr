@@ -269,6 +269,15 @@ describe('spawnUnit', () => {
     expect(world.entities).toHaveLength(0);
   });
 
+  it('refuses to spawn an effect, which only exists once spawned as one, and adds nothing', () => {
+    const world = new World<Entity>();
+
+    expect(() =>
+      spawnUnit(world, { type: 'impact-dirt', team: 'blue', position: { x: 0, y: 0 } }, DEFAULT_CELL_SIZE)
+    ).toThrow('Cannot spawn "impact-dirt" as a unit: it is an effect');
+    expect(world.entities).toHaveLength(0);
+  });
+
   it('is unaffected by later mutation of the caller-supplied position', () => {
     const world = new World<Entity>();
     const position = { x: 1, y: 2 };

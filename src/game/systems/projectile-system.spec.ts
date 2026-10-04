@@ -20,16 +20,23 @@ function makeTarget(world: World<Entity>, x: number, health = 10): Entity {
 
 function makeProjectile(
   world: World<Entity>,
-  options: { targetId: number; damage?: number; maxRange?: number; vx?: number }
+  options: {
+    targetId: number;
+    damage?: number;
+    maxRange?: number;
+    vx?: number;
+    type?: 'bolt' | 'rock';
+  }
 ): Entity {
-  const { targetId, damage = 4, maxRange = 1000, vx = SPEED } = options;
+  const { targetId, damage = 4, maxRange = 1000, vx = SPEED, type = 'bolt' } = options;
   return world.add({
     id: nextId++,
     transform: { position: { x: 0, y: 0 }, rotation: 0 },
     velocity: { x: vx, y: 0 },
     damage: { value: damage },
+    renderable: { shape: 'circle', color: 0xffffff, size: 6, extent: 8 },
     projectile: {
-      type: 'bolt',
+      type,
       sourceUnitType: 'crossbowsoldier',
       sourceTeam: 'blue',
       targetId,
@@ -252,6 +259,57 @@ describe('createProjectileSystem', () => {
 
       expect(bystander.health!.current).toBe(10);
       expect(queries.projectiles.size).toBe(0);
+    });
+  });
+
+  describe('impact effect', () => {
+    function run(options: { type: 'bolt' | 'rock'; targetX: number; maxRange?: number; kill?: boolean }) {
+      const world = new World<Entity>();
+      const queries = createQueries(world);
+      const system = createProjectileSystem(queries);
+      const target = makeTarget(world, options.targetX);
+      const projectile = makeProjectile(world, {
+        targetId: target.id!,
+        type: options.type,
+        maxRange: options.maxRange,
+      });
+      if (options.kill) {
+        world.remove(target);
+      }
+      for (let i = 0; i < 60 && world.entities.includes(projectile); i++) {
+        system(world, DT);
+      }
+      return { world, queries, target };
+    }
+
+    it('spawns one dirt burst at the impact point when a rock hits', () => {
+      const { queries, target } = run({ type: 'rock', targetX: 100 });
+
+      expect(queries.effects.size).toBe(1);
+      const [effect] = queries.effects;
+      expect(effect.effect).toMatchObject({ type: 'impact-dirt', sourceUnitType: 'crossbowsoldier' });
+      expect(effect.transform.position).toEqual(target.transform!.position);
+      expect(effect.unitType).toBeUndefined();
+    });
+
+    it('spawns none when a bolt hits', () => {
+      const { queries, target } = run({ type: 'bolt', targetX: 100 });
+
+      expect(target.health!.current).toBeLessThan(10);
+      expect(queries.effects.size).toBe(0);
+    });
+
+    it('spawns none when a rock expires out of range', () => {
+      const { queries, target } = run({ type: 'rock', targetX: 1000, maxRange: 50 });
+
+      expect(target.health!.current).toBe(10);
+      expect(queries.effects.size).toBe(0);
+    });
+
+    it('spawns none when the rock\'s target is gone', () => {
+      const { queries } = run({ type: 'rock', targetX: 100, kill: true });
+
+      expect(queries.effects.size).toBe(0);
     });
   });
 });

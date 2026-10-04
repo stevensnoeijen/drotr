@@ -7,6 +7,7 @@ import type {
   CellOccupancy,
   Damage,
   Dead,
+  Effect,
   Footprint,
   Health,
   Hoverable,
@@ -60,4 +61,5 @@ export interface Entity {
   dead?: Dead;
   ranged?: Ranged;
   projectile?: Projectile;
+  effect?: Effect;
 }

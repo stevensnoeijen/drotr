@@ -4,7 +4,7 @@ import { animationSpeed, isSpriteUnitType, SPRITE_UNIT_TYPES } from './unit-spri
 
 describe('SPRITE_UNIT_TYPES', () => {
   it('renders swordsmen, crossbow soldiers, knights, bolts and rocks as sprites', () => {
-    expect(SPRITE_UNIT_TYPES).toEqual(['swordsmen', 'crossbowsoldier', 'knight', 'bolt', 'rock']);
+    expect(SPRITE_UNIT_TYPES).toEqual(['swordsmen', 'crossbowsoldier', 'knight', 'bolt', 'rock', 'impact-dirt']);
   });
 
   it('is what isSpriteUnitType decides by', () => {
@@ -13,6 +13,7 @@ describe('SPRITE_UNIT_TYPES', () => {
     expect(isSpriteUnitType('crossbowsoldier')).toBe(true);
     expect(isSpriteUnitType('bolt')).toBe(true);
     expect(isSpriteUnitType('rock')).toBe(true);
+    expect(isSpriteUnitType('impact-dirt')).toBe(true);
     expect(isSpriteUnitType('catapult')).toBe(false);
     expect(isSpriteUnitType(undefined)).toBe(false);
   });

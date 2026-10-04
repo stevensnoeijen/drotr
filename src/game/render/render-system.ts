@@ -209,8 +209,8 @@ export function spriteScale(renderable: Renderable, manifest: UnitManifest): num
 
 /**
  * The sprite type, team set and action a sprite entity shows. A projectile
- * only ever flies, so it always plays its `move` frames, in its one
- * (neutral) colourway; a unit's come from its own type, team and state.
+ * only ever flies, and an effect only ever plays once, so each always plays
+ * its `move` frames, in its one (neutral) colourway; a unit's come from its own type, team and state.
  */
 function spriteStateOf(entity: RenderableEntity): {
   type: UnitType;
@@ -219,6 +219,9 @@ function spriteStateOf(entity: RenderableEntity): {
 } {
   if (entity.projectile) {
     return { type: entity.projectile.type, team: 'neutral', action: 'move' };
+  }
+  if (entity.effect) {
+    return { type: entity.effect.type, team: 'neutral', action: 'move' };
   }
   return {
     type: entity.unitType!,
@@ -358,7 +361,9 @@ function createSpriteAnimation(
  * `projectile.type`, showing the frame for the direction it travels and
  * drawn at its firer's scale (see {@link projectileSpriteScale}). Every
  * other entity gets a shape view: its primitive shape, turned to face
- * `Transform.rotation`. Both kinds share the same
+ * `Transform.rotation`. An effect (see `Effect`) gets a sprite view of its
+ * `effect.type` at the scale of the unit that caused it, and its view is
+ * destroyed when `EffectSystem` (or a world reset) removes it. Both kinds share the same
  * selection marks, health bar and z-order (see `EntityView`). The sprite
  * textures belong to Pixi's `Assets` cache and are shared; views are only
  * ever destroyed with `{ children: true }`, never their textures.
@@ -380,6 +385,16 @@ export class RenderSystem {
         entity,
         data,
         projectileSpriteScale(entity.renderable, firer.manifest)
+      );
+      container.addChild(view.animation.sprite);
+    } else if (entity.effect) {
+      const data = this.spriteData(entity.effect.type);
+      const source = this.spriteData(entity.effect.sourceUnitType);
+      // Drawn at the cause's world-per-art-pixel scale, like a projectile.
+      view.animation = createSpriteAnimation(
+        entity,
+        data,
+        projectileSpriteScale(entity.renderable, source.manifest)
       );
       container.addChild(view.animation.sprite);
     } else if (isSpriteUnitType(entity.unitType)) {

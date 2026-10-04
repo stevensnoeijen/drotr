@@ -2,6 +2,7 @@ import { World, type With } from 'miniplex';
 import { AnimatedSprite, Container, Graphics, type Spritesheet, type Ticker } from 'pixi.js';
 import { beforeAll, describe, expect, it } from 'vitest';
 
+import { spawnEffect } from '~/game/combat/spawn-effect';
 import { fireProjectile, type RangedAttacker } from '~/game/combat/fire-projectile';
 import { spawnUnit, cellPosition } from '~/game/data/spawn';
 import type { UnitType } from '~/game/data/units';
@@ -290,6 +291,67 @@ describe('RenderSystem sprite views', () => {
       // The bolt is laid out in its firer's box, so the firer's frame fits
       // it at the firer's own scale.
       expect(spriteScale(bolt.renderable!, crossbow)).toBe(20 / 32);
+    });
+  });
+
+  describe('effects', () => {
+    function addDirt(world: World<Entity>, spawn: ReturnType<typeof setup>['spawn']) {
+      const firer = spawn('crossbowsoldier', 'blue', 16, 0);
+      return spawnEffect(world, {
+        type: 'impact-dirt',
+        position: { x: 40, y: 8 },
+        sourceUnitType: 'crossbowsoldier',
+        renderable: firer.renderable!,
+      });
+    }
+
+    it('draws an impact as a lone sprite playing the dirt burst at the firer scale', () => {
+      const { world, parent, spawn } = setup();
+      addDirt(world, spawn);
+
+      const view = viewOf(parent, 1);
+      expect(view.children).toHaveLength(1);
+      const sprite = spriteOf(parent, 1);
+      expect(sprite.textures).toBe(animation('impact-dirt.neutral.move.n'));
+      expect(sprite.playing).toBe(true);
+      expect(sprite.loop).toBe(false);
+      expect(sprite.scale.x).toBe(spriteOf(parent, 0).scale.x);
+    });
+
+    it('positions the view at the effect', () => {
+      const { world, parent, spawn, system } = setup();
+      addDirt(world, spawn);
+
+      system.sync();
+
+      expect(viewOf(parent, 1).position.x).toBe(40);
+      expect(viewOf(parent, 1).position.y).toBe(8);
+    });
+
+    it('destroys the view, but not the shared textures, when the effect is removed', () => {
+      const { world, parent, spawn, system } = setup();
+      const effect = addDirt(world, spawn);
+      const view = viewOf(parent, 1);
+      const sprite = spriteOf(parent, 1);
+      const texture = sprite.texture;
+
+      world.remove(effect);
+
+      expect(system.size).toBe(1);
+      expect(parent.children).toHaveLength(1);
+      expect(view.destroyed).toBe(true);
+      expect(sprite.destroyed).toBe(true);
+      expect(texture.destroyed).toBe(false);
+    });
+
+    it('destroys the view when the render system is disposed with the effect alive', () => {
+      const { world, parent, spawn, system } = setup();
+      addDirt(world, spawn);
+      const view = viewOf(parent, 1);
+
+      system.dispose();
+
+      expect(view.destroyed).toBe(true);
     });
   });
 

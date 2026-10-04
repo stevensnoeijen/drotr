@@ -7,6 +7,7 @@ import { CELLS_PER_TILE, tilesToCells } from '~/lib/grid';
 import type { Point } from '~/lib/math/types';
 import {
   footprintOf,
+  isEffectUnitType,
   isProjectileUnitType,
   units,
   type UnitDefinition,
@@ -101,7 +102,7 @@ export interface SpawnUnitOptions {
  * actually reserves (`CellOccupancySystem`), making multi-cell occupancy
  * visible and debuggable rather than a one-cell dot.
  *
- * @throws {Error} for a projectile type such as `'bolt'` or `'rock'` (see
+ * @throws {Error} for a projectile type such as `'bolt'` or `'rock'`, or an effect such as `'impact-dirt'` (see
  * `PROJECTILE_UNIT_TYPES`): a projectile is never a unit, it only ever
  * exists as what `fireProjectile` fires.
  */
@@ -113,6 +114,11 @@ export function spawnUnit(
   if (isProjectileUnitType(type)) {
     throw new Error(
       `Cannot spawn "${type}" as a unit: it is a projectile, which only exists once fired`
+    );
+  }
+  if (isEffectUnitType(type)) {
+    throw new Error(
+      `Cannot spawn "${type}" as a unit: it is an effect, which only exists once spawned as one`
     );
   }
   const definition = units[type];
