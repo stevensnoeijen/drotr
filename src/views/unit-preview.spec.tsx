@@ -60,6 +60,11 @@ function frameCounts(stage: Container): number[] {
     .map((s) => s.textures.length);
 }
 
+/** Whether an animated sprite on the stage currently shows `frame` first. */
+function shows(stage: Container, frame: unknown): boolean {
+  return descendants(stage).some((o) => o instanceof AnimatedSprite && o.textures[0] === frame);
+}
+
 describe('UnitPreview catapult firing demo', () => {
   let container: HTMLDivElement;
   let root: Root;
@@ -105,16 +110,16 @@ describe('UnitPreview catapult firing demo', () => {
   /** Runs the page for `seconds` of fake time, collecting what is on stage. */
   async function run(stage: Container, seconds: number) {
     const seen = new Set<number>();
-    let peakEightFrame = 0;
+    let sawBurst = false;
+    const burstFrame = (mocks.sheet as Spritesheet).animations['impact-dirt.neutral.move.n'][0];
     for (let t = 0; t < seconds * 1000; t += 16) {
       await act(async () => {
         vi.advanceTimersByTime(16);
       });
-      const counts = frameCounts(stage);
-      for (const count of counts) seen.add(count);
-      peakEightFrame = Math.max(peakEightFrame, counts.filter((c) => c === 8).length);
+      for (const count of frameCounts(stage)) seen.add(count);
+      sawBurst ||= shows(stage, burstFrame);
     }
-    return { seen, peakEightFrame };
+    return { seen, sawBurst };
   }
 
   it('keeps the rock and the dirt burst selectable as units of their own', async () => {
@@ -147,13 +152,55 @@ describe('UnitPreview catapult firing demo', () => {
     const stage = await open('unit=catapult&action=attack&direction=e');
     act(() => checkbox('Attack with projectile')!.click());
 
-    const { seen, peakEightFrame } = await run(stage, 3);
+    const { seen, sawBurst } = await run(stage, 3);
 
-    // The one-frame rock in flight, then the 8-frame dirt burst on landing
-    // next to the catapult's own 8-frame attack.
+    // The one-frame rock in flight, then the dirt burst on landing.
     expect(seen.has(1)).toBe(true);
-    expect(peakEightFrame).toBe(2);
+    expect(sawBurst).toBe(true);
     expect(stage.children).toHaveLength(2);
+  });
+
+  it('fires once every 4 seconds: attack from frame 1, launch on frame 2, hold frame 8', async () => {
+    const stage = await open('unit=catapult&action=attack&direction=e');
+    act(() => checkbox('Attack with projectile')!.click());
+    const sheet = mocks.sheet as Spritesheet;
+    const rockFrame = sheet.animations['rock.neutral.move.e'][0];
+    const attackFrames = sheet.animations['catapult.neutral.attack.e'];
+    expect(attackFrames).toHaveLength(8);
+    const catapult = () =>
+      descendants(stage).find(
+        (o): o is AnimatedSprite => o instanceof AnimatedSprite && o.textures[0] === attackFrames[0]
+      )!;
+
+    let launches = 0;
+    let inFlight = false;
+    const frameAtLaunch: number[] = [];
+    const heldBetweenShots: number[] = [];
+    const frameAtRestart: number[] = [];
+    for (let t = 0; t < 9500; t += 16) {
+      await act(async () => {
+        vi.advanceTimersByTime(16);
+      });
+      const flying = shows(stage, rockFrame);
+      if (flying && !inFlight) {
+        launches++;
+        frameAtLaunch.push(catapult().currentFrame);
+      }
+      inFlight = flying;
+      // Well after the half-second attack, long before the next shot.
+      if (t > 2500 && t < 3500) heldBetweenShots.push(catapult().currentFrame);
+      // Just after the second shot starts.
+      if (t > 4000 && t < 4100) frameAtRestart.push(catapult().currentFrame);
+    }
+
+    // Shots at about 0 s, 4 s and 8 s; a looping attack would fire ~18 times.
+    expect(launches).toBe(3);
+    // The rock leaves while the second frame (index 1) is showing.
+    expect(frameAtLaunch).toEqual([1, 1, 1]);
+    // The catapult holds on frame 8 (index 7) instead of looping or idling.
+    expect(new Set(heldBetweenShots)).toEqual(new Set([7]));
+    // The next cycle restarts from the first frame.
+    expect(Math.min(...frameAtRestart)).toBeLessThanOrEqual(1);
   });
 
   it('draws no dirt burst when the impact is switched off', async () => {
@@ -161,11 +208,10 @@ describe('UnitPreview catapult firing demo', () => {
     act(() => checkbox('Attack with projectile')!.click());
     act(() => checkbox('Dirt impact')!.click());
 
-    const { seen, peakEightFrame } = await run(stage, 3);
+    const { seen, sawBurst } = await run(stage, 3);
 
     expect(seen.has(1)).toBe(true);
-    // Only the catapult's own 8 frames: the burst never appears.
-    expect(peakEightFrame).toBe(1);
+    expect(sawBurst).toBe(false);
   });
 
   it('removes the demo layer when the projectile checkbox is switched off', async () => {

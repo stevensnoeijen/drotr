@@ -26,6 +26,54 @@ import type { Point } from '~/lib/math/types';
 /** World units per second a demo rock flies. */
 const DEMO_ROCK_SPEED = 150;
 
+/**
+ * Seconds between two shots of the demo catapult, from the start of one
+ * attack to the start of the next. The attack plays once per shot from its
+ * first frame, then holds on its {@link DEMO_HOLD_FRAME} until the next one.
+ */
+export const DEMO_FIRE_INTERVAL_SECONDS = 4;
+
+/** Attack frame (counted from 1) the rock is launched on. */
+export const DEMO_LAUNCH_FRAME = 2;
+
+/**
+ * Attack frame (counted from 1) the catapult holds on until the next shot.
+ * An attack with fewer frames holds on its last one.
+ */
+export const DEMO_HOLD_FRAME = 8;
+
+/**
+ * The 0-based attack frame indices the demo launches on and holds on, for an
+ * attack animation of `frameCount` frames. Both are kept inside the animation.
+ */
+export function demoFrameIndices(frameCount: number): { launch: number; hold: number } {
+  const last = Math.max(0, frameCount - 1);
+  return {
+    launch: Math.min(DEMO_LAUNCH_FRAME - 1, last),
+    hold: Math.min(DEMO_HOLD_FRAME - 1, last),
+  };
+}
+
+/**
+ * Counts the time between shots: {@link FireTimer.advance} returns `true`
+ * on the step the next shot is due. Starts just after a shot.
+ */
+export interface FireTimer {
+  advance(dt: number): boolean;
+}
+
+export function createFireTimer(interval = DEMO_FIRE_INTERVAL_SECONDS): FireTimer {
+  let elapsed = 0;
+  return {
+    advance(dt) {
+      elapsed += dt;
+      if (elapsed < interval) return false;
+      elapsed -= interval;
+      return true;
+    },
+  };
+}
+
 /** World units per movement cell (a 40 px tile, two cells wide). */
 export const DEMO_CELL_SIZE = 20;
 

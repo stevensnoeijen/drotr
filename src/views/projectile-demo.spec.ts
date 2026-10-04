@@ -12,6 +12,11 @@ import { committedAtlas, committedManifest, committedUnitSprites } from '~/test/
 import {
   DEMO_FIRER_RENDERABLE,
   DEMO_FLIGHT_DISTANCE,
+  DEMO_FIRE_INTERVAL_SECONDS,
+  DEMO_HOLD_FRAME,
+  DEMO_LAUNCH_FRAME,
+  demoFrameIndices,
+  createFireTimer,
   createProjectileDemo,
   demoFlight,
 } from './projectile-demo';
@@ -53,6 +58,53 @@ describe('demoFlight', () => {
   it('lands east of the catapult when it faces east, and north when it faces north', () => {
     expect(demoFlight('e').to.x).toBeGreaterThan(demoFlight('e').from.x);
     expect(demoFlight('n').to.y).toBeLessThan(demoFlight('n').from.y);
+  });
+});
+
+describe('demoFrameIndices', () => {
+  it('launches on frame 2 and holds on frame 8, counted from 1', () => {
+    expect(DEMO_LAUNCH_FRAME).toBe(2);
+    expect(DEMO_HOLD_FRAME).toBe(8);
+    expect(demoFrameIndices(8)).toEqual({ launch: 1, hold: 7 });
+  });
+
+  it('holds on the last frame of a shorter attack', () => {
+    expect(demoFrameIndices(5)).toEqual({ launch: 1, hold: 4 });
+  });
+
+  it('keeps a single-frame attack inside its one frame', () => {
+    expect(demoFrameIndices(1)).toEqual({ launch: 0, hold: 0 });
+  });
+});
+
+describe('createFireTimer', () => {
+  it('fires a shot every 4 seconds', () => {
+    expect(DEMO_FIRE_INTERVAL_SECONDS).toBe(4);
+    const timer = createFireTimer();
+
+    const shots: number[] = [];
+    for (let i = 1; i <= 600; i++) {
+      if (timer.advance(1 / 60)) shots.push(i / 60);
+    }
+
+    expect(shots).toHaveLength(2);
+    expect(shots[0]).toBeCloseTo(4, 1);
+    expect(shots[1]).toBeCloseTo(8, 1);
+  });
+
+  it('does not fire before the interval has passed', () => {
+    const timer = createFireTimer(4);
+
+    expect(timer.advance(3.9)).toBe(false);
+    expect(timer.advance(0.2)).toBe(true);
+  });
+
+  it('keeps the remainder so slow frames do not stretch the cadence', () => {
+    const timer = createFireTimer(4);
+
+    expect(timer.advance(4.5)).toBe(true);
+    expect(timer.advance(3.4)).toBe(false);
+    expect(timer.advance(0.2)).toBe(true);
   });
 });
 

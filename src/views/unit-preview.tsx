@@ -23,8 +23,10 @@ import { spriteScale } from '~/game/render/render-system';
 import {
   DEMO_FIRER_RENDERABLE,
   DEMO_ZOOM,
+  createFireTimer,
   createProjectileDemo,
   demoFlight,
+  demoFrameIndices,
 } from './projectile-demo';
 import {
   animationOptions,
@@ -196,7 +198,8 @@ export default function UnitPreview() {
     if (!textures) return;
     const [w, h] = manifest.frameSize;
     const [ax, ay] = manifest.anchor;
-    const { fps, hitFrame = 0 } = manifest.actions[selection.action]!;
+    const { fps, frames: frameCount } = manifest.actions[selection.action]!;
+    const { launch: launchFrame, hold: holdFrame } = demoFrameIndices(frameCount);
 
     // With the firing demo on, the view is zoomed out to fit the whole
     // flight, and the catapult is drawn at the scale it has in the game's
@@ -216,12 +219,19 @@ export default function UnitPreview() {
     const sprite = new AnimatedSprite({ textures, autoPlay: false });
     sprite.anchor.set(ax, ay);
     sprite.animationSpeed = animationSpeed(fps);
-    sprite.loop = selection.loop;
-    // Launched when the swing releases, so a looping attack re-fires each cycle.
+    // The firing demo plays the attack once per shot, from its first frame,
+    // and holds on its hold frame until the next shot (see `createFireTimer`),
+    // whatever the Loop setting says.
+    sprite.loop = flight ? false : selection.loop;
     let demo: ReturnType<typeof createProjectileDemo> | undefined;
     sprite.onFrameChange = (frame) => {
       setPlayback((p) => ({ ...p, frame }));
-      if (frame === hitFrame) demo?.launch();
+      if (!flight) return;
+      if (frame === launchFrame) demo?.launch();
+      if (frame >= holdFrame) {
+        sprite.gotoAndStop(holdFrame);
+        setPlayback((p) => ({ ...p, playing: false }));
+      }
     };
     sprite.onComplete = () => setPlayback((p) => ({ ...p, playing: false }));
     view.addChild(sprite);
@@ -254,9 +264,16 @@ export default function UnitPreview() {
       );
       const running = createProjectileDemo(sprites, worldLayer, { ...flight, impact: dirtImpact });
       demo = running;
+      const fireTimer = createFireTimer();
       let last = performance.now();
       frameRequest = requestAnimationFrame(function tick(now) {
-        running.step(Math.min((now - last) / 1000, 0.1));
+        const dt = Math.min((now - last) / 1000, 0.1);
+        if (fireTimer.advance(dt)) {
+          sprite.textures = textures;
+          sprite.gotoAndPlay(0);
+          setPlayback((p) => ({ ...p, playing: true }));
+        }
+        running.step(dt);
         last = now;
         frameRequest = requestAnimationFrame(tick);
       });
