@@ -6,6 +6,7 @@ import { CATAPULT_FRAME_MAP } from './catapult';
 import { CROSSBOWSOLDIER_FRAME_MAP } from './crossbowsoldier';
 import { JUGGERNAUT_FRAME_MAP } from './juggernaut';
 import { KNIGHT_FRAME_MAP } from './knight';
+import { ROCK_FRAME_MAP } from './rock';
 import { SWORDSMEN_FRAME_MAP } from './swordsmen';
 
 /** Every unit type whose sprites have been migrated to a frame map. */
@@ -17,4 +18,5 @@ export const FRAME_MAPS: Partial<Record<UnitType, UnitFrameMap>> = {
   catapult: CATAPULT_FRAME_MAP,
   cannon: CANNON_FRAME_MAP,
   bolt: BOLT_FRAME_MAP,
+  rock: ROCK_FRAME_MAP,
 };

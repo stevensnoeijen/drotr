@@ -1,0 +1,21 @@
+{
+  "atlas": "/assets/units.json",
+  "frameSize": [
+    8,
+    8
+  ],
+  "anchor": [
+    0.5,
+    0.5
+  ],
+  "teams": [
+    "neutral"
+  ],
+  "actions": {
+    "move": {
+      "frames": 1,
+      "fps": 0,
+      "loop": false
+    }
+  }
+}

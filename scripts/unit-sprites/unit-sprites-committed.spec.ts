@@ -115,6 +115,7 @@ describe('committed unit pixels', () => {
     ['catapult', '4134a922e9f4f4b18efd752e9093ab7363e67271'],
     ['cannon', '78e7b786d65089a7a350f924f92d144c0658d58b'],
     ['bolt', '8076f4fb3f8872a8ba41863f97721ce34612899d'],
+    ['rock', '2d1fdc43237a6b790a54fdf59657ca3b9aa39874'],
   ] as const)('leaves the %s frames unchanged', (unit, hash) => {
     expect(unitPixelHash(unit)).toBe(hash);
   });
@@ -338,5 +339,28 @@ describe('committed bolt', () => {
       (d) => sheet.frames[animations[`bolt.neutral.move.${d}`][0]].frame
     );
     expect(others).not.toContainEqual(frame);
+  });
+});
+
+describe('committed rock', () => {
+  const manifest = parseUnitManifest(readJson(unitManifestPath('rock')));
+  const animations = sheet.animations as Record<string, string[]>;
+
+  it('only flies: a single still, team-neutral move frame', () => {
+    expect(manifest.teams).toEqual(['neutral']);
+    expect(manifest.actions).toEqual({ move: { frames: 1, fps: 0, loop: false } });
+    expect(manifest.frameSize).toEqual([8, 8]);
+    expect(manifest.anchor).toEqual([0.5, 0.5]);
+  });
+
+  it('reuses one 8x8 frame for all eight directions', () => {
+    const frames = DIRECTIONS.map((direction) => {
+      const names = animations[`rock.neutral.move.${direction}`];
+      expect(names).toHaveLength(1);
+      const { frame } = sheet.frames[names[0]];
+      expect([frame.w, frame.h]).toEqual([8, 8]);
+      return frame;
+    });
+    expect(new Set(frames.map((f) => `${f.x},${f.y}`)).size).toBe(1);
   });
 });
