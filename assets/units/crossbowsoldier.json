@@ -24,10 +24,10 @@
       "loop": true
     },
     "attack": {
-      "frames": 8,
+      "frames": 32,
       "fps": 16,
       "loop": false,
-      "hitFrame": 2
+      "hitFrame": 12
     },
     "dead": {
       "frames": 4,
