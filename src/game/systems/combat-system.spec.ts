@@ -863,6 +863,45 @@ describe('CombatSystem ranged release timing', () => {
   });
 });
 
+describe('CombatSystem looping ranged attack', () => {
+  it('fires one bolt per cycle and never drops the swing between shots', () => {
+    const world = new World<Entity>();
+    const queries = createQueries(world);
+    const system = createCombatSystem(queries, DEFAULT_CELL_SIZE);
+    const target = makeUnit(world, { team: 'red', x: 3 * DEFAULT_CELL_SIZE, health: 1000 });
+    const crossbowman = makeUnit(world, {
+      team: 'blue',
+      x: 0,
+      attackRangeCells: 5,
+      damage: 2,
+      attackCooldown: 0.5,
+      projectileSpeed: 1,
+      releaseTime: 0.125,
+    });
+    crossbowman.target = { entityId: target.id! };
+
+    // The first swing starts when the first cooldown elapses (0.5 s).
+    run(system, world, 30);
+    expect(crossbowman.attackSwing).toBeDefined();
+
+    // From there the swing is flagged on every tick, across 9 more cycles,
+    // and each cycle releases exactly one bolt.
+    let previous = crossbowman.attackSwing;
+    let restarts = 0;
+    for (let tick = 0; tick < 295; tick++) {
+      run(system, world, 1);
+      expect(crossbowman.attackSwing).toBeDefined();
+      if (crossbowman.attackSwing !== previous) {
+        restarts++;
+        previous = crossbowman.attackSwing;
+      }
+    }
+    expect(restarts).toBe(9);
+    // Swings start every 0.5 s from 0.5 s to 5.0 s and release 0.125 s in.
+    expect(queries.projectiles.size).toBe(10);
+  });
+});
+
 describe('attackers query', () => {
   it('matches only fully combat-statted units', () => {
     const world = new World<Entity>();

@@ -212,6 +212,15 @@ function releaseProjectile(
  */
 export const MAX_SWING_SECONDS = 0.5;
 
+/**
+ * Slack on swing expiry, absorbing float drift from summing fixed steps. When
+ * the swing is exactly as long as the cooldown (a looping crossbow attack),
+ * the next swing starts the tick this one would expire; without the slack a
+ * drift of one ulp would expire it a tick early and flash the idle pose
+ * between two shots.
+ */
+const SWING_EXPIRY_TOLERANCE = 1e-6;
+
 /** How long `self`'s swing stays flagged; never longer than its cooldown. */
 function swingDuration(self: AttackerEntity): number {
   return Math.min(MAX_SWING_SECONDS, self.attackCooldown.duration);
@@ -266,7 +275,10 @@ export function createCombatSystem(queries: Queries, cellSize: number): System {
       if (self.attackSwing) {
         self.attackSwing.elapsed += dt;
         releaseProjectile(world, queries, self, cellSize);
-        if (self.attackSwing && self.attackSwing.elapsed >= swingDuration(self)) {
+        if (
+          self.attackSwing &&
+          self.attackSwing.elapsed >= swingDuration(self) + SWING_EXPIRY_TOLERANCE
+        ) {
           delete self.attackSwing;
         }
       }
