@@ -7,6 +7,7 @@ import juggernautData from './units/juggernaut.json';
 import catapultData from './units/catapult.json';
 import cannonData from './units/cannon.json';
 import boltData from './units/bolt.json';
+import rockData from './units/rock.json';
 
 /**
  * The kinds of unit in the game. Names and starting HP match
@@ -20,15 +21,15 @@ import boltData from './units/bolt.json';
  * the unit sprite pipeline (frame map, shared atlas, manifest) like any
  * unit's. They are never spawned as units.
  */
-export const UNIT_TYPES = ['swordsmen', 'knight', 'crossbowsoldier', 'juggernaut', 'catapult', 'cannon', 'bolt'] as const;
+export const UNIT_TYPES = ['swordsmen', 'knight', 'crossbowsoldier', 'juggernaut', 'catapult', 'cannon', 'bolt', 'rock'] as const;
 export type UnitType = (typeof UNIT_TYPES)[number];
 
 /**
  * The {@link UNIT_TYPES} that are fired projectiles rather than units: a
- * crossbow's bolt. One only ever exists as a fired `Projectile` entity (see
+ * crossbow's bolt or a catapult's rock. One only ever exists as a fired `Projectile` entity (see
  * `fireProjectile`), which has no `unitType`; `spawnUnit` refuses them.
  */
-export const PROJECTILE_UNIT_TYPES = ['bolt'] as const satisfies readonly UnitType[];
+export const PROJECTILE_UNIT_TYPES = ['bolt', 'rock'] as const satisfies readonly UnitType[];
 export type ProjectileUnitType = (typeof PROJECTILE_UNIT_TYPES)[number];
 
 /** Whether `type` is a projectile (see {@link PROJECTILE_UNIT_TYPES}), not a unit. */
@@ -98,12 +99,13 @@ export interface UnitDefinition {
   /** Detection/aggro range in map tiles, converted to cells by `spawnUnit`. */
   aggroRange?: number;
   /**
-   * Whether this unit type fights with a fired projectile rather than
-   * instant melee damage — read by `CombatSystem` to fire a travelling
-   * `Projectile` via `fireProjectile` once a swing lands. `crossbowsoldier`
-   * is the only unit that sets this so far.
+   * The projectile this unit type fights with, rather than instant melee
+   * damage — `spawnUnit` copies it to `Ranged.projectile`, and
+   * `CombatSystem` fires a travelling `Projectile` of this type via
+   * `fireProjectile` once a swing lands. `crossbowsoldier` fires bolts and
+   * `catapult` rocks; omitted for melee units.
    */
-  projectile?: boolean;
+  projectile?: ProjectileUnitType;
   /**
    * Seconds into the attack swing at which a projectile unit looses its
    * shot, matching the attack animation's release frame (`hitFrame / fps`
@@ -137,6 +139,8 @@ export const units: Record<UnitType, UnitDefinition> = {
   // Only the minimum the type requires: one cell in size, no combat stats,
   // and a placeholder health, since a bolt is never spawned as a unit.
   bolt: boltData as UnitDefinition,
+  // A catapult's rock: a projectile like the bolt, with the same minimal data.
+  rock: rockData as UnitDefinition,
 };
 
 /** Every unit not given an explicit `footprint` occupies exactly one cell. */

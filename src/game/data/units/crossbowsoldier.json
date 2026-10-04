@@ -13,6 +13,6 @@
   "attackReleaseTime": 0.75,
   "range": 5,
   "aggroRange": 5,
-  "projectile": true,
+  "projectile": "bolt",
   "assets": null
 }

@@ -33,8 +33,8 @@ const TEAM_COLOR: Record<Team, number> = {
 const UNIT_MARGIN = 2;
 
 /**
- * Map tiles per second a fired projectile (currently just the crossbow
- * soldier's bolt) travels. Fast enough to visibly cross the map as a
+ * Map tiles per second a fired projectile (the crossbow
+ * soldier's bolt, the catapult's rock) travels. Fast enough to visibly cross the map as a
  * "shot" rather than a crawl, while still taking a handful of ticks to reach
  * `attackRange` so the travel actually reads on screen.
  */
@@ -101,7 +101,7 @@ export interface SpawnUnitOptions {
  * actually reserves (`CellOccupancySystem`), making multi-cell occupancy
  * visible and debuggable rather than a one-cell dot.
  *
- * @throws {Error} for a projectile type such as `'bolt'` (see
+ * @throws {Error} for a projectile type such as `'bolt'` or `'rock'` (see
  * `PROJECTILE_UNIT_TYPES`): a projectile is never a unit, it only ever
  * exists as what `fireProjectile` fires.
  */
@@ -163,11 +163,11 @@ export function spawnUnit(
   // Marks this unit type's attacks as fired projectiles rather than instant
   // melee damage — read by `CombatSystem` to fire a travelling `Projectile`
   // (`fireProjectile`) instead of applying damage directly. The crossbow
-  // soldier is the only ranged unit, and it fires bolts.
+  // soldier fires bolts and the catapult rocks.
   if (definition.projectile) {
     entity.ranged = {
       projectileSpeed: PROJECTILE_SPEED_TILES * tileSize,
-      projectile: 'bolt',
+      projectile: definition.projectile,
       releaseTime: definition.attackReleaseTime ?? 0,
     };
   }

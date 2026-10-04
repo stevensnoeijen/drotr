@@ -169,8 +169,10 @@ describe.each(['swordsmen', 'crossbowsoldier', 'knight', 'juggernaut', 'catapult
 
   it('plays the attack within one swing and lands the hit on a real frame', () => {
     // A ranged unit's swing is its whole attack cooldown, not the melee cap.
+    // A unit with a projectile but no combat stats yet (the catapult) keeps
+    // the melee cap.
     const swingSeconds = unitDefinitions[unit].projectile
-      ? unitDefinitions[unit].attackCooldown!
+      ? (unitDefinitions[unit].attackCooldown ?? MAX_SWING_SECONDS)
       : MAX_SWING_SECONDS;
     expect(seconds('attack')).toBeLessThanOrEqual(swingSeconds);
     expect(actions.attack!.hitFrame).toBeLessThan(actions.attack!.frames);
