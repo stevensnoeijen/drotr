@@ -902,6 +902,35 @@ describe('CombatSystem looping ranged attack', () => {
   });
 });
 
+describe('CombatSystem swing duration', () => {
+  it('keeps a ranged swing flagged for the whole cooldown, not the melee cap', () => {
+    const { world, system, attacker } = setupDuel({
+      gapCells: 3,
+      attackRangeCells: 5,
+      attackCooldown: 2,
+    });
+    Object.assign(attacker, crossbow(100, 0.75));
+
+    run(system, world, 120);
+    const swing = attacker.attackSwing;
+    expect(swing).toBeDefined();
+
+    // Past MAX_SWING_SECONDS and well into the cycle: still the same swing.
+    run(system, world, 100);
+    expect(attacker.attackSwing).toBe(swing);
+  });
+
+  it('still caps a melee swing at MAX_SWING_SECONDS under a longer cooldown', () => {
+    const { world, system, attacker } = setupDuel({ gapCells: 1, attackCooldown: 2 });
+
+    run(system, world, 120);
+    expect(attacker.attackSwing).toBeDefined();
+
+    run(system, world, Math.ceil(MAX_SWING_SECONDS / DT) + 1);
+    expect(attacker.attackSwing).toBeUndefined();
+  });
+});
+
 describe('attackers query', () => {
   it('matches only fully combat-statted units', () => {
     const world = new World<Entity>();

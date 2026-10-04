@@ -206,9 +206,9 @@ function releaseProjectile(
 }
 
 /**
- * Longest an {@link AttackSwing} stays flagged: a swing is a short visual
- * beat, not the whole cooldown, so a slow attacker does not look like it is
- * swinging constantly.
+ * Longest a melee {@link AttackSwing} stays flagged: a swing is a short
+ * visual beat, not the whole cooldown, so a slow attacker does not look like
+ * it is swinging constantly. A ranged swing is exempt, see {@link swingDuration}.
  */
 export const MAX_SWING_SECONDS = 0.5;
 
@@ -221,9 +221,16 @@ export const MAX_SWING_SECONDS = 0.5;
  */
 const SWING_EXPIRY_TOLERANCE = 1e-6;
 
-/** How long `self`'s swing stays flagged; never longer than its cooldown. */
+/**
+ * How long `self`'s swing stays flagged. A melee swing is capped at
+ * {@link MAX_SWING_SECONDS} and never outlasts its cooldown. A ranged swing
+ * lasts the whole cooldown: its attack animation is the full firing cycle
+ * (aim, release, reload), looping for as long as the unit stays engaged.
+ */
 function swingDuration(self: AttackerEntity): number {
-  return Math.min(MAX_SWING_SECONDS, self.attackCooldown.duration);
+  return self.ranged
+    ? self.attackCooldown.duration
+    : Math.min(MAX_SWING_SECONDS, self.attackCooldown.duration);
 }
 
 /**
