@@ -16,7 +16,7 @@ Guidance for Claude Code (and contributors) working in this repository.
   - `npm run lint`
   - `npm test`
 - Open the PR against `main` and reference the issue it closes (e.g.
-  `Closes #75`).
+  `Closes #75`). Prefix the PR title with the ticket id: `#<issue-number> <title>`.
 - When creating or editing issue/PR bodies via `gh`, write the body to a file
   in the scratchpad and pass `--body-file` instead of inline `--body`. Inside
   a quoted heredoc (`<<'EOF'`), never escape backticks or `$` — no escaping is
