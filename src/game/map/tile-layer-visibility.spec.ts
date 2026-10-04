@@ -10,10 +10,10 @@ import {
   type TileLayerInfo,
 } from './tile-layer-visibility';
 
-/** The `buildings` map's tile layers: only terrain shown, intact and ruined hidden. */
+/** The `buildings` map's tile layers: only terrain shown, damaged and ruined hidden. */
 const BUILDINGS: TileLayerInfo[] = [
   { name: 'terrain', visible: true, kind: 'tile' },
-  { name: 'intact', visible: false, kind: 'tile' },
+  { name: 'damaged', visible: false, kind: 'tile' },
   { name: 'ruined', visible: false, kind: 'tile' },
 ];
 

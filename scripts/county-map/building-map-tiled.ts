@@ -29,17 +29,17 @@ import {
  *
  * - `terrain`: the interior grid, every cell set (`gid = atlas index + 1`,
  *   so index 0 is gid 1).
- * - `intact`: the intact exterior overlay, hidden. Empty (gid 0) where
+ * - `damaged`: the damaged exterior overlay, hidden. Empty (gid 0) where
  *   the grid is 0.
  * - `ruined`: the ruined overlay, hidden. Empty (gid 0) where the grid is 0.
  *
  * So by default only the interior view shows. The engine loads both
- * overlays but starts them hidden; to see a building intact or ruined, toggle
- * `intact` or `ruined` on, in the Tiled editor or through the engine's
+ * overlays but starts them hidden; to see a building damaged or ruined, toggle
+ * `damaged` or `ruined` on, in the Tiled editor or through the engine's
  * `tile-layers` debug option.
  * - `collision`: hidden, and currently all open (every cell gid 0) — real
  *   building collision isn't derived yet. The source is unresolved: either
- *   the `intact` overlay's footprint or `BUILDING.MAP`'s unread flag grids
+ *   the `damaged` overlay's footprint or `BUILDING.MAP`'s unread flag grids
  *   3-14 (see `docs/MAP_FORMAT.md`). A follow-up will fill this in; until
  *   then a unit can walk straight through a building.
  * - `spawns`: an empty object layer (the loader requires one).
@@ -88,7 +88,7 @@ export function buildBuildingsTiledMap(
   return {
     ...buildTerrainTiledMap([
       tileLayer(1, 'terrain', interiorData(map)),
-      tileLayer(2, 'intact', overlayData(map.intact), false),
+      tileLayer(2, 'damaged', overlayData(map.damaged), false),
       tileLayer(3, 'ruined', overlayData(map.ruined), false),
       tileLayer(4, 'collision', allOpenCollisionData(), false),
       spawnsLayer(5),

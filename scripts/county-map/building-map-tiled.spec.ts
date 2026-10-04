@@ -41,7 +41,7 @@ function syntheticBuildingMap(
       { x: 0, y: 1, value: 5 },
       { x: 127, y: 127, value: 1471 },
     ],
-    intact: [
+    damaged: [
       { x: 1, y: 0, value: 1449 },
       { x: 3, y: 2, value: 1 },
     ],
@@ -194,11 +194,11 @@ describe('buildBuildingsTiledMap', () => {
     expect(map.tilesets).toEqual([{ firstgid: 1, source: 'terrain.tsx' }]);
   });
 
-  it('emits terrain, intact (hidden), ruined (hidden), collision (hidden), spawns and prefabs, back to front', () => {
+  it('emits terrain, damaged (hidden), ruined (hidden), collision (hidden), spawns and prefabs, back to front', () => {
     const map = buildBuildingsTiledMap(syntheticBuildingMap());
     expect(map.layers.map((l) => [l.id, l.name, l.type, l.visible])).toEqual([
       [1, 'terrain', 'tilelayer', true],
-      [2, 'intact', 'tilelayer', false],
+      [2, 'damaged', 'tilelayer', false],
       [3, 'ruined', 'tilelayer', false],
       [4, 'collision', 'tilelayer', false],
       [5, 'spawns', 'objectgroup', true],
@@ -231,14 +231,14 @@ describe('buildBuildingsTiledMap', () => {
     expect(data.every((gid) => gid >= 1)).toBe(true);
   });
 
-  it('leaves intact empty (gid 0) where its grid is 0', () => {
-    const intact = layer(
+  it('leaves damaged empty (gid 0) where its grid is 0', () => {
+    const damaged = layer(
       buildBuildingsTiledMap(syntheticBuildingMap()),
-      'intact'
+      'damaged'
     );
-    expect(intact.width).toEqual(128);
-    expect(intact.height).toEqual(128);
-    expect(nonEmpty(intact.data as number[])).toEqual([
+    expect(damaged.width).toEqual(128);
+    expect(damaged.height).toEqual(128);
+    expect(nonEmpty(damaged.data as number[])).toEqual([
       [1, 0, 1450],
       [3, 2, 2],
     ]);
@@ -255,7 +255,7 @@ describe('buildBuildingsTiledMap', () => {
     ]);
   });
 
-  it.each(['interior', 'intact', 'ruined'] as const)(
+  it.each(['interior', 'damaged', 'ruined'] as const)(
     'throws for a %s tile index above 1471',
     (grid) => {
       const map = syntheticBuildingMap({
@@ -277,7 +277,7 @@ describe('buildBuildingsTiledMap', () => {
     expect(first.endsWith('}\n')).toBe(true);
   });
 
-  it('passes parseTiledMap, drawing only terrain, with intact, ruined and collision kept hidden', () => {
+  it('passes parseTiledMap, drawing only terrain, with damaged, ruined and collision kept hidden', () => {
     const map = buildBuildingsTiledMap(syntheticBuildingMap());
     const parsed = parseTiledMap(map, terrainTileset);
 
@@ -285,7 +285,7 @@ describe('buildBuildingsTiledMap', () => {
     expect(parsed.spawns).toEqual([]);
     expect(parsed.tileLayers).toEqual([
       { name: 'terrain', visible: true, data: layer(map, 'terrain').data },
-      { name: 'intact', visible: false, data: layer(map, 'intact').data },
+      { name: 'damaged', visible: false, data: layer(map, 'damaged').data },
       { name: 'ruined', visible: false, data: layer(map, 'ruined').data },
       { name: 'collision', visible: false, data: layer(map, 'collision').data },
     ]);

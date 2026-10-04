@@ -11,7 +11,7 @@
 import {
   BUILDING_GRID_SIZE,
   BUILDING_MAP_BYTES,
-  INTACT_GRID_OFFSET,
+  DAMAGED_GRID_OFFSET,
   INTERIOR_GRID_OFFSET,
   RUINED_GRID_OFFSET,
 } from '~/lib/building-map';
@@ -24,8 +24,8 @@ export type BuildingMapFixtureCell = CountyMapFixtureCell;
 export interface BuildingMapFixtureOptions {
   /** Grid 0 `lo` values (interior atlas indices) to set, by cell. */
   readonly interior?: readonly BuildingMapFixtureCell[];
-  /** Grid 1 `lo` values (intact overlay atlas indices) to set, by cell. */
-  readonly intact?: readonly BuildingMapFixtureCell[];
+  /** Grid 1 `lo` values (damaged overlay atlas indices) to set, by cell. */
+  readonly damaged?: readonly BuildingMapFixtureCell[];
   /** Grid 2 `lo` values (ruined overlay atlas indices) to set, by cell. */
   readonly ruined?: readonly BuildingMapFixtureCell[];
   /**
@@ -55,7 +55,7 @@ export function buildBuildingMapBytes(
   };
 
   write(options.interior, INTERIOR_GRID_OFFSET);
-  write(options.intact, INTACT_GRID_OFFSET);
+  write(options.damaged, DAMAGED_GRID_OFFSET);
   write(options.ruined, RUINED_GRID_OFFSET);
   for (const [offset, value] of Object.entries(options.raw ?? {})) {
     view.setUint16(Number(offset), value, true);

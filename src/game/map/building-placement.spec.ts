@@ -222,21 +222,21 @@ describe('stampBuildings', () => {
 
   /**
    * A 4x4 buildings map whose tower prefab sits at (1,2) with one empty
-   * intact cell, over prefab terrain gid 70 (or `prefabGround` for that cell).
+   * damaged cell, over prefab terrain gid 70 (or `prefabGround` for that cell).
    */
   function buildingsMap(prefabGround = 70): ParsedMap {
     const prefabTerrain = Array<number>(16).fill(70);
     prefabTerrain[2 * 4 + 2] = prefabGround;
     // A flipped gid in the prefab terrain copies as it is.
     prefabTerrain[3 * 4 + 1] = 52 + 0x80000000;
-    const intact = Array<number>(16).fill(0);
+    const damaged = Array<number>(16).fill(0);
     // Prefab rect (1,2) 2x2: cells (1,2) (2,2) (1,3) (2,3).
-    intact[2 * 4 + 1] = 50;
-    intact[2 * 4 + 2] = 0;
-    intact[3 * 4 + 1] = 52;
-    intact[3 * 4 + 2] = 53;
+    damaged[2 * 4 + 1] = 50;
+    damaged[2 * 4 + 2] = 0;
+    damaged[3 * 4 + 1] = 52;
+    damaged[3 * 4 + 2] = 53;
     // A stray gid outside the prefab must not be copied.
-    intact[0] = 99;
+    damaged[0] = 99;
     return {
       width: 4,
       height: 4,
@@ -246,7 +246,7 @@ describe('stampBuildings', () => {
       tileset,
       tileLayers: [
         { name: 'terrain', visible: true, data: prefabTerrain },
-        { name: 'intact', visible: true, data: intact },
+        { name: 'damaged', visible: true, data: damaged },
       ],
       objectLayers: [
         {
@@ -271,7 +271,7 @@ describe('stampBuildings', () => {
 
   const placements = [{ site: 'tower-1', level: 'grass' }];
 
-  it('overwrites terrain with the prefab terrain and ignores its intact overlay', () => {
+  it('overwrites terrain with the prefab terrain and ignores its damaged overlay', () => {
     const stamped = stampBuildings(countyMap(), buildingsMap(), placements);
     const terrain = stamped.tileLayers[0].data;
     expect(terrain[1 * 6 + 2]).toBe(70);

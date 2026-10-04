@@ -14,7 +14,7 @@
  * - grid 0: the **interior** view (floors and walls seen from above, on a
  *   grass fill). Every cell is a real tile; index 0 is the plain ground
  *   tile, not an empty cell.
- * - grid 1: the **intact** exterior (battlements and roofs), aligned
+ * - grid 1: the **damaged** exterior (battlements and roofs), aligned
  *   cell-for-cell with grid 0. A non-zero tile replaces the interior tile
  *   under it; `0` means no overlay.
  * - grid 2: the **ruined** state (crumbled walls), with the same alignment
@@ -41,8 +41,8 @@ export const BUILDING_MAP_BYTES = BUILDING_GRID_COUNT * BUILDING_GRID_BYTES;
 
 /** Byte offset of grid 0, the interior view. */
 export const INTERIOR_GRID_OFFSET = 0 * BUILDING_GRID_BYTES;
-/** Byte offset of grid 1, the intact exterior overlay. */
-export const INTACT_GRID_OFFSET = 1 * BUILDING_GRID_BYTES;
+/** Byte offset of grid 1, the damaged exterior overlay. */
+export const DAMAGED_GRID_OFFSET = 1 * BUILDING_GRID_BYTES;
 /** Byte offset of grid 2, the ruined overlay. */
 export const RUINED_GRID_OFFSET = 2 * BUILDING_GRID_BYTES;
 
@@ -55,10 +55,10 @@ export interface BuildingMap {
    */
   readonly interior: Uint16Array;
   /**
-   * Grid 1 `lo`: the intact exterior's atlas tile index, row-major, `128 *
+   * Grid 1 `lo`: the damaged exterior's atlas tile index, row-major, `128 *
    * 128` long. `0` means no overlay on that cell.
    */
-  readonly intact: Uint16Array;
+  readonly damaged: Uint16Array;
   /**
    * Grid 2 `lo`: the ruined state's atlas tile index, row-major, `128 *
    * 128` long. `0` means no overlay on that cell.
@@ -92,7 +92,7 @@ export function parseBuildingMap(bytes: Uint8Array): BuildingMap {
     readSection(view, gridOffset, BUILDING_GRID_SIZE, 0);
   return {
     interior: readLo(INTERIOR_GRID_OFFSET),
-    intact: readLo(INTACT_GRID_OFFSET),
+    damaged: readLo(DAMAGED_GRID_OFFSET),
     ruined: readLo(RUINED_GRID_OFFSET),
   };
 }

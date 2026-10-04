@@ -2,7 +2,7 @@ import type { BridgeBank, TileRect } from '../dracula-exe';
 
 /**
  * A complete bridge drawn in `BUILDING.MAP` that no `DRACULA.EXE` prefab slot
- * points at. They were found by grouping the intact overlay's bridge tiles
+ * points at. They were found by grouping the damaged overlay's bridge tiles
  * into connected pieces and dropping everything inside a slot's rect; every
  * piece below has both end caps and a full deck. Nothing in a county places
  * them, but the art is there, so the `prefabs` layer marks them too.

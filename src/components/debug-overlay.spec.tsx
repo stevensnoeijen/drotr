@@ -111,7 +111,7 @@ describe('DebugOverlay', () => {
   describe('tile-layers', () => {
     const LAYERS: TileLayerInfo[] = [
       { name: 'terrain', visible: true, kind: 'tile' },
-      { name: 'intact', visible: true, kind: 'tile' },
+      { name: 'damaged', visible: true, kind: 'tile' },
       { name: 'ruined', visible: false, kind: 'tile' },
     ];
 
@@ -149,7 +149,7 @@ describe('DebugOverlay', () => {
       openMenu();
       expect(listedLayers()).toEqual([
         ['terrain', true],
-        ['intact', true],
+        ['damaged', true],
         ['ruined', false],
         ['constructionsobjects', true],
       ]);
@@ -188,7 +188,7 @@ describe('DebugOverlay', () => {
 
       expect(listedLayers()).toEqual([
         ['terrain', true],
-        ['intact', false],
+        ['damaged', false],
         ['ruined', true],
       ]);
       // Nested inside the option's own entry.
@@ -211,7 +211,7 @@ describe('DebugOverlay', () => {
 
       expect(listedLayers()).toEqual([
         ['terrain', true],
-        ['intact', true],
+        ['damaged', true],
         ['ruined', false],
       ]);
     });

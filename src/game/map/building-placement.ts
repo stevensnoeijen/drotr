@@ -129,7 +129,7 @@ function requireTileLayer(map: Pick<ParsedMap, 'tileLayers'>, name: string): num
  * A copy of `map` with each placement's prefab drawn onto its construction
  * site: across the site's footprint, the county's `terrain` gids are
  * replaced by the prefab's own `terrain` gids from `buildingsMap` (the
- * parsed `buildings.tmj`): the undamaged building. Its `intact` and
+ * parsed `buildings.tmj`): the undamaged building. Its `damaged` and
  * `ruined` overlays are for a partly and fully destroyed building and are
  * not placed. A prefab cell that is empty keeps the county's terrain, and
  * nothing outside a footprint changes. Both maps
