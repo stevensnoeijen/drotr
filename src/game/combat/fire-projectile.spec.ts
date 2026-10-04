@@ -15,7 +15,7 @@ function crossbowSoldier(overrides: Partial<RangedAttacker> = {}): RangedAttacke
     renderable: { shape: 'triangle', color: 0x66ccff, size: 6, extent: 8 },
     damage: { value: 4 },
     attackRange: { value: 5 },
-    ranged: { projectileSpeed: 300, projectile: 'bolt' },
+    ranged: { projectileSpeed: 300, projectile: 'bolt', releaseTime: 0 },
     ...overrides,
   };
 }
@@ -99,7 +99,7 @@ describe('fireProjectile', () => {
     const attacker = crossbowSoldier({
       team: 'red',
       damage: { value: 1 },
-      ranged: { projectileSpeed: 100, projectile: 'bolt' },
+      ranged: { projectileSpeed: 100, projectile: 'bolt', releaseTime: 0 },
     });
     const target: With<Entity, 'transform'> = { id: 2, transform: { position: { x: 10, y: 0 }, rotation: 0 } };
 

@@ -165,7 +165,11 @@ export function spawnUnit(
   // (`fireProjectile`) instead of applying damage directly. The crossbow
   // soldier is the only ranged unit, and it fires bolts.
   if (definition.projectile) {
-    entity.ranged = { projectileSpeed: PROJECTILE_SPEED_TILES * tileSize, projectile: 'bolt' };
+    entity.ranged = {
+      projectileSpeed: PROJECTILE_SPEED_TILES * tileSize,
+      projectile: 'bolt',
+      releaseTime: definition.attackReleaseTime ?? 0,
+    };
   }
   // Only the player's own (blue) units can be click-selected; red is the
   // opposing side and has no `selectable` component at all — a query for

@@ -107,6 +107,30 @@ export function pickFrames(
   return { size: source.size, frames };
 }
 
+/**
+ * Re-times an animation by listing which source frames play, in order:
+ * `order` holds 0-based indices into the source frames and may repeat or
+ * skip them, so holding a pose lengthens the animation without new art.
+ */
+export function sequenceFrames(
+  source: FrameMapAnimation,
+  order: readonly number[]
+): FrameMapAnimation {
+  const frames = Object.fromEntries(
+    DIRECTIONS.map((d) => [
+      d,
+      order.map((index) => {
+        const frame = source.frames[d][index];
+        if (!frame) {
+          throw new RangeError(`no frame ${index} in direction ${d}`);
+        }
+        return frame;
+      }),
+    ])
+  ) as Record<Direction, (readonly [number, number])[]>;
+  return { size: source.size, frames };
+}
+
 /** The atlas rect of one frame. */
 export function frameRect(
   animation: FrameMapAnimation,

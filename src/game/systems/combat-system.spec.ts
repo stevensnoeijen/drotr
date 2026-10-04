@@ -27,6 +27,8 @@ interface UnitOptions {
   attackCooldown?: number;
   /** World units/sec a fired projectile travels, if this unit is ranged. */
   projectileSpeed?: number;
+  /** Seconds into the swing a ranged unit fires. Defaults to 0. */
+  releaseTime?: number;
 }
 
 /**
@@ -41,9 +43,12 @@ let nextId = 1;
  * plus the `unitType` and `renderable` `spawnUnit` gives every unit, which
  * the fired bolt is drawn to scale against.
  */
-function crossbow(projectileSpeed: number): Pick<Entity, 'ranged' | 'unitType' | 'renderable'> {
+function crossbow(
+  projectileSpeed: number,
+  releaseTime = 0
+): Pick<Entity, 'ranged' | 'unitType' | 'renderable'> {
   return {
-    ranged: { projectileSpeed, projectile: 'bolt' },
+    ranged: { projectileSpeed, projectile: 'bolt', releaseTime },
     unitType: 'crossbowsoldier',
     renderable: { shape: 'triangle', color: 0x66ccff, size: 6, extent: 8 },
   };
@@ -60,6 +65,7 @@ function makeUnit(
     damage,
     attackCooldown,
     projectileSpeed,
+    releaseTime,
   }: UnitOptions
 ): Entity {
   // Snapped to the cell centre, exactly as `spawnUnit` places a real unit —
@@ -81,7 +87,7 @@ function makeUnit(
     entity.attackCooldown = { duration: attackCooldown };
   }
   if (projectileSpeed !== undefined) {
-    Object.assign(entity, crossbow(projectileSpeed));
+    Object.assign(entity, crossbow(projectileSpeed, releaseTime));
   }
   return world.add(entity);
 }
@@ -724,6 +730,204 @@ describe('CombatSystem ranged attacks', () => {
 
     expect(queries.projectiles.size).toBe(0);
     expect(target.health!.current).toBe(100);
+  });
+});
+
+describe('CombatSystem ranged release timing', () => {
+  const RELEASE = 0.125;
+
+  function setupRelease() {
+    const world = new World<Entity>();
+    const queries = createQueries(world);
+    const system = createCombatSystem(queries, DEFAULT_CELL_SIZE);
+    const target = makeUnit(world, { team: 'red', x: 3 * DEFAULT_CELL_SIZE });
+    const crossbowman = makeUnit(world, {
+      team: 'blue',
+      x: 0,
+      attackRangeCells: 5,
+      damage: 2,
+      attackCooldown: 1.5,
+      projectileSpeed: 10 * DEFAULT_CELL_SIZE,
+      releaseTime: RELEASE,
+    });
+    crossbowman.target = { entityId: target.id! };
+    return { world, queries, system, target, crossbowman };
+  }
+
+  /** Runs to the tick the 1.5 s cooldown elapses, so the swing has just started. */
+  function runToSwingStart(system: ReturnType<typeof createCombatSystem>, world: World<Entity>) {
+    run(system, world, 90);
+  }
+
+  it('starts the swing without firing in the same tick', () => {
+    const { world, queries, system, crossbowman } = setupRelease();
+
+    runToSwingStart(system, world);
+
+    expect(crossbowman.attackSwing).toBeDefined();
+    expect(queries.projectiles.size).toBe(0);
+  });
+
+  it('fires exactly one projectile once the release time has passed', () => {
+    const { world, queries, system } = setupRelease();
+
+    runToSwingStart(system, world);
+    run(system, world, 7);
+    expect(queries.projectiles.size).toBe(0);
+    run(system, world, 1);
+    expect(queries.projectiles.size).toBe(1);
+  });
+
+  it('does not fire a second bolt from the same swing', () => {
+    const { world, queries, system } = setupRelease();
+
+    runToSwingStart(system, world);
+    run(system, world, 20);
+
+    expect(queries.projectiles.size).toBe(1);
+  });
+
+  it('fires nothing and clears the swing when the target dies during the wind-up', () => {
+    const { world, queries, system, target, crossbowman } = setupRelease();
+
+    runToSwingStart(system, world);
+    target.health!.current = 0;
+    run(system, world, 10);
+
+    expect(queries.projectiles.size).toBe(0);
+    expect(crossbowman.attackSwing).toBeUndefined();
+    expect(crossbowman.target).toBeUndefined();
+  });
+
+  it('fires nothing when the target is removed during the wind-up', () => {
+    const { world, queries, system, target, crossbowman } = setupRelease();
+
+    runToSwingStart(system, world);
+    world.remove(target);
+    run(system, world, 10);
+
+    expect(queries.projectiles.size).toBe(0);
+    expect(crossbowman.attackSwing).toBeUndefined();
+  });
+
+  it('still fires when the target leaves range during the wind-up', () => {
+    const { world, queries, system, target } = setupRelease();
+
+    runToSwingStart(system, world);
+    target.transform!.position.x = 30 * DEFAULT_CELL_SIZE;
+    run(system, world, 10);
+
+    expect(queries.projectiles.size).toBe(1);
+  });
+
+  it('still fires when the attacker starts moving during the wind-up', () => {
+    const { world, queries, system, crossbowman } = setupRelease();
+
+    runToSwingStart(system, world);
+    crossbowman.velocity = { x: 80, y: 0 };
+    run(system, world, 10);
+
+    expect(queries.projectiles.size).toBe(1);
+  });
+
+  it('fires nothing when the attacker dies during the wind-up', () => {
+    const { world, queries, system, crossbowman } = setupRelease();
+
+    runToSwingStart(system, world);
+    crossbowman.health!.current = 0;
+    run(system, world, 10);
+
+    expect(queries.projectiles.size).toBe(0);
+  });
+
+  it('keeps shots one cooldown apart', () => {
+    const { world, queries, system } = setupRelease();
+
+    runToSwingStart(system, world);
+    run(system, world, 10);
+    expect(queries.projectiles.size).toBe(1);
+    // Second swing starts 1.5 s after the first, and fires 0.125 s later.
+    run(system, world, 85);
+    expect(queries.projectiles.size).toBe(1);
+    run(system, world, 10);
+    expect(queries.projectiles.size).toBe(2);
+  });
+
+  it('still damages a melee target at swing start', () => {
+    const { world, attacker, target, system } = setupDuel({ gapCells: 1, damage: 3 });
+
+    run(system, world, 60);
+
+    expect(attacker.attackSwing?.pendingTargetId).toBeUndefined();
+    expect(target.health!.current).toBe(97);
+  });
+});
+
+describe('CombatSystem looping ranged attack', () => {
+  it('fires one bolt per cycle and never drops the swing between shots', () => {
+    const world = new World<Entity>();
+    const queries = createQueries(world);
+    const system = createCombatSystem(queries, DEFAULT_CELL_SIZE);
+    const target = makeUnit(world, { team: 'red', x: 3 * DEFAULT_CELL_SIZE, health: 1000 });
+    const crossbowman = makeUnit(world, {
+      team: 'blue',
+      x: 0,
+      attackRangeCells: 5,
+      damage: 2,
+      attackCooldown: 0.5,
+      projectileSpeed: 1,
+      releaseTime: 0.125,
+    });
+    crossbowman.target = { entityId: target.id! };
+
+    // The first swing starts when the first cooldown elapses (0.5 s).
+    run(system, world, 30);
+    expect(crossbowman.attackSwing).toBeDefined();
+
+    // From there the swing is flagged on every tick, across 9 more cycles,
+    // and each cycle releases exactly one bolt.
+    let previous = crossbowman.attackSwing;
+    let restarts = 0;
+    for (let tick = 0; tick < 295; tick++) {
+      run(system, world, 1);
+      expect(crossbowman.attackSwing).toBeDefined();
+      if (crossbowman.attackSwing !== previous) {
+        restarts++;
+        previous = crossbowman.attackSwing;
+      }
+    }
+    expect(restarts).toBe(9);
+    // Swings start every 0.5 s from 0.5 s to 5.0 s and release 0.125 s in.
+    expect(queries.projectiles.size).toBe(10);
+  });
+});
+
+describe('CombatSystem swing duration', () => {
+  it('keeps a ranged swing flagged for the whole cooldown, not the melee cap', () => {
+    const { world, system, attacker } = setupDuel({
+      gapCells: 3,
+      attackRangeCells: 5,
+      attackCooldown: 2,
+    });
+    Object.assign(attacker, crossbow(100, 0.75));
+
+    run(system, world, 120);
+    const swing = attacker.attackSwing;
+    expect(swing).toBeDefined();
+
+    // Past MAX_SWING_SECONDS and well into the cycle: still the same swing.
+    run(system, world, 100);
+    expect(attacker.attackSwing).toBe(swing);
+  });
+
+  it('still caps a melee swing at MAX_SWING_SECONDS under a longer cooldown', () => {
+    const { world, system, attacker } = setupDuel({ gapCells: 1, attackCooldown: 2 });
+
+    run(system, world, 120);
+    expect(attacker.attackSwing).toBeDefined();
+
+    run(system, world, Math.ceil(MAX_SWING_SECONDS / DT) + 1);
+    expect(attacker.attackSwing).toBeUndefined();
   });
 });
 

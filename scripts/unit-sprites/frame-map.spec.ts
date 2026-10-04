@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { DIRECTIONS } from '../../src/game/render/sprites/animation-key';
-import { frameBlock, pickFrames } from './frame-map';
+import { frameBlock, pickFrames, sequenceFrames } from './frame-map';
 import { IDLE_PICK, SWORDSMEN_FRAME_MAP } from './frame-maps/swordsmen';
 
 describe('swordsmen frame map', () => {
@@ -71,6 +71,21 @@ describe('frame map helpers', () => {
       [9, 20],
       [13, 20],
     ]);
+  });
+
+  it('plays source frames in the given order, repeats included', () => {
+    const block = frameBlock(0, rows, 3, [4, 10]);
+    expect(sequenceFrames(block, [0, 0, 2, 1]).frames.n).toEqual([
+      [0, 0],
+      [0, 0],
+      [8, 0],
+      [4, 0],
+    ]);
+  });
+
+  it('rejects a sequence outside the source animation', () => {
+    const block = frameBlock(0, rows, 2);
+    expect(() => sequenceFrames(block, [0, 2])).toThrow(RangeError);
   });
 
   it('rejects a pick outside the source animation', () => {

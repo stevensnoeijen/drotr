@@ -1,5 +1,5 @@
 import type { Direction } from '../../../src/game/render/sprites/animation-key';
-import { frameBlock, pickFrames, type UnitFrameMap } from '../frame-map';
+import { frameBlock, pickFrames, sequenceFrames, type UnitFrameMap } from '../frame-map';
 
 /**
  * Crossbow soldier frames in `BATTLE.ART`: 32×32, one atlas row per
@@ -83,6 +83,28 @@ export const IDLE_PICK = {
   blue: { n: 3, ne: 3, e: 3, se: 3, s: 3, sw: 3, w: 3, nw: 3 },
 } as const satisfies Record<'red' | 'blue', Record<Direction, number>>;
 
+/**
+ * The 8 source attack frames stretched to a 32-slot (2 s at 16 fps) cycle.
+ * Frame 0 is the loaded pose, frame 1 the settled aim and frame 2 the
+ * release; 3 to 7 are the bow coming back down. The aim is held (0 then 1)
+ * before the release, which plays for a single slot, then the recovery
+ * frames are held in turn, so the shot reads as a pause, a quick loose and
+ * a slow reload instead of a stutter through the release.
+ */
+const ATTACK_ORDER = [
+  ...Array<number>(6).fill(0),
+  ...Array<number>(6).fill(1),
+  2,
+  ...Array<number>(3).fill(3),
+  ...Array<number>(4).fill(4),
+  ...Array<number>(4).fill(5),
+  ...Array<number>(4).fill(6),
+  ...Array<number>(4).fill(7),
+];
+
+/** Index of the release frame within {@link ATTACK_ORDER}. */
+const ATTACK_HIT_FRAME = ATTACK_ORDER.indexOf(2);
+
 const blueMove = frameBlock(128, BLUE_ROWS, 8);
 const redMove = frameBlock(384, RED_MOVE_ROWS, 8);
 
@@ -91,30 +113,31 @@ export const CROSSBOWSOLDIER_FRAME_MAP: UnitFrameMap = {
   // The figure is drawn centred in its 32x32 cell (top-down view), so the
   // anchor stays at the frame centre.
   anchor: [0.5, 0.5],
-  // Attack: 8 frames at 16 fps fill exactly one MAX_SWING_SECONDS (0.5 s)
-  // swing, so the unit is back on idle as the swing flag clears. CombatSystem
-  // fires the bolt when the swing starts; hitFrame marks the visual release
-  // (0-based frame 2, bolt loosed) about 125 ms in. Move: 8 frames at 10 fps
-  // is 0.8 s per cycle, matching the swordsmen's gait at the same 2 cells/s.
-  // Dead: 4 frames at 8 fps is 0.5 s, then holdLast keeps the corpse on its
-  // final frame until DEATH_REMOVAL_DELAY_SECONDS.
+  // Attack: 8 source frames stretched to 32 slots at 16 fps, one 2 s loop.
+  // CombatSystem fires the bolt at the release time (attackReleaseTime in the
+  // unit data, kept equal to hitFrame / fps by a test), and the unit's
+  // attackCooldown equals the animation length, so the attack loops while
+  // engaged, one bolt per cycle. Move: 8 frames at 10 fps is 0.8 s per cycle,
+  // matching the swordsmen's gait at the same 2 cells/s. Dead: 4 frames at
+  // 8 fps is 0.5 s, then holdLast keeps the corpse on its final frame until
+  // DEATH_REMOVAL_DELAY_SECONDS.
   playback: {
     idle: { fps: 0, loop: false },
     move: { fps: 10, loop: true },
-    attack: { fps: 16, loop: false, hitFrame: 2 },
+    attack: { fps: 16, loop: false, hitFrame: ATTACK_HIT_FRAME },
     dead: { fps: 8, loop: false, holdLast: true },
   },
   teams: {
     blue: {
       idle: pickFrames(blueMove, IDLE_PICK.blue),
       move: blueMove,
-      attack: frameBlock(384, BLUE_ROWS, 8),
+      attack: sequenceFrames(frameBlock(384, BLUE_ROWS, 8), ATTACK_ORDER),
       dead: frameBlock(512, BLUE_DEAD_ROWS, 4),
     },
     red: {
       idle: pickFrames(redMove, IDLE_PICK.red),
       move: redMove,
-      attack: frameBlock(384, RED_ATTACK_ROWS, 8),
+      attack: sequenceFrames(frameBlock(384, RED_ATTACK_ROWS, 8), ATTACK_ORDER),
       dead: frameBlock(512, RED_DEAD_ROWS, 4),
     },
   },

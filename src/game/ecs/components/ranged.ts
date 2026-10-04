@@ -14,4 +14,9 @@ export interface Ranged {
   projectileSpeed: number;
   /** What this unit fires, which decides the sprite the projectile is drawn as. */
   projectile: ProjectileUnitType;
+  /**
+   * Seconds into the attack swing at which the projectile is fired. 0 fires
+   * in the tick the swing starts.
+   */
+  releaseTime: number;
 }
