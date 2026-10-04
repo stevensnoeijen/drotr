@@ -127,10 +127,12 @@ function requireTileLayer(map: Pick<ParsedMap, 'tileLayers'>, name: string): num
 
 /**
  * A copy of `map` with each placement's prefab drawn onto its construction
- * site: the prefab's non-empty `intact` gids (from `buildingsMap`, the
- * parsed `buildings.tmj`) overwrite the county's `terrain` gids across the
- * site's footprint. Where the prefab's `intact` cell is empty the county's
- * own terrain stays, and nothing outside a footprint changes. Both maps
+ * site: across the site's footprint, the county's `terrain` gids are
+ * replaced by the prefab's own `terrain` gids from `buildingsMap` (the
+ * parsed `buildings.tmj`): the undamaged building. Its `intact` and
+ * `ruined` overlays are for a partly and fully destroyed building and are
+ * not placed. A prefab cell that is empty keeps the county's terrain, and
+ * nothing outside a footprint changes. Both maps
  * share one tileset, so gids copy as they are, flip flags included. Neither
  * input is mutated, and collision is left alone.
  *
@@ -149,7 +151,8 @@ export function stampBuildings(
   const sites = parseConstructionSites(map);
   const prefabs = parseBuildingPrefabs(buildingsMap);
   const terrainIndex = requireTileLayer(map, 'terrain');
-  const intact = buildingsMap.tileLayers[requireTileLayer(buildingsMap, 'intact')].data;
+  const prefabTerrain =
+    buildingsMap.tileLayers[requireTileLayer(buildingsMap, 'terrain')].data;
   const terrain = [...map.tileLayers[terrainIndex].data];
 
   for (const placement of placements) {
@@ -171,7 +174,8 @@ export function stampBuildings(
     }
     for (let dy = 0; dy < footprint.height; dy++) {
       for (let dx = 0; dx < footprint.width; dx++) {
-        const gid = intact[(prefab.rect.y + dy) * buildingsMap.width + prefab.rect.x + dx];
+        const source = (prefab.rect.y + dy) * buildingsMap.width + prefab.rect.x + dx;
+        const gid = prefabTerrain[source];
         if (gid !== 0) {
           terrain[(footprint.y + dy) * map.width + footprint.x + dx] = gid;
         }

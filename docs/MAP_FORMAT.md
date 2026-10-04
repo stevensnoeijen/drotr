@@ -797,9 +797,11 @@ which is a hypothesis and not something the data shows:
   `terrain` bridge is only a backdrop in `buildings.tmj`, and the `intact`
   dark deck may simply be how a normal bridge looks over water.
 
-Placing a building on a county site copies the prefab's `intact` layer
-(see `stampBuildings` in `src/game/map/building-placement.ts`), bridges
-included; the `ruined` state is not placed. The later damaged-bridge work
+Placing a building on a county site copies the prefab's `terrain` layer,
+the undamaged building (see `stampBuildings` in
+`src/game/map/building-placement.ts`), bridges included. The `intact` and
+`ruined` overlays are for a partly and fully destroyed building and are
+not placed yet. The later damaged-bridge work
 should check this hypothesis by rendering both states over county water.
 
 In the engine it is the `buildings` map; view it with the `empty`

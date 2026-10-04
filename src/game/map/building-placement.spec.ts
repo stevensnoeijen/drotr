@@ -220,13 +220,20 @@ describe('stampBuildings', () => {
     };
   }
 
-  /** A 4x4 buildings map whose tower prefab sits at (1,2) with one empty intact cell. */
-  function buildingsMap(): ParsedMap {
+  /**
+   * A 4x4 buildings map whose tower prefab sits at (1,2) with one empty
+   * intact cell, over prefab terrain gid 70 (or `prefabGround` for that cell).
+   */
+  function buildingsMap(prefabGround = 70): ParsedMap {
+    const prefabTerrain = Array<number>(16).fill(70);
+    prefabTerrain[2 * 4 + 2] = prefabGround;
+    // A flipped gid in the prefab terrain copies as it is.
+    prefabTerrain[3 * 4 + 1] = 52 + 0x80000000;
     const intact = Array<number>(16).fill(0);
     // Prefab rect (1,2) 2x2: cells (1,2) (2,2) (1,3) (2,3).
     intact[2 * 4 + 1] = 50;
     intact[2 * 4 + 2] = 0;
-    intact[3 * 4 + 1] = 52 + 0x80000000;
+    intact[3 * 4 + 1] = 52;
     intact[3 * 4 + 2] = 53;
     // A stray gid outside the prefab must not be copied.
     intact[0] = 99;
@@ -237,7 +244,10 @@ describe('stampBuildings', () => {
       collision: new Uint8Array(16),
       spawns: [],
       tileset,
-      tileLayers: [{ name: 'intact', visible: true, data: intact }],
+      tileLayers: [
+        { name: 'terrain', visible: true, data: prefabTerrain },
+        { name: 'intact', visible: true, data: intact },
+      ],
       objectLayers: [
         {
           name: 'prefabs',
@@ -261,13 +271,18 @@ describe('stampBuildings', () => {
 
   const placements = [{ site: 'tower-1', level: 'grass' }];
 
-  it('overwrites terrain with non-empty intact gids and keeps terrain under empty ones', () => {
+  it('overwrites terrain with the prefab terrain and ignores its intact overlay', () => {
     const stamped = stampBuildings(countyMap(), buildingsMap(), placements);
     const terrain = stamped.tileLayers[0].data;
-    expect(terrain[1 * 6 + 2]).toBe(50);
-    expect(terrain[1 * 6 + 3]).toBe(1);
+    expect(terrain[1 * 6 + 2]).toBe(70);
+    expect(terrain[1 * 6 + 3]).toBe(70);
     expect(terrain[2 * 6 + 2]).toBe(52 + 0x80000000);
-    expect(terrain[2 * 6 + 3]).toBe(53);
+    expect(terrain[2 * 6 + 3]).toBe(70);
+  });
+
+  it('keeps county terrain where the prefab terrain cell is empty', () => {
+    const stamped = stampBuildings(countyMap(), buildingsMap(0), placements);
+    expect(stamped.tileLayers[0].data[1 * 6 + 3]).toBe(1);
   });
 
   it('leaves every cell outside the footprint, and the other layers, unchanged', () => {
