@@ -242,7 +242,7 @@ checked against all 12 counties. **None of them holds it.**
 | Section B `hi` bit 8 (`256`) | not build spots | absent from 7 of 12 counties. Where present it's water blobs or a cliff-rim lattice, dozens of subcells rather than a few plots (see "`256` is not a third terrain class") |
 | Section B `hi` bit 2 (`4`) deviations | not build spots | Section B is nearly a function of the tile beneath it. The cells that break from their tile's usual 2×2 pattern are one-subcell nudges along cliff and shore edges, plus a few isolated unblocked holes in open water that no unit could reach. There are 6–707 per county, scattered (2–240 clusters), with no shared shape |
 | a marker tile index in Section A | not build spots | the only tile in all 12 counties at a few-per-map count is **701**, a signpost on a cairn, and it only ever sits on the map border. See "Map-edge signposts" below |
-| building art stamped into Section A | none present | `BUILDING.MAP`'s three tile grids (interior, intact and ruined) use 922 distinct tiles. 856 of them — every roof, tower and wall — appear in **no** county. The other 66 are plain terrain (gravel, grass, water, shoreline, one tree), used for the ground around the compounds |
+| building art stamped into Section A | none present | `BUILDING.MAP`'s three tile grids (interior, damaged and ruined) use 922 distinct tiles. 856 of them — every roof, tower and wall — appear in **no** county. The other 66 are plain terrain (gravel, grass, water, shoreline, one tree), used for the ground around the compounds |
 | a third section / trailing bytes | none | Sections A + B are exactly 327,680 bytes |
 
 **Conclusion (high confidence for the negative):** county `.MAP` files do
@@ -434,7 +434,7 @@ grass caps 1225/1229 vs rock caps 1064/1066, wood vertical 1207/1209 vs
 vs 1241/1257. The county sites that use the rock-bank slots all meet
 rock or cliff terrain at both ends. So the second wood run and the "alt.
 art" stone runs are bank variants. They are not the damaged state of the
-other slots: a rock-bank bridge has its own `intact` art, and the `ruined`
+other slots: a rock-bank bridge has its own `damaged` art, and the `ruined`
 layer holds something only inside stone-wide bridges, grass and rock alike
 (see "Bridge art in the three layers" below). The rock-bank slots are a fixed table in
 `scripts/dracula-exe/building-sites.ts`. A bridge site is the top-left of
@@ -549,7 +549,7 @@ and aligned cell-for-cell:
   1382–1387). Every cell is a real tile: the 471 zero cells are atlas
   index 0, the plain ground tile, running as seams and lines through the
   building interiors — not holes. Every tile in this grid is fully opaque.
-- **Grid 1 — intact exterior.** Battlements and red roofs. Where non-zero,
+- **Grid 1 — damaged exterior.** Battlements and red roofs. Where non-zero,
   the tile **replaces** the interior tile under it; `0` means no overlay.
   Only 229 of its 4,940 cells use a tile with any transparency.
 - **Grid 2 — ruined state.** Crumbled walls with the interior still
@@ -709,15 +709,15 @@ it. Its layers, back to front:
 
 - **`terrain`** — grid 0, the interior view, every cell set (index 0 is
   gid 1). Purely cosmetic: the engine's collision grid never reads it.
-- **`intact`** — grid 1, **hidden**. Empty (gid 0) where the grid is 0.
+- **`damaged`** — grid 1, **hidden**. Empty (gid 0) where the grid is 0.
 - **`ruined`** — grid 2, **hidden**. Empty (gid 0) where the grid is 0.
 
 So by default only the interior view shows. The engine loads both overlays
-but starts them hidden; to see the buildings intact or ruined, toggle
-`intact` or `ruined` on, in the Tiled editor or through the engine's
+but starts them hidden; to see the buildings damaged or ruined, toggle
+`damaged` or `ruined` on, in the Tiled editor or through the engine's
 `tile-layers` debug option (`?debug=tile-layers`).
 - **`collision`** — hidden, and currently **all open** (every gid 0). Real
-  building collision isn't derived yet — the candidates are the `intact`
+  building collision isn't derived yet — the candidates are the `damaged`
   overlay's footprint or `BUILDING.MAP`'s unread flag grids 3–14 (see
   "Open questions for later" below) — so a unit can walk straight through
   a building until a follow-up fills this in.
@@ -750,8 +750,8 @@ but starts them hidden; to see the buildings intact or ruined, toggle
   layers" below.
 
   **Spare bridges**: 15 complete bridges that no executable slot points at
-  (217 `intact` cells lie outside every slot rect). They are found by
-  grouping the intact overlay's bridge tiles into connected pieces and
+  (217 `damaged` cells lie outside every slot rect). They are found by
+  grouping the damaged overlay's bridge tiles into connected pieces and
   dropping the cells inside slot rects, and are listed in
   `scripts/county-map/spare-bridges.ts`, each with both end caps and a full
   deck. Bank follows the end caps as for slot bridges. They are: three
@@ -763,7 +763,7 @@ but starts them hidden; to see the buildings intact or ruined, toggle
   four stone-wide vertical rock bridges of lengths 4–7 side by side (x 51–62,
   y 40–46), and three rock horizontal bridges (stone, length 5, x 28–32,
   y 48–49; stone-wide, lengths 5 and 6, x 25–29 and x 30–35, y 50–52).
-  Their `ruined` cells follow the same rule as slot bridges (below). Nine `intact` cells are neither inside a rect nor part of a bridge, and
+  Their `ruined` cells follow the same rule as slot bridges (below). Nine `damaged` cells are neither inside a rect nor part of a bridge, and
   stay unmarked: single tile 1386 cells at (18, 33) and (18, 36), tile 2
   at x 21, y 56–58, and four tile 1382 cells at x 29–31, y 92–93.
 
@@ -778,7 +778,7 @@ caps. Taking a stone-wide bridge (3 across):
 | layer | what it holds for a bridge |
 |---|---|
 | `terrain` | a clean bridge: end caps 1216–1223, deck tile 325 |
-| `intact` | a dark, scorched-looking deck: end caps 1224–1231, deck tile 357 |
+| `damaged` | a dark, scorched-looking deck: end caps 1224–1231, deck tile 357 |
 | `ruined` | tile 389 (a brown dirt strip) down the middle column only, from the second cell to the second-last. Nothing on the end caps or edge columns |
 
 Only stone-wide bridges have any `ruined` cells (slots 11–16, 30–37 and 41,
@@ -794,12 +794,12 @@ which is a hypothesis and not something the data shows:
   remains left in the river, which is why they are a strip and not a whole
   deck.
 - On a county site the ground under a bridge is water. So the clean
-  `terrain` bridge is only a backdrop in `buildings.tmj`, and the `intact`
+  `terrain` bridge is only a backdrop in `buildings.tmj`, and the `damaged`
   dark deck may simply be how a normal bridge looks over water.
 
 Placing a building on a county site copies the prefab's `terrain` layer,
 the undamaged building (see `stampBuildings` in
-`src/game/map/building-placement.ts`), bridges included. The `intact` and
+`src/game/map/building-placement.ts`), bridges included. The `damaged` and
 `ruined` overlays are for a partly and fully destroyed building and are
 not placed yet. The later damaged-bridge work
 should check this hypothesis by rendering both states over county water.

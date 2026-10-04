@@ -134,7 +134,7 @@ vi.mock('~/game/map/load-tiled-map', () => ({
     tileset: {},
     tileLayers: [
       { name: 'terrain', visible: true, data: [1, 1] },
-      { name: 'intact', visible: true, data: [0, 2] },
+      { name: 'damaged', visible: true, data: [0, 2] },
       { name: 'ruined', visible: false, data: [3, 0] },
     ],
     objectLayers: [{ name: 'spawns', visible: true, objects: [] }],
@@ -307,7 +307,7 @@ describe('GameCanvas', () => {
 
       expect(onTileLayers).toHaveBeenCalledExactlyOnceWith([
         { name: 'terrain', visible: true, kind: 'tile' },
-        { name: 'intact', visible: true, kind: 'tile' },
+        { name: 'damaged', visible: true, kind: 'tile' },
         { name: 'ruined', visible: false, kind: 'tile' },
         { name: 'spawns', visible: true, kind: 'object' },
       ]);

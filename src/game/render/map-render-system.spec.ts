@@ -225,7 +225,7 @@ describe('MapRenderSystem', () => {
         height: 20,
         tileLayers: [
           layer(new Array(400).fill(1), true, 'terrain'),
-          layer(new Array(400).fill(2), true, 'intact'),
+          layer(new Array(400).fill(2), true, 'damaged'),
           layer(new Array(400).fill(3), false, 'ruined'),
         ],
       });
@@ -239,7 +239,7 @@ describe('MapRenderSystem', () => {
     it('gives every chunk one container per layer, back to front, labelled by layer', () => {
       const system = threeLayers();
       for (const chunk of system.container.children) {
-        expect(chunk.children.map((child) => child.label)).toEqual(['terrain', 'intact', 'ruined']);
+        expect(chunk.children.map((child) => child.label)).toEqual(['terrain', 'damaged', 'ruined']);
       }
     });
 

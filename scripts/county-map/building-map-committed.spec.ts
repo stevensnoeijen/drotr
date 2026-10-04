@@ -39,10 +39,10 @@ describe('public/maps/buildings.tmj', () => {
     expect(map.tilesets).toEqual([{ firstgid: 1, source: 'terrain.tsx' }]);
   });
 
-  it('has terrain, a hidden intact, a hidden ruined, a hidden collision, an empty spawns layer and a prefabs layer, back to front', () => {
+  it('has terrain, a hidden damaged, a hidden ruined, a hidden collision, an empty spawns layer and a prefabs layer, back to front', () => {
     expect(map.layers.map((l) => [l.name, l.type, l.visible])).toEqual([
       ['terrain', 'tilelayer', true],
-      ['intact', 'tilelayer', false],
+      ['damaged', 'tilelayer', false],
       ['ruined', 'tilelayer', false],
       ['collision', 'tilelayer', false],
       ['spawns', 'objectgroup', true],
@@ -101,12 +101,12 @@ describe('public/maps/buildings.tmj', () => {
       }
     });
 
-    it('draws every spare bridge as intact tiles over its whole rect', () => {
-      const intact = tileData('intact');
+    it('draws every spare bridge as damaged tiles over its whole rect', () => {
+      const damaged = tileData('damaged');
       for (const { rect } of SPARE_BRIDGES) {
         for (let y = rect.y; y < rect.y + rect.height; y++) {
           for (let x = rect.x; x < rect.x + rect.width; x++) {
-            expect(intact[y * 128 + x], `(${x}, ${y})`).not.toBe(0);
+            expect(damaged[y * 128 + x], `(${x}, ${y})`).not.toBe(0);
           }
         }
       }
@@ -127,9 +127,9 @@ describe('public/maps/buildings.tmj', () => {
     const terrain = tileData('terrain');
     expect(terrain).toHaveLength(128 * 128);
     expect(nonEmptyCount(terrain)).toEqual(128 * 128);
-    expect(nonEmptyCount(tileData('intact'))).toEqual(4940);
+    expect(nonEmptyCount(tileData('damaged'))).toEqual(4940);
     expect(nonEmptyCount(tileData('ruined'))).toEqual(2767);
-    const all = [...terrain, ...tileData('intact'), ...tileData('ruined')];
+    const all = [...terrain, ...tileData('damaged'), ...tileData('ruined')];
     // gid = atlas index + 1, and the highest index used is 1451.
     expect(Math.max(...all)).toEqual(1452);
   });
@@ -143,7 +143,7 @@ describe('public/maps/buildings.tmj', () => {
     // All four are kept; only terrain starts out shown.
     expect(parsed.tileLayers).toEqual([
       { name: 'terrain', visible: true, data: tileData('terrain') },
-      { name: 'intact', visible: false, data: tileData('intact') },
+      { name: 'damaged', visible: false, data: tileData('damaged') },
       { name: 'ruined', visible: false, data: tileData('ruined') },
       { name: 'collision', visible: false, data: tileData('collision') },
     ]);
