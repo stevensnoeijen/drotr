@@ -1,6 +1,7 @@
 import { emptyScenario } from './empty';
 import { knightsScenario } from './knights';
 import { testBigFightScenario } from './test-big-fight';
+import { testBuildingsScenario } from './test-buildings';
 import { testScenario } from './test';
 import type { Scenario } from './types';
 
@@ -13,6 +14,7 @@ export const scenarios: readonly Scenario[] = [
   testScenario,
   testBigFightScenario,
   knightsScenario,
+  testBuildingsScenario,
   emptyScenario,
 ];
 
