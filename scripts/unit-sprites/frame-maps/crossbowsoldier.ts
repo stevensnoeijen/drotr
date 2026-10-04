@@ -95,7 +95,9 @@ export const CROSSBOWSOLDIER_FRAME_MAP: UnitFrameMap = {
   // swing, so the unit is back on idle as the swing flag clears. CombatSystem
   // fires the bolt at the release time (attackReleaseTime in the unit data,
   // kept equal to hitFrame / fps by a test); hitFrame marks that visual
-  // release (0-based frame 2, bolt loosed) 125 ms in. Move: 8 frames at 10 fps
+  // release (0-based frame 2, bolt loosed) 125 ms in. The unit's attackCooldown
+  // equals the animation length, so the attack loops while engaged, one bolt
+  // per cycle. Move: 8 frames at 10 fps
   // is 0.8 s per cycle, matching the swordsmen's gait at the same 2 cells/s.
   // Dead: 4 frames at 8 fps is 0.5 s, then holdLast keeps the corpse on its
   // final frame until DEATH_REMOVAL_DELAY_SECONDS.

@@ -9,7 +9,7 @@
   "stamina": 6,
   "speed": 2,
   "movementSpeed": 2,
-  "attackCooldown": 1.5,
+  "attackCooldown": 0.5,
   "attackReleaseTime": 0.125,
   "range": 5,
   "aggroRange": 5,

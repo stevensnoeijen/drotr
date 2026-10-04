@@ -178,7 +178,13 @@ describe.each(['swordsmen', 'crossbowsoldier', 'knight', 'juggernaut', 'catapult
   });
 });
 
-describe('crossbowsoldier attack release time', () => {
+describe('crossbowsoldier attack timing', () => {
+  it('fires once per attack animation loop', () => {
+    const { actions } = parseUnitManifest(readJson(unitManifestPath('crossbowsoldier')));
+    const { frames, fps } = actions.attack!;
+    expect(unitDefinitions.crossbowsoldier.attackCooldown).toBeCloseTo(frames / fps, 6);
+  });
+
   it('matches the committed attack animation\'s release frame', () => {
     const { actions } = parseUnitManifest(readJson(unitManifestPath('crossbowsoldier')));
     const { hitFrame, fps } = actions.attack!;
