@@ -30,7 +30,7 @@
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.3",
-    "@types/lodash": "^4.14.184",
+    "@types/lodash": "^4.17.26",
     "@types/node": "^24.19.1",
     "@types/pngjs": "^6.0.5",
     "@types/react": "^19.2.18",
